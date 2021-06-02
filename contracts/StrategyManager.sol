@@ -4,6 +4,8 @@ pragma solidity >=0.5.0;
 import './libraries/SafeMath.sol';
 import './libraries/Ownable.sol';
 
+import './Strategy.sol';
+
 contract StrategyManager {
     using SafeMath for uint;
 
@@ -60,10 +62,41 @@ contract StrategyManager {
         delete userToPositions[_user][userToPositions[_user].length - 1];
     }
 
-    //TODO
-    /*function publishStrategy() internal returns(address) {
-        return userToDevelopedStrategies[_user];
-    }*/
+    function _publishStrategy(string memory strategyName,
+                            string memory strategyDescription,
+                            string memory strategySymbol,
+                            uint maxPoolSize,
+                            string memory underlyingAssetSymbol,
+                            bool direction,
+                            address proxyAddress,
+                            uint[] memory entryRules,
+                            uint[] memory exitRules,
+                            uint maxTradeDuration,
+                            uint profitTarget,
+                            uint stopLoss,
+                            address developerAddress) internal {
+
+        Strategy temp = new Strategy(strategyName,
+                                    strategyDescription, 
+                                    strategySymbol,
+                                    maxPoolSize,
+                                    underlyingAssetSymbol,
+                                    direction,
+                                    proxyAddress,
+                                    entryRules,
+                                    exitRules,
+                                    maxTradeDuration,
+                                    profitTarget,
+                                    stopLoss,
+                                    developerAddress);
+
+        address strategyAddress = address(temp);
+        strategies.push(strategyAddress);
+        userToPublishedStrategies[developerAddress].push(strategies.length - 1);
+        addressToIndex[strategyAddress] = strategies.length - 1;
+
+        emit PublishedStrategy(developerAddress, strategyAddress, block.timestamp);
+    }
 
     /* ========== MODIFIERS ========== */
 
@@ -74,5 +107,5 @@ contract StrategyManager {
 
     /* ========== EVENTS ========== */
 
-    event PublishedStrategy();
+    event PublishedStrategy(address developerAddress, address strategyAddress, uint timestamp);
 }

@@ -1,5 +1,7 @@
 pragma solidity >=0.5.0;
 
+import './TradingBot.sol';
+
 import './libraries/SafeMath.sol';
 
 contract Strategy {
@@ -11,18 +13,16 @@ contract Strategy {
     uint8 public constant decimals = 18;
     uint  public maxSupply = 1000000 * (10 ** decimals); //1000000 tokens 
 
-    //Strategy state variables
-    address tradingBotAddress;
-    address developerAddress;
-    string description;
-    string underlyingAssetSymbol;
-    bool direction; //true == long, false == short
-    uint publishedOnTimestamp;
+    //Strategy variables
+    address private tradingBotAddress;
+    address public developerAddress;
+    string public description;
+    uint public publishedOnTimestamp;
 
     //Custom token state variables
-    uint maxPoolSize;
-    uint tokenPrice;
-    uint circulatingSupply;
+    uint public maxPoolSize;
+    uint public tokenPrice;
+    uint public circulatingSupply;
 
     address proxyAddress;
 
@@ -32,19 +32,30 @@ contract Strategy {
     event Approval(address indexed owner, address indexed spender, uint value);
     event Transfer(address indexed from, address indexed to, uint value);
 
-    constructor(string memory _name, string memory _description, string memory _symbol, uint _maxPoolSize, string memory _underlyingAssetSymbol, bool _direction, address _proxyAddress) public {
-        developerAddress = msg.sender;
+    constructor(string memory _name,
+                string memory _description,
+                string memory _symbol,
+                uint _maxPoolSize,
+                string memory _underlyingAssetSymbol,
+                bool _direction,
+                address _proxyAddress,
+                uint[] memory _entryRules,
+                uint[] memory _exitRules,
+                uint _maxTradeDuration,
+                uint _profitTarget,
+                uint _stopLoss,
+                address _developerAddress) public {
+
+        developerAddress = _developerAddress;
         description = _description;
         symbol = _symbol;
         name = _name;
         maxPoolSize = _maxPoolSize.mul(10 ** decimals);
-        underlyingAssetSymbol = _underlyingAssetSymbol;
-        direction = _direction;
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
         proxyAddress = _proxyAddress;
 
-        //TODO: generate trading bot
+        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol));
     }
 
     //ERC20 functions
@@ -93,8 +104,8 @@ contract Strategy {
 
     //Strategy functions
 
-    function _getStrategyDetails() public view returns (string memory, string memory, string memory, string memory, address, bool, uint, uint, uint, uint) {
-        return (name, symbol, description, underlyingAssetSymbol, developerAddress, direction, publishedOnTimestamp, maxPoolSize, tokenPrice, circulatingSupply);
+    function _getStrategyDetails() public view returns (string memory, string memory, string memory, address, uint, uint, uint, uint) {
+        return (name, symbol, description, developerAddress, publishedOnTimestamp, maxPoolSize, tokenPrice, circulatingSupply);
     }
 
     function _getPositionDetails(address _user) public view returns (string memory, string memory, uint, uint, uint) {
