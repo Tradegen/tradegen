@@ -2,7 +2,6 @@ pragma solidity >=0.5.0;
 
 //libraries
 import './libraries/SafeMath.sol';
-import './libraries/Ownable.sol';
 
 import './Strategy.sol';
 

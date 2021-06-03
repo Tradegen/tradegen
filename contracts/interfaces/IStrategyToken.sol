@@ -1,14 +1,11 @@
-pragma solidity >=0.4.24;
+pragma solidity >=0.5.0;
 
 interface IStrategyToken {
-    // Views
-    function currencyKey() external view returns (bytes32);
-
-    // Mutative functions
-    function transferAndSettle(address to, uint value) external returns (bool);
-
-    // Restricted: used internally to Tradegen
-    function burn(address account, uint amount) external;
-
-    function issue(address account, uint amount) external;
+    function _getStrategyDetails() external view returns (string memory, string memory, string memory, address, uint, uint, uint, uint);
+    function _getPositionDetails(address _user) external view returns (string memory, string memory, uint, uint, uint);
+    function buyPosition(address from, address to, uint numberOfTokens) external;
+    function deposit(address _user, uint amount) external;
+    function withdraw(address _user, uint amount) external;
+    function getTradingBotAddress() external view returns (address);
+    function getBalanceOf(address user) external view returns (uint);
 }

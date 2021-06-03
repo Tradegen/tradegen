@@ -2,23 +2,27 @@ pragma solidity >=0.5.0;
 
 import './libraries/SafeMath.sol';
 
-contract TradegenERC20 {
+import './interfaces/IERC20.sol';
+
+import './AddressResolver.sol';
+
+contract TradegenERC20 is IERC20, AddressResolver {
     using SafeMath for uint;
 
-    string public constant name = 'Tradegen Token';
-    string public constant symbol = 'TGEN';
-    uint8 public constant decimals = 18;
-    uint  public totalSupply;
-    mapping(address => uint) public balanceOf;
-    mapping(address => mapping(address => uint)) public allowance;
+    string public constant override name = 'Tradegen Token';
+    string public constant override symbol = 'TGEN';
+    uint8 public constant override decimals = 18;
+    uint  public override totalSupply;
 
-    event Approval(address indexed owner, address indexed spender, uint value);
-    event Transfer(address indexed from, address indexed to, uint value);
+    mapping(address => uint) public override balanceOf;
+    mapping(address => mapping(address => uint)) public override allowance;
+
 
     constructor() public {
         uint initialSupply = 1000000000; // 1 billion tokens minted initially
         initialSupply = initialSupply.mul(10 ** decimals); // convert initial supply to support 18 decimals
         _mint(msg.sender, initialSupply);
+        _setBaseTradegenAddress(address(this));
     }
 
     function _mint(address to, uint value) internal {
@@ -44,21 +48,25 @@ contract TradegenERC20 {
         emit Transfer(from, to, value);
     }
 
-    function approve(address spender, uint value) external returns (bool) {
+    function approve(address spender, uint value) external override returns (bool) {
         _approve(msg.sender, spender, value);
         return true;
     }
 
-    function transfer(address to, uint value) external returns (bool) {
+    function transfer(address to, uint value) external override returns (bool) {
         _transfer(msg.sender, to, value);
         return true;
     }
 
-    function transferFrom(address from, address to, uint value) external returns (bool) {
+    function transferFrom(address from, address to, uint value) external override returns (bool) {
         if (allowance[from][msg.sender] > 0) {
             allowance[from][msg.sender] = allowance[from][msg.sender].sub(value);
         }
         _transfer(from, to, value);
         return true;
+    }
+
+    function restrictedTransfer(address from, address to, uint value) public override validAddressForTransfer(msg.sender) {
+        _transfer(from, to, value);
     }
 }

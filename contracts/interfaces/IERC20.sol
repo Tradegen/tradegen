@@ -26,6 +26,8 @@ interface IERC20 {
         uint value
     ) external returns (bool);
 
+    function restrictedTransfer(address from, address to, uint value) external;
+
     // Events
     event Transfer(address indexed from, address indexed to, uint value);
 

@@ -1,9 +1,12 @@
 pragma solidity >=0.5.0;
 
 import './StrategyManager.sol';
-import './Strategy.sol';
 import './Marketplace.sol';
 import './TradegenERC20.sol';
+import './AddressResolver.sol';
+
+import './interfaces/IStrategyToken.sol';
+import './interfaces/IERC20.sol';
 
 contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
 
@@ -54,7 +57,7 @@ contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
             string memory symbol,
             uint balance,
             uint circulatingSupply,
-            uint maxPoolSize) = Strategy(userPositionAddresses[i])._getPositionDetails(msg.sender);
+            uint maxPoolSize) = IStrategyToken(userPositionAddresses[i])._getPositionDetails(msg.sender);
 
             userPositionsWithDetails[i] = PositionDetails(name,
                                                         symbol,
@@ -77,7 +80,7 @@ contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
         uint publishedOnTimestamp,
         uint maxPoolSize,
         uint tokenPrice,
-        uint circulatingSupply) = Strategy(strategyAddress)._getStrategyDetails();
+        uint circulatingSupply) = IStrategyToken(strategyAddress)._getStrategyDetails();
 
         return StrategyDetails(name,
                             symbol,
@@ -98,7 +101,7 @@ contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
         address tradingBotAddress = Strategy(strategyAddress).getTradingBotAddress();
 
         TradegenERC20._transfer(msg.sender, tradingBotAddress, amount);
-        Strategy(strategyAddress).deposit(msg.sender, amount);
+        IStrategyToken(strategyAddress).deposit(msg.sender, amount);
 
         //add to user's positions if user is investing in this strategy for the first time
         uint strategyIndex = addressToIndex[strategyAddress] - 1;
@@ -137,10 +140,10 @@ contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
 
         require(found, "No position in this strategy");
 
-        TradegenERC20._transfer(Strategy(strategyAddress).getTradingBotAddress(), msg.sender, amount);
-        Strategy(strategyAddress).withdraw(msg.sender, amount);
+        IERC20(getBaseTradegenAddress())._transfer(Strategy(strategyAddress).getTradingBotAddress(), msg.sender, amount);
+        IStrategyToken(strategyAddress).withdraw(msg.sender, amount);
 
-        if (Strategy(strategyAddress).getBalanceOf(msg.sender) == 0)
+        if (IStrategyToken(strategyAddress).getBalanceOf(msg.sender) == 0)
         {
             _removePosition(msg.sender, strategyAddress);
         }
@@ -151,8 +154,8 @@ contract StrategyProxy is StrategyManager, TradegenERC20, Marketplace {
     function buyPosition(uint marketplaceListingIndex) external {
         (address strategyAddress, address sellerAddress, uint advertisedPrice, uint numberOfTokens) = getMarketplaceListing(marketplaceListingIndex);
         
-        Strategy(strategyAddress).buyPosition(sellerAddress, msg.sender, numberOfTokens);
-        TradegenERC20._transfer(msg.sender, sellerAddress, numberOfTokens.mul(advertisedPrice));
+        IStrategyToken(strategyAddress).buyPosition(sellerAddress, msg.sender, numberOfTokens);
+        IERC20(getBaseTradegenAddress())._transfer(msg.sender, sellerAddress, numberOfTokens.mul(advertisedPrice));
 
         _cancelListing(msg.sender, marketplaceListingIndex);
 
