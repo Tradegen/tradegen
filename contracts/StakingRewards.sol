@@ -4,6 +4,7 @@ pragma solidity >=0.5.0;
 import './libraries/SafeMath.sol';
 
 import './interfaces/IERC20.sol';
+
 import './AddressResolver.sol';
 
 contract StakingRewards is AddressResolver {
@@ -13,7 +14,7 @@ contract StakingRewards is AddressResolver {
     mapping(address => uint256) private _balances;
 
     constructor() public {
-        _setBaseTradegenAddress(address(this));
+        _setStakingRewardsAddress(address(this));
     }
 
     /* ========== VIEWS ========== */

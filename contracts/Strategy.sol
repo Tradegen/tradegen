@@ -57,6 +57,7 @@ contract Strategy is IStrategyToken, AddressResolver {
         proxyAddress = _proxyAddress;
 
         tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol));
+        _addTradingBotAddress(tradingBotAddress);
     }
 
     //ERC20 functions
@@ -131,8 +132,16 @@ contract Strategy is IStrategyToken, AddressResolver {
         return tradingBotAddress;
     }
 
+    function getDeveloperAddress() public view override returns (address) {
+        return developerAddress;
+    }
+
     function getBalanceOf(address user) public view override onlyProxy(msg.sender) returns (uint) {
         return balanceOf[user];
+    }
+
+    function getCirculatingSupply() public view override returns (uint) {
+        return circulatingSupply;
     }
 
     modifier onlyProxy(address _caller) {

@@ -7,5 +7,7 @@ interface IStrategyToken {
     function deposit(address _user, uint amount) external;
     function withdraw(address _user, uint amount) external;
     function getTradingBotAddress() external view returns (address);
+    function getDeveloperAddress() external view returns (address);
     function getBalanceOf(address user) external view returns (uint);
+    function getCirculatingSupply() external view returns (uint)
 }

@@ -1,11 +1,14 @@
 pragma solidity >=0.5.0;
 
 import './Factory.sol';
+import './TradingBotRewards.sol';
+import './AddressResolver.sol';
 
 import './libraries/SafeMath.sol';
 import './interfaces/IRule.sol';
+import './interfaces/IStrategyToken.sol';
 
-contract TradingBot is Factory {
+contract TradingBot is Factory, AddressResolver {
     using SafeMath for uint;
 
     //parameters
@@ -24,7 +27,8 @@ contract TradingBot is Factory {
     uint private _currentOrderEntryPrice;
     uint private _currentTradeDuration;
 
-    address private oracleAddress;
+    address private _oracleAddress;
+    address private _strategyAddress;
 
     constructor(uint[] memory entryRules,
                 uint[] memory exitRules,
@@ -41,6 +45,8 @@ contract TradingBot is Factory {
         _stopLoss = stopLoss;
         _direction = direction;
         _underlyingAssetSymbol = underlyingAssetSymbol;
+
+        _strategyAddress = msg.sender;
 
         (_entryRuleAddresses, _exitRuleAddresses) = _generateRules(entryRules, exitRules);
 
@@ -68,17 +74,14 @@ contract TradingBot is Factory {
         }
         else
         {
-            if (_checkProfitTarget(latestPrice))
+            if (_checkProfitTarget(latestPrice) || _checkStopLoss(latestPrice) || _currentTradeDuration >= _maxTradeDuration)
             {
-                (_currentOrderSize, _currentOrderEntryPrice) = _placeOrder(!_direction);
-            }
-            else if (_checkStopLoss(latestPrice))
-            {
-                (_currentOrderSize, _currentOrderEntryPrice) = _placeOrder(!_direction);
-            }
-            else if (_currentTradeDuration >= _maxTradeDuration)
-            {
-                (_currentOrderSize, _currentOrderEntryPrice) = _placeOrder(!_direction);
+                (, uint exitPrice) = _placeOrder(!_direction);
+                (bool profitOrLoss, uint amount) = _calculateProfitOrLoss(exitPrice);
+                _currentOrderEntryPrice = 0;
+                _currentOrderSize = 0;
+                _currentTradeDuration = 0;
+                TradingBotRewards(getTradingBotRewardsAddress()).updateRewards(profitOrLoss, amount, IStrategyToken(_strategyAddress).getCirculatingSupply());
             }
             else
             {
@@ -97,6 +100,10 @@ contract TradingBot is Factory {
         emit PlacedOrder(address(this), block.timestamp, _underlyingAssetSymbol, 0, 0, orderType);
 
         return (size, price);
+    } 
+
+    function _calculateProfitOrLoss(uint exitPrice) private view returns (bool, uint) {
+        return (exitPrice >= _currentOrderEntryPrice) ? (true, exitPrice.sub(_currentOrderEntryPrice).div(_currentOrderEntryPrice)) : (false, _currentOrderEntryPrice.sub(exitPrice).div(_currentOrderEntryPrice));
     }
 
     function _updateRules(uint latestPrice) private {
@@ -146,7 +153,7 @@ contract TradingBot is Factory {
     /* ========== MODIFIERS ========== */
 
     modifier onlyOracle(address _caller) {
-        require(_caller == oracleAddress, "Only the oracle can call this function");
+        require(_caller == _oracleAddress, "Only the oracle can call this function");
         _;
     }
 
