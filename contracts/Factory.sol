@@ -2,13 +2,20 @@ pragma solidity >=0.5.0;
 
 import './Imports.sol';
 import './Rule.sol';
+import './AddressResolver.sol';
 
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 
-contract Factory is Imports {
+contract Factory is AddressResolver {
 
-    function _generateRules(uint[] memory entryRules, uint[] memory exitRules) internal returns (address[] memory, address[] memory) {
+    constructor() public {
+        _setFactoryAddress(address(this));
+
+        //Need to set Imports address manually
+    }
+
+    function _generateRules(uint[] memory entryRules, uint[] memory exitRules) public onlyTradingBot(msg.sender) returns (address[] memory, address[] memory) {
         address[] memory entryRuleAddresses = new address[](entryRules.length);
         address[] memory exitRuleAddresses = new address[](exitRules.length);
 
@@ -33,9 +40,9 @@ contract Factory is Imports {
         uint firstIndicatorParam = (rule << 176) >> 216;
         uint secondIndicatorParam = (rule << 216) >> 216;
 
-        address firstIndicatorAddress = _generateIndicator(firstIndicator, firstIndicatorParam);
-        address secondIndicatorAddress = _generateIndicator(secondIndicator, secondIndicatorParam);
-        address comparatorAddress = _generateComparator(comparator, firstIndicatorAddress, secondIndicatorAddress);
+        address firstIndicatorAddress = Imports(getImportsAddress())._generateIndicator(firstIndicator, firstIndicatorParam);
+        address secondIndicatorAddress = Imports(getImportsAddress())._generateIndicator(secondIndicator, secondIndicatorParam);
+        address comparatorAddress = Imports(getImportsAddress())._generateComparator(comparator, firstIndicatorAddress, secondIndicatorAddress);
 
         return address(new Rule(firstIndicatorAddress, secondIndicatorAddress, comparatorAddress));
     }

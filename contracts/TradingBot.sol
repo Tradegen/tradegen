@@ -9,7 +9,7 @@ import './interfaces/IRule.sol';
 import './interfaces/IStrategyToken.sol';
 import './interfaces/ITradingBot.sol';
 
-contract TradingBot is ITradingBot, Factory, AddressResolver {
+contract TradingBot is ITradingBot, AddressResolver{
     using SafeMath for uint;
 
     //parameters
@@ -49,7 +49,7 @@ contract TradingBot is ITradingBot, Factory, AddressResolver {
 
         _strategyAddress = msg.sender;
 
-        (_entryRuleAddresses, _exitRuleAddresses) = _generateRules(entryRules, exitRules);
+        (_entryRuleAddresses, _exitRuleAddresses) = Factory(getFactoryAddress())._generateRules(entryRules, exitRules);
 
         //TODO: set oracle address
     }

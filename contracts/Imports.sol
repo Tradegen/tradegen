@@ -27,8 +27,14 @@ import './indicators/SMA.sol';
 import './indicators/Up.sol';
 
 contract Imports {
+
+    address private _factoryAddress;
+
+    constructor(address factoryAddress) public {
+        _factoryAddress = factoryAddress;
+    }
     
-    function _generateIndicator(uint indicator, uint param) internal returns (address) {
+    function _generateIndicator(uint indicator, uint param) public onlyFactory(msg.sender) returns (address) {
         if (indicator == 0)
         {
             return address(new Down());
@@ -77,7 +83,7 @@ contract Imports {
         return address(0);
     }
 
-    function _generateComparator(uint comparator, address firstIndicatorAddress, address secondIndicatorAddress) internal returns (address) {
+    function _generateComparator(uint comparator, address firstIndicatorAddress, address secondIndicatorAddress) public onlyFactory(msg.sender) returns (address) {
         if (comparator == 0)
         {
             return address(new Closes(firstIndicatorAddress, secondIndicatorAddress));
@@ -124,5 +130,10 @@ contract Imports {
         }
 
         return address(0);
+    }
+
+    modifier onlyFactory(address addressToCheck) {
+        require(addressToCheck == _factoryAddress, "Only the factory can call this function");
+        _;
     }
 }

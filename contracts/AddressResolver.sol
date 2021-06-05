@@ -1,6 +1,8 @@
 pragma solidity >=0.5.0;
 
-contract AddressResolver {
+import './Ownable.sol';
+
+contract AddressResolver is Ownable {
     address public _baseTradegenAddress;
     address public _stakingRewardsAddress;
     address public _tradingBotRewardsAddress;
@@ -8,6 +10,8 @@ contract AddressResolver {
     address public _settingsAddress;
     address public _strategyApprovalAddress;
     address public _userManagerAddress;
+    address public _factoryAddress;
+    address public _importsAddress;
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
@@ -42,6 +46,14 @@ contract AddressResolver {
         return _userManagerAddress;
     }
 
+    function getFactoryAddress() public view returns (address) {
+        return _factoryAddress;
+    }
+
+    function getImportsAddress() public view returns (address) {
+        return _importsAddress;
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
@@ -68,12 +80,22 @@ contract AddressResolver {
         _userManagerAddress = userManagerAddress;
     }
 
+    function _setImportsAddress(address importsAddress) internal isValidAddress(importsAddress) {
+        _importsAddress = importsAddress;
+    }
+
     function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
 
     function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) {
         _strategyAddresses[strategyAddress] = strategyAddress;
+    }
+
+    /* ========== RESTRICTED FUNCTIONS ========== */
+
+    function _setFactoryAddress(address factoryAddress) internal isValidAddress(factoryAddress) onlyOwner() {
+        _factoryAddress = factoryAddress;
     }
 
     /* ========== MODIFIERS ========== */
@@ -105,6 +127,11 @@ contract AddressResolver {
 
     modifier onlyProxy(address addressToCheck) {
         require(addressToCheck == _strategyProxyAddress, "Only the strategy proxy can call this function");
+        _;
+    }
+
+    modifier onlyFactory(address addressToCheck) {
+        require(addressToCheck == _factoryAddress, "Only the factory can call this function");
         _;
     }
 }
