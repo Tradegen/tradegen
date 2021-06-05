@@ -45,13 +45,13 @@ contract Strategy is IStrategyToken, AddressResolver {
         name = _name;
 
         maxPoolSize = (_strategyParams << 149) >> 206;
-        uint direction = (_strategyParams << 199) >> 255;
+        bool direction = ((_strategyParams << 199) >> 255) == 1 ? true : false;
         uint maxTradeDuration = (_strategyParams << 200) >> 248;
         uint underlyingAssetSymbol = (_strategyParams << 208) >> 240;
         uint profitTarget = (_strategyParams << 224) >> 240;
         uint stopLoss = (_strategyParams << 240) >> 240;
 
-        maxPoolSize = _maxPoolSize.mul(10 ** decimals);
+        maxPoolSize = maxPoolSize.mul(10 ** decimals);
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
 
@@ -140,7 +140,7 @@ contract Strategy is IStrategyToken, AddressResolver {
     }
 
     modifier onlyProxyOrTradingBotRewards(address _caller) {
-        require(_caller == proxyAddress || _caller == getTradingBotRewardsAddress(), "Only proxy or trading bot rewards can call this function");
+        require(_caller == getStrategyProxyAddress() || _caller == getTradingBotRewardsAddress(), "Only proxy or trading bot rewards can call this function");
         _;
     }
 }

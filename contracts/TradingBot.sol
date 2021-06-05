@@ -21,7 +21,7 @@ contract TradingBot is ITradingBot, AddressResolver{
     uint public _profitTarget; //assumes profit target is %
     uint public _stopLoss; //assumes stop loss is %
     bool public _direction; //false = short, true = long
-    string public _underlyingAssetSymbol;
+    uint public _underlyingAssetSymbol;
 
     //state variables
     uint private _currentOrderSize;
@@ -37,7 +37,7 @@ contract TradingBot is ITradingBot, AddressResolver{
                 uint profitTarget,
                 uint stopLoss,
                 bool direction,
-                string memory underlyingAssetSymbol) public {
+                uint underlyingAssetSymbol) public {
         
         _entryRules = entryRules;
         _exitRules = exitRules;
@@ -56,7 +56,7 @@ contract TradingBot is ITradingBot, AddressResolver{
 
     /* ========== VIEWS ========== */
 
-    function getTradingBotParameters() public view override returns (uint[] memory, uint[] memory, uint, uint, uint, bool, string memory) {
+    function getTradingBotParameters() public view override returns (uint[] memory, uint[] memory, uint, uint, uint, bool, uint) {
         return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
     }
 
@@ -164,5 +164,5 @@ contract TradingBot is ITradingBot, AddressResolver{
 
     /* ========== EVENTS ========== */
 
-    event PlacedOrder(address tradingBotAddress, uint256 timestamp, string underlyingAssetSymbol, uint size, uint price, bool orderType);
+    event PlacedOrder(address tradingBotAddress, uint256 timestamp, uint underlyingAssetSymbol, uint size, uint price, bool orderType);
 }
