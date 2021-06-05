@@ -105,8 +105,8 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
         uint transactionFee = amount.mul(3).div(1000); //0.3% transaction fee
 
-        IERC20(getBaseTradegenAddress())._transfer(msg.sender, tradingBotAddress, amount);
-        IERC20(getBaseTradegenAddress())._transfer(msg.sender, developerAddress, transactionFee);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, tradingBotAddress, amount);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, developerAddress, transactionFee);
         IStrategyToken(strategyAddress).deposit(msg.sender, amount);
 
         //add to user's positions if user is investing in this strategy for the first time
@@ -148,7 +148,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
         address tradingBotAddress = IStrategyToken(strategyAddress).getTradingBotAddress();
 
-        IERC20(getBaseTradegenAddress())._transfer(tradingBotAddress, msg.sender, amount);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(tradingBotAddress, msg.sender, amount);
         IStrategyToken(strategyAddress).withdraw(msg.sender, amount);
 
         if (IStrategyToken(strategyAddress).getBalanceOf(msg.sender) == 0)
@@ -168,8 +168,8 @@ contract StrategyProxy is Marketplace, StrategyManager {
         uint transactionFee = amount.mul(3).div(1000); //0.3% transaction fee
         
         IStrategyToken(strategyAddress).buyPosition(sellerAddress, msg.sender, numberOfTokens);
-        IERC20(getBaseTradegenAddress())._transfer(msg.sender, sellerAddress, amount);
-        IERC20(getBaseTradegenAddress())._transfer(msg.sender, developerAddress, transactionFee);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, sellerAddress, amount);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, developerAddress, transactionFee);
 
         _cancelListing(msg.sender, marketplaceListingIndex);
 
