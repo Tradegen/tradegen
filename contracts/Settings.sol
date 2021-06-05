@@ -32,7 +32,7 @@ contract Settings is AddressResolver {
     /* ========== VIEWS ========== */
 
     function checkIfSymbolIDIsValid(uint symbolID) public view returns (bool) {
-        return (symbolID >= 0 && underlyingAssetIDToOracleAddress[symbolID] != address(0));
+        return (symbolID > 0 && underlyingAssetIDToOracleAddress[symbolID] != address(0));
     }
 
     function getVoteLimit() public view returns (uint) {
@@ -55,7 +55,36 @@ contract Settings is AddressResolver {
         return strategyApprovalThreshold;
     }
 
+    function getOracleAddress(uint underlyingAssetID) public view returns (address) {
+        return underlyingAssetIDToOracleAddress[underlyingAssetID];
+    }
+
+    function getUnderlyingAssetSymbol(uint underlyingAssetID) public view returns (string memory) {
+        return underlyingAssetIDToSymbol[underlyingAssetID];
+    }
+
     /* ========== RESTRICTED FUNCTIONS ========== */
+
+    function addNewAsset(uint underlyingAssetID, string memory symbol, address oracleAddress) public onlyOwner() {
+        require(oracleAddress != address(0), "Invalid oracle address");
+        require(underlyingAssetID > 0, "Asset ID out of range");
+        require(underlyingAssetIDToOracleAddress[underlyingAssetID] == address(0), "Asset already exists");
+        require(symbolToUnderlyingAssetID[symbol] == 0, "Symbol already exists");
+
+        underlyingAssetIDToOracleAddress[underlyingAssetID] = oracleAddress;
+        underlyingAssetIDToSymbol[underlyingAssetID] = symbol;
+        symbolToUnderlyingAssetID[symbol] = underlyingAssetID;
+
+        emit AddedAsset(underlyingAssetID, symbol, oracleAddress, block.timestamp);
+    }
+
+    function updateOracleAddress(uint underlyingAssetID, address newOracleAddress) public onlyOwner() {
+        require(newOracleAddress != address(0), "Invalid oracle address");
+
+        underlyingAssetIDToOracleAddress[underlyingAssetID] = newOracleAddress;
+
+        emit UpdatedOracleAddress(underlyingAssetID, newOracleAddress, block.timestamp);
+    }
 
     function setStakingYield(uint newYield) public onlyOwner() {
         require(newYield > 0, "Yield cannot be 0");
@@ -132,6 +161,8 @@ contract Settings is AddressResolver {
 
     /* ========== EVENTS ========== */
 
+    event AddedAsset(uint underlyingAssetID, string symbol, address oracleAddress, uint timestamp);
+    event UpdatedOracleAddress(uint underlyingAssetID, address newOracleAddress, uint timestamp);
     event UpdatedStakingYield(uint newYield, uint timestamp);
     event UpdatedTransactionFee(uint newTransactionFee, uint timestamp);
     event UpdatedVoteLimit(uint newVoteLimit, uint timestamp);

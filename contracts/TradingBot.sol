@@ -1,6 +1,7 @@
 pragma solidity >=0.5.0;
 
 import './Factory.sol';
+import './Settings.sol';
 import './TradingBotRewards.sol';
 import './AddressResolver.sol';
 
@@ -48,10 +49,9 @@ contract TradingBot is ITradingBot, AddressResolver{
         _underlyingAssetSymbol = underlyingAssetSymbol;
 
         _strategyAddress = msg.sender;
+        _oracleAddress = Settings(getSettingsAddress()).getOracleAddress(underlyingAssetSymbol);
 
         (_entryRuleAddresses, _exitRuleAddresses) = Factory(getFactoryAddress())._generateRules(entryRules, exitRules);
-
-        //TODO: set oracle address
     }
 
     /* ========== VIEWS ========== */
