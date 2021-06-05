@@ -3,6 +3,7 @@ pragma solidity >=0.5.0;
 import './libraries/SafeMath.sol';
 
 import './StrategyManager.sol';
+import './TradingBotRewards.sol';
 import './Marketplace.sol';
 import './AddressResolver.sol';
 
@@ -99,7 +100,7 @@ contract StrategyProxy is StrategyManager, Marketplace, AddressResolver {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) {
+    function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) noYieldToClaim(msg.sender, strategyAddress) {
         address tradingBotAddress = IStrategyToken(strategyAddress).getTradingBotAddress();
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
 
@@ -130,7 +131,7 @@ contract StrategyProxy is StrategyManager, Marketplace, AddressResolver {
         emit DepositedFundsIntoStrategy(msg.sender, strategyAddress, amount, block.timestamp);
     }
 
-    function withdrawFundsFromStrategy(address strategyAddress, uint amount) external {
+    function withdrawFundsFromStrategy(address strategyAddress, uint amount) external noYieldToClaim(msg.sender, strategyAddress) {
         //check if user has position
         uint strategyIndex = addressToIndex[strategyAddress] - 1;
         bool found = false;
@@ -174,6 +175,27 @@ contract StrategyProxy is StrategyManager, Marketplace, AddressResolver {
         _cancelListing(msg.sender, marketplaceListingIndex);
 
         emit BoughtPosition(msg.sender, strategyAddress, advertisedPrice, numberOfTokens, block.timestamp);
+    }
+
+    function _claim(address user, bool debtOrYield, uint amount) public onlyTradingBot(msg.sender) {
+        //transfer profit from bot to user
+        if (debtOrYield)
+        {
+            IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, user, amount);
+        }
+        //transfer loss from bot to user
+        else
+        {
+            IERC20(getBaseTradegenAddress()).restrictedTransfer(user, msg.sender, amount);
+        }
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier noYieldToClaim(address user, address tradingBotAddress) {
+        (, uint amount) = TradingBotRewards(getTradingBotRewardsAddress()).getUserAvailableYieldForBot(user, tradingBotAddress);
+        require(amount == 0, "Need to claim yield first");
+        _;
     }
 
     /* ========== EVENTS ========== */

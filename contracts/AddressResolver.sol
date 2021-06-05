@@ -52,12 +52,17 @@ contract AddressResolver {
     }
 
     modifier validAddressForTransfer(address addressToCheck) {
-        require(addressToCheck == _stakingRewardsAddress, "Address is not valid");
+        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress, "Address is not valid");
         _;
     }
 
     modifier onlyTradingBot(address addressToCheck) {
         require(addressToCheck == _tradingBotAddresses[addressToCheck], "Only the trading bot can call this function");
+        _;
+    }
+
+    modifier onlyTradingBotRewards(address addressToCheck) {
+        require(addressToCheck == _tradingBotRewardsAddress, "Only TradingBotRewards can call this function");
         _;
     }
 }

@@ -7,8 +7,9 @@ import './AddressResolver.sol';
 import './libraries/SafeMath.sol';
 import './interfaces/IRule.sol';
 import './interfaces/IStrategyToken.sol';
+import './interfaces/ITradingBot.sol';
 
-contract TradingBot is Factory, AddressResolver {
+contract TradingBot is ITradingBot, Factory, AddressResolver {
     using SafeMath for uint;
 
     //parameters
@@ -55,13 +56,17 @@ contract TradingBot is Factory, AddressResolver {
 
     /* ========== VIEWS ========== */
 
-    function getTradingBotParameters() public view returns (uint[] memory, uint[] memory, uint, uint, uint, bool, string memory) {
+    function getTradingBotParameters() public view override returns (uint[] memory, uint[] memory, uint, uint, uint, bool, string memory) {
         return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
+    }
+
+    function getStrategyAddress() public view override onlyTradingBotRewards(msg.sender) returns (address) {
+        return _strategyAddress;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function onPriceFeedUpdate(uint latestPrice) public onlyOracle(msg.sender) {
+    function onPriceFeedUpdate(uint latestPrice) public override onlyOracle(msg.sender) {
         _updateRules(latestPrice);
 
         //check if bot is not in a trade
@@ -92,7 +97,7 @@ contract TradingBot is Factory, AddressResolver {
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    //TODO
+    //TODO: send order to decentralized exchange
     function _placeOrder(bool orderType) private returns (uint, uint) {
         uint amount = 0; //get amount from TradegenERC20 balanceOf[address(this)]
         uint size = 0;

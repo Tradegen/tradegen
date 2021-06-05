@@ -136,7 +136,7 @@ contract Strategy is IStrategyToken, AddressResolver {
         return developerAddress;
     }
 
-    function getBalanceOf(address user) public view override onlyProxy(msg.sender) returns (uint) {
+    function getBalanceOf(address user) public view override onlyProxyOrTradingBotRewards(msg.sender) returns (uint) {
         return balanceOf[user];
     }
 
@@ -146,6 +146,11 @@ contract Strategy is IStrategyToken, AddressResolver {
 
     modifier onlyProxy(address _caller) {
         require(_caller == proxyAddress, "Only proxy can call this function");
+        _;
+    }
+
+    modifier onlyProxyOrTradingBotRewards(address _caller) {
+        require(_caller == proxyAddress || _caller == getTradingBotRewardsAddress(), "Only proxy or trading bot rewards can call this function");
         _;
     }
 }

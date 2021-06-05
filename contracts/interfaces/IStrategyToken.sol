@@ -9,5 +9,5 @@ interface IStrategyToken {
     function getTradingBotAddress() external view returns (address);
     function getDeveloperAddress() external view returns (address);
     function getBalanceOf(address user) external view returns (uint);
-    function getCirculatingSupply() external view returns (uint)
+    function getCirculatingSupply() external view returns (uint);
 }

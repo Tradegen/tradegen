@@ -69,4 +69,8 @@ contract TradegenERC20 is IERC20, AddressResolver {
     function restrictedTransfer(address from, address to, uint value) public override validAddressForTransfer(msg.sender) {
         _transfer(from, to, value);
     }
+
+    function transferStakingRewards(address to, uint value) public override validAddressForTransfer(msg.sender) {
+        _mint(to, value);
+    }
 }
