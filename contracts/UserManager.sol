@@ -1,6 +1,8 @@
 pragma solidity >=0.5.0;
 
-contract UserManager {
+import './AddressResolver.sol';
+
+contract UserManager is AddressResolver {
 
     struct User {
         uint memberSinceTimestamp;
@@ -10,10 +12,18 @@ contract UserManager {
     mapping (address => User) public users;
     mapping (string => address) public usernames;
 
+    constructor() public {
+        _setUserManagerAddress(address(this));
+    }
+
     /* ========== VIEWS ========== */
 
     function getUser(address _user) external view userExists(_user) returns(User memory) {
         return users[_user];
+    }
+
+    function getUsername(address _user) public view userExists(_user) returns(string memory) {
+        return users[_user].username;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */

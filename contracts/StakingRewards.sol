@@ -6,6 +6,7 @@ import './libraries/SafeMath.sol';
 import './interfaces/IERC20.sol';
 
 import './AddressResolver.sol';
+import './Settings.sol';
 
 contract StakingRewards is AddressResolver {
     using SafeMath for uint;
@@ -15,7 +16,7 @@ contract StakingRewards is AddressResolver {
         uint leftoverYield;
     }
 
-    uint256 private _totalSupply;
+    uint private _totalSupply;
     mapping(address => uint) private _balances;
     mapping(address => State) private _userToState;
 
@@ -74,8 +75,7 @@ contract StakingRewards is AddressResolver {
             return 0;
         }
 
-        uint yieldRate = 12; // 12% APY
-        yieldRate = yieldRate.div(100);
+        uint yieldRate = Settings(getSettingsAddress()).getStakingYield().div(100); //convert % to decimal
         uint newYield = (block.timestamp.sub(_userToState[user].timestamp).mul(yieldRate).mul(_balances[user])).div(365 days);
 
         return _userToState[user].leftoverYield.add(newYield);
@@ -91,7 +91,7 @@ contract StakingRewards is AddressResolver {
 
     /* ========== EVENTS ========== */
 
-    event Staked(address indexed user, uint256 amount, uint timestamp);
-    event Unstaked(address indexed user, uint256 amount, uint timestamp);
-    event ClaimedStakingRewards(address indexed user, uint256 amount, uint timestamp);
+    event Staked(address indexed user, uint amount, uint timestamp);
+    event Unstaked(address indexed user, uint amount, uint timestamp);
+    event ClaimedStakingRewards(address indexed user, uint amount, uint timestamp);
 }

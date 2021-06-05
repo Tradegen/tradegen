@@ -97,7 +97,7 @@ contract TradingBotRewards is AddressResolver {
 
     function claim(address tradingBotAddress) public userHasAPosition(msg.sender) tradingBotAddressIsValid(tradingBotAddress) {
         (bool debtOrYield, uint amount) = _calculateDebtOrYield(msg.sender, tradingBotAddress);
-        StrategyProxy(getStrategyProxyAdddress())._claim(msg.sender, debtOrYield, amount);
+        StrategyProxy(getStrategyProxyAddress())._claim(msg.sender, debtOrYield, amount);
         _userToBotToLastClaimIndex[msg.sender][tradingBotAddress] = _botToStateHistory[tradingBotAddress].length;
 
         emit Claimed(msg.sender, tradingBotAddress, debtOrYield, amount, block.timestamp);

@@ -7,8 +7,10 @@ contract AddressResolver {
     address public _strategyProxyAddress;
     address public _settingsAddress;
     address public _strategyApprovalAddress;
+    address public _userManagerAddress;
 
     mapping (address => address) public _tradingBotAddresses;
+    mapping (address => address) public _strategyAddresses;
 
     /* ========== VIEWS ========== */
 
@@ -36,6 +38,10 @@ contract AddressResolver {
         return _strategyApprovalAddress;
     }
 
+    function getUserManagerAddress() public view returns (address) {
+        return _userManagerAddress;
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
@@ -58,14 +64,27 @@ contract AddressResolver {
         _strategyApprovalAddress = strategyApprovalAddress;
     }
 
+    function _setUserManagerAddress(address userManagerAddress) internal isValidAddress(userManagerAddress) {
+        _userManagerAddress = userManagerAddress;
+    }
+
     function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
+    }
+
+    function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) {
+        _strategyAddresses[strategyAddress] = strategyAddress;
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier isValidAddress(address addressToCheck) {
         require(addressToCheck != address(0), "Address is not valid");
+        _;
+    }
+
+    modifier isValidStrategyAddress(address _strategyAddress) {
+        require(_strategyAddresses[_strategyAddress] == _strategyAddress, "Strategy address not found");
         _;
     }
 

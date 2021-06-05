@@ -65,24 +65,20 @@ contract Strategy is IStrategyToken, AddressResolver {
         require(circulatingSupply.add(value) <= maxSupply, "Cannot exceed max supply");
         circulatingSupply = circulatingSupply.add(value);
         balanceOf[to] = balanceOf[to].add(value);
-        //emit Transfer(address(0), to, value);
     }
 
     function _burn(address from, uint value) internal {
         balanceOf[from] = balanceOf[from].sub(value);
         circulatingSupply = circulatingSupply.sub(value);
-        //emit Transfer(from, address(0), value);
     }
 
     function _approve(address owner, address spender, uint value) private {
         allowance[owner][spender] = value;
-        //emit Approval(owner, spender, value);
     }
 
     function _transfer(address from, address to, uint value) internal {
         balanceOf[from] = balanceOf[from].sub(value);
         balanceOf[to] = balanceOf[to].add(value);
-        //emit Transfer(from, to, value);
     }
 
     function approve(address spender, uint value) external returns (bool) {

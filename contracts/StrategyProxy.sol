@@ -5,12 +5,11 @@ import './libraries/SafeMath.sol';
 import './StrategyManager.sol';
 import './TradingBotRewards.sol';
 import './Marketplace.sol';
-import './AddressResolver.sol';
 
 import './interfaces/IStrategyToken.sol';
 import './interfaces/IERC20.sol';
 
-contract StrategyProxy is StrategyManager, Marketplace, AddressResolver {
+contract StrategyProxy is Marketplace, StrategyManager {
     using SafeMath for uint256;
 
      struct StrategyDetails {

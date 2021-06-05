@@ -47,6 +47,10 @@ contract Settings is AddressResolver {
         return votingPenalty;
     }
 
+    function getStakingYield() public view returns (uint) {
+        return stakingYield;
+    }
+
     function getStrategyApprovalThreshold() public view returns (uint) {
         return strategyApprovalThreshold;
     }

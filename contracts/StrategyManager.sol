@@ -4,8 +4,9 @@ pragma solidity >=0.5.0;
 import './libraries/SafeMath.sol';
 
 import './Strategy.sol';
+import './AddressResolver.sol';
 
-contract StrategyManager {
+contract StrategyManager is AddressResolver {
     using SafeMath for uint;
 
     address[] public strategies; // stores contract address of each published strategy
@@ -87,13 +88,6 @@ contract StrategyManager {
         strategyNameToIndex[strategyName] = strategies.length;
 
         emit PublishedStrategy(developerAddress, strategyAddress, block.timestamp);
-    }
-
-    /* ========== MODIFIERS ========== */
-
-    modifier isValidStrategyAddress(address _strategyAddress) {
-        require(addressToIndex[_strategyAddress] > 0, "Strategy address not found");
-        _;
     }
 
     /* ========== EVENTS ========== */

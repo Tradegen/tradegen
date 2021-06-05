@@ -5,11 +5,11 @@ import './libraries/SafeMath.sol';
 
 import './interfaces/IStrategyToken.sol';
 
-import './StrategyManager.sol';
 import './UserManager.sol';
+import './AddressResolver.sol';
 
-contract Marketplace {
-    using SafeMath for uint256;
+contract Marketplace is AddressResolver {
+    using SafeMath for uint;
 
     struct PositionForSale {
         string strategyName;
@@ -31,7 +31,7 @@ contract Marketplace {
         return userToMarketplaceListings[_user];
     }
 
-    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(marketplaceListingIndex) returns (address, address, uint, uint) {
+    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(user, marketplaceListingIndex) returns (address, address, uint, uint) {
         PositionForSale memory marketplaceListing = userToMarketplaceListings[user][marketplaceListingIndex];
 
         return (marketplaceListing.strategyAddress, marketplaceListing.sellerAddress, marketplaceListing.advertisedPrice, marketplaceListing.numberOfTokens);
@@ -43,25 +43,25 @@ contract Marketplace {
         require(price > 0, "Price cannot be 0");
         require(numberOfTokens > 0, "Price cannot be 0");
 
-        uint userBalance = IStrategyToken(strategyAddress).balanceOf[msg.sender];
+        uint userBalance = IStrategyToken(strategyAddress).getBalanceOf(msg.sender);
 
         require(userBalance > 0, "No tokens in this strategy");
         require(userBalance - userToNumberOfTokensForSale[msg.sender][strategyAddress] >= numberOfTokens, "Not enough tokens in this strategy");
 
-        string username = UserManager.getUser(msg.sender).username;
-        (string strategyName, string strategySymbol, , , , , , , uint tokenPrice, ) = IStrategyToken(strategyAddress)._getStrategyDetails();
+        string memory username = UserManager(getUserManagerAddress()).getUsername(msg.sender);
+        (string memory strategyName, string memory strategySymbol, , , , , uint tokenPrice, ) = IStrategyToken(strategyAddress)._getStrategyDetails();
         userToMarketplaceListings[msg.sender].push(PositionForSale(strategyName, strategySymbol, username, strategyAddress, msg.sender, numberOfTokens, price, tokenPrice));
         userToNumberOfTokensForSale[msg.sender][strategyAddress].add(numberOfTokens);
 
         emit ListedPositionForSale(msg.sender, strategyAddress, userToMarketplaceListings[msg.sender].length - 1, price, numberOfTokens, block.timestamp);
     }
 
-    function editListing(uint marketplaceListingIndex, uint256 newPrice) external marketplaceListingIndexWithinBounds(msg.sender, marketplaceListingIndex) {
+    function editListing(uint marketplaceListingIndex, uint newPrice) external marketplaceListingIndexWithinBounds(msg.sender, marketplaceListingIndex) {
         require(newPrice > 0, "Price cannot be 0");
 
-        userToMarketplaceListings[msg.sender][marketplaceListingsIndex].advertisedPrice = newPrice;
+        userToMarketplaceListings[msg.sender][marketplaceListingIndex].advertisedPrice = newPrice;
 
-        emit UpdatedListing(msg.sender, userToMarketplaceListings[msg.sender][marketplaceListingsIndex].strategyAddress, marketplaceListingIndex, newPrice, block.timestamp);
+        emit UpdatedListing(msg.sender, userToMarketplaceListings[msg.sender][marketplaceListingIndex].strategyAddress, marketplaceListingIndex, newPrice, block.timestamp);
     }
 
     function cancelListing(uint marketplaceListingIndex) external marketplaceListingIndexWithinBounds(msg.sender, marketplaceListingIndex) {
@@ -77,7 +77,7 @@ contract Marketplace {
 
         delete userToMarketplaceListings[_user][userToMarketplaceListings[_user].length - 1];
 
-        marketplaceListings[marketplaceListingIndex] = marketplaceListings[marketplaceListings.length - 1];
+        userToMarketplaceListings[_user][marketplaceListingIndex] = userToMarketplaceListings[_user][userToMarketplaceListings[_user].length - 1];
 
         userToNumberOfTokensForSale[_user][strategyAddress].sub(numberOfTokens);
 
@@ -98,7 +98,7 @@ contract Marketplace {
 
     /* ========== EVENTS ========== */
 
-    event ListedPositionForSale(address user, address strategyAddress, uint marketplaceListingIndex, uint price, uint numberOfTokens, uint timestamp);
-    event UpdatedListing(address user, address strategyAddress, uint marketplaceListingIndex, uint newPrice, uint timestamp);
-    event CancelledListing(address user, address strategyAddress, uint marketplaceListingIndex, uint timestamp);
+    event ListedPositionForSale(address indexed user, address strategyAddress, uint marketplaceListingIndex, uint price, uint numberOfTokens, uint timestamp);
+    event UpdatedListing(address indexed user, address strategyAddress, uint marketplaceListingIndex, uint newPrice, uint timestamp);
+    event CancelledListing(address indexed user, address strategyAddress, uint marketplaceListingIndex, uint timestamp);
 }
