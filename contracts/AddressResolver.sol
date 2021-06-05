@@ -5,6 +5,8 @@ contract AddressResolver {
     address public _stakingRewardsAddress;
     address public _tradingBotRewardsAddress;
     address public _strategyProxyAddress;
+    address public _settingsAddress;
+    address public _strategyApprovalAddress;
 
     mapping (address => address) public _tradingBotAddresses;
 
@@ -26,6 +28,14 @@ contract AddressResolver {
         return _strategyProxyAddress;
     }
 
+    function getSettingsAddress() public view returns (address) {
+        return _settingsAddress;
+    }
+
+    function getStrategyApprovalAddress() public view returns (address) {
+        return _strategyApprovalAddress;
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
@@ -40,6 +50,14 @@ contract AddressResolver {
         _tradingBotRewardsAddress = tradingBotRewardsAddress;
     }
 
+    function _setSettingsAddress(address settingsAddress) internal isValidAddress(settingsAddress) {
+        _settingsAddress = settingsAddress;
+    }
+
+    function _setStrategyApprovalAddress(address strategyApprovalAddress) internal isValidAddress(strategyApprovalAddress) {
+        _strategyApprovalAddress = strategyApprovalAddress;
+    }
+
     function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
@@ -52,7 +70,7 @@ contract AddressResolver {
     }
 
     modifier validAddressForTransfer(address addressToCheck) {
-        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress, "Address is not valid");
+        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress || addressToCheck == _strategyApprovalAddress, "Address is not valid");
         _;
     }
 
@@ -63,6 +81,11 @@ contract AddressResolver {
 
     modifier onlyTradingBotRewards(address addressToCheck) {
         require(addressToCheck == _tradingBotRewardsAddress, "Only TradingBotRewards can call this function");
+        _;
+    }
+
+    modifier onlyProxy(address addressToCheck) {
+        require(addressToCheck == _strategyProxyAddress, "Only the strategy proxy can call this function");
         _;
     }
 }

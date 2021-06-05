@@ -15,7 +15,7 @@ contract Strategy is IStrategyToken, AddressResolver {
     string public name;
     string public symbol;
     uint8 public constant decimals = 18;
-    uint  public maxSupply = 1000000 * (10 ** decimals); //1000000 tokens 
+    uint public maxSupply = 1000000 * (10 ** decimals); //1000000 tokens 
 
     //Strategy variables
     address private tradingBotAddress;
@@ -28,35 +28,34 @@ contract Strategy is IStrategyToken, AddressResolver {
     uint public tokenPrice;
     uint public circulatingSupply;
 
-    address proxyAddress;
-
     mapping(address => uint) public balanceOf;
     mapping(address => mapping(address => uint)) public allowance;
 
     constructor(string memory _name,
                 string memory _description,
                 string memory _symbol,
-                uint _maxPoolSize,
-                string memory _underlyingAssetSymbol,
-                bool _direction,
-                address _proxyAddress,
+                uint _strategyParams,
                 uint[] memory _entryRules,
                 uint[] memory _exitRules,
-                uint _maxTradeDuration,
-                uint _profitTarget,
-                uint _stopLoss,
                 address _developerAddress) public {
 
         developerAddress = _developerAddress;
         description = _description;
         symbol = _symbol;
         name = _name;
+
+        maxPoolSize = (_strategyParams << 149) >> 206;
+        uint direction = (_strategyParams << 199) >> 255;
+        uint maxTradeDuration = (_strategyParams << 200) >> 248;
+        uint underlyingAssetSymbol = (_strategyParams << 208) >> 240;
+        uint profitTarget = (_strategyParams << 224) >> 240;
+        uint stopLoss = (_strategyParams << 240) >> 240;
+
         maxPoolSize = _maxPoolSize.mul(10 ** decimals);
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
-        proxyAddress = _proxyAddress;
 
-        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol));
+        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, direction, underlyingAssetSymbol));
         _addTradingBotAddress(tradingBotAddress);
     }
 
@@ -142,11 +141,6 @@ contract Strategy is IStrategyToken, AddressResolver {
 
     function getCirculatingSupply() public view override returns (uint) {
         return circulatingSupply;
-    }
-
-    modifier onlyProxy(address _caller) {
-        require(_caller == proxyAddress, "Only proxy can call this function");
-        _;
     }
 
     modifier onlyProxyOrTradingBotRewards(address _caller) {

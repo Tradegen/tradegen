@@ -27,7 +27,8 @@ interface IERC20 {
     ) external returns (bool);
 
     function restrictedTransfer(address from, address to, uint value) external;
-    function transferStakingRewards(address to, uint value) external;
+    function sendRewards(address to, uint value) external;
+    function sendPenalty(address to, uint value) external;
 
     // Events
     event Transfer(address indexed from, address indexed to, uint value);

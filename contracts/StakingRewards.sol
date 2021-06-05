@@ -82,7 +82,7 @@ contract StakingRewards is AddressResolver {
     }
 
     function _claimStakingRewards(address user, uint amount) internal {
-        IERC20(getBaseTradegenAddress()).transferStakingRewards(user, amount);
+        IERC20(getBaseTradegenAddress()).sendRewards(user, amount);
         _userToState[user].leftoverYield = _calculateAvailableYield(user).sub(amount);
         _userToState[user].timestamp = block.timestamp;
 

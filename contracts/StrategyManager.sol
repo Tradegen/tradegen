@@ -12,6 +12,8 @@ contract StrategyManager {
     mapping (address => uint[]) public userToPublishedStrategies; //stores indexes of user's published strategies
     mapping (address => uint[]) public userToPositions; //stores index of user's positions (strategies);
     mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents strategy not found
+    mapping (string => uint) public strategySymbolToIndex; //maps to (index + 1); index 0 represents strategy not found
+    mapping (string => uint) public strategyNameToIndex; //maps to (index + 1); index 0 represents strategy not found
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
@@ -64,35 +66,25 @@ contract StrategyManager {
     function _publishStrategy(string memory strategyName,
                             string memory strategyDescription,
                             string memory strategySymbol,
-                            uint maxPoolSize,
-                            string memory underlyingAssetSymbol,
-                            bool direction,
-                            address proxyAddress,
+                            uint strategyParams,
                             uint[] memory entryRules,
                             uint[] memory exitRules,
-                            uint maxTradeDuration,
-                            uint profitTarget,
-                            uint stopLoss,
                             address developerAddress) internal {
 
         Strategy temp = new Strategy(strategyName,
                                     strategyDescription, 
                                     strategySymbol,
-                                    maxPoolSize,
-                                    underlyingAssetSymbol,
-                                    direction,
-                                    proxyAddress,
+                                    strategyParams,
                                     entryRules,
                                     exitRules,
-                                    maxTradeDuration,
-                                    profitTarget,
-                                    stopLoss,
                                     developerAddress);
 
         address strategyAddress = address(temp);
         strategies.push(strategyAddress);
-        userToPublishedStrategies[developerAddress].push(strategies.length - 1);
-        addressToIndex[strategyAddress] = strategies.length - 1;
+        userToPublishedStrategies[developerAddress].push(strategies.length);
+        addressToIndex[strategyAddress] = strategies.length;
+        strategySymbolToIndex[strategySymbol] = strategies.length;
+        strategyNameToIndex[strategyName] = strategies.length;
 
         emit PublishedStrategy(developerAddress, strategyAddress, block.timestamp);
     }
