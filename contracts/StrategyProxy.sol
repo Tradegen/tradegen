@@ -10,16 +10,14 @@ import './interfaces/IStrategyToken.sol';
 import './interfaces/IERC20.sol';
 
 contract StrategyProxy is Marketplace, StrategyManager {
-    using SafeMath for uint256;
+    using SafeMath for uint;
 
      struct StrategyDetails {
         string name;
         string strategySymbol;
         string description;
-        string underlyingAssetSymbol;
         address developerAddress;
         address strategyAddress;
-        bool direction;
         uint publishedOnTimestamp;
         uint maxPoolSize;
         uint tokenPrice;
@@ -76,9 +74,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
         (string memory name,
         string memory symbol,
         string memory description,
-        string memory underlyingAssetSymbol,
         address developerAddress,
-        bool direction,
         uint publishedOnTimestamp,
         uint maxPoolSize,
         uint tokenPrice,
@@ -87,10 +83,8 @@ contract StrategyProxy is Marketplace, StrategyManager {
         return StrategyDetails(name,
                             symbol,
                             description,
-                            underlyingAssetSymbol,
                             developerAddress,
                             strategyAddress,
-                            direction,
                             publishedOnTimestamp,
                             maxPoolSize,
                             tokenPrice,
@@ -159,8 +153,8 @@ contract StrategyProxy is Marketplace, StrategyManager {
         emit WithdrewFundsFromStrategy(msg.sender, strategyAddress, amount, block.timestamp);
     }
 
-    function buyPosition(uint marketplaceListingIndex) external {
-        (address strategyAddress, address sellerAddress, uint advertisedPrice, uint numberOfTokens) = getMarketplaceListing(marketplaceListingIndex);
+    function buyPosition(address user, uint marketplaceListingIndex) external {
+        (address strategyAddress, address sellerAddress, uint advertisedPrice, uint numberOfTokens) = getMarketplaceListing(user, marketplaceListingIndex);
 
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
 

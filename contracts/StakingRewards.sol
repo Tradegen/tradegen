@@ -30,7 +30,7 @@ contract StakingRewards is AddressResolver {
         return _totalSupply;
     }
 
-    function balanceOf(address account) external view returns (uint) {
+    function balanceOf(address account) public view returns (uint) {
         return _balances[account];
     }
 

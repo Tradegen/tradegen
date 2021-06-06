@@ -3,6 +3,7 @@ pragma solidity >=0.5.0;
 import './Settings.sol';
 import './AddressResolver.sol';
 import './StrategyManager.sol';
+import './StakingRewards.sol';
 
 import './interfaces/IERC20.sol';
 
@@ -63,7 +64,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     function submitStrategyForApproval(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategyDescription, string memory strategySymbol) external {
         require(_checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, strategyName, strategySymbol), "Strategy does not meet criteria");
 
-        submittedStrategies.push(SubmittedStrategy(false, true, backtestResults, strategyParams, entryRules, exitRules, new StrategyVote[](0), strategyName, strategyDescription, strategySymbol, maxPoolSize, msg.sender));
+        submittedStrategies.push(SubmittedStrategy(false, true, backtestResults, strategyParams, entryRules, exitRules, new StrategyVote[](0), strategyName, strategyDescription, strategySymbol, msg.sender));
         userSubmittedStrategies[msg.sender].push(submittedStrategies.length - 1);
 
         emit SubmittedStrategyForApproval(msg.sender, submittedStrategies.length - 1, block.timestamp);
@@ -71,6 +72,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
     function voteForStrategy(uint index, bool decision, uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) external indexIsWithinBounds(index) strategyIsPendingApproval(index) userHasNotVotedYet(msg.sender, index) {
         require(_checkIfParamsMatch(index, strategyParams, entryRules, exitRules), "Strategy parameters do not match");
+        require(StakingRewards(getStakingRewardsAddress()).balanceOf(msg.sender) >= Settings(getSettingsAddress()).getStrategyApprovalThreshold(), "Not enough staked TGEN to vote");
 
         bool meetsCriteria = _checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, submittedStrategies[index].strategyName, submittedStrategies[index].strategySymbol);
         bool correct = false;
@@ -96,7 +98,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
         if (submittedStrategies[index].votes.length == Settings(getSettingsAddress()).getVoteLimit())
         {
-            _processVotes(index);
+            _processVotes(index, submittedStrategies[index].developer);
         }
 
         emit VotedForStrategy(msg.sender, index, decision, block.timestamp);
@@ -164,13 +166,13 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
         if (numberOfCorrectVotes >= Settings(getSettingsAddress()).getStrategyApprovalThreshold())
         {
-            submittedStrategies[index].decision = true;
+            submittedStrategies[index].status = true;
             _publishStrategy(strategy.strategyName, strategy.strategyDescription, strategy.strategySymbol, strategy.submittedParams, strategy.entryRules, strategy.exitRules, strategy.developer);
             emit ApprovedStrategy(index, block.timestamp);
         }
         else
         {
-            submittedStrategies[index].decision = false;
+            submittedStrategies[index].status = false;
             emit RejectedStrategy(index, block.timestamp);
         }
     }
