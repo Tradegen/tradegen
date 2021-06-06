@@ -1,12 +1,14 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract LatestPrice is IIndicator {
+contract LatestPrice is IIndicator, AddressResolver {
     uint public currentValue;
     uint[] public history;
 
-    constructor() public {}
+    constructor() public onlyImports(msg.sender) {}
 
     function getName() public pure override returns (string memory) {
         return "LatestPrice";

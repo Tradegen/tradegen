@@ -1,10 +1,12 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract Up is IIndicator {
+contract Up is IIndicator, AddressResolver {
 
-    constructor() public {}
+    constructor() public onlyImports(msg.sender) {}
 
     function getName() public pure override returns (string memory) {
         return "Up";

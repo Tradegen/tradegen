@@ -1,15 +1,17 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
-contract Closes is IComparator {
+contract Closes is IComparator, AddressResolver {
 
     address private _firstIndicatorAddress;
     address private _secondIndicatorAddress;
     uint private _previousPrice;
 
-    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public {
+    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public onlyImports(msg.sender) {
         _firstIndicatorAddress = firstIndicatorAddress;
         _secondIndicatorAddress = secondIndicatorAddress;
         _previousPrice = 0;

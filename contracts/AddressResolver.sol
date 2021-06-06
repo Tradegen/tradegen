@@ -60,6 +60,10 @@ contract AddressResolver is Ownable {
         _baseTradegenAddress = baseTradegenAddress;
     }
 
+    function _setFactoryAddress(address factoryAddress) internal isValidAddress(factoryAddress) {
+        _factoryAddress = factoryAddress;
+    }
+
     function _setStakingRewardsAddress(address stakingRewardsAddress) internal isValidAddress(stakingRewardsAddress) {
         _stakingRewardsAddress = stakingRewardsAddress;
     }
@@ -80,10 +84,6 @@ contract AddressResolver is Ownable {
         _userManagerAddress = userManagerAddress;
     }
 
-    function _setImportsAddress(address importsAddress) internal isValidAddress(importsAddress) {
-        _importsAddress = importsAddress;
-    }
-
     function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
@@ -94,8 +94,8 @@ contract AddressResolver is Ownable {
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    function _setFactoryAddress(address factoryAddress) internal isValidAddress(factoryAddress) onlyOwner() {
-        _factoryAddress = factoryAddress;
+    function _setImportsAddress(address importsAddress) public isValidAddress(importsAddress) onlyOwner() {
+        _importsAddress = importsAddress;
     }
 
     /* ========== MODIFIERS ========== */
@@ -132,6 +132,11 @@ contract AddressResolver is Ownable {
 
     modifier onlyFactory(address addressToCheck) {
         require(addressToCheck == _factoryAddress, "Only the factory can call this function");
+        _;
+    }
+
+    modifier onlyImports(address addressToCheck) {
+        require(addressToCheck == _importsAddress, "Only the Imports contract can call this function");
         _;
     }
 }

@@ -1,9 +1,11 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../libraries/SafeMath.sol';
 
-contract SMA is IIndicator {
+contract SMA is IIndicator, AddressResolver {
     using SafeMath for uint;
 
     uint public currentValue;
@@ -12,7 +14,7 @@ contract SMA is IIndicator {
     uint public SMAperiod;
     uint public total;
 
-    constructor(uint period) public {
+    constructor(uint period) public onlyImports(msg.sender) {
         SMAperiod = period;
     }
 

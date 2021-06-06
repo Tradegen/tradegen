@@ -12,14 +12,10 @@ contract Marketplace is AddressResolver {
     using SafeMath for uint;
 
     struct PositionForSale {
-        string strategyName;
-        string strategySymbol;
-        string sellerUsername;
         address strategyAddress;
         address sellerAddress;
         uint numberOfTokens;
         uint advertisedPrice;
-        uint marketPrice;
     }
 
     mapping (address => PositionForSale[]) public userToMarketplaceListings; //stores the marketplace listings for a given user
@@ -48,9 +44,7 @@ contract Marketplace is AddressResolver {
         require(userBalance > 0, "No tokens in this strategy");
         require(userBalance - userToNumberOfTokensForSale[msg.sender][strategyAddress] >= numberOfTokens, "Not enough tokens in this strategy");
 
-        string memory username = UserManager(getUserManagerAddress()).getUsername(msg.sender);
-        (string memory strategyName, string memory strategySymbol, , , , , uint tokenPrice, ) = IStrategyToken(strategyAddress)._getStrategyDetails();
-        userToMarketplaceListings[msg.sender].push(PositionForSale(strategyName, strategySymbol, username, strategyAddress, msg.sender, numberOfTokens, price, tokenPrice));
+        userToMarketplaceListings[msg.sender].push(PositionForSale(strategyAddress, msg.sender, numberOfTokens, price));
         userToNumberOfTokensForSale[msg.sender][strategyAddress].add(numberOfTokens);
 
         emit ListedPositionForSale(msg.sender, strategyAddress, userToMarketplaceListings[msg.sender].length - 1, price, numberOfTokens, block.timestamp);
@@ -64,21 +58,18 @@ contract Marketplace is AddressResolver {
         emit UpdatedListing(msg.sender, userToMarketplaceListings[msg.sender][marketplaceListingIndex].strategyAddress, marketplaceListingIndex, newPrice, block.timestamp);
     }
 
-    function cancelListing(uint marketplaceListingIndex) external marketplaceListingIndexWithinBounds(msg.sender, marketplaceListingIndex) {
+    function cancelListing(uint marketplaceListingIndex) external {
         _cancelListing(msg.sender, marketplaceListingIndex);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    function _cancelListing(address _user, uint marketplaceListingIndex) internal {
+    function _cancelListing(address _user, uint marketplaceListingIndex) internal marketplaceListingIndexWithinBounds(_user, marketplaceListingIndex) {
         uint numberOfTokens = userToMarketplaceListings[_user][marketplaceListingIndex].numberOfTokens;
         address strategyAddress = userToMarketplaceListings[_user][marketplaceListingIndex].strategyAddress;
         userToMarketplaceListings[_user][marketplaceListingIndex] = userToMarketplaceListings[_user][userToMarketplaceListings[_user].length - 1];
 
-        delete userToMarketplaceListings[_user][userToMarketplaceListings[_user].length - 1];
-
-        userToMarketplaceListings[_user][marketplaceListingIndex] = userToMarketplaceListings[_user][userToMarketplaceListings[_user].length - 1];
-
+        userToMarketplaceListings[_user].pop();
         userToNumberOfTokensForSale[_user][strategyAddress].sub(numberOfTokens);
 
         if (userToNumberOfTokensForSale[_user][strategyAddress] == 0)

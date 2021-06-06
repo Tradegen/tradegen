@@ -1,12 +1,14 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract Interval is IIndicator {
+contract Interval is IIndicator, AddressResolver {
     uint public currentValue;
     uint[] public history;
 
-    constructor(uint interval) public {
+    constructor(uint interval) public onlyImports(msg.sender) {
         currentValue = interval;
         history.push(interval);
     }

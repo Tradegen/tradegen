@@ -1,12 +1,14 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract NPercent is IIndicator {
+contract NPercent is IIndicator, AddressResolver {
     uint public currentValue;
     uint[] public history;
 
-    constructor(uint percent) public {
+    constructor(uint percent) public onlyImports(msg.sender) {
         currentValue = percent;
         history.push(percent);
     }

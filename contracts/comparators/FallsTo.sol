@@ -1,11 +1,13 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
 import '../libraries/SafeMath.sol';
 
-contract FallsTo is IComparator {
+contract FallsTo is IComparator, AddressResolver {
     using SafeMath for uint;
 
     address private _firstIndicatorAddress;
@@ -13,7 +15,7 @@ contract FallsTo is IComparator {
     uint private _firstIndicatorPreviousValue;
     uint private _secondIndicatorPreviousValue;
 
-    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public {
+    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public onlyImports(msg.sender) {
         _firstIndicatorAddress = firstIndicatorAddress;
         _secondIndicatorAddress = secondIndicatorAddress;
     }

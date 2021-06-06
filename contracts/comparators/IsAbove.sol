@@ -1,19 +1,21 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
-contract IsAbove is IComparator {
+contract IsAbove is IComparator, AddressResolver {
 
     address private _firstIndicatorAddress;
     address private _secondIndicatorAddress;
 
-    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public {
+    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public onlyImports(msg.sender) {
         _firstIndicatorAddress = firstIndicatorAddress;
         _secondIndicatorAddress = secondIndicatorAddress;
     }
 
-    function checkConditions() public override returns (bool) {
+    function checkConditions() public view override returns (bool) {
         uint[] memory firstIndicatorPriceHistory = IIndicator(_firstIndicatorAddress).getValue();
         uint[] memory secondIndicatorPriceHistory = IIndicator(_secondIndicatorAddress).getValue();
 

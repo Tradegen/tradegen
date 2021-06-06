@@ -1,14 +1,16 @@
 pragma solidity >=0.5.0;
 
+import '../AddressResolver.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract NthPriceUpdate is IIndicator {
+contract NthPriceUpdate is IIndicator, AddressResolver {
     uint public currentValue;
     uint[] public indicatorHistory;
     uint[] public priceHistory;
     uint public N;
 
-    constructor(uint numberOfPriceUpdates) public {
+    constructor(uint numberOfPriceUpdates) public onlyImports(msg.sender) {
         N = numberOfPriceUpdates;
     }
 

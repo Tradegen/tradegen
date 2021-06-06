@@ -41,7 +41,7 @@ contract TradingBotRewards is AddressResolver {
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    function _calculateDebtOrYield(address user, address tradingBotAddress) internal returns (bool, uint) {
+    function _calculateDebtOrYield(address user, address tradingBotAddress) internal view returns (bool, uint) {
         address strategyAddress = ITradingBot(tradingBotAddress).getStrategyAddress();
         uint numberOfTokens = IStrategyToken(strategyAddress).getBalanceOf(user);
         State[] memory history = _botToStateHistory[tradingBotAddress];
@@ -95,7 +95,7 @@ contract TradingBotRewards is AddressResolver {
         emit UpdatedRewards(msg.sender, profitOrLoss, amount, block.timestamp);
     }
 
-    function claim(address tradingBotAddress) public userHasAPosition(msg.sender) tradingBotAddressIsValid(tradingBotAddress) {
+    function claim(address tradingBotAddress) public userHasAPosition(msg.sender, tradingBotAddress) tradingBotAddressIsValid(tradingBotAddress) {
         (bool debtOrYield, uint amount) = _calculateDebtOrYield(msg.sender, tradingBotAddress);
         StrategyProxy(getStrategyProxyAddress())._claim(msg.sender, debtOrYield, amount);
         _userToBotToLastClaimIndex[msg.sender][tradingBotAddress] = _botToStateHistory[tradingBotAddress].length;

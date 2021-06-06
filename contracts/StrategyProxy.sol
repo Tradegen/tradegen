@@ -166,7 +166,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, sellerAddress, amount);
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, developerAddress, transactionFee);
 
-        _cancelListing(msg.sender, marketplaceListingIndex);
+        _cancelListing(user, marketplaceListingIndex);
 
         emit BoughtPosition(msg.sender, strategyAddress, advertisedPrice, numberOfTokens, block.timestamp);
     }
