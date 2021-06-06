@@ -139,6 +139,10 @@ contract Strategy is IStrategyToken, AddressResolver {
         return circulatingSupply;
     }
 
+    function checkIfBotIsInATrade() public view override returns (bool) {
+        return (TradingBot(tradingBotAddress).checkIfBotIsInATrade());
+    }
+
     modifier onlyProxyOrTradingBotRewards(address _caller) {
         require(_caller == getStrategyProxyAddress() || _caller == getTradingBotRewardsAddress(), "Only proxy or trading bot rewards can call this function");
         _;

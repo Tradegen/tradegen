@@ -55,6 +55,10 @@ contract Settings is AddressResolver {
         return strategyApprovalThreshold;
     }
 
+    function getTransactionFee() public view returns (uint) {
+        return transactionFee;
+    }
+
     function getOracleAddress(uint underlyingAssetID) public view returns (address) {
         return underlyingAssetIDToOracleAddress[underlyingAssetID];
     }

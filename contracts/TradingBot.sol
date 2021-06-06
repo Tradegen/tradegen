@@ -64,6 +64,10 @@ contract TradingBot is ITradingBot, AddressResolver{
         return _strategyAddress;
     }
 
+    function checkIfBotIsInATrade() public view override returns (bool) {
+        return (_currentOrderSize == 0);
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function onPriceFeedUpdate(uint latestPrice) public override onlyOracle(msg.sender) {

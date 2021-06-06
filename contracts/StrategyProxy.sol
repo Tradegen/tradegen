@@ -5,6 +5,7 @@ import './libraries/SafeMath.sol';
 import './StrategyManager.sol';
 import './TradingBotRewards.sol';
 import './Marketplace.sol';
+import './Settings.sol';
 
 import './interfaces/IStrategyToken.sol';
 import './interfaces/IERC20.sol';
@@ -93,11 +94,11 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) noYieldToClaim(msg.sender, strategyAddress) {
+    function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) noYieldToClaim(msg.sender, strategyAddress) botIsNotInATrade(strategyAddress) {
         address tradingBotAddress = IStrategyToken(strategyAddress).getTradingBotAddress();
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
 
-        uint transactionFee = amount.mul(3).div(1000); //0.3% transaction fee
+        uint transactionFee = amount.mul(Settings(getSettingsAddress()).getTransactionFee()).div(1000);
 
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, tradingBotAddress, amount);
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, developerAddress, transactionFee);
@@ -124,7 +125,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
         emit DepositedFundsIntoStrategy(msg.sender, strategyAddress, amount, block.timestamp);
     }
 
-    function withdrawFundsFromStrategy(address strategyAddress, uint amount) external noYieldToClaim(msg.sender, strategyAddress) {
+    function withdrawFundsFromStrategy(address strategyAddress, uint amount) external noYieldToClaim(msg.sender, strategyAddress) botIsNotInATrade(strategyAddress) {
         //check if user has position
         uint strategyIndex = addressToIndex[strategyAddress] - 1;
         bool found = false;
@@ -159,7 +160,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
 
         uint amount = numberOfTokens.mul(advertisedPrice);
-        uint transactionFee = amount.mul(3).div(1000); //0.3% transaction fee
+        uint transactionFee = amount.mul(Settings(getSettingsAddress()).getTransactionFee()).div(1000);
         
         IStrategyToken(strategyAddress).buyPosition(sellerAddress, msg.sender, numberOfTokens);
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, sellerAddress, amount);
@@ -188,6 +189,11 @@ contract StrategyProxy is Marketplace, StrategyManager {
     modifier noYieldToClaim(address user, address tradingBotAddress) {
         (, uint amount) = TradingBotRewards(getTradingBotRewardsAddress()).getUserAvailableYieldForBot(user, tradingBotAddress);
         require(amount == 0, "Need to claim yield first");
+        _;
+    }
+
+    modifier botIsNotInATrade(address strategyAddress) {
+        require(!Strategy(strategyAddress).checkIfBotIsInATrade(), "Cannot deposit or withdraw funds when bot is in a trade");
         _;
     }
 
