@@ -38,7 +38,7 @@ contract TradingBot is ITradingBot, AddressResolver{
                 uint profitTarget,
                 uint stopLoss,
                 bool direction,
-                uint underlyingAssetSymbol) public {
+                uint underlyingAssetSymbol) public onlyStrategy(msg.sender) {
         
         _entryRules = entryRules;
         _exitRules = exitRules;

@@ -9,6 +9,7 @@ contract AddressResolver is Ownable {
     address public _strategyProxyAddress;
     address public _settingsAddress;
     address public _strategyApprovalAddress;
+    address public _strategyManagerAddress;
     address public _userManagerAddress;
     address public _factoryAddress;
     address public _importsAddress;
@@ -40,6 +41,10 @@ contract AddressResolver is Ownable {
 
     function getStrategyApprovalAddress() public view returns (address) {
         return _strategyApprovalAddress;
+    }
+
+    function getStrategyManagerAddress() public view returns (address) {
+        return _strategyManagerAddress;
     }
 
     function getUserManagerAddress() public view returns (address) {
@@ -80,11 +85,15 @@ contract AddressResolver is Ownable {
         _strategyApprovalAddress = strategyApprovalAddress;
     }
 
+    function _setStrategyManagerAddress(address strategyManagerAddress) internal isValidAddress(strategyManagerAddress) {
+        _strategyManagerAddress = strategyManagerAddress;
+    }
+
     function _setUserManagerAddress(address userManagerAddress) internal isValidAddress(userManagerAddress) {
         _userManagerAddress = userManagerAddress;
     }
 
-    function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) {
+    function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) onlyStrategy(msg.sender) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
 
@@ -120,6 +129,11 @@ contract AddressResolver is Ownable {
         _;
     }
 
+    modifier onlyStrategy(address addressToCheck) {
+        require(addressToCheck == _strategyAddresses[addressToCheck], "Only the Strategy contract can call this function");
+        _;
+    }
+
     modifier onlyTradingBotRewards(address addressToCheck) {
         require(addressToCheck == _tradingBotRewardsAddress, "Only TradingBotRewards can call this function");
         _;
@@ -132,6 +146,11 @@ contract AddressResolver is Ownable {
 
     modifier onlyFactory(address addressToCheck) {
         require(addressToCheck == _factoryAddress, "Only the factory can call this function");
+        _;
+    }
+
+    modifier onlyStrategyManager(address addressToCheck) {
+        require(addressToCheck == _strategyManagerAddress, "Only the Strategy Manager contract can call this function");
         _;
     }
 

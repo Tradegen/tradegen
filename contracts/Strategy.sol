@@ -37,7 +37,7 @@ contract Strategy is IStrategyToken, AddressResolver {
                 uint _strategyParams,
                 uint[] memory _entryRules,
                 uint[] memory _exitRules,
-                address _developerAddress) public {
+                address _developerAddress) public onlyStrategyManager(msg.sender) {
 
         developerAddress = _developerAddress;
         description = _description;
