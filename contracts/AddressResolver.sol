@@ -12,7 +12,6 @@ contract AddressResolver is Ownable {
     address public _strategyManagerAddress;
     address public _userManagerAddress;
     address public _factoryAddress;
-    address public _importsAddress;
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
@@ -58,10 +57,6 @@ contract AddressResolver is Ownable {
         return _factoryAddress;
     }
 
-    function getImportsAddress() public view returns (address) {
-        return _importsAddress;
-    }
-
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
@@ -102,12 +97,6 @@ contract AddressResolver is Ownable {
 
     function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) onlyStrategyManager(msg.sender) {
         _strategyAddresses[strategyAddress] = strategyAddress;
-    }
-
-    /* ========== RESTRICTED FUNCTIONS ========== */
-
-    function _setImportsAddress(address importsAddress) public isValidAddress(importsAddress) onlyOwner() {
-        _importsAddress = importsAddress;
     }
 
     /* ========== MODIFIERS ========== */
@@ -154,11 +143,6 @@ contract AddressResolver is Ownable {
 
     modifier onlyStrategyManager(address addressToCheck) {
         require(addressToCheck == _strategyManagerAddress, "Only the Strategy Manager contract can call this function");
-        _;
-    }
-
-    modifier onlyImports(address addressToCheck) {
-        require(addressToCheck == _importsAddress, "Only the Imports contract can call this function");
         _;
     }
 }

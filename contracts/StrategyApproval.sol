@@ -98,7 +98,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
         if (submittedStrategies[index].votes.length == Settings(getSettingsAddress()).getVoteLimit())
         {
-            _processVotes(index, submittedStrategies[index].developer);
+            _processVotes(index);
         }
 
         emit VotedForStrategy(msg.sender, index, decision, block.timestamp);
@@ -149,7 +149,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         return (strategyParams == strategy.submittedParams);
     }
 
-    function _processVotes(uint index, address developer) internal {
+    function _processVotes(uint index) internal {
         uint numberOfCorrectVotes;
         SubmittedStrategy memory strategy = submittedStrategies[index];
 

@@ -24,12 +24,12 @@ contract Rule is IRule, AddressResolver {
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function update(uint latestPrice) public override callerIsTradingBot(msg.sender) {
-        IIndicator(_firstIndicatorAddress).update(latestPrice);
-        IIndicator(_secondIndicatorAddress).update(latestPrice);
+        IIndicator(_firstIndicatorAddress).update(msg.sender, latestPrice);
+        IIndicator(_secondIndicatorAddress).update(msg.sender, latestPrice);
     }   
 
     function checkConditions() public override callerIsTradingBot(msg.sender) returns (bool) {
-        return IComparator(_comparatorAddress).checkConditions();
+        return IComparator(_comparatorAddress).checkConditions(msg.sender);
     }
 
     /* ========== MODIFIERS ========== */
