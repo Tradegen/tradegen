@@ -1,33 +1,42 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
-contract Closes is IComparator, AddressResolver {
+contract Closes is IComparator {
 
-    address private _firstIndicatorAddress;
-    address private _secondIndicatorAddress;
-    uint private _previousPrice;
-
-    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public onlyImports(msg.sender) {
-        _firstIndicatorAddress = firstIndicatorAddress;
-        _secondIndicatorAddress = secondIndicatorAddress;
-        _previousPrice = 0;
+    struct State {
+        address firstIndicatorAddress;
+        address secondIndicatorAddress;
+        uint previousPrice;
     }
 
-    function checkConditions() public override returns (bool) {
-        if (keccak256(bytes(IIndicator(_secondIndicatorAddress).getName())) == keccak256(bytes("Up")))
+    mapping (address => State) private _tradingBotStates;
+
+    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
+        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
+        require(_tradingBotStates[tradingBotAddress].previousPrice == 0, "Trading bot already exists");
+
+        _tradingBotStates[tradingBotAddress] = State(firstIndicatorAddress, secondIndicatorAddress, 0);
+    }
+
+    function checkConditions(address tradingBotAddress) public override returns (bool) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        
+        if (keccak256(bytes(IIndicator(tradingBotState.secondIndicatorAddress).getName())) == keccak256(bytes("Up")))
         {
-            uint[] memory priceHistory = IIndicator(_firstIndicatorAddress).getValue();
+            uint[] memory priceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(tradingBotAddress);
 
             if (priceHistory.length == 0)
             {
                 return false;
             }
 
-            if (keccak256(bytes(IIndicator(_firstIndicatorAddress).getName())) == keccak256(bytes("PreviousNPriceUpdates")))
+            if (keccak256(bytes(IIndicator(tradingBotState.firstIndicatorAddress).getName())) == keccak256(bytes("PreviousNPriceUpdates")))
             {
                 for (uint i = 1; i < priceHistory.length; i++)
                 {
@@ -41,21 +50,21 @@ contract Closes is IComparator, AddressResolver {
             }
             else
             {
-                bool result = (priceHistory[0] > _previousPrice);
-                _previousPrice = priceHistory[0];
+                bool result = (priceHistory[0] > tradingBotState.previousPrice);
+                tradingBotState.previousPrice = priceHistory[0];
                 return result;
             }
         }
-        else if (keccak256(bytes(IIndicator(_secondIndicatorAddress).getName())) == keccak256(bytes("Down")))
+        else if (keccak256(bytes(IIndicator(tradingBotState.secondIndicatorAddress).getName())) == keccak256(bytes("Down")))
         {
-            uint[] memory priceHistory = IIndicator(_firstIndicatorAddress).getValue();
+            uint[] memory priceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(tradingBotAddress);
 
             if (priceHistory.length == 0)
             {
                 return false;
             }
 
-            if (keccak256(bytes(IIndicator(_firstIndicatorAddress).getName())) == keccak256(bytes("PreviousNPriceUpdates")))
+            if (keccak256(bytes(IIndicator(tradingBotState.firstIndicatorAddress).getName())) == keccak256(bytes("PreviousNPriceUpdates")))
             {
                 for (uint i = 1; i < priceHistory.length; i++)
                 {
@@ -69,8 +78,8 @@ contract Closes is IComparator, AddressResolver {
             }
             else
             {
-                bool result = (priceHistory[0] < _previousPrice);
-                _previousPrice = priceHistory[0];
+                bool result = (priceHistory[0] < tradingBotState.previousPrice);
+                tradingBotState.previousPrice = priceHistory[0];
                 return result;
             }
         }

@@ -1,26 +1,36 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
 import '../libraries/SafeMath.sol';
 
-contract RiseByAtMost is IComparator, AddressResolver {
+contract RiseByAtMost is IComparator {
     using SafeMath for uint;
 
-    address private _firstIndicatorAddress;
-    address private _secondIndicatorAddress;
-
-    constructor(address firstIndicatorAddress, address secondIndicatorAddress) public onlyImports(msg.sender) {
-        _firstIndicatorAddress = firstIndicatorAddress;
-        _secondIndicatorAddress = secondIndicatorAddress;
+    struct State {
+        address firstIndicatorAddress;
+        address secondIndicatorAddress;
     }
 
-    function checkConditions() public view override returns (bool) {
-        uint[] memory firstIndicatorHistory = IIndicator(_firstIndicatorAddress).getValue();
-        uint[] memory secondIndicatorHistory = IIndicator(_secondIndicatorAddress).getValue();
+    mapping (address => State) private _tradingBotStates;
+
+    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
+        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
+        require(_tradingBotStates[tradingBotAddress].firstIndicatorAddress == address(0), "Trading bot already exists");
+
+        _tradingBotStates[tradingBotAddress] = State(firstIndicatorAddress, secondIndicatorAddress);
+    }
+
+    function checkConditions(address tradingBotAddress) public view override returns (bool) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
+        uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(tradingBotAddress);
+        uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(tradingBotAddress);
 
         if (firstIndicatorHistory.length == 0)
         {

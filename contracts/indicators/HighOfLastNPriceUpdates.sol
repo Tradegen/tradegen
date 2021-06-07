@@ -1,45 +1,64 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 
-contract HighOfLastNPriceUpdates is IIndicator, AddressResolver {
-    uint public currentValue;
-    uint[] public history;
-    uint public N;
+contract HighOfLastNPriceUpdates is IIndicator {
 
-    constructor(uint numberOfPriceUpdates) public onlyImports(msg.sender) {
-        N = numberOfPriceUpdates;
+    struct State {
+        uint currentValue;
+        uint N;
+        uint[] history;
     }
+
+    mapping (address => State) private _tradingBotStates;
 
     function getName() public pure override returns (string memory) {
         return "HighOfLastNPriceUpdates";
     }
 
-    function update(uint latestPrice) public override {
-        history.push(latestPrice);
+    function addTradingBot(address tradingBotAddress, uint param) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
+        require(param > 1, "Invalid param");
+
+        _tradingBotStates[tradingBotAddress] = State(0, param, new uint[](0));
+    }
+
+    function update(address tradingBotAddress, uint latestPrice) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
+        tradingBotState.history.push(latestPrice);
 
         uint high = 0;
 
-        if (history.length >= N)
+        if (tradingBotState.history.length >= tradingBotState.N)
         {
-            for (uint i = 0; i < N; i++)
+            for (uint i = 0; i < tradingBotState.N; i++)
             {
-                high = (history[history.length - i - 1] > high) ? history[history.length - i - 1] : high;
+                high = (tradingBotState.history[tradingBotState.history.length - i - 1] > high) ? tradingBotState.history[tradingBotState.history.length - i - 1] : high;
             }
         }
 
-        currentValue = high;
+        tradingBotState.currentValue = high;
     }   
 
-    function getValue() public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
         uint[] memory temp = new uint[](1);
-        temp[0] = currentValue;
+        temp[0] = tradingBotState.currentValue;
         return temp;
     }
 
-    function getHistory() public view override returns (uint[] memory) {
-        return history;
+    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
+        return tradingBotState.history;
     }
 }

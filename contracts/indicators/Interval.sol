@@ -1,31 +1,34 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 
-contract Interval is IIndicator, AddressResolver {
-    uint public currentValue;
-    uint[] public history;
+contract Interval is IIndicator {
 
-    constructor(uint interval) public onlyImports(msg.sender) {
-        currentValue = interval;
-        history.push(interval);
-    }
+    mapping (address => uint) private _tradingBotStates;
 
     function getName() public pure override returns (string memory) {
         return "Interval";
     }
 
-    function update(uint latestPrice) public override {}   
+    function addTradingBot(address tradingBotAddress, uint param) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(_tradingBotStates[tradingBotAddress] == 0, "Trading bot already exists");
+        require(param > 0, "Invalid param");
 
-    function getValue() public view override returns (uint[] memory) {
+        _tradingBotStates[tradingBotAddress] = param;
+    }
+
+    function update(address tradingBotAddress, uint latestPrice) public override {}   
+
+    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
         uint[] memory temp = new uint[](1);
-        temp[0] = currentValue;
+        temp[0] = _tradingBotStates[tradingBotAddress];
         return temp;
     }
 
-    function getHistory() public view override returns (uint[] memory) {
-        return history;
+    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+        uint[] memory temp = new uint[](1);
+        temp[0] = _tradingBotStates[tradingBotAddress];
+        return temp;
     }
 }

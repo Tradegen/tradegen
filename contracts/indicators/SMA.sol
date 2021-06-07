@@ -1,51 +1,69 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 import '../libraries/SafeMath.sol';
 
-contract SMA is IIndicator, AddressResolver {
+contract SMA is IIndicator {
     using SafeMath for uint;
 
-    uint public currentValue;
-    uint[] public priceHistory;
-    uint[] public indicatorHistory;
-    uint public SMAperiod;
-    uint public total;
-
-    constructor(uint period) public onlyImports(msg.sender) {
-        SMAperiod = period;
+    struct State {
+        uint currentValue;
+        uint SMAperiod;
+        uint total;
+        uint[] priceHistory;
+        uint[] indicatorHistory;
     }
+
+    mapping (address => State) private _tradingBotStates;
 
     function getName() public pure override returns (string memory) {
         return "SMA";
     }
 
-    function update(uint latestPrice) public override {
-        priceHistory.push(latestPrice);
-        total = total.add(latestPrice);
+    function addTradingBot(address tradingBotAddress, uint param) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
+        require(param > 1, "Invalid param");
 
-        if (priceHistory.length >= SMAperiod)
+        _tradingBotStates[tradingBotAddress] = State(0, param, 0, new uint[](0), new uint[](0));
+    }
+
+    function update(address tradingBotAddress, uint latestPrice) public override {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
+        tradingBotState.priceHistory.push(latestPrice);
+        tradingBotState.total = tradingBotState.total.add(latestPrice);
+
+        if (tradingBotState.priceHistory.length >= tradingBotState.SMAperiod)
         {
-            if (priceHistory.length > SMAperiod)
+            if (tradingBotState.priceHistory.length > tradingBotState.SMAperiod)
             {
-                total = total.sub(priceHistory[priceHistory.length - SMAperiod]);
+                tradingBotState.total = tradingBotState.total.sub(tradingBotState.priceHistory[tradingBotState.priceHistory.length - tradingBotState.SMAperiod]);
             }
 
-            currentValue = total.div(SMAperiod);
+            tradingBotState.currentValue = tradingBotState.total.div(tradingBotState.SMAperiod);
         }
 
-        indicatorHistory.push(currentValue);
+        tradingBotState.indicatorHistory.push(tradingBotState.currentValue);
     }   
 
-    function getValue() public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
         uint[] memory temp = new uint[](1);
-        temp[0] = currentValue;
+        temp[0] = tradingBotState.currentValue;
         return temp;
     }
 
-    function getHistory() public view override returns (uint[] memory) {
-        return indicatorHistory;
+    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+
+        return tradingBotState.indicatorHistory;
     }
 }

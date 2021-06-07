@@ -4,9 +4,11 @@ interface IIndicator {
 
     function getName() external pure returns (string memory);
 
-    function update(uint latestPrice) external;
+    function addTradingBot(address tradingBotAddress, uint param) external;
 
-    function getValue() external view returns (uint[] memory);
+    function update(address tradingBotAddress, uint latestPrice) external;
 
-    function getHistory() external view returns (uint[] memory);
+    function getValue(address tradingBotAddress) external view returns (uint[] memory);
+
+    function getHistory(address tradingBotAddress) external view returns (uint[] memory);
 }

@@ -1,26 +1,24 @@
 pragma solidity >=0.5.0;
 
-import '../AddressResolver.sol';
-
 import '../interfaces/IIndicator.sol';
 
-contract Up is IIndicator, AddressResolver {
-
-    constructor() public onlyImports(msg.sender) {}
+contract Up is IIndicator {
 
     function getName() public pure override returns (string memory) {
         return "Up";
     }
 
-    function update(uint latestPrice) public override {}   
+    function addTradingBot(address tradingBotAddress, uint param) public pure override {}
 
-    function getValue() public pure override returns (uint[] memory) {
+    function update(address tradingBotAddress, uint latestPrice) public override {}   
+
+    function getValue(address tradingBotAddress) public pure override returns (uint[] memory) {
         uint[] memory temp = new uint[](1);
         temp[0] = 1;
         return temp;
     }
 
-    function getHistory() public pure override returns (uint[] memory) {
+    function getHistory(address tradingBotAddress) public pure override returns (uint[] memory) {
         return new uint[](0);
     }
 }

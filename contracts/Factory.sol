@@ -9,10 +9,11 @@ import './interfaces/IComparator.sol';
 
 contract Factory is AddressResolver {
 
+    address[] public indicators;
+    address[] public comparators;
+
     constructor() public {
         _setFactoryAddress(address(this));
-
-        //Need to set Imports address manually
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -34,6 +35,22 @@ contract Factory is AddressResolver {
         return (entryRuleAddresses, exitRuleAddresses);
     }
 
+    function _addNewIndicator(address indicatorAddress) public onlyOwner() {
+        require(indicatorAddress != address(0), "Invalid indicator address");
+
+        indicators.push(indicatorAddress);
+
+        emit AddedIndicator(indicatorAddress, indicators.length - 1, block.timestamp);
+    }
+
+    function _addNewComparator(address comparatorAddress) public onlyOwner() {
+        require(comparatorAddress != address(0), "Invalid comparator address");
+
+        comparators.push(comparatorAddress);
+
+        emit AddedComparator(comparatorAddress, comparators.length - 1, block.timestamp);
+    }
+
     /* ========== INTERNAL FUNCTIONS ========== */
 
     //first 154 bits = empty, next 6 bits = comparator, next 8 bits = first indicator, next 8 bits = second indicator, next 40 bits = first indicator param, next 40 bits = second indicator param
@@ -44,12 +61,36 @@ contract Factory is AddressResolver {
         uint firstIndicatorParam = (rule << 176) >> 216;
         uint secondIndicatorParam = (rule << 216) >> 216;
 
-        address firstIndicatorAddress = Imports(getImportsAddress())._generateIndicator(firstIndicator, firstIndicatorParam);
-        address secondIndicatorAddress = Imports(getImportsAddress())._generateIndicator(secondIndicator, secondIndicatorParam);
-        address comparatorAddress = Imports(getImportsAddress())._generateComparator(comparator, firstIndicatorAddress, secondIndicatorAddress);
+        address firstIndicatorAddress = _addBotToIndicator(firstIndicator, firstIndicatorParam, tradingBotAddress);
+        address secondIndicatorAddress = _addBotToIndicator(secondIndicator, secondIndicatorParam, tradingBotAddress);
+        address comparatorAddress = _addBotToComparator(comparator, firstIndicatorAddress, secondIndicatorAddress, tradingBotAddress);
 
         require(firstIndicatorAddress != address(0) && secondIndicatorAddress != address(0) && comparatorAddress != address(0), "Invalid address when generating rule");
 
         return address(new Rule(firstIndicatorAddress, secondIndicatorAddress, comparatorAddress, tradingBotAddress));
     }
+
+    function _addBotToIndicator(uint indicatorIndex, uint indicatorParam, address tradingBotAddress) private returns (address) {
+        require(indicatorIndex >= 0 && indicatorIndex < indicators.length, "Indicator index out of range");
+
+        IIndicator(indicators[indicatorIndex]).addTradingBot(tradingBotAddress, indicatorParam);
+
+        return indicators[indicatorIndex];
+    }
+
+    function _addBotToComparator(uint comparatorIndex, address firstIndicatorAddress, address secondIndicatorAddress, address tradingBotAddress) private returns (address) {
+        require(comparatorIndex >= 0 && comparatorIndex < comparators.length, "Comparator index out of range");
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
+        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
+
+        IComparator(comparators[comparatorIndex]).addTradingBot(tradingBotAddress, firstIndicatorAddress, secondIndicatorAddress);
+
+        return comparators[comparatorIndex];
+    }
+
+    /* ========== EVENTS ========== */
+
+    event AddedIndicator(address indicatorAddress, uint indicatorindex, uint timestamp);
+    event AddedComparator(address comparatorAddress, uint comparatorindex, uint timestamp);
 }

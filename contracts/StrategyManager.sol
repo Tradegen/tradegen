@@ -86,6 +86,7 @@ contract StrategyManager is AddressResolver {
         addressToIndex[strategyAddress] = strategies.length;
         strategySymbolToIndex[strategySymbol] = strategies.length;
         strategyNameToIndex[strategyName] = strategies.length;
+        _addStrategyAddress(strategyAddress);
 
         emit PublishedStrategy(developerAddress, strategyAddress, block.timestamp);
     }

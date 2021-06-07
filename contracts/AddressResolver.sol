@@ -17,6 +17,9 @@ contract AddressResolver is Ownable {
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
 
+    constructor() public Ownable() {
+    }
+
     /* ========== VIEWS ========== */
 
     function getBaseTradegenAddress() public view returns (address) {
@@ -97,7 +100,7 @@ contract AddressResolver is Ownable {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
 
-    function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) {
+    function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) onlyStrategyManager(msg.sender) {
         _strategyAddresses[strategyAddress] = strategyAddress;
     }
 
