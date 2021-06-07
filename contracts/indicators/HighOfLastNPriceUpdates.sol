@@ -1,8 +1,10 @@
 pragma solidity >=0.5.0;
 
+import '../Ownable.sol';
+
 import '../interfaces/IIndicator.sol';
 
-contract HighOfLastNPriceUpdates is IIndicator {
+contract HighOfLastNPriceUpdates is IIndicator, Ownable {
 
     struct State {
         uint currentValue;
@@ -12,11 +14,13 @@ contract HighOfLastNPriceUpdates is IIndicator {
 
     mapping (address => State) private _tradingBotStates;
 
+    constructor() public Ownable() {}
+
     function getName() public pure override returns (string memory) {
         return "HighOfLastNPriceUpdates";
     }
 
-    function addTradingBot(address tradingBotAddress, uint param) public override {
+    function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
         require(param > 1, "Invalid param");

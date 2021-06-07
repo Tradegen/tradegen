@@ -1,11 +1,13 @@
 pragma solidity >=0.5.0;
 
+import '../Ownable.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
 import '../libraries/SafeMath.sol';
 
-contract RiseByAtLeast is IComparator {
+contract RiseByAtLeast is IComparator, Ownable {
     using SafeMath for uint;
 
     struct State {
@@ -13,7 +15,9 @@ contract RiseByAtLeast is IComparator {
         address secondIndicatorAddress;
     }
 
-    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override {
+    constructor() public Ownable() {}
+
+    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");

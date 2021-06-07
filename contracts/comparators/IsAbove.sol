@@ -1,16 +1,22 @@
 pragma solidity >=0.5.0;
 
+import '../Ownable.sol';
+
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
-contract IsAbove is IComparator {
+contract IsAbove is IComparator, Ownable {
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
     }
 
-    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override {
+    mapping (address => State) private _tradingBotStates;
+
+    constructor() public Ownable() {}
+
+    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
@@ -18,8 +24,6 @@ contract IsAbove is IComparator {
 
         _tradingBotStates[tradingBotAddress] = State(firstIndicatorAddress, secondIndicatorAddress);
     }
-
-    mapping (address => State) private _tradingBotStates;
 
     function checkConditions(address tradingBotAddress) public view override returns (bool) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
