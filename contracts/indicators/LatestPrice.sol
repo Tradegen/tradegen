@@ -6,12 +6,7 @@ import '../interfaces/IIndicator.sol';
 
 contract LatestPrice is IIndicator, Ownable {
 
-    struct State {
-        uint currentValue;
-        uint[] history;
-    }
-
-    mapping (address => State) private _tradingBotStates;
+    mapping (address => uint[]) private _tradingBotStates;
 
     constructor() public Ownable() {}
 
@@ -21,35 +16,27 @@ contract LatestPrice is IIndicator, Ownable {
 
     function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
-
-        _tradingBotStates[tradingBotAddress] = State(0, new uint[](0));
+        require(_tradingBotStates[tradingBotAddress].length == 0, "Trading bot already exists");
     }
 
     function update(address tradingBotAddress, uint latestPrice) public override {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
-        tradingBotState.currentValue = latestPrice;
-        tradingBotState.history.push(latestPrice);
+        _tradingBotStates[tradingBotAddress].push(latestPrice);
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
         uint[] memory temp = new uint[](1);
-        temp[0] = tradingBotState.currentValue;
+        temp[0] = _tradingBotStates[tradingBotAddress][_tradingBotStates[tradingBotAddress].length - 1];
+
         return temp;
     }
 
     function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
-        return tradingBotState.history;
+        return _tradingBotStates[tradingBotAddress];
     }
 }

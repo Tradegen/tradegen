@@ -9,16 +9,15 @@ import './interfaces/IERC20.sol';
 
 contract StrategyApproval is AddressResolver, StrategyManager {
     struct UserVote {
-        uint strategyID;
-        uint timestamp;
         bool decision;
         bool correct;
+        uint32 timestamp;
+        uint32 strategyID;
     }
 
     struct StrategyVote {
         address voter;
-        uint timestamp;
-        uint voterBacktestResults;
+        uint32 timestamp;
         bool decision;
         bool correct;
     }
@@ -26,15 +25,14 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     struct SubmittedStrategy {
         bool status; //true = approved, false = rejected
         bool pendingApproval; //true = pending, false = decision made
+        address developer;
         uint submittedBacktestResults;
         uint submittedParams;
+        string strategyName;
+        string strategySymbol;
         uint[] entryRules;
         uint[] exitRules;
         StrategyVote[] votes;
-        string strategyName;
-        string strategyDescription;
-        string strategySymbol;
-        address developer;
     }
 
     SubmittedStrategy[] public submittedStrategies;
@@ -61,10 +59,10 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function submitStrategyForApproval(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategyDescription, string memory strategySymbol) external {
+    function submitStrategyForApproval(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategySymbol) external {
         require(_checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, strategyName, strategySymbol), "Strategy does not meet criteria");
 
-        submittedStrategies.push(SubmittedStrategy(false, true, backtestResults, strategyParams, entryRules, exitRules, new StrategyVote[](0), strategyName, strategyDescription, strategySymbol, msg.sender));
+        submittedStrategies.push(SubmittedStrategy(false, true, msg.sender, backtestResults, strategyParams, strategyName, strategySymbol, entryRules, exitRules, new StrategyVote[](0)));
         userSubmittedStrategies[msg.sender].push(submittedStrategies.length - 1);
 
         emit SubmittedStrategyForApproval(msg.sender, submittedStrategies.length - 1, block.timestamp);
@@ -93,8 +91,8 @@ contract StrategyApproval is AddressResolver, StrategyManager {
             emit ReceivedPenalty(msg.sender, index, votingPenalty, block.timestamp);
         }
 
-        submittedStrategies[index].votes.push(StrategyVote(msg.sender, block.timestamp, backtestResults, decision, correct));
-        userVoteHistory[msg.sender].push(UserVote(index, block.timestamp, decision, correct));
+        submittedStrategies[index].votes.push(StrategyVote(msg.sender, uint32(block.timestamp), decision, correct));
+        userVoteHistory[msg.sender].push(UserVote(decision, correct, uint32(block.timestamp), uint32(index)));
 
         if (submittedStrategies[index].votes.length == Settings(getSettingsAddress()).getVoteLimit())
         {
@@ -117,7 +115,22 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         uint profitTarget = (strategyParams << 224) >> 240;
         uint stopLoss = (strategyParams << 240) >> 240;
 
-        return (Settings(getSettingsAddress()).checkIfSymbolIDIsValid(symbol) && strategyNameToIndex[strategyName] == 0 && strategySymbolToIndex[strategySymbol] == 0 && entryRules.length > 0 && exitRules.length > 0 && numberOfTrades > 0 && alphaDirection == 1 && maxDuration > 0 && profitTarget > 0 && stopLoss > 0 && maxPoolSize > 0);
+        return (Settings(getSettingsAddress()).checkIfSymbolIDIsValid(symbol) && 
+                entryRules.length <= Settings(getSettingsAddress()).getMaximumNumberOfEntryRules() &&
+                exitRules.length <= Settings(getSettingsAddress()).getMaximumNumberOfExitRules() &&
+                bytes(strategyName).length > 0 &&
+                bytes(strategyName).length < 25 &&
+                bytes(strategySymbol).length > 0 &&
+                bytes(strategySymbol).length < 7 &&
+                strategyNameToIndex[strategyName] == 0 && strategySymbolToIndex[strategySymbol] == 0 &&
+                entryRules.length > 0 &&
+                exitRules.length > 0 &&
+                numberOfTrades > 0 &&
+                alphaDirection == 1 &&
+                maxDuration > 0 &&
+                profitTarget > 0 &&
+                stopLoss > 0 &&
+                maxPoolSize > 0);
     }
 
     function _checkIfParamsMatch(uint index, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) internal view indexIsWithinBounds(index) returns(bool) {
@@ -167,7 +180,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         if (numberOfCorrectVotes >= Settings(getSettingsAddress()).getStrategyApprovalThreshold())
         {
             submittedStrategies[index].status = true;
-            _publishStrategy(strategy.strategyName, strategy.strategyDescription, strategy.strategySymbol, strategy.submittedParams, strategy.entryRules, strategy.exitRules, strategy.developer);
+            _publishStrategy(strategy.strategyName, strategy.strategySymbol, strategy.submittedParams, strategy.entryRules, strategy.exitRules, strategy.developer);
             emit ApprovedStrategy(index, block.timestamp);
         }
         else

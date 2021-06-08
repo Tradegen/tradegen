@@ -20,7 +20,6 @@ contract Strategy is IStrategyToken, AddressResolver {
     //Strategy variables
     address private tradingBotAddress;
     address public developerAddress;
-    string public description;
     uint public publishedOnTimestamp;
 
     //Custom token state variables
@@ -32,7 +31,6 @@ contract Strategy is IStrategyToken, AddressResolver {
     mapping(address => mapping(address => uint)) public allowance;
 
     constructor(string memory _name,
-                string memory _description,
                 string memory _symbol,
                 uint _strategyParams,
                 uint[] memory _entryRules,
@@ -40,7 +38,6 @@ contract Strategy is IStrategyToken, AddressResolver {
                 address _developerAddress) public onlyStrategyManager(msg.sender) {
 
         developerAddress = _developerAddress;
-        description = _description;
         symbol = _symbol;
         name = _name;
 
@@ -101,8 +98,8 @@ contract Strategy is IStrategyToken, AddressResolver {
 
     //Strategy functions
 
-    function _getStrategyDetails() public view override returns (string memory, string memory, string memory, address, uint, uint, uint, uint) {
-        return (name, symbol, description, developerAddress, publishedOnTimestamp, maxPoolSize, tokenPrice, circulatingSupply);
+    function _getStrategyDetails() public view override returns (string memory, string memory, address, uint, uint, uint, uint) {
+        return (name, symbol, developerAddress, publishedOnTimestamp, maxPoolSize, tokenPrice, circulatingSupply);
     }
 
     function _getPositionDetails(address _user) public view override returns (string memory, string memory, uint, uint, uint) {

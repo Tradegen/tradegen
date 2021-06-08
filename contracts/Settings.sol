@@ -59,6 +59,14 @@ contract Settings is AddressResolver {
         return transactionFee;
     }
 
+    function getMaximumNumberOfEntryRules() public view returns (uint) {
+        return maximumNumberOfEntryRules;
+    }
+
+    function getMaximumNumberOfExitRules() public view returns (uint) {
+        return maximumNumberOfExitRules;
+    }
+
     function getOracleAddress(uint underlyingAssetID) public view returns (address) {
         return underlyingAssetIDToOracleAddress[underlyingAssetID];
     }

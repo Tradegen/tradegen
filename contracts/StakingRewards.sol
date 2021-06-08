@@ -12,8 +12,8 @@ contract StakingRewards is AddressResolver {
     using SafeMath for uint;
 
     struct State {
-        uint timestamp;
-        uint leftoverYield;
+        uint32 timestamp;
+        uint224 leftoverYield;
     }
 
     uint private _totalSupply;
@@ -43,8 +43,8 @@ contract StakingRewards is AddressResolver {
     function stake(uint amount) external {
         require(amount > 0, "Cannot stake 0");
 
-        _userToState[msg.sender].timestamp = block.timestamp;
-        _userToState[msg.sender].leftoverYield = _calculateAvailableYield(msg.sender);
+        _userToState[msg.sender].timestamp = uint32(block.timestamp);
+        _userToState[msg.sender].leftoverYield = uint224(_calculateAvailableYield(msg.sender));
         
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
@@ -55,6 +55,7 @@ contract StakingRewards is AddressResolver {
 
     function unstake(uint amount) external {
         require(amount > 0, "Cannot withdraw 0");
+
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
         IERC20(getBaseTradegenAddress()).restrictedTransfer(address(this), msg.sender, amount);
@@ -78,12 +79,12 @@ contract StakingRewards is AddressResolver {
         uint yieldRate = Settings(getSettingsAddress()).getStakingYield().div(100); //convert % to decimal
         uint newYield = (block.timestamp.sub(_userToState[user].timestamp).mul(yieldRate).mul(_balances[user])).div(365 days);
 
-        return _userToState[user].leftoverYield.add(newYield);
+        return uint256(_userToState[user].leftoverYield).add(newYield);
     }
 
     function _claimStakingRewards(address user, uint amount) internal {
-        _userToState[user].leftoverYield = _calculateAvailableYield(user).sub(amount);
-        _userToState[user].timestamp = block.timestamp;
+        _userToState[user].leftoverYield = uint224(_calculateAvailableYield(user).sub(amount));
+        _userToState[user].timestamp = uint32(block.timestamp);
         IERC20(getBaseTradegenAddress()).sendRewards(user, amount);
 
         emit ClaimedStakingRewards(user, amount, block.timestamp);

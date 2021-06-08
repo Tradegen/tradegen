@@ -16,31 +16,27 @@ contract StrategyManager is AddressResolver {
     mapping (string => uint) public strategySymbolToIndex; //maps to (index + 1); index 0 represents strategy not found
     mapping (string => uint) public strategyNameToIndex; //maps to (index + 1); index 0 represents strategy not found
 
+     /* ========== VIEWS ========== */
+
+    function getUserPublishedStrategies(address user) external view returns(uint[] memory) {
+        require(user != address(0), "Invalid address");
+
+        return userToPublishedStrategies[user];
+    }
+
+    function getUserPositions(address user) external view returns(uint[] memory) {
+        require(user != address(0), "Invalid address");
+
+        return userToPositions[user];
+    }
+
+    function getStrategyAddressFromIndex(uint index) external view returns(address) {
+        require(index >= 0 && index < strategies.length, "Index out of range");
+
+        return strategies[index];
+    }
+
     /* ========== INTERNAL FUNCTIONS ========== */
-
-    function _getUserPublishedStrategies(address _user) internal view returns(address[] memory) {
-        uint[] memory userPublishedStrategyIndexes = userToPublishedStrategies[_user];
-        address[] memory userPublishedStrategies = new address[](userPublishedStrategyIndexes.length);
-
-        for (uint i = 0; i < userPublishedStrategyIndexes.length; i++)
-        {
-            userPublishedStrategies[i] = strategies[userPublishedStrategyIndexes[i]];
-        }
-
-        return userPublishedStrategies;
-    }
-
-    function _getUserPositions(address _user) internal view returns(address[] memory) {
-        uint[] memory userPositionIndexes = userToPositions[_user];
-        address[] memory userPositions = new address[](userPositionIndexes.length);
-
-        for (uint i = 0; i < userPositionIndexes.length; i++)
-        {
-            userPositions[i] = strategies[userPositionIndexes[i]];
-        }
-
-        return userPositions;
-    }
 
     function _addPosition(address _user, address _strategyAddress) internal isValidStrategyAddress(_strategyAddress) {
         userToPositions[_user].push(addressToIndex[_strategyAddress] - 1);
@@ -50,6 +46,7 @@ contract StrategyManager is AddressResolver {
         uint positionIndex;
         uint strategyIndex = addressToIndex[_strategyAddress];
 
+        //bounded by number of strategies
         for (positionIndex = 0; positionIndex < userToPositions[_user].length; positionIndex++)
         {
             if (positionIndex == strategyIndex)
@@ -65,7 +62,6 @@ contract StrategyManager is AddressResolver {
     }
 
     function _publishStrategy(string memory strategyName,
-                            string memory strategyDescription,
                             string memory strategySymbol,
                             uint strategyParams,
                             uint[] memory entryRules,
@@ -73,7 +69,6 @@ contract StrategyManager is AddressResolver {
                             address developerAddress) internal {
 
         Strategy temp = new Strategy(strategyName,
-                                    strategyDescription, 
                                     strategySymbol,
                                     strategyParams,
                                     entryRules,
@@ -88,10 +83,10 @@ contract StrategyManager is AddressResolver {
         strategyNameToIndex[strategyName] = strategies.length;
         _addStrategyAddress(strategyAddress);
 
-        emit PublishedStrategy(developerAddress, strategyAddress, block.timestamp);
+        emit PublishedStrategy(developerAddress, strategyAddress, strategies.length - 1, block.timestamp);
     }
 
     /* ========== EVENTS ========== */
 
-    event PublishedStrategy(address developerAddress, address strategyAddress, uint timestamp);
+    event PublishedStrategy(address developerAddress, address strategyAddress, uint strategyIndex, uint timestamp);
 }

@@ -16,8 +16,6 @@ contract TradingBot is ITradingBot, AddressResolver{
     //parameters
     address[] private _entryRuleAddresses;
     address[] private _exitRuleAddresses;
-    uint[] private _entryRules;
-    uint[] private _exitRules;
     uint public _maxTradeDuration;
     uint public _profitTarget; //assumes profit target is %
     uint public _stopLoss; //assumes stop loss is %
@@ -40,8 +38,6 @@ contract TradingBot is ITradingBot, AddressResolver{
                 bool direction,
                 uint underlyingAssetSymbol) public onlyStrategy(msg.sender) {
         
-        _entryRules = entryRules;
-        _exitRules = exitRules;
         _maxTradeDuration = maxTradeDuration;
         _profitTarget = profitTarget;
         _stopLoss = stopLoss;
@@ -56,8 +52,8 @@ contract TradingBot is ITradingBot, AddressResolver{
 
     /* ========== VIEWS ========== */
 
-    function getTradingBotParameters() public view override returns (uint[] memory, uint[] memory, uint, uint, uint, bool, uint) {
-        return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
+    function getTradingBotParameters() public view override returns (address[] memory, address[] memory, uint, uint, uint, bool, uint) {
+        return (_entryRuleAddresses, _exitRuleAddresses, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
     }
 
     function getStrategyAddress() public view override onlyTradingBotRewards(msg.sender) returns (address) {

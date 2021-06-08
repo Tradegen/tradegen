@@ -14,9 +14,9 @@ contract TradingBotRewards is AddressResolver {
     using SafeMath for uint;
 
     struct State {
+        uint88 amount;
+        uint160 circulatingSupply;
         bool debtOrYield; //true = yield, false = debt
-        uint amount;
-        uint circulatingSupply;
     }
 
     mapping(address => mapping (address => uint)) private _userToBotToLastClaimIndex; // maps to (index + 1), with index 0 representing user not having a position in the strategy
@@ -46,23 +46,23 @@ contract TradingBotRewards is AddressResolver {
         uint numberOfTokens = IStrategyToken(strategyAddress).getBalanceOf(user);
         State[] memory history = _botToStateHistory[tradingBotAddress];
 
-        uint userRatio = numberOfTokens.div(history[history.length - 1].circulatingSupply);
+        uint userRatio = numberOfTokens.div(uint256(history[history.length - 1].circulatingSupply));
         uint lastClaimIndex = _userToBotToLastClaimIndex[user][tradingBotAddress] - 1;
 
         //check for same sign
         if ((history[history.length - 1].debtOrYield && history[lastClaimIndex].debtOrYield) || (!history[history.length - 1].debtOrYield && !history[lastClaimIndex].debtOrYield))
         {
-            return (history[history.length - 1].debtOrYield, userRatio.mul((history[history.length - 1].amount.sub(history[lastClaimIndex].amount))));
+            return (history[history.length - 1].debtOrYield, userRatio.mul((uint256(history[history.length - 1].amount).sub(uint256(history[lastClaimIndex].amount)))));
         }
         //user initially had yield and now has debt
         else if (history[history.length - 1].debtOrYield && !history[lastClaimIndex].debtOrYield)
         {
-            return (history[history.length - 1].amount >= history[lastClaimIndex].amount) ? (false, history[history.length - 1].amount.sub(history[lastClaimIndex].amount)) : (true, history[lastClaimIndex].amount.sub(history[history.length - 1].amount));
+            return (history[history.length - 1].amount >= history[lastClaimIndex].amount) ? (false, uint256(history[history.length - 1].amount).sub(uint256(history[lastClaimIndex].amount))) : (true, uint256(history[lastClaimIndex].amount).sub(uint256(history[history.length - 1].amount)));
         }
         //user initially had debt and now has yield
         else
         {
-            return (history[history.length - 1].amount >= history[lastClaimIndex].amount) ? (true, history[history.length - 1].amount.sub(history[lastClaimIndex].amount)) : (false, history[lastClaimIndex].amount.sub(history[history.length - 1].amount));
+            return (history[history.length - 1].amount >= history[lastClaimIndex].amount) ? (true, uint256(history[history.length - 1].amount).sub(uint256(history[lastClaimIndex].amount))) : (false, uint256(history[lastClaimIndex].amount).sub(uint256(history[history.length - 1].amount)));
         }
     }
 
@@ -76,21 +76,21 @@ contract TradingBotRewards is AddressResolver {
             //check for same sign
             if ((history[history.length - 1].debtOrYield && profitOrLoss) || (!history[history.length - 1].debtOrYield && !profitOrLoss))
             {
-                amount = amount.add(history[history.length - 1].amount);
+                amount = amount.add(uint256(history[history.length - 1].amount));
             }
             //current yield is positive and bot made losing trade
             else if (history[history.length - 1].debtOrYield && !profitOrLoss)
             {
-                (profitOrLoss, amount) = (history[history.length - 1].amount >= amount) ? (true, history[history.length - 1].amount.sub(amount)) : (false, amount.sub(history[history.length - 1].amount));
+                (profitOrLoss, amount) = (uint256(history[history.length - 1].amount) >= amount) ? (true, uint256(history[history.length - 1].amount).sub(amount)) : (false, amount.sub(uint256(history[history.length - 1].amount)));
             }
             //current yield is negative and bot made profitable trade
             else
             {
-                (profitOrLoss, amount) = (amount >= history[history.length - 1].amount) ? (true, amount.sub(history[history.length - 1].amount)) : (false, history[history.length - 1].amount.sub(amount));
+                (profitOrLoss, amount) = (amount >= uint256(history[history.length - 1].amount)) ? (true, amount.sub(uint256(history[history.length - 1].amount))) : (false, uint256(history[history.length - 1].amount).sub(amount));
             }
         }
 
-        history.push(State(profitOrLoss, amount, circulatingSupply));
+        history.push(State(uint80(amount), uint160(circulatingSupply), profitOrLoss));
 
         emit UpdatedRewards(msg.sender, profitOrLoss, amount, block.timestamp);
     }

@@ -12,10 +12,9 @@ contract Marketplace is AddressResolver {
     using SafeMath for uint;
 
     struct PositionForSale {
+        uint88 numberOfTokens;
+        uint168 advertisedPrice;
         address strategyAddress;
-        address sellerAddress;
-        uint numberOfTokens;
-        uint advertisedPrice;
     }
 
     mapping (address => PositionForSale[]) public userToMarketplaceListings; //stores the marketplace listings for a given user
@@ -27,10 +26,10 @@ contract Marketplace is AddressResolver {
         return userToMarketplaceListings[_user];
     }
 
-    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(user, marketplaceListingIndex) returns (address, address, uint, uint) {
+    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(user, marketplaceListingIndex) returns (uint, uint, address) {
         PositionForSale memory marketplaceListing = userToMarketplaceListings[user][marketplaceListingIndex];
 
-        return (marketplaceListing.strategyAddress, marketplaceListing.sellerAddress, marketplaceListing.advertisedPrice, marketplaceListing.numberOfTokens);
+        return (uint256(marketplaceListing.advertisedPrice), uint256(marketplaceListing.numberOfTokens), marketplaceListing.strategyAddress);
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
@@ -44,8 +43,8 @@ contract Marketplace is AddressResolver {
         require(userBalance > 0, "No tokens in this strategy");
         require(userBalance - userToNumberOfTokensForSale[msg.sender][strategyAddress] >= numberOfTokens, "Not enough tokens in this strategy");
 
-        userToMarketplaceListings[msg.sender].push(PositionForSale(strategyAddress, msg.sender, numberOfTokens, price));
-        userToNumberOfTokensForSale[msg.sender][strategyAddress].add(numberOfTokens);
+        userToMarketplaceListings[msg.sender].push(PositionForSale(uint88(numberOfTokens), uint168(price), strategyAddress));
+        userToNumberOfTokensForSale[msg.sender][strategyAddress] = uint256(userToNumberOfTokensForSale[msg.sender][strategyAddress]).add(numberOfTokens);
 
         emit ListedPositionForSale(msg.sender, strategyAddress, userToMarketplaceListings[msg.sender].length - 1, price, numberOfTokens, block.timestamp);
     }
@@ -53,7 +52,7 @@ contract Marketplace is AddressResolver {
     function editListing(uint marketplaceListingIndex, uint newPrice) external marketplaceListingIndexWithinBounds(msg.sender, marketplaceListingIndex) {
         require(newPrice > 0, "Price cannot be 0");
 
-        userToMarketplaceListings[msg.sender][marketplaceListingIndex].advertisedPrice = newPrice;
+        userToMarketplaceListings[msg.sender][marketplaceListingIndex].advertisedPrice = uint168(newPrice);
 
         emit UpdatedListing(msg.sender, userToMarketplaceListings[msg.sender][marketplaceListingIndex].strategyAddress, marketplaceListingIndex, newPrice, block.timestamp);
     }

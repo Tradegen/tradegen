@@ -7,8 +7,8 @@ import '../interfaces/IIndicator.sol';
 contract PreviousNPriceUpdates is IIndicator, Ownable {
 
     struct State {
-        uint currentValue;
-        uint N;
+        uint8 N;
+        uint128 currentValue;
         uint[] history;
     }
 
@@ -23,39 +23,34 @@ contract PreviousNPriceUpdates is IIndicator, Ownable {
     function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
-        require(param > 1, "Invalid param");
+        require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[tradingBotAddress] = State(0, param, new uint[](0));
+        _tradingBotStates[tradingBotAddress] = State(uint8(param), 0, new uint[](0));
     }
 
     function update(address tradingBotAddress, uint latestPrice) public override {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
-        tradingBotState.history.push(latestPrice);
+        _tradingBotStates[tradingBotAddress].history.push(latestPrice);
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
         
-        uint length = (tradingBotState.history.length >= tradingBotState.N) ? tradingBotState.N : 0;
+        uint length = (_tradingBotStates[tradingBotAddress].history.length >= uint256(_tradingBotStates[tradingBotAddress].N)) ? uint256(_tradingBotStates[tradingBotAddress].N) : 0;
         uint[] memory temp = new uint[](length);
-        
+
         for (uint i = length; i >= 1; i--)
         {
-            temp[length - i] = tradingBotState.history[length - i];
+            temp[length - i] = _tradingBotStates[tradingBotAddress].history[length - i];
         }
+
         return temp;
     }
 
     function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
-        return tradingBotState.history;
+        return _tradingBotStates[tradingBotAddress].history;
     }
 }

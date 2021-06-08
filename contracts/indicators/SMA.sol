@@ -9,8 +9,8 @@ contract SMA is IIndicator, Ownable {
     using SafeMath for uint;
 
     struct State {
-        uint currentValue;
         uint SMAperiod;
+        uint currentValue;
         uint total;
         uint[] priceHistory;
         uint[] indicatorHistory;
@@ -27,7 +27,7 @@ contract SMA is IIndicator, Ownable {
     function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
-        require(param > 1, "Invalid param");
+        require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
         _tradingBotStates[tradingBotAddress] = State(0, param, 0, new uint[](0), new uint[](0));
     }

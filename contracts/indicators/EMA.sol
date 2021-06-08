@@ -9,9 +9,9 @@ contract EMA is IIndicator, Ownable {
     using SafeMath for uint;
 
     struct State {
-        uint currentValue;
-        uint EMAperiod;
-        uint[] priceHistory;
+        uint8 EMAperiod;
+        uint120 currentValue;
+        uint120 previousEMA;
         uint[] indicatorHistory;
     }
 
@@ -26,60 +26,35 @@ contract EMA is IIndicator, Ownable {
     function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
-        require(param > 1, "Invalid param");
+        require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[tradingBotAddress] = State(0, param, new uint[](0), new uint[](0));
+        _tradingBotStates[tradingBotAddress] = State(uint8(param), 0, 0, new uint[](0));
     }
 
     function update(address tradingBotAddress, uint latestPrice) public override {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        uint currentValue = uint256(_tradingBotStates[tradingBotAddress].currentValue);
+        uint multiplier = 2;
+        multiplier = multiplier.div(uint256(_tradingBotStates[tradingBotAddress].EMAperiod).add(1));
 
-        tradingBotState.priceHistory.push(latestPrice);
+        _tradingBotStates[tradingBotAddress].currentValue = (currentValue == 0) ? uint120(latestPrice) : uint120((multiplier.mul(latestPrice.sub(uint256(_tradingBotStates[tradingBotAddress].previousEMA)).add(uint256(_tradingBotStates[tradingBotAddress].previousEMA)))));
+        _tradingBotStates[tradingBotAddress].previousEMA = uint120(currentValue);
 
-        if (tradingBotState.priceHistory.length >= tradingBotState.EMAperiod)
-        {
-            uint temp = 0;
-            uint initialEMA = 0;
-            uint multiplier = 2;
-            multiplier = multiplier.div(tradingBotState.EMAperiod.add(1));
-
-            for (uint i = tradingBotState.EMAperiod; i >= 1; i--)
-            {
-                if (i == tradingBotState.EMAperiod)
-                {
-                    initialEMA = tradingBotState.priceHistory[tradingBotState.priceHistory.length - i];
-                    temp = initialEMA;
-                }
-                else
-                {
-                    temp = multiplier.mul(tradingBotState.priceHistory[tradingBotState.priceHistory.length - i]).add((1 - multiplier).mul(initialEMA));
-                    initialEMA = temp;
-                }
-            }
-
-            tradingBotState.currentValue = temp;
-        }
-
-        tradingBotState.indicatorHistory.push(tradingBotState.currentValue);
+        _tradingBotStates[tradingBotAddress].indicatorHistory.push(uint256(_tradingBotStates[tradingBotAddress].currentValue));
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
         uint[] memory temp = new uint[](1);
-        temp[0] = tradingBotState.currentValue;
+        temp[0] = uint256(_tradingBotStates[tradingBotAddress].currentValue);
         return temp;
     }
 
     function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
-
-        return tradingBotState.indicatorHistory;
+        return _tradingBotStates[tradingBotAddress].indicatorHistory;
     }
 }

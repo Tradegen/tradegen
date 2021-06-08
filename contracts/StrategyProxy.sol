@@ -16,7 +16,6 @@ contract StrategyProxy is Marketplace, StrategyManager {
      struct StrategyDetails {
         string name;
         string strategySymbol;
-        string description;
         address developerAddress;
         address strategyAddress;
         uint publishedOnTimestamp;
@@ -36,45 +35,9 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
     /* ========== VIEWS ========== */
 
-    function getUserPublishedStrategies() external view returns(StrategyDetails[] memory) {
-        address[] memory userPublishedStrategiesAddresses = _getUserPublishedStrategies(msg.sender);
-        StrategyDetails[] memory userPublishedStrategiesWithDetails = new StrategyDetails[](userPublishedStrategiesAddresses.length);
-
-        for (uint i = 0; i < userPublishedStrategiesAddresses.length; i++)
-        {
-            userPublishedStrategiesWithDetails[i] = getStrategyDetails(userPublishedStrategiesAddresses[i]);
-        }
-
-        return userPublishedStrategiesWithDetails;
-    }
-
-    function getUserPositions() external view returns(PositionDetails[] memory) {
-        address[] memory userPositionAddresses = _getUserPositions(msg.sender);
-        PositionDetails[] memory userPositionsWithDetails = new PositionDetails[](userPositionAddresses.length);
-
-        for (uint i = 0; i < userPositionAddresses.length; i++)
-        {
-            (string memory name,
-            string memory symbol,
-            uint balance,
-            uint circulatingSupply,
-            uint maxPoolSize) = IStrategyToken(userPositionAddresses[i])._getPositionDetails(msg.sender);
-
-            userPositionsWithDetails[i] = PositionDetails(name,
-                                                        symbol,
-                                                        userPositionAddresses[i],
-                                                        balance,
-                                                        circulatingSupply,
-                                                        maxPoolSize);
-        }
-
-        return userPositionsWithDetails;
-    }
-
     function getStrategyDetails(address strategyAddress) public view returns(StrategyDetails memory) {
         (string memory name,
         string memory symbol,
-        string memory description,
         address developerAddress,
         uint publishedOnTimestamp,
         uint maxPoolSize,
@@ -83,7 +46,6 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
         return StrategyDetails(name,
                             symbol,
-                            description,
                             developerAddress,
                             strategyAddress,
                             publishedOnTimestamp,
@@ -155,15 +117,15 @@ contract StrategyProxy is Marketplace, StrategyManager {
     }
 
     function buyPosition(address user, uint marketplaceListingIndex) external {
-        (address strategyAddress, address sellerAddress, uint advertisedPrice, uint numberOfTokens) = getMarketplaceListing(user, marketplaceListingIndex);
+        (uint advertisedPrice, uint numberOfTokens, address strategyAddress) = getMarketplaceListing(user, marketplaceListingIndex);
 
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
 
         uint amount = numberOfTokens.mul(advertisedPrice);
         uint transactionFee = amount.mul(Settings(getSettingsAddress()).getTransactionFee()).div(1000);
         
-        IStrategyToken(strategyAddress).buyPosition(sellerAddress, msg.sender, numberOfTokens);
-        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, sellerAddress, amount);
+        IStrategyToken(strategyAddress).buyPosition(user, msg.sender, numberOfTokens);
+        IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, user, amount);
         IERC20(getBaseTradegenAddress()).restrictedTransfer(msg.sender, developerAddress, transactionFee);
 
         _cancelListing(user, marketplaceListingIndex);
