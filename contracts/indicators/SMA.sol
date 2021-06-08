@@ -9,9 +9,8 @@ contract SMA is IIndicator, Ownable {
     using SafeMath for uint;
 
     struct State {
-        uint SMAperiod;
-        uint currentValue;
-        uint total;
+        uint8 SMAperiod;
+        uint128 currentValue;
         uint[] priceHistory;
         uint[] indicatorHistory;
     }
@@ -29,28 +28,24 @@ contract SMA is IIndicator, Ownable {
         require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[tradingBotAddress] = State(0, param, 0, new uint[](0), new uint[](0));
+        _tradingBotStates[tradingBotAddress] = State(uint8(param), 0, new uint[](0), new uint[](0));
     }
 
     function update(address tradingBotAddress, uint latestPrice) public override {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        _tradingBotStates[tradingBotAddress].priceHistory.push(latestPrice);
 
-        tradingBotState.priceHistory.push(latestPrice);
-        tradingBotState.total = tradingBotState.total.add(latestPrice);
-
-        if (tradingBotState.priceHistory.length >= tradingBotState.SMAperiod)
+        if ( _tradingBotStates[tradingBotAddress].priceHistory.length >= uint256(_tradingBotStates[tradingBotAddress].SMAperiod))
         {
-            if (tradingBotState.priceHistory.length > tradingBotState.SMAperiod)
-            {
-                tradingBotState.total = tradingBotState.total.sub(tradingBotState.priceHistory[tradingBotState.priceHistory.length - tradingBotState.SMAperiod]);
-            }
-
-            tradingBotState.currentValue = tradingBotState.total.div(tradingBotState.SMAperiod);
+            uint temp = uint256(_tradingBotStates[tradingBotAddress].currentValue).mul(uint256(_tradingBotStates[tradingBotAddress].SMAperiod));
+            temp = temp.sub(_tradingBotStates[tradingBotAddress].priceHistory[_tradingBotStates[tradingBotAddress].priceHistory.length - uint256(_tradingBotStates[tradingBotAddress].SMAperiod)]);
+            temp = temp.add(latestPrice);
+            temp = temp.div(uint256(_tradingBotStates[tradingBotAddress].SMAperiod));
+            _tradingBotStates[tradingBotAddress].currentValue = uint128(temp);
         }
 
-        tradingBotState.indicatorHistory.push(tradingBotState.currentValue);
+        _tradingBotStates[tradingBotAddress].indicatorHistory.push(_tradingBotStates[tradingBotAddress].currentValue);
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
