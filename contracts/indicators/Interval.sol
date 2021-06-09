@@ -20,6 +20,19 @@ contract Interval is IIndicator {
         return "Interval";
     }
 
+    function getPriceAndDeveloper() public view override returns (uint, address) {
+        return (_price, _developer);
+    }
+
+    function editPrice(uint newPrice) external override {
+        require(msg.sender == _developer, "Only the developer can edit the price");
+        require(newPrice >= 0, "Price must be a positive number");
+
+        _price = newPrice;
+
+        emit UpdatedPrice(address(this), newPrice, block.timestamp);
+    }
+
     function addTradingBot(uint param) public override {
         require(_tradingBotStates[msg.sender] == 0, "Trading bot already exists");
         require(param > 0, "Invalid param");

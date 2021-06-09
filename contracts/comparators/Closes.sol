@@ -23,6 +23,19 @@ contract Closes is IComparator {
         _developer = msg.sender;
     }
 
+    function getPriceAndDeveloper() public view override returns (uint, address) {
+        return (_price, _developer);
+    }
+
+    function editPrice(uint newPrice) external override {
+        require(msg.sender == _developer, "Only the developer can edit the price");
+        require(newPrice >= 0, "Price must be a positive number");
+
+        _price = newPrice;
+
+        emit UpdatedPrice(address(this), newPrice, block.timestamp);
+    }
+
     function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) public override {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");

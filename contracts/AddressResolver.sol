@@ -112,7 +112,7 @@ contract AddressResolver is Ownable {
     }
 
     modifier validAddressForTransfer(address addressToCheck) {
-        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress || addressToCheck == _strategyApprovalAddress, "Address is not valid");
+        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress || addressToCheck == _strategyApprovalAddress || addressToCheck == _componentsAddress, "Address is not valid");
         _;
     }
 
