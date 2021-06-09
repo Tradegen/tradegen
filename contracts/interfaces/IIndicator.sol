@@ -4,9 +4,9 @@ interface IIndicator {
 
     function getName() external pure returns (string memory);
 
-    function addTradingBot(address tradingBotAddress, uint param) external;
+    function addTradingBot(uint param) external; //anyone can call this function but it only works if trading bot calls it
 
-    function update(address tradingBotAddress, uint latestPrice) external;
+    function update(uint latestPrice) external;
 
     function getValue(address tradingBotAddress) external view returns (uint[] memory);
 

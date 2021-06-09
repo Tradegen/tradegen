@@ -1,10 +1,8 @@
 pragma solidity >=0.5.0;
 
-import '../Ownable.sol';
-
 import '../interfaces/IIndicator.sol';
 
-contract PreviousNPriceUpdates is IIndicator, Ownable {
+contract PreviousNPriceUpdates is IIndicator {
 
     struct State {
         uint8 N;
@@ -12,26 +10,31 @@ contract PreviousNPriceUpdates is IIndicator, Ownable {
         uint[] history;
     }
 
+    uint public _price;
+    address public _developer;
+
     mapping (address => State) private _tradingBotStates;
 
-    constructor() public Ownable() {}
+    constructor(uint price) public {
+        require(price >= 0, "Price must be greater than 0");
+
+        _price = price;
+        _developer = msg.sender;
+    }
 
     function getName() public pure override returns (string memory) {
         return "PreviousNPriceUpdates";
     }
 
-    function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
+    function addTradingBot(uint param) public override {
+        require(_tradingBotStates[msg.sender].currentValue == 0, "Trading bot already exists");
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[tradingBotAddress] = State(uint8(param), 0, new uint[](0));
+        _tradingBotStates[msg.sender] = State(uint8(param), 0, new uint[](0));
     }
 
-    function update(address tradingBotAddress, uint latestPrice) public override {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
-
-        _tradingBotStates[tradingBotAddress].history.push(latestPrice);
+    function update(uint latestPrice) public override {
+        _tradingBotStates[msg.sender].history.push(latestPrice);
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {

@@ -1,21 +1,23 @@
 pragma solidity >=0.5.0;
 
-import './Factory.sol';
 import './Settings.sol';
 import './TradingBotRewards.sol';
 import './AddressResolver.sol';
+import './Components.sol';
 
 import './libraries/SafeMath.sol';
-import './interfaces/IRule.sol';
+
 import './interfaces/IStrategyToken.sol';
 import './interfaces/ITradingBot.sol';
+import './interfaces/IIndicator.sol';
+import './interfaces/IComparator.sol';
 
-contract TradingBot is ITradingBot, AddressResolver{
+contract TradingBot is ITradingBot, AddressResolver {
     using SafeMath for uint;
 
     //parameters
-    address[] private _entryRuleAddresses;
-    address[] private _exitRuleAddresses;
+    Rule[] private _entryRules;
+    Rule[] private _exitRules;
     uint public _maxTradeDuration;
     uint public _profitTarget; //assumes profit target is %
     uint public _stopLoss; //assumes stop loss is %
@@ -47,13 +49,13 @@ contract TradingBot is ITradingBot, AddressResolver{
         _strategyAddress = msg.sender;
         _oracleAddress = Settings(getSettingsAddress()).getOracleAddress(underlyingAssetSymbol);
 
-        (_entryRuleAddresses, _exitRuleAddresses) = Factory(getFactoryAddress())._generateRules(entryRules, exitRules);
+        _generateRules(entryRules, exitRules);
     }
 
     /* ========== VIEWS ========== */
 
-    function getTradingBotParameters() public view override returns (address[] memory, address[] memory, uint, uint, uint, bool, uint) {
-        return (_entryRuleAddresses, _exitRuleAddresses, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
+    function getTradingBotParameters() public view override returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, uint) {
+        return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
     }
 
     function getStrategyAddress() public view override onlyTradingBotRewards(msg.sender) returns (address) {
@@ -112,21 +114,23 @@ contract TradingBot is ITradingBot, AddressResolver{
     }
 
     function _updateRules(uint latestPrice) private {
-        for (uint i = 0; i < _entryRuleAddresses.length; i++)
+        for (uint i = 0; i < _entryRules.length; i++)
         {
-            IRule(_entryRuleAddresses[i]).update(latestPrice);
+            IIndicator(_entryRules[i].firstIndicatorAddress).update(latestPrice);
+            IIndicator(_entryRules[i].secondIndicatorAddress).update(latestPrice);
         }
 
-        for (uint i = 0; i < _exitRuleAddresses.length; i++)
+        for (uint i = 0; i < _exitRules.length; i++)
         {
-            IRule(_exitRuleAddresses[i]).update(latestPrice);
+            IIndicator(_exitRules[i].firstIndicatorAddress).update(latestPrice);
+            IIndicator(_exitRules[i].secondIndicatorAddress).update(latestPrice);
         }
     }
 
     function _checkEntryRules() private returns (bool) {
-        for (uint i = 0; i < _entryRuleAddresses.length; i++)
+        for (uint i = 0; i < _entryRules.length; i++)
         {
-            if (!IRule(_entryRuleAddresses[i]).checkConditions())
+            if (!IComparator(_entryRules[i].comparatorAddress).checkConditions())
             {
                 return false;
             }
@@ -136,9 +140,9 @@ contract TradingBot is ITradingBot, AddressResolver{
     }
 
     function _checkExitRules() private returns (bool) {
-        for (uint i = 0; i < _exitRuleAddresses.length; i++)
+        for (uint i = 0; i < _exitRules.length; i++)
         {
-            if (!IRule(_exitRuleAddresses[i]).checkConditions())
+            if (!IComparator(_exitRules[i].comparatorAddress).checkConditions())
             {
                 return false;
             }
@@ -153,6 +157,58 @@ contract TradingBot is ITradingBot, AddressResolver{
 
     function _checkStopLoss(uint latestPrice) private view returns (bool) {
         return _direction ? (latestPrice < _currentOrderEntryPrice.mul(1 - _stopLoss.div(100))) : (latestPrice > _currentOrderEntryPrice.mul(1 - _stopLoss.div(100)));
+    }
+
+    function _generateRules(uint[] memory entryRules, uint[] memory exitRules) internal {
+
+        for (uint i = 0; i < entryRules.length; i++)
+        {
+            _entryRules.push(_generateRule(entryRules[i]));
+        }
+
+        for (uint i = 0; i < exitRules.length; i++)
+        {
+             _exitRules.push(_generateRule(exitRules[i]));
+        }
+    }
+
+    //first 154 bits = empty, next 6 bits = comparator, next 8 bits = first indicator, next 8 bits = second indicator, next 40 bits = first indicator param, next 40 bits = second indicator param
+    function _generateRule(uint rule) private returns (Rule memory) {
+        uint comparator = rule >> 96;
+        uint firstIndicator = (rule << 160) >> 248;
+        uint secondIndicator = (rule << 168) >> 248;
+        uint firstIndicatorParam = (rule << 176) >> 216;
+        uint secondIndicatorParam = (rule << 216) >> 216;
+
+        address firstIndicatorAddress = _addBotToIndicator(firstIndicator, firstIndicatorParam);
+        address secondIndicatorAddress = _addBotToIndicator(secondIndicator, secondIndicatorParam);
+        address comparatorAddress = _addBotToComparator(comparator, firstIndicatorAddress, secondIndicatorAddress);
+
+        require(firstIndicatorAddress != address(0) && secondIndicatorAddress != address(0) && comparatorAddress != address(0), "Invalid address when generating rule");
+
+        return Rule(firstIndicatorAddress, secondIndicatorAddress, comparatorAddress);
+    }
+
+    function _addBotToIndicator(uint indicatorIndex, uint indicatorParam) private returns (address) {
+        address[] memory indicators = Components(getComponentsAddress()).getIndicators();
+
+        require(indicatorIndex >= 0 && indicatorIndex < indicators.length, "Indicator index out of range");
+
+        IIndicator(indicators[indicatorIndex]).addTradingBot(indicatorParam);
+
+        return indicators[indicatorIndex];
+    }
+
+    function _addBotToComparator(uint comparatorIndex, address firstIndicatorAddress, address secondIndicatorAddress) private returns (address) {
+        address[] memory comparators = Components(getComponentsAddress()).getComparators();
+
+        require(comparatorIndex >= 0 && comparatorIndex < comparators.length, "Comparator index out of range");
+        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
+        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
+
+        IComparator(comparators[comparatorIndex]).addTradingBot(firstIndicatorAddress, secondIndicatorAddress);
+
+        return comparators[comparatorIndex];
     }
 
     /* ========== MODIFIERS ========== */

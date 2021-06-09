@@ -1,7 +1,14 @@
 pragma solidity >=0.5.0;
 
 interface ITradingBot {
-    function getTradingBotParameters() external view returns (address[] memory, address[] memory, uint, uint, uint, bool, uint);
+
+    struct Rule {
+        address firstIndicatorAddress;
+        address secondIndicatorAddress;
+        address comparatorAddress;
+    }
+
+    function getTradingBotParameters() external view returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, uint);
     function onPriceFeedUpdate(uint latestPrice) external;
     function getStrategyAddress() external view returns (address);
     function checkIfBotIsInATrade() external view returns (bool);

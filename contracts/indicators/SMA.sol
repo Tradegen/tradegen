@@ -1,11 +1,9 @@
 pragma solidity >=0.5.0;
 
-import '../Ownable.sol';
-
 import '../interfaces/IIndicator.sol';
 import '../libraries/SafeMath.sol';
 
-contract SMA is IIndicator, Ownable {
+contract SMA is IIndicator {
     using SafeMath for uint;
 
     struct State {
@@ -15,37 +13,42 @@ contract SMA is IIndicator, Ownable {
         uint[] indicatorHistory;
     }
 
+    uint public _price;
+    address public _developer;
+
     mapping (address => State) private _tradingBotStates;
 
-    constructor() public Ownable() {}
+    constructor(uint price) public {
+        require(price >= 0, "Price must be greater than 0");
+
+        _price = price;
+        _developer = msg.sender;
+    }
 
     function getName() public pure override returns (string memory) {
         return "SMA";
     }
 
-    function addTradingBot(address tradingBotAddress, uint param) public override onlyOwner() {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(_tradingBotStates[tradingBotAddress].currentValue == 0, "Trading bot already exists");
+    function addTradingBot(uint param) public override {
+        require(_tradingBotStates[msg.sender].currentValue == 0, "Trading bot already exists");
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[tradingBotAddress] = State(uint8(param), 0, new uint[](0), new uint[](0));
+        _tradingBotStates[msg.sender] = State(uint8(param), 0, new uint[](0), new uint[](0));
     }
 
-    function update(address tradingBotAddress, uint latestPrice) public override {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
+    function update(uint latestPrice) public override {
+        _tradingBotStates[msg.sender].priceHistory.push(latestPrice);
 
-        _tradingBotStates[tradingBotAddress].priceHistory.push(latestPrice);
-
-        if ( _tradingBotStates[tradingBotAddress].priceHistory.length >= uint256(_tradingBotStates[tradingBotAddress].SMAperiod))
+        if ( _tradingBotStates[msg.sender].priceHistory.length >= uint256(_tradingBotStates[msg.sender].SMAperiod))
         {
-            uint temp = uint256(_tradingBotStates[tradingBotAddress].currentValue).mul(uint256(_tradingBotStates[tradingBotAddress].SMAperiod));
-            temp = temp.sub(_tradingBotStates[tradingBotAddress].priceHistory[_tradingBotStates[tradingBotAddress].priceHistory.length - uint256(_tradingBotStates[tradingBotAddress].SMAperiod)]);
+            uint temp = uint256(_tradingBotStates[msg.sender].currentValue).mul(uint256(_tradingBotStates[msg.sender].SMAperiod));
+            temp = temp.sub(_tradingBotStates[msg.sender].priceHistory[_tradingBotStates[msg.sender].priceHistory.length - uint256(_tradingBotStates[msg.sender].SMAperiod)]);
             temp = temp.add(latestPrice);
-            temp = temp.div(uint256(_tradingBotStates[tradingBotAddress].SMAperiod));
-            _tradingBotStates[tradingBotAddress].currentValue = uint128(temp);
+            temp = temp.div(uint256(_tradingBotStates[msg.sender].SMAperiod));
+            _tradingBotStates[msg.sender].currentValue = uint128(temp);
         }
 
-        _tradingBotStates[tradingBotAddress].indicatorHistory.push(_tradingBotStates[tradingBotAddress].currentValue);
+        _tradingBotStates[msg.sender].indicatorHistory.push(_tradingBotStates[msg.sender].currentValue);
     }   
 
     function getValue(address tradingBotAddress) public view override returns (uint[] memory) {

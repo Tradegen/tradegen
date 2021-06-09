@@ -11,7 +11,7 @@ contract AddressResolver is Ownable {
     address public _strategyApprovalAddress;
     address public _strategyManagerAddress;
     address public _userManagerAddress;
-    address public _factoryAddress;
+    address public _componentsAddress;
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
@@ -53,18 +53,14 @@ contract AddressResolver is Ownable {
         return _userManagerAddress;
     }
 
-    function getFactoryAddress() public view returns (address) {
-        return _factoryAddress;
+    function getComponentsAddress() public view returns (address) {
+        return _componentsAddress;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
         _baseTradegenAddress = baseTradegenAddress;
-    }
-
-    function _setFactoryAddress(address factoryAddress) internal isValidAddress(factoryAddress) {
-        _factoryAddress = factoryAddress;
     }
 
     function _setStakingRewardsAddress(address stakingRewardsAddress) internal isValidAddress(stakingRewardsAddress) {
@@ -89,6 +85,10 @@ contract AddressResolver is Ownable {
 
     function _setUserManagerAddress(address userManagerAddress) internal isValidAddress(userManagerAddress) {
         _userManagerAddress = userManagerAddress;
+    }
+
+    function _setComponentsAddress(address componentsAddress) internal isValidAddress(componentsAddress) {
+        _componentsAddress = componentsAddress;
     }
 
     function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) onlyStrategy(msg.sender) {
@@ -133,11 +133,6 @@ contract AddressResolver is Ownable {
 
     modifier onlyProxy(address addressToCheck) {
         require(addressToCheck == _strategyProxyAddress, "Only the strategy proxy can call this function");
-        _;
-    }
-
-    modifier onlyFactory(address addressToCheck) {
-        require(addressToCheck == _factoryAddress, "Only the factory can call this function");
         _;
     }
 

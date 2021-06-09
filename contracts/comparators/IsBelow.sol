@@ -1,37 +1,40 @@
 pragma solidity >=0.5.0;
 
-import '../Ownable.sol';
-
 import '../interfaces/IIndicator.sol';
 import '../interfaces/IComparator.sol';
 
-contract IsBelow is IComparator, Ownable {
+contract IsBelow is IComparator {
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
     }
 
+    uint public _price;
+    address public _developer;
+
     mapping (address => State) private _tradingBotStates;
 
-    constructor() public Ownable() {}
+    constructor(uint price) public {
+        require(price >= 0, "Price must be greater than 0");
 
-    function addTradingBot(address tradingBotAddress, address firstIndicatorAddress, address secondIndicatorAddress) public override onlyOwner() {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
-        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
-        require(_tradingBotStates[tradingBotAddress].firstIndicatorAddress == address(0), "Trading bot already exists");
-
-        _tradingBotStates[tradingBotAddress] = State(firstIndicatorAddress, secondIndicatorAddress);
+        _price = price;
+        _developer = msg.sender;
     }
 
-    function checkConditions(address tradingBotAddress) public view override returns (bool) {
-        require(tradingBotAddress != address(0), "Invalid trading bot address");
+    function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) public override {
+        require(firstIndicatorAddress != address(0), "Invalid first indicator address");
+        require(secondIndicatorAddress != address(0), "Invalid second indicator address");
+        require(_tradingBotStates[msg.sender].firstIndicatorAddress == address(0), "Trading bot already exists");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        _tradingBotStates[msg.sender] = State(firstIndicatorAddress, secondIndicatorAddress);
+    }
 
-        uint[] memory firstIndicatorPriceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(tradingBotAddress);
-        uint[] memory secondIndicatorPriceHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(tradingBotAddress);
+    function checkConditions() public view override returns (bool) {
+        State storage tradingBotState = _tradingBotStates[msg.sender];
+
+        uint[] memory firstIndicatorPriceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender);
+        uint[] memory secondIndicatorPriceHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender);
 
         if (firstIndicatorPriceHistory.length == 0 || secondIndicatorPriceHistory.length == 0)
         {

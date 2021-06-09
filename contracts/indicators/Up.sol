@@ -4,13 +4,23 @@ import '../interfaces/IIndicator.sol';
 
 contract Up is IIndicator {
 
+    uint public _price;
+    address public _developer;
+
+    constructor(uint price) public {
+        require(price >= 0, "Price must be greater than 0");
+
+        _price = price;
+        _developer = msg.sender;
+    }
+
     function getName() public pure override returns (string memory) {
         return "Up";
     }
 
-    function addTradingBot(address tradingBotAddress, uint param) public pure override {}
+    function addTradingBot(uint param) public pure override {}
 
-    function update(address tradingBotAddress, uint latestPrice) public override {}   
+    function update(uint latestPrice) public override {}   
 
     function getValue(address tradingBotAddress) public pure override returns (uint[] memory) {
         uint[] memory temp = new uint[](1);
