@@ -33,6 +33,10 @@ contract StrategyProxy is Marketplace, StrategyManager {
         uint maxPoolSize;
     }
 
+    constructor() public {
+        _setStrategyProxyAddress(address(this));
+    }
+
     /* ========== VIEWS ========== */
 
     function getStrategyDetails(address strategyAddress) public view returns(StrategyDetails memory) {

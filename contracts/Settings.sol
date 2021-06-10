@@ -17,6 +17,11 @@ contract Settings is AddressResolver {
     uint public maximumNumberOfEntryRules;
     uint public maximumNumberOfExitRules;
 
+    address public cUSDaddress;
+    address[] public availableCurrencies;
+    mapping (address => uint) public currencyKeyToIndex; //maps to (index + 1); index 0 represents currency key not found
+    mapping (string => address) public currencySymbolToAddress;
+
     mapping (uint => string) public underlyingAssetIDToSymbol;
     mapping (uint => address) public underlyingAssetIDToOracleAddress;
     mapping(string => uint) public symbolToUnderlyingAssetID;
@@ -73,6 +78,20 @@ contract Settings is AddressResolver {
 
     function getUnderlyingAssetSymbol(uint underlyingAssetID) public view returns (string memory) {
         return underlyingAssetIDToSymbol[underlyingAssetID];
+    }
+
+    function getAvailableCurrencies() public view returns (address[] memory) {
+        return availableCurrencies;
+    }
+
+    function checkIfCurrencyIsAvailable(address currency) public view returns (bool) {
+        require(currency != address(0), "Invalid currency key");
+
+        return currencyKeyToIndex[currency] > 0;
+    }
+
+    function getStableCurrencyAddress() public view returns (address) {
+        return cUSDaddress;
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -171,9 +190,49 @@ contract Settings is AddressResolver {
         emit UpdatedMaximumNumberOfExitRules(newMaximumNumberOfExitRules, block.timestamp);
     }
 
+    function setStableCurrencyAddress(address stableCurrencyAddress) public onlyOwner() {
+        require(stableCurrencyAddress != address(0), "Invalid address");
+
+        cUSDaddress = stableCurrencyAddress;
+
+        emit UpdatedStableCurrencyAddress(stableCurrencyAddress, block.timestamp);
+    }
+
+    function updateCurrencyKey(string memory currencySymbol, address newCurrencyKey) public onlyOwner() {
+        require(newCurrencyKey != address(0), "Invalid address");
+        require(newCurrencyKey != cUSDaddress, "New currency key cannot equal stable token address");
+        require(currencyKeyToIndex[newCurrencyKey] == 0, "New currency key already exists");
+        require(currencySymbolToAddress[currencySymbol] != address(0), "Currency symbol not found");
+
+        address oldCurrencyKey = currencySymbolToAddress[currencySymbol];
+        uint oldCurrencyKeyIndex = currencyKeyToIndex[oldCurrencyKey];
+
+        availableCurrencies[oldCurrencyKeyIndex - 1] = newCurrencyKey;
+        currencyKeyToIndex[newCurrencyKey] = oldCurrencyKeyIndex;
+        currencySymbolToAddress[currencySymbol] = newCurrencyKey;
+
+        delete currencyKeyToIndex[oldCurrencyKey];
+
+        emit UpdatedCurrencyKey(currencySymbol, newCurrencyKey, block.timestamp);
+    }
+
+    function addCurrencyKey(string memory currencySymbol, address currencyKey) public onlyOwner() {
+        require(currencyKey != address(0), "Invalid address");
+        require(currencyKey != cUSDaddress, "Cannot equal stable token address");
+        require(currencyKeyToIndex[currencyKey] == 0, "Currency key already exists");
+        require(currencySymbolToAddress[currencySymbol] == address(0), "Currency symbol already exists");
+
+        availableCurrencies.push(currencyKey);
+        currencyKeyToIndex[currencyKey] = availableCurrencies.length;
+        currencySymbolToAddress[currencySymbol] = currencyKey;
+
+        emit UpdatedStableCurrencyAddress(currencyKey, block.timestamp);
+    }
+
     /* ========== EVENTS ========== */
 
     event AddedAsset(uint underlyingAssetID, string symbol, address oracleAddress, uint timestamp);
+    event AddedCurrencyKey(address currencyKey, uint timestamp);
     event UpdatedOracleAddress(uint underlyingAssetID, address newOracleAddress, uint timestamp);
     event UpdatedStakingYield(uint newYield, uint timestamp);
     event UpdatedTransactionFee(uint newTransactionFee, uint timestamp);
@@ -184,4 +243,6 @@ contract Settings is AddressResolver {
     event UpdatedStrategyApprovalThreshold(uint newStrategyApprovalThreshold, uint timestamp);
     event UpdatedMaximumNumberOfEntryRules(uint newMaximumNumberOfEntryRules, uint timestamp);
     event UpdatedMaximumNumberOfExitRules(uint newMaximumNumberOfExitRules, uint timestamp);
+    event UpdatedStableCurrencyAddress(address stableCurrencyAddress, uint timestamp);
+    event UpdatedCurrencyKey(string currencySymbol, address newCurrencyKey, uint timestamp);   
 }

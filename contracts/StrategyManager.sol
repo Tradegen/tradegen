@@ -16,6 +16,10 @@ contract StrategyManager is AddressResolver {
     mapping (string => uint) public strategySymbolToIndex; //maps to (index + 1); index 0 represents strategy not found
     mapping (string => uint) public strategyNameToIndex; //maps to (index + 1); index 0 represents strategy not found
 
+    constructor() public {
+        _setStrategyManagerAddress(address(this));
+    }
+
      /* ========== VIEWS ========== */
 
     function getUserPublishedStrategies(address user) external view returns(uint[] memory) {

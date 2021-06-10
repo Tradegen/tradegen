@@ -7,10 +7,12 @@ contract AddressResolver is Ownable {
     address public _stakingRewardsAddress;
     address public _tradingBotRewardsAddress;
     address public _strategyProxyAddress;
+    address public _poolProxyAddress;
     address public _settingsAddress;
     address public _strategyApprovalAddress;
     address public _strategyManagerAddress;
     address public _userManagerAddress;
+    address public _poolManagerAddress;
     address public _componentsAddress;
 
     mapping (address => address) public _tradingBotAddresses;
@@ -37,6 +39,10 @@ contract AddressResolver is Ownable {
         return _strategyProxyAddress;
     }
 
+    function getPoolProxyAddress() public view returns (address) {
+        return _poolProxyAddress;
+    }
+
     function getSettingsAddress() public view returns (address) {
         return _settingsAddress;
     }
@@ -53,6 +59,10 @@ contract AddressResolver is Ownable {
         return _userManagerAddress;
     }
 
+    function getPoolManagerAddress() public view returns (address) {
+        return _poolManagerAddress;
+    }
+
     function getComponentsAddress() public view returns (address) {
         return _componentsAddress;
     }
@@ -61,6 +71,14 @@ contract AddressResolver is Ownable {
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
         _baseTradegenAddress = baseTradegenAddress;
+    }
+
+    function _setStrategyProxyAddress(address strategyProxyAddress) internal isValidAddress(strategyProxyAddress) {
+        _strategyProxyAddress = strategyProxyAddress;
+    }
+
+    function _setPoolProxyAddress(address poolProxyAddress) internal isValidAddress(poolProxyAddress) {
+        _poolProxyAddress = poolProxyAddress;
     }
 
     function _setStakingRewardsAddress(address stakingRewardsAddress) internal isValidAddress(stakingRewardsAddress) {
@@ -85,6 +103,10 @@ contract AddressResolver is Ownable {
 
     function _setUserManagerAddress(address userManagerAddress) internal isValidAddress(userManagerAddress) {
         _userManagerAddress = userManagerAddress;
+    }
+
+    function _setPoolManagerAddress(address poolManagerAddress) internal isValidAddress(poolManagerAddress) {
+        _poolManagerAddress = poolManagerAddress;
     }
 
     function _setComponentsAddress(address componentsAddress) internal isValidAddress(componentsAddress) {
@@ -136,6 +158,11 @@ contract AddressResolver is Ownable {
         _;
     }
 
+    modifier onlyPoolProxy(address addressToCheck) {
+        require(addressToCheck == _poolProxyAddress, "Only the pool proxy can call this function");
+        _;
+    }
+
     modifier onlyStrategyManager(address addressToCheck) {
         require(addressToCheck == _strategyManagerAddress, "Only the Strategy Manager contract can call this function");
         _;
@@ -143,6 +170,11 @@ contract AddressResolver is Ownable {
 
     modifier onlyUserManager(address addressToCheck) {
         require(addressToCheck == _userManagerAddress, "Only the User Manager contract can call this function");
+        _;
+    }
+
+    modifier onlyPoolManager(address addressToCheck) {
+        require(addressToCheck == _poolManagerAddress, "Only the Pool Manager contract can call this function");
         _;
     }
 }
