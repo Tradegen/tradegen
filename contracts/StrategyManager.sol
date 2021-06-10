@@ -20,7 +20,7 @@ contract StrategyManager is AddressResolver {
         _setStrategyManagerAddress(address(this));
     }
 
-     /* ========== VIEWS ========== */
+    /* ========== VIEWS ========== */
 
     function getUserPublishedStrategies(address user) external view returns(uint[] memory) {
         require(user != address(0), "Invalid address");

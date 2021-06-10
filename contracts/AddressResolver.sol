@@ -17,6 +17,7 @@ contract AddressResolver is Ownable {
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
+    mapping (address => address) public _poolAddresses;
 
     constructor() public Ownable() {
     }
@@ -121,6 +122,10 @@ contract AddressResolver is Ownable {
         _strategyAddresses[strategyAddress] = strategyAddress;
     }
 
+    function _addPoolAddress(address poolAddress) internal isValidAddress(poolAddress) onlyPoolManager(msg.sender) {
+        _poolAddresses[poolAddress] = poolAddress;
+    }
+
     /* ========== MODIFIERS ========== */
 
     modifier isValidAddress(address addressToCheck) {
@@ -130,6 +135,11 @@ contract AddressResolver is Ownable {
 
     modifier isValidStrategyAddress(address _strategyAddress) {
         require(_strategyAddresses[_strategyAddress] == _strategyAddress, "Strategy address not found");
+        _;
+    }
+
+    modifier isValidPoolAddress(address _poolAddress) {
+        require(_poolAddresses[_poolAddress] == _poolAddress, "Pool address not found");
         _;
     }
 
