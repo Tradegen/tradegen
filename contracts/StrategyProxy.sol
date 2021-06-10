@@ -13,7 +13,7 @@ import './interfaces/IERC20.sol';
 contract StrategyProxy is Marketplace, StrategyManager {
     using SafeMath for uint;
 
-     struct StrategyDetails {
+    struct StrategyDetails {
         string name;
         string strategySymbol;
         address developerAddress;

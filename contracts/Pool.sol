@@ -15,7 +15,7 @@ contract Pool is IPool, AddressResolver {
     string public _name;
     uint public _supply;
     address public _manager;
-    uint public _performanceFee;
+    uint public _performanceFee; //expressed as %
 
     address[] public _positionKeys;
     uint public cUSDdebt;
@@ -167,7 +167,7 @@ contract Pool is IPool, AddressResolver {
     function _payPerformanceFee(address user, uint userBalance, uint amount, uint exchangeRate) internal returns (uint) {
         uint profit = userBalance.sub(balanceOf[user]);
         uint ratio = amount.mul(profit).div(userBalance);
-        uint fee = ratio.mul(exchangeRate);
+        uint fee = ratio.mul(exchangeRate).mul(_performanceFee).div(100);
 
         TradegenERC20(getBaseTradegenAddress()).sendRewards(_manager, fee);
 

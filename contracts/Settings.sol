@@ -16,6 +16,8 @@ contract Settings is AddressResolver {
     uint public strategyApprovalThreshold;
     uint public maximumNumberOfEntryRules;
     uint public maximumNumberOfExitRules;
+    uint public maximumNumberOfPoolsPerUser;
+    uint public maximumPerformanceFee;
 
     address public cUSDaddress;
     address[] public availableCurrencies;
@@ -94,6 +96,14 @@ contract Settings is AddressResolver {
         return cUSDaddress;
     }
 
+    function getMaximumNumberOfPoolsPerUser() public view returns (uint) {
+        return maximumNumberOfPoolsPerUser;
+    }
+
+    function getMaximumPerformanceFee() public view returns (uint) {
+        return maximumPerformanceFee;
+    }
+
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     function addNewAsset(uint underlyingAssetID, string memory symbol, address oracleAddress) public onlyOwner() {
@@ -131,6 +141,23 @@ contract Settings is AddressResolver {
         transactionFee = newTransactionFee;
 
         emit UpdatedStakingYield(newTransactionFee, block.timestamp);
+    }
+
+    function setMaximumNumberOfPoolsPerUser(uint newMaximumNumberOfPoolsPerUser) public onlyOwner() {
+        require(newMaximumNumberOfPoolsPerUser > 0, "Maximum number of pools per user cannot be 0");
+
+        maximumNumberOfPoolsPerUser = newMaximumNumberOfPoolsPerUser;
+
+        emit UpdatedMaximumNumberOfPoolsPerUser(newMaximumNumberOfPoolsPerUser, block.timestamp);
+    }
+
+    function setMaximumPerformanceFee(uint newMaximumPerformanceFee) public onlyOwner() {
+        require(newMaximumPerformanceFee > 0, "Maximum performance fee cannot be 0");
+        require(newMaximumPerformanceFee < 100, "Maximum performance fee must be less than 100%");
+
+        maximumPerformanceFee = newMaximumPerformanceFee;
+
+        emit UpdatedMaximumPerformanceFee(newMaximumPerformanceFee, block.timestamp);
     }
 
     function setVoteLimit(uint newVoteLimit) public onlyOwner() {
@@ -238,6 +265,8 @@ contract Settings is AddressResolver {
     event UpdatedTransactionFee(uint newTransactionFee, uint timestamp);
     event UpdatedVoteLimit(uint newVoteLimit, uint timestamp);
     event UpdatedVotingReward(uint newVotingReward, uint timestamp);
+    event UpdatedMaximumNumberOfPoolsPerUser(uint newMaximumNumberOfPoolsPerUser, uint timestamp);
+    event UpdatedMaximumPerformanceFee(uint newMaximumPerformanceFee, uint timestamp);
     event UpdatedVotingPenalty(uint newVotingPenalty, uint timestamp);
     event UpdatedMinimumStakeToVote(uint newMinimumStakeToVote, uint timestamp);
     event UpdatedStrategyApprovalThreshold(uint newStrategyApprovalThreshold, uint timestamp);

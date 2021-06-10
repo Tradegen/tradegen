@@ -20,7 +20,7 @@ contract PoolManager is AddressResolver {
 
     /* ========== VIEWS ========== */
 
-    function getUserPools(address user) external view returns(uint[] memory) {
+    function getUserPools(address user) public view returns(uint[] memory) {
         require(user != address(0), "Invalid address");
 
         return userToPools[user];
