@@ -7,6 +7,12 @@ import './AddressResolver.sol';
 contract Settings is AddressResolver {
     using SafeMath for uint;
 
+    struct OracleData {
+        address oracleAddress;
+        string oracleName;
+    }
+
+    //settings
     uint public stakingYield; //APY% for staking rewards
     uint public transactionFee; //initialy 0.3%
     uint public voteLimit;
@@ -19,11 +25,18 @@ contract Settings is AddressResolver {
     uint public maximumNumberOfPoolsPerUser;
     uint public maximumPerformanceFee;
 
+    //currencies
     address public cUSDaddress;
     address[] public availableCurrencies;
     mapping (address => uint) public currencyKeyToIndex; //maps to (index + 1); index 0 represents currency key not found
     mapping (string => address) public currencySymbolToAddress;
 
+    //oracles
+    address[] public oracleAPIAddresses;
+    mapping (address => uint) public isValidOracleAPIAddress; // maps to (index + 1) in oracleAPIAddresses array; index 0 represents invalid API address
+    mapping (address => string) public oracleAddressToName;
+
+    //strategies
     mapping (uint => string) public underlyingAssetIDToSymbol;
     mapping (uint => address) public underlyingAssetIDToOracleAddress;
     mapping(string => uint) public symbolToUnderlyingAssetID;
@@ -40,6 +53,10 @@ contract Settings is AddressResolver {
 
     function checkIfSymbolIDIsValid(uint symbolID) public view returns (bool) {
         return (symbolID > 0 && underlyingAssetIDToOracleAddress[symbolID] != address(0));
+    }
+
+    function checkIfOracleAddressIsValid(address addressToCheck) public view returns (bool) {
+        return (isValidOracleAPIAddress[addressToCheck] > 0);
     }
 
     function getVoteLimit() public view returns (uint) {
@@ -102,6 +119,17 @@ contract Settings is AddressResolver {
 
     function getMaximumPerformanceFee() public view returns (uint) {
         return maximumPerformanceFee;
+    }
+
+    function getOracleAPIAddresses() public view returns (OracleData[] memory) {
+        OracleData[] memory temp = new OracleData[](oracleAPIAddresses.length);
+
+        for (uint i = 0; i < oracleAPIAddresses.length; i++)
+        {
+            temp[i] = OracleData(oracleAPIAddresses[i], oracleAddressToName[oracleAPIAddresses[i]]);
+        }
+
+        return temp;
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -253,13 +281,43 @@ contract Settings is AddressResolver {
         currencyKeyToIndex[currencyKey] = availableCurrencies.length;
         currencySymbolToAddress[currencySymbol] = currencyKey;
 
-        emit UpdatedStableCurrencyAddress(currencyKey, block.timestamp);
+        emit AddedCurrencyKey(currencyKey, block.timestamp);
+    }
+
+    function updateOracleAPIAddress(address oldOracleAddress, address newOracleAddress) public onlyOwner() {
+        require(newOracleAddress != address(0), "Invalid address");
+        require(oldOracleAddress != address(0), "Invalid address");
+        require(isValidOracleAPIAddress[oldOracleAddress] > 0, "Old oracle address doesn't exist");
+        require(isValidOracleAPIAddress[newOracleAddress] == 0, "New oracle address already exists");
+
+        uint oldOracleAddressIndex = isValidOracleAPIAddress[oldOracleAddress];
+
+        oracleAPIAddresses[oldOracleAddressIndex - 1] = newOracleAddress;
+        isValidOracleAPIAddress[newOracleAddress] = oldOracleAddressIndex;
+        oracleAddressToName[newOracleAddress] = oracleAddressToName[oldOracleAddress];
+
+        delete isValidOracleAPIAddress[oldOracleAddress];
+        delete oracleAddressToName[oldOracleAddress];
+
+        emit UpdatedOracleAPIAddress(oracleAddressToName[newOracleAddress], newOracleAddress, block.timestamp);
+    }
+
+    function addOracleAPIAddress(string memory name, address oracleAddress) public onlyOwner() {
+        require(oracleAddress != address(0), "Invalid address");
+        require(isValidOracleAPIAddress[oracleAddress] == 0, "Oracle address already exists");
+
+        oracleAPIAddresses.push(oracleAddress);
+        isValidOracleAPIAddress[oracleAddress] = oracleAPIAddresses.length;
+        oracleAddressToName[oracleAddress] = name;
+
+        emit AddedOracleAPIAddress(oracleAddress, block.timestamp);
     }
 
     /* ========== EVENTS ========== */
 
     event AddedAsset(uint underlyingAssetID, string symbol, address oracleAddress, uint timestamp);
     event AddedCurrencyKey(address currencyKey, uint timestamp);
+    event AddedOracleAPIAddress(address oracleAddress, uint timestamp);
     event UpdatedOracleAddress(uint underlyingAssetID, address newOracleAddress, uint timestamp);
     event UpdatedStakingYield(uint newYield, uint timestamp);
     event UpdatedTransactionFee(uint newTransactionFee, uint timestamp);
@@ -274,4 +332,5 @@ contract Settings is AddressResolver {
     event UpdatedMaximumNumberOfExitRules(uint newMaximumNumberOfExitRules, uint timestamp);
     event UpdatedStableCurrencyAddress(address stableCurrencyAddress, uint timestamp);
     event UpdatedCurrencyKey(string currencySymbol, address newCurrencyKey, uint timestamp);   
+    event UpdatedOracleAPIAddress(string oracleName, address newOracleAddress, uint timestamp);
 }
