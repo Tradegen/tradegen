@@ -1,6 +1,7 @@
 pragma solidity >=0.5.0;
 
 import './interfaces/IERC20.sol';
+import './interfaces/IPool.sol';
 
 import './libraries/SafeMath.sol';
 
@@ -8,7 +9,7 @@ import './AddressResolver.sol';
 import './Settings.sol';
 import './TradegenERC20.sol';
 
-contract Pool is AddressResolver {
+contract Pool is IPool, AddressResolver {
     using SafeMath for uint;
 
     string public _name;
@@ -21,11 +22,8 @@ contract Pool is AddressResolver {
     uint public TGENdebt;
 
     mapping (address => uint) public balanceOf;
-
-    struct PositionKeyAndBalance {
-        address positionKey;
-        uint balance;
-    }
+    mapping (address => uint) public investorToIndex; //maps to (index + 1) in investors array; index 0 represents investor not found
+    address[] public investors;
 
     constructor(string memory name, uint performanceFee, address manager) public onlyPoolManager(msg.sender) {
         _name = name;
@@ -35,15 +33,26 @@ contract Pool is AddressResolver {
 
     /* ========== VIEWS ========== */
 
-    function getPoolName() public view returns (string memory) {
+    function getPoolName() public view override returns (string memory) {
         return _name;
     }
 
-    function getManagerAddress() public view returns (address) {
+    function getManagerAddress() public view override returns (address) {
         return _manager;
     }
 
-    function getPositionsAndTotal() public view returns (PositionKeyAndBalance[] memory, uint) {
+    function getInvestors() public view override returns (InvestorAndBalance[] memory) {
+        InvestorAndBalance[] memory temp = new InvestorAndBalance[](investors.length);
+
+        for (uint i = 0; i < investors.length; i++)
+        {
+            temp[i] = InvestorAndBalance(investors[i], balanceOf[investors[i]]);
+        }
+
+        return temp;
+    }
+
+    function getPositionsAndTotal() public view override returns (PositionKeyAndBalance[] memory, uint) {
         PositionKeyAndBalance[] memory temp = new PositionKeyAndBalance[](_positionKeys.length);
         uint sum = 0;
 
@@ -57,18 +66,18 @@ contract Pool is AddressResolver {
         return (temp, sum);
     }
 
-    function getAvailableFunds() public view returns (uint) {
+    function getAvailableFunds() public view override returns (uint) {
         return IERC20(Settings(getSettingsAddress()).getStableCurrencyAddress()).balanceOf(address(this));
     }
 
-    function getPoolBalance() public view returns (uint) {
+    function getPoolBalance() public view override returns (uint) {
         (, uint positionBalance) = getPositionsAndTotal();
         uint availableFunds = getAvailableFunds();
         
         return availableFunds.add(positionBalance);
     }
 
-    function getUserBalance(address user) public view returns (uint) {
+    function getUserBalance(address user) public view override returns (uint) {
         require(user != address(0), "Invalid address");
 
         uint poolBalance = getPoolBalance();
@@ -78,8 +87,15 @@ contract Pool is AddressResolver {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function deposit(uint amount) external {
+    function deposit(uint amount) external override {
         require(amount > 0, "Deposit must be greater than 0");
+
+        //add user to pool's investors
+        if (balanceOf[msg.sender] == 0)
+        {
+            investors.push(msg.sender);
+            investorToIndex[msg.sender] = investors.length;
+        }
 
         IERC20(Settings(getSettingsAddress()).getStableCurrencyAddress()).transferFrom(msg.sender, address(this), amount);
         balanceOf[msg.sender].add(amount); //add 1 LP token per cUSD
@@ -93,7 +109,7 @@ contract Pool is AddressResolver {
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    function withdraw(address user, uint amount) public onlyPoolProxy(msg.sender) {
+    function withdraw(address user, uint amount) public override onlyPoolProxy(msg.sender) {
         require(user != address(0), "Invalid user address");
         require(amount > 0, "Withdrawal must be greater than 0");
 
@@ -110,6 +126,17 @@ contract Pool is AddressResolver {
         TGENdebt.add(TGENequivalent);
         balanceOf[user].sub(numberOfLPTokens);
         _supply.sub(numberOfLPTokens);
+
+        //remove user from pool's investors user has no funds left in pool
+        if (balanceOf[user] == 0)
+        {
+            uint index = investorToIndex[user];
+            address lastInvestor = investors[investors.length - 1];
+            investorToIndex[lastInvestor] = index;
+            investors[index - 1] = lastInvestor;
+            investors.pop();
+            delete investorToIndex[user];
+        }
 
         TradegenERC20(getBaseTradegenAddress()).sendRewards(user, TGENequivalent.sub(fee));
 
