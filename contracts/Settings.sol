@@ -56,7 +56,7 @@ contract Settings is AddressResolver {
     }
 
     function checkIfOracleAddressIsValid(address addressToCheck) public view returns (bool) {
-        return (isValidOracleAPIAddress[addressToCheck] > 0);
+        return (currencyKeyToIndex[addressToCheck] > 0);
     }
 
     function getVoteLimit() public view returns (uint) {

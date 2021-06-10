@@ -143,6 +143,54 @@ contract Pool is IPool, AddressResolver {
         emit WithdrewFundsFromPool(msg.sender, address(this), amount, block.timestamp);
     }
 
+    function _placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external onlyManager() {
+        require(numberOfTokens > 0, "Number of tokens must be greater than 0");
+        require(currencyKey != address(0), "Invalid currency key");
+        require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKey), "Currency key is not available");
+
+        //buying
+        if (buyOrSell)
+        {
+            require(cUSDdebt == 0, "Need to settle debt before making an opening trade");
+
+            uint tokenToUSD = 1; //TODO: get exchange rate from Ubeswap
+
+            require(getAvailableFunds() >= numberOfTokens.mul(tokenToUSD), "Not enough funds");
+
+            //TODO: exchange cUSD for token on Ubeswap
+        }
+        //selling
+        else
+        {
+            uint positionIndex;
+            for (positionIndex = 0; positionIndex < _positionKeys.length; positionIndex++)
+            {
+                if (currencyKey == _positionKeys[positionIndex])
+                {
+                    break;
+                }
+            }
+
+            require(positionIndex < _positionKeys.length, "Don't have a position in this currency");
+            require(IERC20(currencyKey).balanceOf(msg.sender) >= numberOfTokens, "Not enough tokens in this currency");
+
+            uint USDToToken = 1; //TODO: get exchange rate from Ubeswap
+
+            _settleDebt(numberOfTokens.mul(USDToToken));
+
+            //TODO: exchange token for cUSD on Ubeswap
+
+            //remove position key if no funds left in currency
+            if (IERC20(currencyKey).balanceOf(msg.sender) == 0)
+            {
+                _positionKeys[positionIndex] = _positionKeys[_positionKeys.length - 1];
+                _positionKeys.pop();
+            }
+        }
+
+        emit PlacedOrder(address(this), currencyKey, buyOrSell, numberOfTokens, block.timestamp);
+    }
+
     /* ========== INTERNAL FUNCTIONS ========== */
 
     function _settleDebt(uint amount) internal {
@@ -176,9 +224,17 @@ contract Pool is IPool, AddressResolver {
         return fee;
     }
 
+    /* ========== MODIFIERS ========== */
+
+    modifier onlyManager() {
+        require(msg.sender == _manager, "Only manager can call this function");
+        _;
+    }
+
     /* ========== EVENTS ========== */
 
     event DepositedFundsIntoPool(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
     event WithdrewFundsFromPool(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
     event PaidPerformanceFee(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
+    event PlacedOrder(address indexed poolAddress, address indexed currencyKey, bool buyOrSell, uint amount, uint timestamp);
 }
