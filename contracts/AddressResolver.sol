@@ -140,4 +140,9 @@ contract AddressResolver is Ownable {
         require(addressToCheck == _strategyManagerAddress, "Only the Strategy Manager contract can call this function");
         _;
     }
+
+    modifier onlyUserManager(address addressToCheck) {
+        require(addressToCheck == _userManagerAddress, "Only the User Manager contract can call this function");
+        _;
+    }
 }

@@ -1,6 +1,7 @@
 pragma solidity >=0.5.0;
 
 import './Settings.sol';
+import './Components.sol';
 import './AddressResolver.sol';
 import './StrategyManager.sol';
 import './StakingRewards.sol';
@@ -61,6 +62,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
     function submitStrategyForApproval(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategySymbol) external {
         require(_checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, strategyName, strategySymbol), "Strategy does not meet criteria");
+        require(_checkIfUserPurchasedComponents(entryRules, exitRules), "Need to purchase indicator/comparator before using");
 
         submittedStrategies.push(SubmittedStrategy(false, true, msg.sender, backtestResults, strategyParams, strategyName, strategySymbol, entryRules, exitRules, new StrategyVote[](0)));
         userSubmittedStrategies[msg.sender].push(submittedStrategies.length - 1);
@@ -100,6 +102,55 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         }
 
         emit VotedForStrategy(msg.sender, index, decision, block.timestamp);
+    }
+
+    function _checkIfUserPurchasedComponents(uint[] memory entryRules, uint[] memory exitRules) public view returns (bool)
+    {
+        for (uint i = 0; i < entryRules.length; i++)
+        {
+            uint comparator = entryRules[i] >> 96;
+            uint firstIndicator = (entryRules[i] << 160) >> 248;
+            uint secondIndicator = (entryRules[i] << 168) >> 248;
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            {
+                return false;
+            }
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            {
+                return false;
+            }
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedComparator(msg.sender, comparator))
+            {
+                return false;
+            }
+        }
+
+        for (uint i = 0; i < exitRules.length; i++)
+        {
+            uint comparator = exitRules[i] >> 96;
+            uint firstIndicator = (exitRules[i] << 160) >> 248;
+            uint secondIndicator = (exitRules[i] << 168) >> 248;
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            {
+                return false;
+            }
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            {
+                return false;
+            }
+
+            if (!Components(getComponentsAddress()).checkIfUserPurchasedComparator(msg.sender, comparator))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */

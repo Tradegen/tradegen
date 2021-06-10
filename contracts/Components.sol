@@ -9,6 +9,8 @@ import './interfaces/IComparator.sol';
 
 contract Components is Ownable, AddressResolver {
 
+    address[] public defaultIndicators;
+    address[] public defaultComparators;
     address[] public indicators;
     address[] public comparators;
 
@@ -33,6 +35,36 @@ contract Components is Ownable, AddressResolver {
 
     function getComparators() public view returns (address[] memory) {
         return comparators;
+    }
+
+    function getUserPurchasedIndicators(address user) public view returns (uint[] memory) {
+        require(user != address(0), "Invalid user address");
+
+        return userPurchasedIndicators[user];
+    }
+
+    function getUserPurchasedComparators(address user) public view returns (uint[] memory) {
+        require(user != address(0), "Invalid user address");
+
+        return userPurchasedComparators[user];
+    }
+
+    function checkIfUserPurchasedIndicator(address user, uint indicatorIndex) public view returns (bool) {
+        require(user != address(0), "Invalid user address");
+        require(indicatorIndex >= 0 && indicatorIndex < indicators.length, "Indicator index out of range");
+
+        address indicatorAddress = indicators[indicatorIndex];
+
+        return indicatorUsers[indicatorAddress][user] > 0;
+    }
+
+    function checkIfUserPurchasedComparator(address user, uint comparatorIndex) public view returns (bool) {
+        require(user != address(0), "Invalid user address");
+        require(comparatorIndex >= 0 && comparatorIndex < comparators.length, "Comparators index out of range");
+
+        address comparatorAddress = comparators[comparatorIndex];
+
+        return comparatorUsers[comparatorAddress][user] > 0;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
@@ -81,6 +113,28 @@ contract Components is Ownable, AddressResolver {
         comparatorAddressToIndex[comparatorAddress] = comparators.length;
 
         emit AddedComparator(comparatorAddress, comparators.length - 1, block.timestamp);
+    }
+
+    function _addDefaultComponentsToUser(address user) public onlyUserManager(msg.sender) {
+        require(user != address(0), "Invalid user address");
+
+        uint[] memory _userPurchasedIndicators = new uint[](defaultIndicators.length);
+        uint[] memory _userPurchasedComparators = new uint[](defaultComparators.length);
+
+        for (uint i = 0; i < defaultIndicators.length; i++)
+        {
+            _userPurchasedIndicators[i] = indicatorAddressToIndex[defaultIndicators[i]] - 1;
+            indicatorUsers[defaultIndicators[i]][user] = indicatorAddressToIndex[defaultIndicators[i]];
+        }
+
+        for (uint i = 0; i < defaultComparators.length; i++)
+        {
+            _userPurchasedComparators[i] = comparatorAddressToIndex[defaultComparators[i]] - 1;
+            comparatorUsers[defaultComparators[i]][user] = comparatorAddressToIndex[defaultComparators[i]];
+        }
+
+        userPurchasedIndicators[user] = _userPurchasedIndicators;
+        userPurchasedComparators[user] = _userPurchasedComparators;
     }
 
     /* ========== EVENTS ========== */

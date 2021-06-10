@@ -1,5 +1,6 @@
 pragma solidity >=0.5.0;
 
+import './Components.sol';
 import './AddressResolver.sol';
 
 contract UserManager is AddressResolver {
@@ -49,6 +50,8 @@ contract UserManager is AddressResolver {
 
         usernames[defaultRandomUsername] = msg.sender;
         users[msg.sender] = User(block.timestamp, defaultRandomUsername);
+
+        Components(getComponentsAddress())._addDefaultComponentsToUser(msg.sender);
 
         emit RegisteredUser(msg.sender, block.timestamp);
     }
