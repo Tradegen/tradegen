@@ -3,85 +3,43 @@ pragma solidity >=0.5.0;
 import '../../interfaces/IUniswapV2Router02.sol';
 
 interface IBaseUbeswapAdapter {
-  event Swapped(address fromAsset, address toAsset, uint256 fromAmount, uint256 receivedAmount);
+    event Swapped(address fromAsset, address toAsset, uint fromAmount, uint receivedAmount);
 
-  struct PermitSignature {
-    uint256 amount;
-    uint256 deadline;
-    uint8 v;
-    bytes32 r;
-    bytes32 s;
-  }
+    function MAX_SLIPPAGE_PERCENT() external returns (uint);
 
-  struct AmountCalc {
-    uint256 calculatedAmount;
-    uint256 relativePrice;
-    uint256 amountInUsd;
-    uint256 amountOutUsd;
-    address[] path;
-  }
+    function UBESWAP_ROUTER() external returns (IUniswapV2Router02);
 
-  function WETH_ADDRESS() external returns (address);
+    /**
+    * @dev Given an input asset address, returns the price of the asset in cUSD
+    * @param currencyKey Address of the asset
+    * @return uint Price of the asset
+    */
+    function getPrice(address currencyKey) external view returns(uint);
 
-  function MAX_SLIPPAGE_PERCENT() external returns (uint256);
+    /**
+    * @dev Given an input asset amount, returns the maximum output amount of the other asset
+    * @param numberOfTokens Number of tokens
+    * @param currencyKeyIn Address of the asset to be swap from
+    * @param currencyKeyOut Address of the asset to be swap to
+    * @return uint Amount out of the asset
+    */
+    function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);
 
-  function FLASHLOAN_PREMIUM_TOTAL() external returns (uint256);
+    /**
+    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from a user pool
+    * @param assetToSwapFrom Origin asset
+    * @param assetToSwapTo Destination asset
+    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
+    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    */
+    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external;
 
-  function USD_ADDRESS() external returns (address);
-
-  //function ORACLE() external returns (IPriceOracleGetter);
-
-  function UNISWAP_ROUTER() external returns (IUniswapV2Router02);
-
-  /**
-   * @dev Given an input asset amount, returns the maximum output amount of the other asset and the prices
-   * @param amountIn Amount of reserveIn
-   * @param reserveIn Address of the asset to be swap from
-   * @param reserveOut Address of the asset to be swap to
-   * @return uint256 Amount out of the reserveOut
-   * @return uint256 The price of out amount denominated in the reserveIn currency (18 decimals)
-   * @return uint256 In amount of reserveIn value denominated in USD (8 decimals)
-   * @return uint256 Out amount of reserveOut value denominated in USD (8 decimals)
-   * @return address[] The exchange path
-   */
-  function getAmountsOut(
-    uint256 amountIn,
-    address reserveIn,
-    address reserveOut
-  )
-    external
-    view
-    returns (
-      uint256,
-      uint256,
-      uint256,
-      uint256,
-      address[] memory
-    );
-
-  /**
-   * @dev Returns the minimum input asset amount required to buy the given output asset amount and the prices
-   * @param amountOut Amount of reserveOut
-   * @param reserveIn Address of the asset to be swap from
-   * @param reserveOut Address of the asset to be swap to
-   * @return uint256 Amount in of the reserveIn
-   * @return uint256 The price of in amount denominated in the reserveOut currency (18 decimals)
-   * @return uint256 In amount of reserveIn value denominated in USD (8 decimals)
-   * @return uint256 Out amount of reserveOut value denominated in USD (8 decimals)
-   * @return address[] The exchange path
-   */
-  function getAmountsIn(
-    uint256 amountOut,
-    address reserveIn,
-    address reserveOut
-  )
-    external
-    view
-    returns (
-      uint256,
-      uint256,
-      uint256,
-      uint256,
-      address[] memory
-    );
+    /**
+    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from a trading bot
+    * @param assetToSwapFrom Origin asset
+    * @param assetToSwapTo Destination asset
+    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
+    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    */
+    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external;
 }

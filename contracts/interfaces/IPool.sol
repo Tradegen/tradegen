@@ -21,4 +21,5 @@ interface IPool {
     function getUserBalance(address user) external view returns (uint);
     function deposit(uint amount) external;
     function withdraw(address user, uint amount) external;
+    function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external;
 }

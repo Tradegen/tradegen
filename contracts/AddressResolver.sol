@@ -14,6 +14,7 @@ contract AddressResolver is Ownable {
     address public _userManagerAddress;
     address public _poolManagerAddress;
     address public _componentsAddress;
+    address public _baseUbeswapAdapterAddress;
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
@@ -68,6 +69,10 @@ contract AddressResolver is Ownable {
         return _componentsAddress;
     }
 
+    function getBaseUbeswapAdapterAddress() public view returns (address) {
+        return _baseUbeswapAdapterAddress;
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
@@ -76,6 +81,10 @@ contract AddressResolver is Ownable {
 
     function _setStrategyProxyAddress(address strategyProxyAddress) internal isValidAddress(strategyProxyAddress) {
         _strategyProxyAddress = strategyProxyAddress;
+    }
+
+    function _setBaseUbeswapAdapterAddress(address baseUbeswapAdapterAddress) internal isValidAddress(baseUbeswapAdapterAddress) {
+        _baseUbeswapAdapterAddress = baseUbeswapAdapterAddress;
     }
 
     function _setPoolProxyAddress(address poolProxyAddress) internal isValidAddress(poolProxyAddress) {

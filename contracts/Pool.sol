@@ -1,5 +1,7 @@
 pragma solidity >=0.5.0;
 
+import './adapters/interfaces/IBaseUbeswapAdapter.sol';
+
 import './interfaces/IERC20.sol';
 import './interfaces/IPool.sol';
 
@@ -143,21 +145,24 @@ contract Pool is IPool, AddressResolver {
         emit WithdrewFundsFromPool(msg.sender, address(this), amount, block.timestamp);
     }
 
-    function _placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external onlyManager() {
+    function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external override onlyManager() {
         require(numberOfTokens > 0, "Number of tokens must be greater than 0");
         require(currencyKey != address(0), "Invalid currency key");
         require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKey), "Currency key is not available");
+
+        uint tokenToUSD = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).getPrice(currencyKey);
+        address stableCoinAddress = Settings(getSettingsAddress()).getStableCurrencyAddress();
 
         //buying
         if (buyOrSell)
         {
             require(cUSDdebt == 0, "Need to settle debt before making an opening trade");
-
-            uint tokenToUSD = 1; //TODO: get exchange rate from Ubeswap
-
             require(getAvailableFunds() >= numberOfTokens.mul(tokenToUSD), "Not enough funds");
 
-            //TODO: exchange cUSD for token on Ubeswap
+            uint amountInUSD = numberOfTokens.div(tokenToUSD);
+            uint minAmountOut = numberOfTokens.mul(98).div(100); //max slippage 2%
+
+            IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, minAmountOut);
         }
         //selling
         else
@@ -174,11 +179,12 @@ contract Pool is IPool, AddressResolver {
             require(positionIndex < _positionKeys.length, "Don't have a position in this currency");
             require(IERC20(currencyKey).balanceOf(msg.sender) >= numberOfTokens, "Not enough tokens in this currency");
 
-            uint USDToToken = 1; //TODO: get exchange rate from Ubeswap
+            _settleDebt(numberOfTokens.mul(tokenToUSD));
 
-            _settleDebt(numberOfTokens.mul(USDToToken));
+            uint amountInUSD = numberOfTokens.mul(tokenToUSD);
+            uint minAmountOut = amountInUSD.mul(98).div(100); //max slippage 2%
 
-            //TODO: exchange token for cUSD on Ubeswap
+            IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, minAmountOut);
 
             //remove position key if no funds left in currency
             if (IERC20(currencyKey).balanceOf(msg.sender) == 0)
