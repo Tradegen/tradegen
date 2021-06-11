@@ -11,9 +11,15 @@ import './interfaces/IStrategyToken.sol';
 import './interfaces/ITradingBot.sol';
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
+import './interfaces/IERC20.sol';
+import './adapters/interfaces/IBaseUbeswapAdapter.sol';
 
 contract TradingBot is ITradingBot, AddressResolver {
     using SafeMath for uint;
+
+    IERC20 public immutable STABLE_COIN;
+    IERC20 public immutable TOKEN;
+    IBaseUbeswapAdapter public immutable UBESWAP_ADAPTER;
 
     //parameters
     Rule[] private _entryRules;
@@ -22,7 +28,7 @@ contract TradingBot is ITradingBot, AddressResolver {
     uint public _profitTarget; //assumes profit target is %
     uint public _stopLoss; //assumes stop loss is %
     bool public _direction; //false = short, true = long
-    uint public _underlyingAssetSymbol;
+    address public _underlyingAsset;
 
     //state variables
     uint private _currentOrderSize;
@@ -38,24 +44,29 @@ contract TradingBot is ITradingBot, AddressResolver {
                 uint profitTarget,
                 uint stopLoss,
                 bool direction,
-                uint underlyingAssetSymbol) public onlyStrategy(msg.sender) {
+                uint underlyingAssetID) public onlyStrategy(msg.sender) {
+
+        _underlyingAsset = Settings(getSettingsAddress()).getCurrencyKeyFromIndex(underlyingAssetID);
+
+        STABLE_COIN = IERC20(Settings(getSettingsAddress()).getStableCurrencyAddress());
+        TOKEN = IERC20(_underlyingAsset);
+        UBESWAP_ADAPTER = IBaseUbeswapAdapter(Settings(getSettingsAddress()).getBaseUbeswapAdapterAddress());
         
         _maxTradeDuration = maxTradeDuration;
         _profitTarget = profitTarget;
         _stopLoss = stopLoss;
         _direction = direction;
-        _underlyingAssetSymbol = underlyingAssetSymbol;
 
         _strategyAddress = msg.sender;
-        _oracleAddress = Settings(getSettingsAddress()).getOracleAddress(underlyingAssetSymbol);
+        _oracleAddress = Settings(getSettingsAddress()).getOracleAddress(underlyingAssetID);
 
         _generateRules(entryRules, exitRules);
     }
 
     /* ========== VIEWS ========== */
 
-    function getTradingBotParameters() public view override returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, uint) {
-        return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAssetSymbol);
+    function getTradingBotParameters() public view override returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, address) {
+        return (_entryRules, _exitRules, _maxTradeDuration, _profitTarget, _stopLoss, _direction, _underlyingAsset);
     }
 
     function getStrategyAddress() public view override onlyTradingBotRewards(msg.sender) returns (address) {
@@ -99,14 +110,29 @@ contract TradingBot is ITradingBot, AddressResolver {
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    //TODO: send order to decentralized exchange
-    function _placeOrder(bool orderType) private returns (uint, uint) {
-        uint amount = 0; //get amount from TradegenERC20 balanceOf[address(this)]
-        uint size = 0;
-        uint price = 0;
-        emit PlacedOrder(address(this), block.timestamp, _underlyingAssetSymbol, 0, 0, orderType);
+    function _placeOrder(bool buyOrSell) private returns (uint, uint) {
+        uint stableCoinBalance = STABLE_COIN.balanceOf(address(this));
+        uint tokenBalance = TOKEN.balanceOf(address(this));
+        uint tokenToUSD = UBESWAP_ADAPTER.getPrice(_underlyingAsset);
+        uint numberOfTokens = buyOrSell ? stableCoinBalance : tokenBalance;
+        uint amountInUSD = buyOrSell ? numberOfTokens.div(tokenToUSD) : numberOfTokens.mul(tokenToUSD);
+        uint minAmountOut = buyOrSell ? numberOfTokens.mul(98).div(100) : amountInUSD.mul(98).div(100); //max slippage 2%
+        uint numberOfTokensReceived;
 
-        return (size, price);
+        //buying
+        if (buyOrSell)
+        {
+            numberOfTokensReceived = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromBot(address(STABLE_COIN), _underlyingAsset, amountInUSD, minAmountOut);
+        }
+        //selling
+        else
+        {
+            numberOfTokensReceived = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(_underlyingAsset, address(STABLE_COIN), numberOfTokens, minAmountOut);
+        }
+
+        emit PlacedOrder(address(this), block.timestamp, _underlyingAsset, 0, 0, buyOrSell);
+
+        return (numberOfTokensReceived, tokenToUSD);
     } 
 
     function _calculateProfitOrLoss(uint exitPrice) private view returns (bool, uint) {
@@ -220,5 +246,5 @@ contract TradingBot is ITradingBot, AddressResolver {
 
     /* ========== EVENTS ========== */
 
-    event PlacedOrder(address tradingBotAddress, uint256 timestamp, uint underlyingAssetSymbol, uint size, uint price, bool orderType);
+    event PlacedOrder(address tradingBotAddress, uint256 timestamp, address underlyingAsset, uint size, uint price, bool orderType);
 }

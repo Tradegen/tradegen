@@ -152,6 +152,7 @@ contract Pool is IPool, AddressResolver {
 
         uint tokenToUSD = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).getPrice(currencyKey);
         address stableCoinAddress = Settings(getSettingsAddress()).getStableCurrencyAddress();
+        uint numberOfTokensReceived;
 
         //buying
         if (buyOrSell)
@@ -162,7 +163,7 @@ contract Pool is IPool, AddressResolver {
             uint amountInUSD = numberOfTokens.div(tokenToUSD);
             uint minAmountOut = numberOfTokens.mul(98).div(100); //max slippage 2%
 
-            IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, minAmountOut);
         }
         //selling
         else
@@ -184,7 +185,7 @@ contract Pool is IPool, AddressResolver {
             uint amountInUSD = numberOfTokens.mul(tokenToUSD);
             uint minAmountOut = amountInUSD.mul(98).div(100); //max slippage 2%
 
-            IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, minAmountOut);
 
             //remove position key if no funds left in currency
             if (IERC20(currencyKey).balanceOf(msg.sender) == 0)
@@ -194,7 +195,7 @@ contract Pool is IPool, AddressResolver {
             }
         }
 
-        emit PlacedOrder(address(this), currencyKey, buyOrSell, numberOfTokens, block.timestamp);
+        emit PlacedOrder(address(this), currencyKey, buyOrSell, numberOfTokens, numberOfTokensReceived, block.timestamp);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -242,5 +243,5 @@ contract Pool is IPool, AddressResolver {
     event DepositedFundsIntoPool(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
     event WithdrewFundsFromPool(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
     event PaidPerformanceFee(address indexed user, address indexed poolAddress, uint amount, uint timestamp);
-    event PlacedOrder(address indexed poolAddress, address indexed currencyKey, bool buyOrSell, uint amount, uint timestamp);
+    event PlacedOrder(address indexed poolAddress, address indexed currencyKey, bool buyOrSell, uint numberOfTokensSwapped, uint numberOfTokensReceived, uint timestamp);
 }

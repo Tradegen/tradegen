@@ -72,9 +72,10 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
     * @param assetToSwapTo Destination asset
     * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    * @return the number of tokens received
     */
-    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override isValidPoolAddress(msg.sender) {
-        _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
+    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override isValidPoolAddress(msg.sender) returns (uint) {
+        return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
     }
 
     /**
@@ -83,9 +84,10 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
     * @param assetToSwapTo Destination asset
     * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    * @return the number of tokens received
     */
-    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override onlyTradingBot(msg.sender) {
-        _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
+    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override onlyTradingBot(msg.sender) returns (uint) {
+        return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -97,8 +99,9 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
     * @param assetToSwapTo Destination asset
     * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    * @return the amount of tokens received
     */
-    function _swapExactTokensForTokens(address addressToSwapFrom, address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) internal {
+    function _swapExactTokensForTokens(address addressToSwapFrom, address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) internal returns (uint) {
         uint fromAssetDecimals = _getDecimals(assetToSwapFrom);
         uint toAssetDecimals = _getDecimals(assetToSwapTo);
 
@@ -121,6 +124,8 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
         uint[] memory amounts = UBESWAP_ROUTER.swapExactTokensForTokens(amountToSwap, minAmountOut, path, addressToSwapFrom, block.timestamp);
 
         emit Swapped(assetToSwapFrom, assetToSwapTo, amounts[0], amounts[amounts.length - 1]);
+
+        return amounts[amounts.length - 1];
     }
 
     /**

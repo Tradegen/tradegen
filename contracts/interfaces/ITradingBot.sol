@@ -8,7 +8,7 @@ interface ITradingBot {
         address comparatorAddress;
     }
 
-    function getTradingBotParameters() external view returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, uint);
+    function getTradingBotParameters() external view returns (Rule[] memory, Rule[] memory, uint, uint, uint, bool, address);
     function onPriceFeedUpdate(uint latestPrice) external;
     function getStrategyAddress() external view returns (address);
     function checkIfBotIsInATrade() external view returns (bool);

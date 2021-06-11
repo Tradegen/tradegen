@@ -30,6 +30,7 @@ contract Settings is AddressResolver {
     address[] public availableCurrencies;
     mapping (address => uint) public currencyKeyToIndex; //maps to (index + 1); index 0 represents currency key not found
     mapping (string => address) public currencySymbolToAddress;
+    mapping (address => string) public currencyKeyToSymbol;
 
     //oracles
     address[] public oracleAPIAddresses;
@@ -130,6 +131,12 @@ contract Settings is AddressResolver {
         }
 
         return temp;
+    }
+
+    function getCurrencyKeyFromIndex(uint index) public view returns (address) {
+        require(index >= 0 && index < availableCurrencies.length, "Index out of range");
+
+        return availableCurrencies[index];
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -265,8 +272,10 @@ contract Settings is AddressResolver {
         availableCurrencies[oldCurrencyKeyIndex - 1] = newCurrencyKey;
         currencyKeyToIndex[newCurrencyKey] = oldCurrencyKeyIndex;
         currencySymbolToAddress[currencySymbol] = newCurrencyKey;
+        currencyKeyToSymbol[newCurrencyKey] = currencySymbol;
 
         delete currencyKeyToIndex[oldCurrencyKey];
+        delete currencyKeyToSymbol[oldCurrencyKey];
 
         emit UpdatedCurrencyKey(currencySymbol, newCurrencyKey, block.timestamp);
     }
@@ -280,6 +289,7 @@ contract Settings is AddressResolver {
         availableCurrencies.push(currencyKey);
         currencyKeyToIndex[currencyKey] = availableCurrencies.length;
         currencySymbolToAddress[currencySymbol] = currencyKey;
+        currencyKeyToSymbol[currencyKey] = currencySymbol;
 
         emit AddedCurrencyKey(currencyKey, block.timestamp);
     }
