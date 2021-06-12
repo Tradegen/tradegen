@@ -5,8 +5,9 @@ import './libraries/SafeMath.sol';
 
 import './Pool.sol';
 import './AddressResolver.sol';
+import './UserPoolFarm.sol';
 
-contract PoolManager is AddressResolver {
+contract PoolManager is UserPoolFarm, AddressResolver {
     using SafeMath for uint;
 
     address[] public pools;
@@ -70,6 +71,7 @@ contract PoolManager is AddressResolver {
         userToPools[manager].push(pools.length);
         addressToIndex[poolAddress] = pools.length;
         _addPoolAddress(poolAddress);
+        _initializePool(poolAddress);
 
         emit CreatedPool(manager, poolAddress, pools.length - 1, block.timestamp);
     }

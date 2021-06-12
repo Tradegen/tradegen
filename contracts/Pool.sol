@@ -87,6 +87,12 @@ contract Pool is IPool, AddressResolver {
         return poolBalance.mul(balanceOf[user]).div(_supply);
     }
 
+    function getUserTokenBalance(address user) public view override returns (uint) {
+        require(user != address(0), "Invalid user address");
+        
+        return balanceOf[user];
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function deposit(uint amount) external override {
