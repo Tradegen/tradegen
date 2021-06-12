@@ -1,34 +1,21 @@
 pragma solidity >=0.5.0;
 
+//Interfaces
 import './interfaces/IPool.sol';
 import './interfaces/IERC20.sol';
+import './interfaces/IUserPoolFarm.sol';
 
+//Libraries
 import './libraries/SafeMath.sol';
 
+//Inheritance
 import './Ownable.sol';
 
-contract UserPoolFarm is Ownable {
+contract UserPoolFarm is IUserPoolFarm, Ownable {
     using SafeMath for uint;
 
     IERC20 public immutable TRADEGEN;
-
-    struct PoolState {
-        uint128 circulatingSupply;
-        uint120 weeklyRewardsRate;
-        bool validPool;
-    }
-
-    struct UserState {
-        uint32 timestamp;
-        uint16 lastClaimIndex;
-        uint104 leftoverYield;
-        uint104 balance;
-    }
-
-    struct RewardRate {
-        uint128 timestamp;
-        uint128 weeklyRewardsRate;
-    }
+    address private _poolManagerAddress;
 
     RewardRate[] public rewardsRateHistory; //Stores previous reward rates and the timestamp each rate was changed
     uint public weeklyRewardsRate;
@@ -38,8 +25,9 @@ contract UserPoolFarm is Ownable {
     mapping (address => mapping (address => UserState)) public userStates; //pool->user->state
     mapping (address => address[]) public userInvestedPools;
 
-    constructor(IERC20 baseTradegen) public Ownable() {
+    constructor(IERC20 baseTradegen, address poolManagerAddress) public Ownable() {
         TRADEGEN = baseTradegen;
+        _poolManagerAddress = poolManagerAddress;
         rewardsRateHistory.push(RewardRate(uint128(block.timestamp), 0));
     }
 
@@ -50,7 +38,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @return uint Circulating supply of the pool
     */
-    function getCirculatingSupply(address poolAddress) external view returns (uint) {
+    function getCirculatingSupply(address poolAddress) external view override returns (uint) {
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
 
@@ -63,7 +51,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @return uint The weekly rewards rate of the pool
     */
-    function getWeeklyRewardsRate(address poolAddress) external view returns (uint) {
+    function getWeeklyRewardsRate(address poolAddress) external view override returns (uint) {
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
 
@@ -76,7 +64,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @return uint The number of LP tokens the user staked in the pool
     */
-    function balanceOf(address account, address poolAddress) public view returns (uint) {
+    function balanceOf(address account, address poolAddress) public view override returns (uint) {
         require(account != address(0), "Invalid account address");
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
@@ -88,7 +76,7 @@ contract UserPoolFarm is Ownable {
     * @dev Returns the addresses of pools the user is invested in
     * @return address[] The addresses of pools the user is invested in
     */
-    function getUserInvestedPools() external view returns (address[] memory) {
+    function getUserInvestedPools() external view override returns (address[] memory) {
         return userInvestedPools[msg.sender];
     }
 
@@ -97,7 +85,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @return uint The amount of TGEN yield the user has available for the pool
     */
-    function getAvailableYieldForPool(address poolAddress) external view returns (uint) {
+    function getAvailableYieldForPool(address poolAddress) external view override returns (uint) {
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
 
@@ -111,7 +99,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @param amount The number of LP tokens to stake in the pool
     */
-    function stake(address poolAddress, uint amount) external {
+    function stake(address poolAddress, uint amount) external override {
         require(amount > 0, "Cannot stake 0");
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
@@ -155,7 +143,7 @@ contract UserPoolFarm is Ownable {
     * @param poolAddress Address of the pool
     * @param amount The number of LP tokens to unstake from the pool
     */
-    function unstake(address poolAddress, uint amount) external {
+    function unstake(address poolAddress, uint amount) external override {
         require(amount > 0, "Cannot withdraw 0");
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
@@ -196,7 +184,7 @@ contract UserPoolFarm is Ownable {
     * @dev Claims all available yield for the user in the specified pool
     * @param poolAddress Address of the pool
     */
-    function claimRewards(address poolAddress) external {
+    function claimRewards(address poolAddress) external override {
         require(poolAddress != address(0), "Invalid pool address");
         require(poolStates[poolAddress].validPool, "Invalid pool address");
 
@@ -252,17 +240,6 @@ contract UserPoolFarm is Ownable {
     }
 
     /**
-    * @dev Initializes the PoolState for the given pool
-    * @param poolAddress Address of the pool
-    */
-    function _initializePool(address poolAddress) internal {
-        require(poolAddress != address(0), "Invalid pool address");
-        require(!poolStates[poolAddress].validPool, "Pool already exists");
-
-        poolStates[poolAddress] = PoolState(0, 0, true);
-    }
-
-    /**
     * @dev Calculates the weekly rewards rate for the given pool
     * @param poolAddress Address of the pool
     */
@@ -288,6 +265,24 @@ contract UserPoolFarm is Ownable {
         rewardsRateHistory.push(RewardRate(uint128(block.timestamp), uint128(newWeeklyRewardsRate)));
 
         emit UpdatedWeeklyRewardsRate(newWeeklyRewardsRate, block.timestamp);
+    }
+
+    /**
+    * @dev Initializes the PoolState for the given pool
+    * @param poolAddress Address of the pool
+    */
+    function initializePool(address poolAddress) public onlyPoolManager() {
+        require(poolAddress != address(0), "Invalid pool address");
+        require(!poolStates[poolAddress].validPool, "Pool already exists");
+
+        poolStates[poolAddress] = PoolState(0, 0, true);
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier onlyPoolManager() {
+        require(msg.sender == _poolManagerAddress, "Only the PoolManager contract can call this function");
+        _;
     }
 
     /* ========== EVENTS ========== */

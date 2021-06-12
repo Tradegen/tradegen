@@ -4,6 +4,7 @@ import './adapters/interfaces/IBaseUbeswapAdapter.sol';
 
 import './interfaces/IERC20.sol';
 import './interfaces/IPool.sol';
+import './interfaces/IUserPoolFarm.sol';
 
 import './libraries/SafeMath.sol';
 
@@ -13,6 +14,8 @@ import './TradegenERC20.sol';
 
 contract Pool is IPool, AddressResolver {
     using SafeMath for uint;
+
+    IUserPoolFarm public immutable FARM;
 
     string public _name;
     uint public _supply;
@@ -27,10 +30,11 @@ contract Pool is IPool, AddressResolver {
     mapping (address => uint) public investorToIndex; //maps to (index + 1) in investors array; index 0 represents investor not found
     address[] public investors;
 
-    constructor(string memory name, uint performanceFee, address manager) public onlyPoolManager(msg.sender) {
+    constructor(string memory name, uint performanceFee, address manager, IUserPoolFarm userPoolFarm) public onlyPoolManager(msg.sender) {
         _name = name;
         _manager = manager;
         _performanceFee = performanceFee;
+        FARM = userPoolFarm;
     }
 
     /* ========== VIEWS ========== */
@@ -89,7 +93,7 @@ contract Pool is IPool, AddressResolver {
 
     function getUserTokenBalance(address user) public view override returns (uint) {
         require(user != address(0), "Invalid user address");
-        
+
         return balanceOf[user];
     }
 
@@ -121,14 +125,17 @@ contract Pool is IPool, AddressResolver {
         require(user != address(0), "Invalid user address");
         require(amount > 0, "Withdrawal must be greater than 0");
 
-        uint poolBalance = getPoolBalance();
         uint userBalance = getUserBalance(user);
-        uint numberOfLPTokens = amount.mul(poolBalance).div(_supply);
-        uint cUSDtoTGEN = 1; //TODO: get exchange rate from Ubeswap
-        uint TGENequivalent = amount.mul(cUSDtoTGEN);
-        uint fee = (userBalance > balanceOf[user]) ? _payPerformanceFee(user, userBalance, amount, cUSDtoTGEN) : 0;
+        uint numberOfLPTokensStaked = FARM.balanceOf(user, address(this));
+        uint availableTokensToWithdraw = userBalance.sub(numberOfLPTokensStaked);
 
-        require(userBalance >= amount, "Not enough funds");
+        require(availableTokensToWithdraw >= amount, "Not enough funds");
+
+        uint poolBalance = getPoolBalance();
+        uint numberOfLPTokens = amount.mul(poolBalance).div(_supply);
+        uint TGENtoUSD = IBaseUbeswapAdapter(getBaseUbeswapAdapterAddress()).getPrice(Settings(getSettingsAddress()).getBaseTradegenAddress());
+        uint TGENequivalent = amount.mul(TGENtoUSD);
+        uint fee = (userBalance > balanceOf[user]) ? _payPerformanceFee(user, userBalance, amount, TGENtoUSD) : 0;
 
         cUSDdebt.add(amount);
         TGENdebt.add(TGENequivalent);

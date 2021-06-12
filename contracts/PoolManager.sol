@@ -1,21 +1,26 @@
 pragma solidity >=0.5.0;
 
-//libraries
+//Interfaces
+import './interfaces/IUserPoolFarm.sol';
+
+//Libraries
 import './libraries/SafeMath.sol';
 
 import './Pool.sol';
 import './AddressResolver.sol';
-import './UserPoolFarm.sol';
 
-contract PoolManager is UserPoolFarm, AddressResolver {
+contract PoolManager is AddressResolver {
     using SafeMath for uint;
+
+    IUserPoolFarm public immutable FARM;
 
     address[] public pools;
     mapping (address => uint[]) public userToPools;
     mapping (address => uint[]) public userToPositions;
     mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
 
-    constructor() public {
+    constructor(IUserPoolFarm userPoolFarm) public {
+        FARM = userPoolFarm;
         _setPoolManagerAddress(address(this));
     }
 
@@ -58,20 +63,16 @@ contract PoolManager is UserPoolFarm, AddressResolver {
         delete userToPositions[user][userToPositions[user].length - 1];
     }
 
-    function _createPool(string memory poolName,
-                        uint performanceFee,
-                        address manager) internal {
+    function _createPool(string memory poolName, uint performanceFee, address manager) internal {
 
-        Pool temp = new Pool(poolName,
-                            performanceFee,
-                            manager);
+        Pool temp = new Pool(poolName, performanceFee, manager, FARM);
 
         address poolAddress = address(temp);
         pools.push(poolAddress);
         userToPools[manager].push(pools.length);
         addressToIndex[poolAddress] = pools.length;
         _addPoolAddress(poolAddress);
-        _initializePool(poolAddress);
+        FARM.initializePool(poolAddress);
 
         emit CreatedPool(manager, poolAddress, pools.length - 1, block.timestamp);
     }
