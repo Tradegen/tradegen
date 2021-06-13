@@ -4,6 +4,7 @@ pragma solidity >=0.5.0;
 import '../interfaces/IUniswapV2Router02.sol';
 import '../interfaces/IERC20.sol';
 import '../interfaces/ISettings.sol';
+import '../interfaces/IAddressResolver.sol';
 import './interfaces/IBaseUbeswapAdapter.sol';
 
 //Libraries
@@ -16,11 +17,13 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     uint public constant override MAX_SLIPPAGE_PERCENT = 10; //10% slippage
 
     IUniswapV2Router02 public immutable override UBESWAP_ROUTER;
-    ISettings public immutable override SETTINGS;
+    ISettings public immutable SETTINGS;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    constructor(IUniswapV2Router02 ubeswapRouter, ISettings settings) public {
+    constructor(IUniswapV2Router02 ubeswapRouter, ISettings settings, IAddressResolver addressResolver) public {
         UBESWAP_ROUTER = ubeswapRouter;
         SETTINGS = settings;
+        ADDRESS_RESOLVER = addressResolver;
     }
 
     /* ========== VIEWS ========== */
@@ -32,7 +35,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     */
     function getPrice(address currencyKey) public view override returns(uint) {
         require(currencyKey != address(0), "Invalid currency key");
-        require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKey), "Currency is not available");
+        require(SETTINGS.checkIfCurrencyIsAvailable(currencyKey), "Currency is not available");
 
         address stableCoinAddress = SETTINGS.getStableCoinAddress();
         address[] memory path = new address[](2);
@@ -53,8 +56,8 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) public view override returns (uint) {
         require(currencyKeyIn != address(0), "Invalid currency key in");
         require(currencyKeyOut != address(0), "Invalid currency key out");
-        require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKeyIn), "Currency is not available");
-        require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKeyOut), "Currency is not available");
+        require(SETTINGS.checkIfCurrencyIsAvailable(currencyKeyIn), "Currency is not available");
+        require(SETTINGS.checkIfCurrencyIsAvailable(currencyKeyOut), "Currency is not available");
         require(numberOfTokens > 0, "Number of tokens must be greater than 0");
 
         address[] memory path = new address[](2);
@@ -75,7 +78,9 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
     * @return the number of tokens received
     */
-    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override isValidPoolAddress(msg.sender) returns (uint) {
+    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override returns (uint) {
+        require(ADDRESS_RESOLVER.checkIfPoolAddressIsValid(msg.sender), "Only the pool can call this function");
+
         return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
     }
 
@@ -87,7 +92,9 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
     * @return the number of tokens received
     */
-    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override onlyTradingBot(msg.sender) returns (uint) {
+    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external override returns (uint) {
+        require(ADDRESS_RESOLVER.checkIfTradingBotAddressIsValid(msg.sender), "Only the trading bot can call this function");
+
         return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
     }
 
@@ -124,7 +131,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
 
         uint[] memory amounts = UBESWAP_ROUTER.swapExactTokensForTokens(amountToSwap, minAmountOut, path, addressToSwapFrom, block.timestamp);
 
-        emit Swapped(assetToSwapFrom, assetToSwapTo, amounts[0], amounts[amounts.length - 1]);
+        emit Swapped(assetToSwapFrom, assetToSwapTo, amounts[0], amounts[amounts.length - 1], block.timestamp);
 
         return amounts[amounts.length - 1];
     }
@@ -136,4 +143,8 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     function _getDecimals(address asset) internal view returns (uint) {
         return IERC20(asset).decimals();
     }
+
+    /* ========== EVENTS ========== */
+
+    event Swapped(address fromAsset, address toAsset, uint fromAmount, uint receivedAmount, uint timestamp);
 }

@@ -3,8 +3,6 @@ pragma solidity >=0.5.0;
 import '../../interfaces/IUniswapV2Router02.sol';
 
 interface IBaseUbeswapAdapter {
-    event Swapped(address fromAsset, address toAsset, uint fromAmount, uint receivedAmount);
-
     function MAX_SLIPPAGE_PERCENT() external returns (uint);
 
     function UBESWAP_ROUTER() external returns (IUniswapV2Router02);
