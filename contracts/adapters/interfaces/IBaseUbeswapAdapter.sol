@@ -31,7 +31,7 @@ interface IBaseUbeswapAdapter {
     * @param assetToSwapTo Destination asset
     * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
-    * @return the number of tokens received
+    * @return uint The number of tokens received
     */
     function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
 
@@ -41,7 +41,7 @@ interface IBaseUbeswapAdapter {
     * @param assetToSwapTo Destination asset
     * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
     * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
-    * @return the number of tokens received
+    * @return uint The number of tokens received
     */
     function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
 }
