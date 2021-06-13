@@ -1,32 +1,21 @@
 pragma solidity >=0.5.0;
 
+//Interfaces
+import './interfaces/ISettings.sol';
+
+//Libraries
 import './libraries/SafeMath.sol';
 
-import './AddressResolver.sol';
+//Inheritance
+import './Ownable.sol';
 
-contract Settings is AddressResolver {
+contract Settings is ISettings, Ownable {
     using SafeMath for uint;
 
-    struct OracleData {
-        address oracleAddress;
-        string oracleName;
-    }
-
-    //settings
-    uint public stakingYield; //APY% for staking rewards
-    uint public transactionFee; //initialy 0.3%
-    uint public voteLimit;
-    uint public votingReward;
-    uint public votingPenalty;
-    uint public minimumStakeToVote;
-    uint public strategyApprovalThreshold;
-    uint public maximumNumberOfEntryRules;
-    uint public maximumNumberOfExitRules;
-    uint public maximumNumberOfPoolsPerUser;
-    uint public maximumPerformanceFee;
+    mapping (string => uint) public parameters;
 
     //currencies
-    address public cUSDaddress;
+    address public cUSDAddress;
     address[] public availableCurrencies;
     mapping (address => uint) public currencyKeyToIndex; //maps to (index + 1); index 0 represents currency key not found
     mapping (string => address) public currencySymbolToAddress;
@@ -37,92 +26,65 @@ contract Settings is AddressResolver {
     mapping (address => uint) public isValidOracleAPIAddress; // maps to (index + 1) in oracleAPIAddresses array; index 0 represents invalid API address
     mapping (address => string) public oracleAddressToName;
 
-    //strategies
-    mapping (uint => string) public underlyingAssetIDToSymbol;
-    mapping (uint => address) public underlyingAssetIDToOracleAddress;
-    mapping(string => uint) public symbolToUnderlyingAssetID;
-
-    constructor() public {
-        voteLimit = 10;
-        stakingYield = 12;
-        transactionFee = 3;
-
-        _setSettingsAddress(address(this));
-    }
+    /**
+    * @notice Initial parameters and values:
+    *         StakingYield - 12%; 
+    *         TransactionFee - 0.3%;
+    *         VoteLimit - 10;
+    *         VotingReward - 5 TGEN;
+    *         VotingPenalty - 50 TGEN;
+    *         MinimumStakeToVote - 250 TGEN;
+    *         StrategyApprovalThreshold - 80%;
+    *         MaximumNumberOfEntryRules - 7;
+    *         MaximumNumberOfExitRules - 7;
+    *         MaximumNumberOfPoolsPerUser - 1;
+    *         MaximumPerformanceFee - 50%;
+    */
+    constructor() public Ownable() {}
 
     /* ========== VIEWS ========== */
 
-    function checkIfSymbolIDIsValid(uint symbolID) public view returns (bool) {
-        return (symbolID > 0 && underlyingAssetIDToOracleAddress[symbolID] != address(0));
+    /**
+    * @dev Given the name of a parameter, returns the value of the parameter
+    * @param parameter The name of the parameter to get value for
+    * @return uint The value of the given parameter
+    */
+    function getParameterValue(string memory parameter) public view override returns(uint) {
+        return parameters[parameter];
     }
 
-    function checkIfOracleAddressIsValid(address addressToCheck) public view returns (bool) {
-        return (currencyKeyToIndex[addressToCheck] > 0);
-    }
-
-    function getVoteLimit() public view returns (uint) {
-        return voteLimit;
-    }
-
-    function getVotingReward() public view returns (uint) {
-        return votingReward;
-    }
-
-    function getVotingPenalty() public view returns (uint) {
-        return votingPenalty;
-    }
-
-    function getStakingYield() public view returns (uint) {
-        return stakingYield;
-    }
-
-    function getStrategyApprovalThreshold() public view returns (uint) {
-        return strategyApprovalThreshold;
-    }
-
-    function getTransactionFee() public view returns (uint) {
-        return transactionFee;
-    }
-
-    function getMaximumNumberOfEntryRules() public view returns (uint) {
-        return maximumNumberOfEntryRules;
-    }
-
-    function getMaximumNumberOfExitRules() public view returns (uint) {
-        return maximumNumberOfExitRules;
-    }
-
-    function getOracleAddress(uint underlyingAssetID) public view returns (address) {
-        return underlyingAssetIDToOracleAddress[underlyingAssetID];
-    }
-
-    function getUnderlyingAssetSymbol(uint underlyingAssetID) public view returns (string memory) {
-        return underlyingAssetIDToSymbol[underlyingAssetID];
-    }
-
-    function getAvailableCurrencies() public view returns (address[] memory) {
+    /**
+    * @dev Returns the addresses of supported currencies for trading
+    * @return address[] An array of addresses of supported currencies
+    */
+    function getAvailableCurrencies() external view override returns(address[] memory) {
         return availableCurrencies;
     }
 
-    function checkIfCurrencyIsAvailable(address currency) public view returns (bool) {
-        require(currency != address(0), "Invalid currency key");
+    /**
+    * @dev Given the address of a currency, returns the currency's symbol
+    * @param currencyKey The address of the currency
+    * @return string The currency symbol
+    */
+    function getCurrencySymbol(address currencyKey) external view override isValidAddress(currencyKey) returns(string memory) {
+        require(currencyKeyToIndex[currencyKey] > 0, "Currency not supported");
 
-        return currencyKeyToIndex[currency] > 0;
+        return currencyKeyToSymbol[currencyKey];
     }
 
-    function getStableCurrencyAddress() public view returns (address) {
-        return cUSDaddress;
+    /**
+    * @dev Returns the address of the stable coin
+    * @return address The stable coin address
+    */
+    function getStableCoinAddress() public view override returns(address) {
+        return cUSDAddress;
     }
 
-    function getMaximumNumberOfPoolsPerUser() public view returns (uint) {
-        return maximumNumberOfPoolsPerUser;
-    }
-
-    function getMaximumPerformanceFee() public view returns (uint) {
-        return maximumPerformanceFee;
-    }
-
-    function getOracleAPIAddresses() public view returns (OracleData[] memory) {
+    /**
+    * @dev Returns the addresses and names of supported oracle APIs
+    * @return OracleData[] An array of oracle API addresses and names
+    */
+    function getOracleAPIs() public view override returns(OracleData[] memory) {
         OracleData[] memory temp = new OracleData[](oracleAPIAddresses.length);
 
         for (uint i = 0; i < oracleAPIAddresses.length; i++)
@@ -133,136 +95,51 @@ contract Settings is AddressResolver {
         return temp;
     }
 
-    function getCurrencyKeyFromIndex(uint index) public view returns (address) {
-        require(index >= 0 && index < availableCurrencies.length, "Index out of range");
+    /**
+    * @dev Given the address of an oracle API, returns the name of the oracle API
+    * @param oracleAddress The address of the oracle API
+    * @return string The oracle API name
+    */
+    function getOracleAPIName(address oracleAddress) external view override isValidAddress(oracleAddress) returns(string memory) {
+        require(isValidOracleAPIAddress[oracleAddress] > 0, "Oracle API supported");
 
-        return availableCurrencies[index];
+        return oracleAddressToName[oracleAddress];
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    function addNewAsset(uint underlyingAssetID, string memory symbol, address oracleAddress) public onlyOwner() {
-        require(oracleAddress != address(0), "Invalid oracle address");
-        require(underlyingAssetID > 0, "Asset ID out of range");
-        require(underlyingAssetIDToOracleAddress[underlyingAssetID] == address(0), "Asset already exists");
-        require(symbolToUnderlyingAssetID[symbol] == 0, "Symbol already exists");
+    /**
+    * @dev Updates the address for the given contract; meant to be called by Settings contract owner
+    * @param parameter The name of the parameter to change
+    * @param newValue The new value of the given parameter
+    */
+    function setParameterValue(string memory parameter, uint newValue) external override onlyOwner {
+        require(newValue > 0, "Value cannot be negative");
 
-        underlyingAssetIDToOracleAddress[underlyingAssetID] = oracleAddress;
-        underlyingAssetIDToSymbol[underlyingAssetID] = symbol;
-        symbolToUnderlyingAssetID[symbol] = underlyingAssetID;
+        uint oldValue = parameters[parameter];
+        parameters[parameter] = newValue;
 
-        emit AddedAsset(underlyingAssetID, symbol, oracleAddress, block.timestamp);
+        emit SetParameterValue(parameter, oldValue, newValue, block.timestamp);
     }
 
-    function updateOracleAddress(uint underlyingAssetID, address newOracleAddress) public onlyOwner() {
-        require(newOracleAddress != address(0), "Invalid oracle address");
+    /**
+    * @dev Sets the address of the stable coin
+    * @param stableCoinAddress The address of the stable coin
+    */
+    function setStableCoinAddress(address stableCoinAddress) external override isValidAddress(stableCoinAddress) {
+        address oldAddress = cUSDAddress;
+        cUSDAddress = stableCoinAddress;
 
-        underlyingAssetIDToOracleAddress[underlyingAssetID] = newOracleAddress;
-
-        emit UpdatedOracleAddress(underlyingAssetID, newOracleAddress, block.timestamp);
+        emit UpdatedStableCoinAddress(oldAddress, stableCoinAddress, block.timestamp);
     }
 
-    function setStakingYield(uint newYield) public onlyOwner() {
-        require(newYield > 0, "Yield cannot be 0");
-
-        stakingYield = newYield;
-
-        emit UpdatedStakingYield(newYield, block.timestamp);
-    }
-
-    function setTransactionFee(uint newTransactionFee) public onlyOwner() {
-        require(newTransactionFee > 0, "Transaction fee cannot be 0");
-
-        transactionFee = newTransactionFee;
-
-        emit UpdatedStakingYield(newTransactionFee, block.timestamp);
-    }
-
-    function setMaximumNumberOfPoolsPerUser(uint newMaximumNumberOfPoolsPerUser) public onlyOwner() {
-        require(newMaximumNumberOfPoolsPerUser > 0, "Maximum number of pools per user cannot be 0");
-
-        maximumNumberOfPoolsPerUser = newMaximumNumberOfPoolsPerUser;
-
-        emit UpdatedMaximumNumberOfPoolsPerUser(newMaximumNumberOfPoolsPerUser, block.timestamp);
-    }
-
-    function setMaximumPerformanceFee(uint newMaximumPerformanceFee) public onlyOwner() {
-        require(newMaximumPerformanceFee > 0, "Maximum performance fee cannot be 0");
-        require(newMaximumPerformanceFee < 100, "Maximum performance fee must be less than 100%");
-
-        maximumPerformanceFee = newMaximumPerformanceFee;
-
-        emit UpdatedMaximumPerformanceFee(newMaximumPerformanceFee, block.timestamp);
-    }
-
-    function setVoteLimit(uint newVoteLimit) public onlyOwner() {
-        require(newVoteLimit > 0, "Vote limit cannot be 0");
-
-        voteLimit = newVoteLimit;
-
-        emit UpdatedStakingYield(newVoteLimit, block.timestamp);
-    }
-
-    function setVotingReward(uint newVotingReward) public onlyOwner() {
-        require(newVotingReward > 0, "Voting reward cannot be 0");
-
-        votingReward = newVotingReward;
-
-        emit UpdatedVotingReward(newVotingReward, block.timestamp);
-    }
-
-    function setVotingPenalty(uint newVotingPenalty) public onlyOwner() {
-        require(newVotingPenalty > 0, "Voting penalty cannot be 0");
-
-        votingPenalty = newVotingPenalty;
-
-        emit UpdatedVotingPenalty(newVotingPenalty, block.timestamp);
-    }
-
-    function setMinimumStakeToVote(uint newMinimumStakeToVote) public onlyOwner() {
-        require(newMinimumStakeToVote > 0, "Minimum stake cannot be 0");
-
-        minimumStakeToVote = newMinimumStakeToVote;
-
-        emit UpdatedMinimumStakeToVote(newMinimumStakeToVote, block.timestamp);
-    }
-
-    function setStrategyApprovalThreshold(uint newStrategyApprovalThreshold) public onlyOwner() {
-        require(newStrategyApprovalThreshold > 0, "Strategy approval threshold cannot be 0");
-        require(newStrategyApprovalThreshold < voteLimit, "Strategy approval threshold must be less than vote limit");
-
-        strategyApprovalThreshold = newStrategyApprovalThreshold;
-
-        emit UpdatedStrategyApprovalThreshold(newStrategyApprovalThreshold, block.timestamp);
-    }
-
-    function setMaximumNumberOfEntryRules(uint newMaximumNumberOfEntryRules) public onlyOwner() {
-        require(newMaximumNumberOfEntryRules > 0, "Maximum number of entry rules cannot be 0");
-
-        maximumNumberOfEntryRules = newMaximumNumberOfEntryRules;
-
-        emit UpdatedMaximumNumberOfEntryRules(newMaximumNumberOfEntryRules, block.timestamp);
-    }
-
-    function setMaximumNumberOfExitRules(uint newMaximumNumberOfExitRules) public onlyOwner() {
-        require(newMaximumNumberOfExitRules > 0, "Maximum number of exit rules cannot be 0");
-
-        maximumNumberOfExitRules = newMaximumNumberOfExitRules;
-
-        emit UpdatedMaximumNumberOfExitRules(newMaximumNumberOfExitRules, block.timestamp);
-    }
-
-    function setStableCurrencyAddress(address stableCurrencyAddress) public onlyOwner() {
-        require(stableCurrencyAddress != address(0), "Invalid address");
-
-        cUSDaddress = stableCurrencyAddress;
-
-        emit UpdatedStableCurrencyAddress(stableCurrencyAddress, block.timestamp);
-    }
-
-    function updateCurrencyKey(string memory currencySymbol, address newCurrencyKey) public onlyOwner() {
-        require(newCurrencyKey != address(0), "Invalid address");
-        require(newCurrencyKey != cUSDaddress, "New currency key cannot equal stable token address");
+    /**
+    * @dev Updates the address of the given currency
+    * @param currencySymbol The currency symbol
+    * @param newCurrencyKey The new address for the given currency
+    */
+    function updateCurrencyKey(string memory currencySymbol, address newCurrencyKey) external override onlyOwner isValidAddress(newCurrencyKey) {
+        require(newCurrencyKey != cUSDAddress, "New currency key cannot equal stable token address");
         require(currencyKeyToIndex[newCurrencyKey] == 0, "New currency key already exists");
         require(currencySymbolToAddress[currencySymbol] != address(0), "Currency symbol not found");
 
@@ -277,12 +154,16 @@ contract Settings is AddressResolver {
         delete currencyKeyToIndex[oldCurrencyKey];
         delete currencyKeyToSymbol[oldCurrencyKey];
 
-        emit UpdatedCurrencyKey(currencySymbol, newCurrencyKey, block.timestamp);
+        emit UpdatedCurrencyKey(currencySymbol, oldCurrencyKey, newCurrencyKey, block.timestamp);
     }
 
-    function addCurrencyKey(string memory currencySymbol, address currencyKey) public onlyOwner() {
-        require(currencyKey != address(0), "Invalid address");
-        require(currencyKey != cUSDaddress, "Cannot equal stable token address");
+    /**
+    * @dev Adds a new tradable currency to the platform
+    * @param currencySymbol The symbol of the currency to add
+    * @param currencyKey The address of the currency to add
+    */
+    function addCurrencyKey(string memory currencySymbol, address currencyKey) external override onlyOwner isValidAddress(currencyKey) {
+        require(currencyKey != cUSDAddress, "Cannot equal stable token address");
         require(currencyKeyToIndex[currencyKey] == 0, "Currency key already exists");
         require(currencySymbolToAddress[currencySymbol] == address(0), "Currency symbol already exists");
 
@@ -294,9 +175,12 @@ contract Settings is AddressResolver {
         emit AddedCurrencyKey(currencyKey, block.timestamp);
     }
 
-    function updateOracleAPIAddress(address oldOracleAddress, address newOracleAddress) public onlyOwner() {
-        require(newOracleAddress != address(0), "Invalid address");
-        require(oldOracleAddress != address(0), "Invalid address");
+    /**
+    * @dev Updates the address of a given oracle API
+    * @param oldOracleAddress The address of the oracle API to update
+    * @param newOracleAddress The new address of the given oracle API
+    */
+    function updateOracleAPIAddress(address oldOracleAddress, address newOracleAddress) external override onlyOwner isValidAddress(oldOracleAddress) isValidAddress(newOracleAddress) {
         require(isValidOracleAPIAddress[oldOracleAddress] > 0, "Old oracle address doesn't exist");
         require(isValidOracleAPIAddress[newOracleAddress] == 0, "New oracle address already exists");
 
@@ -309,11 +193,15 @@ contract Settings is AddressResolver {
         delete isValidOracleAPIAddress[oldOracleAddress];
         delete oracleAddressToName[oldOracleAddress];
 
-        emit UpdatedOracleAPIAddress(oracleAddressToName[newOracleAddress], newOracleAddress, block.timestamp);
+        emit UpdatedOracleAPIAddress(oracleAddressToName[newOracleAddress], oldOracleAddress, newOracleAddress, block.timestamp);
     }
 
-    function addOracleAPIAddress(string memory name, address oracleAddress) public onlyOwner() {
-        require(oracleAddress != address(0), "Invalid address");
+    /**
+    * @dev Adds a new oracle API to the platform
+    * @param name The name of the oracle API
+    * @param oracleAddress The address of the oracle API
+    */
+    function addOracleAPIAddress(string memory name, address oracleAddress) external override onlyOwner isValidAddress(oracleAddress) {
         require(isValidOracleAPIAddress[oracleAddress] == 0, "Oracle address already exists");
 
         oracleAPIAddresses.push(oracleAddress);
@@ -323,24 +211,19 @@ contract Settings is AddressResolver {
         emit AddedOracleAPIAddress(oracleAddress, block.timestamp);
     }
 
+    /* ========== MODIFIERS ========== */
+
+    modifier isValidAddress(address addressToCheck) {
+        require(addressToCheck != address(0), "Address is not valid");
+        _;
+    }
+
     /* ========== EVENTS ========== */
 
-    event AddedAsset(uint underlyingAssetID, string symbol, address oracleAddress, uint timestamp);
     event AddedCurrencyKey(address currencyKey, uint timestamp);
     event AddedOracleAPIAddress(address oracleAddress, uint timestamp);
-    event UpdatedOracleAddress(uint underlyingAssetID, address newOracleAddress, uint timestamp);
-    event UpdatedStakingYield(uint newYield, uint timestamp);
-    event UpdatedTransactionFee(uint newTransactionFee, uint timestamp);
-    event UpdatedVoteLimit(uint newVoteLimit, uint timestamp);
-    event UpdatedVotingReward(uint newVotingReward, uint timestamp);
-    event UpdatedMaximumNumberOfPoolsPerUser(uint newMaximumNumberOfPoolsPerUser, uint timestamp);
-    event UpdatedMaximumPerformanceFee(uint newMaximumPerformanceFee, uint timestamp);
-    event UpdatedVotingPenalty(uint newVotingPenalty, uint timestamp);
-    event UpdatedMinimumStakeToVote(uint newMinimumStakeToVote, uint timestamp);
-    event UpdatedStrategyApprovalThreshold(uint newStrategyApprovalThreshold, uint timestamp);
-    event UpdatedMaximumNumberOfEntryRules(uint newMaximumNumberOfEntryRules, uint timestamp);
-    event UpdatedMaximumNumberOfExitRules(uint newMaximumNumberOfExitRules, uint timestamp);
-    event UpdatedStableCurrencyAddress(address stableCurrencyAddress, uint timestamp);
-    event UpdatedCurrencyKey(string currencySymbol, address newCurrencyKey, uint timestamp);   
-    event UpdatedOracleAPIAddress(string oracleName, address newOracleAddress, uint timestamp);
+    event SetParameterValue(string parameter,uint oldValue, uint newValue, uint timestamp);
+    event UpdatedStableCoinAddress(address oldAddress, address stableCurrencyAddress, uint timestamp);
+    event UpdatedCurrencyKey(string currencySymbol, address oldCurrencyKey, address newCurrencyKey, uint timestamp); 
+    event UpdatedOracleAPIAddress(string oracleName, address oldOracleAddress, address newOracleAddress, uint timestamp);
 }

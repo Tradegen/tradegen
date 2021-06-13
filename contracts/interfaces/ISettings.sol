@@ -6,7 +6,7 @@ interface ISettings {
         address oracleAddress;
         string oracleName;
     }
-    
+
     /**
     * @dev Given the name of a parameter, returns the value of the parameter
     * @param parameter The name of the parameter to get value for
@@ -28,10 +28,16 @@ interface ISettings {
     function getCurrencySymbol(address currencyKey) external view returns(string memory);
 
     /**
-    * @dev Returns the addresses of supported oracle APIs
-    * @return address[] An array of oracle API addresses
+    * @dev Returns the address of the stable coin
+    * @return address The stable coin address
     */
-    function getOracleAPIAddresses() external view returns(address[] memory);
+    function getStableCoinAddress() external view returns(address);
+
+    /**
+    * @dev Returns the addresses and names of supported oracle APIs
+    * @return OracleData[] An array of oracle API addresses and names
+    */
+    function getOracleAPIs() external view returns(OracleData[] memory);
 
     /**
     * @dev Given the address of an oracle API, returns the name of the oracle API
@@ -46,6 +52,12 @@ interface ISettings {
     * @param newValue The new value of the given parameter
     */
     function setParameterValue(string memory parameter, uint newValue) external;
+
+    /**
+    * @dev Sets the address of the stable coin
+    * @param stableCoinAddress The address of the stable coin
+    */
+    function setStableCoinAddress(address stableCoinAddress) external;
 
     /**
     * @dev Updates the address of the given currency
