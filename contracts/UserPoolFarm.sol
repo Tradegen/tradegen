@@ -2,7 +2,7 @@ pragma solidity >=0.5.0;
 
 //Interfaces
 import './interfaces/IPool.sol';
-import './interfaces/IERC20.sol';
+import './interfaces/ITradegen.sol';
 import './interfaces/IUserPoolFarm.sol';
 
 //Libraries
@@ -14,7 +14,7 @@ import './Ownable.sol';
 contract UserPoolFarm is IUserPoolFarm, Ownable {
     using SafeMath for uint;
 
-    IERC20 public immutable TRADEGEN;
+    ITradegen public immutable TRADEGEN;
     address private _poolManagerAddress;
 
     RewardRate[] public rewardsRateHistory; //Stores previous reward rates and the timestamp each rate was changed
@@ -25,7 +25,7 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     mapping (address => mapping (address => UserState)) public userStates; //pool->user->state
     mapping (address => address[]) public userInvestedPools;
 
-    constructor(IERC20 baseTradegen, address poolManagerAddress) public Ownable() {
+    constructor(ITradegen baseTradegen, address poolManagerAddress) public Ownable() {
         TRADEGEN = baseTradegen;
         _poolManagerAddress = poolManagerAddress;
         rewardsRateHistory.push(RewardRate(uint128(block.timestamp), 0));
@@ -259,7 +259,7 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     * @dev Updates the weekly rewards rate; meant to be called by the contract owner
     * @param newWeeklyRewardsRate The new weekly rewards rate
     */
-    function updateWeeklyRewardsRate(uint newWeeklyRewardsRate) public onlyOwner() {
+    function updateWeeklyRewardsRate(uint newWeeklyRewardsRate) public override onlyOwner {
         require(newWeeklyRewardsRate >= 0, "Weekly rewards rate cannot be negative");
 
         rewardsRateHistory.push(RewardRate(uint128(block.timestamp), uint128(newWeeklyRewardsRate)));
@@ -271,7 +271,7 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     * @dev Initializes the PoolState for the given pool
     * @param poolAddress Address of the pool
     */
-    function initializePool(address poolAddress) public onlyPoolManager() {
+    function initializePool(address poolAddress) public override onlyPoolManager {
         require(poolAddress != address(0), "Invalid pool address");
         require(!poolStates[poolAddress].validPool, "Pool already exists");
 
