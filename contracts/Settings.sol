@@ -106,6 +106,15 @@ contract Settings is ISettings, Ownable {
         return oracleAddressToName[oracleAddress];
     }
 
+    /**
+    * @dev Given the address of a currency, returns whether the currency is supported on the platform
+    * @param currencyKey The address of the currency
+    * @return bool Whether the currency is supported on the platform
+    */
+    function checkIfCurrencyIsAvailable(address currencyKey) external view override isValidAddress(currencyKey) returns (bool) {
+        return (currencyKeyToIndex[currencyKey] > 0);
+    }
+
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**

@@ -14,7 +14,7 @@ interface IBaseUbeswapAdapter {
     * @param currencyKey Address of the asset
     * @return uint Price of the asset
     */
-    function getPrice(address currencyKey) external view returns(uint);
+    function getPrice(address currencyKey) external view returns (uint);
 
     /**
     * @dev Given an input asset amount, returns the maximum output amount of the other asset

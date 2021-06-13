@@ -12,39 +12,46 @@ interface ISettings {
     * @param parameter The name of the parameter to get value for
     * @return uint The value of the given parameter
     */
-    function getParameterValue(string memory parameter) external view returns(uint);
+    function getParameterValue(string memory parameter) external view returns (uint);
 
     /**
     * @dev Returns the addresses of supported currencies for trading
     * @return address[] An array of addresses of supported currencies
     */
-    function getAvailableCurrencies() external view returns(address[] memory);
+    function getAvailableCurrencies() external view returns (address[] memory);
 
     /**
     * @dev Given the address of a currency, returns the currency's symbol
     * @param currencyKey The address of the currency
     * @return string The currency symbol
     */
-    function getCurrencySymbol(address currencyKey) external view returns(string memory);
+    function getCurrencySymbol(address currencyKey) external view returns (string memory);
 
     /**
     * @dev Returns the address of the stable coin
     * @return address The stable coin address
     */
-    function getStableCoinAddress() external view returns(address);
+    function getStableCoinAddress() external view returns (address);
 
     /**
     * @dev Returns the addresses and names of supported oracle APIs
     * @return OracleData[] An array of oracle API addresses and names
     */
-    function getOracleAPIs() external view returns(OracleData[] memory);
+    function getOracleAPIs() external view returns (OracleData[] memory);
 
     /**
     * @dev Given the address of an oracle API, returns the name of the oracle API
     * @param oracleAddress The address of the oracle API
     * @return string The oracle API name
     */
-    function getOracleAPIName(address oracleAddress) external view returns(string memory);
+    function getOracleAPIName(address oracleAddress) external view returns (string memory);
+
+    /**
+    * @dev Given the address of a currency, returns whether the currency is supported on the platform
+    * @param currencyKey The address of the currency
+    * @return bool Whether the currency is supported on the platform
+    */
+    function checkIfCurrencyIsAvailable(address currencyKey) external view returns (bool);
 
     /**
     * @dev Updates the address for the given contract; meant to be called by Settings contract owner

@@ -3,28 +3,24 @@ pragma solidity >=0.5.0;
 //Interfaces
 import '../interfaces/IUniswapV2Router02.sol';
 import '../interfaces/IERC20.sol';
-import '../interfaces/IAddressResolver.sol';
+import '../interfaces/ISettings.sol';
 import './interfaces/IBaseUbeswapAdapter.sol';
 
 //Libraries
 import '../libraries/SafeMath.sol';
 
-import '../AddressResolver.sol';
-import '../Settings.sol';
-
-contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
+contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     using SafeMath for uint;
 
     // Max slippage percent allowed
     uint public constant override MAX_SLIPPAGE_PERCENT = 10; //10% slippage
 
     IUniswapV2Router02 public immutable override UBESWAP_ROUTER;
-    IAddressResolver public immutable override ADDRESS_RESOLVER;
+    ISettings public immutable override SETTINGS;
 
-    constructor(IUniswapV2Router02 ubeswapRouter, IAddressResolver addressResolver) public {
+    constructor(IUniswapV2Router02 ubeswapRouter, ISettings settings) public {
         UBESWAP_ROUTER = ubeswapRouter;
-        ADDRESS_RESOLVER = addressResolver;
-        _setBaseUbeswapAdapterAddress(address(this));
+        SETTINGS = settings;
     }
 
     /* ========== VIEWS ========== */
@@ -38,7 +34,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
         require(currencyKey != address(0), "Invalid currency key");
         require(Settings(getSettingsAddress()).checkIfCurrencyIsAvailable(currencyKey), "Currency is not available");
 
-        address stableCoinAddress = Settings(getSettingsAddress()).getStableCurrencyAddress();
+        address stableCoinAddress = SETTINGS.getStableCoinAddress();
         address[] memory path = new address[](2);
         path[0] = currencyKey;
         path[1] = stableCoinAddress;
