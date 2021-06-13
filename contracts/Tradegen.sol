@@ -7,9 +7,11 @@ import './TradegenERC20.sol';
 contract Tradegen is ITradegen, TradegenERC20 {
 
     address private _componentsAddress;
+    address private _stakingRewardsAddress;
 
-    constructor(address componentsAddress) public {
+    constructor(address componentsAddress, address stakingRewardsAddress) public {
         _componentsAddress = componentsAddress;
+        _stakingRewardsAddress = stakingRewardsAddress;
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -45,7 +47,7 @@ contract Tradegen is ITradegen, TradegenERC20 {
     /* ========== MODIFIERS ========== */
 
     modifier isValidAddress(address addressToCheck) {
-        require(addressToCheck == _componentsAddress, "Address is not permitted");
+        require(addressToCheck == _componentsAddress || addressToCheck == _stakingRewardsAddress, "Address is not permitted");
         _;
     }
 }
