@@ -1,137 +1,100 @@
 pragma solidity >=0.5.0;
 
+//Interfaces
+import './interfaces/IAddressResolver.sol';
+
+//Inheritance
 import './Ownable.sol';
 
-contract AddressResolver is Ownable {
-    address public _baseTradegenAddress;
-    address public _stakingRewardsAddress;
-    address public _tradingBotRewardsAddress;
-    address public _strategyProxyAddress;
-    address public _poolProxyAddress;
-    address public _settingsAddress;
-    address public _strategyApprovalAddress;
-    address public _strategyManagerAddress;
-    address public _userManagerAddress;
-    address public _poolManagerAddress;
-    address public _componentsAddress;
-    address public _baseUbeswapAdapterAddress;
+contract AddressResolver is IAddressResolver, Ownable {
 
     mapping (address => address) public _tradingBotAddresses;
     mapping (address => address) public _strategyAddresses;
     mapping (address => address) public _poolAddresses;
 
-    constructor() public Ownable() {
-    }
+    mapping (string => address) public contractAddresses;
+
+    constructor() public Ownable() {}
 
     /* ========== VIEWS ========== */
 
-    function getBaseTradegenAddress() public view returns (address) {
-        return _baseTradegenAddress;
+    /**
+    * @dev Given a contract name, returns the address of the contract
+    * @param contractName The name of the contract
+    * @return address The address associated with the given contract name
+    */
+    function getContractAddress(string memory contractName) public view override returns(address) {
+        return contractAddresses[contractName];
     }
 
-    function getStakingRewardsAddress() public view returns (address) {
-        return _stakingRewardsAddress;
+    /**
+    * @dev Given an address, returns whether the address belongs to a trading bot
+    * @param tradingBotAddress The address to validate
+    * @return bool Whether the given address is a valid trading bot address
+    */
+    function checkIfTradingBotAddressIsValid(address tradingBotAddress) public view override returns(bool) {
+        return (tradingBotAddress != address(0)) ? (_tradingBotAddresses[tradingBotAddress] == tradingBotAddress) : false;
     }
 
-    function getTradingBotRewardsAddress() public view returns (address) {
-        return _tradingBotRewardsAddress;
+    /**
+    * @dev Given an address, returns whether the address belongs to a strategy
+    * @param strategyAddress The address to validate
+    * @return bool Whether the given address is a valid strategy address
+    */
+    function checkIfStrategyAddressIsValid(address strategyAddress) public view override returns(bool) {
+        return (strategyAddress != address(0)) ? (_strategyAddresses[strategyAddress] == strategyAddress) : false;
     }
 
-    function getStrategyProxyAddress() public view returns (address) {
-        return _strategyProxyAddress;
+    /**
+    * @dev Given an address, returns whether the address belongs to a user pool
+    * @param poolAddress The address to validate
+    * @return bool Whether the given address is a valid user pool address
+    */
+    function checkIfPoolAddressIsValid(address poolAddress) public view override returns(bool) {
+        return (poolAddress != address(0)) ? (_poolAddresses[poolAddress] == poolAddress) : false;
     }
 
-    function getPoolProxyAddress() public view returns (address) {
-        return _poolProxyAddress;
+    /* ========== RESTRICTED FUNCTIONS ========== */
+
+    /**
+    * @dev Updates the address for the given contract; meant to be called by AddressResolver owner
+    * @param contractName The name of the contract
+    * @param newAddress The new address for the given contract
+    */
+    function setContractAddress(string memory contractName, address newAddress) external override onlyOwner isValidAddress(newAddress) {
+        address oldAddress = contractAddresses[contractName];
+        contractAddresses[contractName] = newAddress;
+
+        emit UpdatedContractAddress(contractName, oldAddress, newAddress, block.timestamp);
     }
 
-    function getSettingsAddress() public view returns (address) {
-        return _settingsAddress;
-    }
+    /**
+    * @dev Adds a new trading bot address; meant to be called by the Strategy contract that owns the trading bot
+    * @param tradingBotAddress The address of the trading bot
+    */
+    function addTradingBotAddress(address tradingBotAddress) external override onlyStrategy isValidAddress(tradingBotAddress) {
+        require(_tradingBotAddresses[tradingBotAddress] != tradingBotAddress, "Trading bot already exists");
 
-    function getStrategyApprovalAddress() public view returns (address) {
-        return _strategyApprovalAddress;
-    }
-
-    function getStrategyManagerAddress() public view returns (address) {
-        return _strategyManagerAddress;
-    }
-
-    function getUserManagerAddress() public view returns (address) {
-        return _userManagerAddress;
-    }
-
-    function getPoolManagerAddress() public view returns (address) {
-        return _poolManagerAddress;
-    }
-
-    function getComponentsAddress() public view returns (address) {
-        return _componentsAddress;
-    }
-
-    function getBaseUbeswapAdapterAddress() public view returns (address) {
-        return _baseUbeswapAdapterAddress;
-    }
-
-    /* ========== MUTATIVE FUNCTIONS ========== */
-
-    function _setBaseTradegenAddress(address baseTradegenAddress) internal isValidAddress(baseTradegenAddress) {
-        _baseTradegenAddress = baseTradegenAddress;
-    }
-
-    function _setStrategyProxyAddress(address strategyProxyAddress) internal isValidAddress(strategyProxyAddress) {
-        _strategyProxyAddress = strategyProxyAddress;
-    }
-
-    function _setBaseUbeswapAdapterAddress(address baseUbeswapAdapterAddress) internal isValidAddress(baseUbeswapAdapterAddress) {
-        _baseUbeswapAdapterAddress = baseUbeswapAdapterAddress;
-    }
-
-    function _setPoolProxyAddress(address poolProxyAddress) internal isValidAddress(poolProxyAddress) {
-        _poolProxyAddress = poolProxyAddress;
-    }
-
-    function _setStakingRewardsAddress(address stakingRewardsAddress) internal isValidAddress(stakingRewardsAddress) {
-        _stakingRewardsAddress = stakingRewardsAddress;
-    }
-
-    function _setTradingBotRewardsAddress(address tradingBotRewardsAddress) internal isValidAddress(tradingBotRewardsAddress) {
-        _tradingBotRewardsAddress = tradingBotRewardsAddress;
-    }
-
-    function _setSettingsAddress(address settingsAddress) internal isValidAddress(settingsAddress) {
-        _settingsAddress = settingsAddress;
-    }
-
-    function _setStrategyApprovalAddress(address strategyApprovalAddress) internal isValidAddress(strategyApprovalAddress) {
-        _strategyApprovalAddress = strategyApprovalAddress;
-    }
-
-    function _setStrategyManagerAddress(address strategyManagerAddress) internal isValidAddress(strategyManagerAddress) {
-        _strategyManagerAddress = strategyManagerAddress;
-    }
-
-    function _setUserManagerAddress(address userManagerAddress) internal isValidAddress(userManagerAddress) {
-        _userManagerAddress = userManagerAddress;
-    }
-
-    function _setPoolManagerAddress(address poolManagerAddress) internal isValidAddress(poolManagerAddress) {
-        _poolManagerAddress = poolManagerAddress;
-    }
-
-    function _setComponentsAddress(address componentsAddress) internal isValidAddress(componentsAddress) {
-        _componentsAddress = componentsAddress;
-    }
-
-    function _addTradingBotAddress(address tradingBotAddress) internal isValidAddress(tradingBotAddress) onlyStrategy(msg.sender) {
         _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
     }
 
-    function _addStrategyAddress(address strategyAddress) internal isValidAddress(strategyAddress) onlyStrategyManager(msg.sender) {
+    /**
+    * @dev Adds a new strategy address; meant to be called by the StrategyManager contract
+    * @param strategyAddress The address of the strategy
+    */
+    function addStrategyAddress(address strategyAddress) external override onlyStrategyManager isValidAddress(strategyAddress) {
+        require(_strategyAddresses[strategyAddress] != strategyAddress, "Strategy already exists");
+
         _strategyAddresses[strategyAddress] = strategyAddress;
     }
 
-    function _addPoolAddress(address poolAddress) internal isValidAddress(poolAddress) onlyPoolManager(msg.sender) {
+    /**
+    * @dev Adds a new user pool address; meant to be called by the PoolManager contract
+    * @param poolAddress The address of the user pool
+    */
+    function addPoolAddress(address poolAddress) external override onlyPoolManager isValidAddress(poolAddress) {
+        require(_poolAddresses[poolAddress] != poolAddress, "Pool already exists");
+
         _poolAddresses[poolAddress] = poolAddress;
     }
 
@@ -142,58 +105,30 @@ contract AddressResolver is Ownable {
         _;
     }
 
-    modifier isValidStrategyAddress(address _strategyAddress) {
-        require(_strategyAddresses[_strategyAddress] == _strategyAddress, "Strategy address not found");
-        _;
-    }
-
-    modifier isValidPoolAddress(address _poolAddress) {
-        require(_poolAddresses[_poolAddress] == _poolAddress, "Pool address not found");
-        _;
-    }
-
     modifier validAddressForTransfer(address addressToCheck) {
-        require(addressToCheck == _stakingRewardsAddress || addressToCheck == _strategyProxyAddress || addressToCheck == _strategyApprovalAddress || addressToCheck == _componentsAddress, "Address is not valid");
+        require(addressToCheck == contractAddresses["StakingRewards"] || addressToCheck == contractAddresses["StrategyProxy"] || addressToCheck == contractAddresses["StrategyApproval"] || addressToCheck == contractAddresses["Components"], "Address is not valid");
         _;
     }
 
-    modifier onlyTradingBot(address addressToCheck) {
-        require(addressToCheck == _tradingBotAddresses[addressToCheck], "Only the trading bot can call this function");
+    modifier onlyStrategy() {
+        require(msg.sender == _strategyAddresses[msg.sender], "Only the Strategy contract can call this function");
         _;
     }
 
-    modifier onlyStrategy(address addressToCheck) {
-        require(addressToCheck == _strategyAddresses[addressToCheck], "Only the Strategy contract can call this function");
+    modifier onlyStrategyManager() {
+        require(msg.sender == contractAddresses["StrategyManager"], "Only the StrategyManager contract can call this function");
         _;
     }
 
-    modifier onlyTradingBotRewards(address addressToCheck) {
-        require(addressToCheck == _tradingBotRewardsAddress, "Only TradingBotRewards can call this function");
+    modifier onlyPoolManager() {
+        require(msg.sender == contractAddresses["PoolManager"], "Only the PoolManager contract can call this function");
         _;
     }
 
-    modifier onlyProxy(address addressToCheck) {
-        require(addressToCheck == _strategyProxyAddress, "Only the strategy proxy can call this function");
-        _;
-    }
+    /* ========== EVENTS ========== */
 
-    modifier onlyPoolProxy(address addressToCheck) {
-        require(addressToCheck == _poolProxyAddress, "Only the pool proxy can call this function");
-        _;
-    }
-
-    modifier onlyStrategyManager(address addressToCheck) {
-        require(addressToCheck == _strategyManagerAddress, "Only the Strategy Manager contract can call this function");
-        _;
-    }
-
-    modifier onlyUserManager(address addressToCheck) {
-        require(addressToCheck == _userManagerAddress, "Only the User Manager contract can call this function");
-        _;
-    }
-
-    modifier onlyPoolManager(address addressToCheck) {
-        require(addressToCheck == _poolManagerAddress, "Only the Pool Manager contract can call this function");
-        _;
-    }
+    event UpdatedContractAddress(string contractName, address oldAddress, address newAddress, uint timestamp);
+    event AddedTradingBotAddress(address tradingBotAddress, uint timestamp);
+    event AddedStrategyAddress(address strategyAddress, uint timestamp);
+    event AddedPoolAddress(address poolAddress, uint timestamp);
 }
