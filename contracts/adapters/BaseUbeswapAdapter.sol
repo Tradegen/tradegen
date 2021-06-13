@@ -1,9 +1,12 @@
 pragma solidity >=0.5.0;
 
+//Interfaces
 import '../interfaces/IUniswapV2Router02.sol';
 import '../interfaces/IERC20.sol';
+import '../interfaces/IAddressResolver.sol';
 import './interfaces/IBaseUbeswapAdapter.sol';
 
+//Libraries
 import '../libraries/SafeMath.sol';
 
 import '../AddressResolver.sol';
@@ -16,9 +19,11 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter, AddressResolver {
     uint public constant override MAX_SLIPPAGE_PERCENT = 10; //10% slippage
 
     IUniswapV2Router02 public immutable override UBESWAP_ROUTER;
+    IAddressResolver public immutable override ADDRESS_RESOLVER;
 
-    constructor(IUniswapV2Router02 ubeswapRouter) public {
+    constructor(IUniswapV2Router02 ubeswapRouter, IAddressResolver addressResolver) public {
         UBESWAP_ROUTER = ubeswapRouter;
+        ADDRESS_RESOLVER = addressResolver;
         _setBaseUbeswapAdapterAddress(address(this));
     }
 
