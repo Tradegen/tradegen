@@ -4,9 +4,7 @@ import './libraries/SafeMath.sol';
 
 import './interfaces/IERC20.sol';
 
-import './AddressResolver.sol';
-
-contract TradegenERC20 is IERC20, AddressResolver {
+contract TradegenERC20 is IERC20 {
     using SafeMath for uint;
 
     string public constant override name = 'Tradegen Token';
@@ -22,7 +20,6 @@ contract TradegenERC20 is IERC20, AddressResolver {
         uint initialSupply = 1000000000; // 1 billion tokens minted initially
         initialSupply = initialSupply.mul(10 ** decimals); // convert initial supply to support 18 decimals
         _mint(msg.sender, initialSupply);
-        _setBaseTradegenAddress(address(this));
     }
 
     function _mint(address to, uint value) internal {
@@ -66,7 +63,7 @@ contract TradegenERC20 is IERC20, AddressResolver {
         return true;
     }
 
-    function restrictedTransfer(address from, address to, uint value) public override validAddressForTransfer(msg.sender) {
+    /*function restrictedTransfer(address from, address to, uint value) public override validAddressForTransfer(msg.sender) {
         _transfer(from, to, value);
     }
 
@@ -76,5 +73,5 @@ contract TradegenERC20 is IERC20, AddressResolver {
 
     function sendPenalty(address from, uint value) public override validAddressForTransfer(msg.sender) {
         _burn(from, value);
-    }
+    }*/
 }
