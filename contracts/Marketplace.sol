@@ -7,9 +7,7 @@ import './libraries/SafeMath.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IStrategyToken.sol';
 
-import './AddressResolver.sol';
-
-contract Marketplace is AddressResolver {
+contract Marketplace {
     using SafeMath for uint;
 
     IAddressResolver private immutable ADDRESS_RESOLVER;
@@ -42,10 +40,12 @@ contract Marketplace is AddressResolver {
     * @dev Returns the marketplace listing data for the given marketplace listing
     * @param user Address of the user
     * @param marketplaceListingIndex Index of the marketplace listing in the array of marketplace listings
-    * @return PositionForSale The number of tokens, advertised price per token, and strategy address for the marketplace listing
+    * @return (uint, uint, address) The number of tokens, advertised price per token, and strategy address for the marketplace listing
     */
-    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(user, marketplaceListingIndex) returns (PositionForSale memory) {
-        return userToMarketplaceListings[user][marketplaceListingIndex];
+    function getMarketplaceListing(address user, uint marketplaceListingIndex) public view marketplaceListingIndexWithinBounds(user, marketplaceListingIndex) returns (uint, uint, address) {
+        PositionForSale memory temp = userToMarketplaceListings[user][marketplaceListingIndex];
+
+        return (uint256(temp.numberOfTokens), uint256(temp.pricePerToken), temp.strategyAddress);
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
@@ -56,7 +56,8 @@ contract Marketplace is AddressResolver {
     * @param pricePerToken Price per LP token in TGEN
     * @param numberOfTokens Number of LP tokens to sell
     */
-    function listPositionForSale(address strategyAddress, uint pricePerToken, uint numberOfTokens) external isValidStrategyAddress(strategyAddress) {
+    function listPositionForSale(address strategyAddress, uint pricePerToken, uint numberOfTokens) external {
+        require(ADDRESS_RESOLVER.checkIfStrategyAddressIsValid(strategyAddress), "Invalid strategy address");
         require(pricePerToken > 0, "Price per token cannot be 0");
         require(numberOfTokens > 0, "Number of tokens cannot be 0");
 
@@ -123,11 +124,6 @@ contract Marketplace is AddressResolver {
 
     modifier marketplaceListingIndexWithinBounds(address user, uint marketplaceListingIndex) {
         require(marketplaceListingIndex < userToMarketplaceListings[user].length, "Marketplace listing index out of bounds");
-        _;
-    }
-
-    modifier isValidStrategyAddress(address strategyAddress) {
-        require(ADDRESS_RESOLVER.checkIfStrategyAddressIsValid(strategyAddress), "Invalid strategy address");
         _;
     }
 
