@@ -1,9 +1,14 @@
 pragma solidity >=0.5.0;
 
+//Interfaces
+import './interfaces/IComponents.sol';
+
 import './Components.sol';
 import './AddressResolver.sol';
 
 contract UserManager is AddressResolver {
+
+    IComponents public immutable COMPONENTS;
 
     struct User {
         uint memberSinceTimestamp;
@@ -13,36 +18,44 @@ contract UserManager is AddressResolver {
     mapping (address => User) public users;
     mapping (string => address) public usernames;
 
-    constructor() public {
-        _setUserManagerAddress(address(this));
+    constructor(IComponents components) public {
+        COMPONENTS = components;
     }
 
     /* ========== VIEWS ========== */
 
-    function getUser(address _user) external view userExists(_user) returns(User memory) {
-        return users[_user];
-    }
-
-    function getUsername(address _user) public view userExists(_user) returns(string memory) {
-        return users[_user].username;
+    /**
+    * @dev Returns the timestamp and username of the given user
+    * @param user Address of the user
+    * @return User The timestamp and username of the user
+    */
+    function getUser(address user) external view userExists(user) returns(User memory) {
+        return users[user];
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function editUsername(string memory _newUsername) external userExists(msg.sender) {
-        require(usernames[_newUsername] == address(0), "Username already exists");
-        require(bytes(_newUsername).length > 0, "Username cannot be empty string");
-        require(bytes(_newUsername).length <= 25, "Username cannot have more than 25 characters");
+    /**
+    * @dev Changes the user's username to the new username
+    * @param newUsername New username for the user
+    */
+    function editUsername(string memory newUsername) external userExists(msg.sender) {
+        require(usernames[newUsername] == address(0), "Username already exists");
+        require(bytes(newUsername).length > 0, "Username cannot be empty string");
+        require(bytes(newUsername).length <= 25, "Username cannot have more than 25 characters");
 
         string memory oldUsername = users[msg.sender].username;
-        users[msg.sender].username = _newUsername;
+        users[msg.sender].username = newUsername;
         delete usernames[oldUsername];
-        usernames[_newUsername] = msg.sender;
+        usernames[newUsername] = msg.sender;
 
-        emit UpdatedUsername(msg.sender, _newUsername, block.timestamp);
+        emit UpdatedUsername(msg.sender, newUsername, block.timestamp);
     }
 
-    // create random username on frontend
+    /**
+    * @dev Registers a new user to the platform
+    * @param defaultRandomUsername Default username created for the user; username is generated on frontend
+    */
     function registerUser(string memory defaultRandomUsername) external {
         require(users[msg.sender].memberSinceTimestamp == 0, "User already exists");
         require(bytes(defaultRandomUsername).length > 0, "Username cannot be empty string");
@@ -51,20 +64,17 @@ contract UserManager is AddressResolver {
         usernames[defaultRandomUsername] = msg.sender;
         users[msg.sender] = User(block.timestamp, defaultRandomUsername);
 
-        Components(getComponentsAddress())._addDefaultComponentsToUser(msg.sender);
+        //Adds default indicators and comparators to the user
+        COMPONENTS._addDefaultComponentsToUser(msg.sender);
 
         emit RegisteredUser(msg.sender, block.timestamp);
     }
 
     /* ========== MODIFIERS ========== */
 
-    modifier userExists(address _user) {
-        require(users[_user].memberSinceTimestamp > 0, "User not found");
-        _;
-    }
-
-    modifier userIsOwner(address _user) {
-        require(msg.sender == _user, "User is not the owner");
+    modifier userExists(address user) {
+        require(user != address(0), "Invalid user address");
+        require(users[user].memberSinceTimestamp > 0, "User not found");
         _;
     }
 
