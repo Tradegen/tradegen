@@ -1,15 +1,21 @@
 pragma solidity >=0.5.0;
 
 import './TradingBot.sol';
-import './AddressResolver.sol';
 
+//Libraries
 import './libraries/SafeMath.sol';
 
+//Interfaces
 import './interfaces/IERC20.sol';
 import './interfaces/IStrategyToken.sol';
+import './interfaces/IAddressResolver.sol';
+import './interfaces/ITradingBot.sol';
 
-contract Strategy is IStrategyToken, AddressResolver {
+contract Strategy is IStrategyToken {
     using SafeMath for uint;
+
+    IAddressResolver public immutable ADDRESS_RESOLVER;
+    ITradingBot public immutable TRADING_BOT;
 
     //ERC20 state variables
     string public name;
@@ -35,14 +41,16 @@ contract Strategy is IStrategyToken, AddressResolver {
                 uint _strategyParams,
                 uint[] memory _entryRules,
                 uint[] memory _exitRules,
-                address _developerAddress) public onlyStrategyManager(msg.sender) {
+                address _developerAddress,
+                IAddressResolver addressResolver) public onlyStrategyManager {
+
+        ADDRESS_RESOLVER = addressResolver;
 
         developerAddress = _developerAddress;
         symbol = _symbol;
         name = _name;
 
-        maxPoolSize = (_strategyParams << 149) >> 206;
-        bool direction = ((_strategyParams << 199) >> 255) == 1 ? true : false;
+        maxPoolSize = (_strategyParams << 150) >> 206;
         uint maxTradeDuration = (_strategyParams << 200) >> 248;
         uint underlyingAssetSymbol = (_strategyParams << 208) >> 240;
         uint profitTarget = (_strategyParams << 224) >> 240;
@@ -52,7 +60,8 @@ contract Strategy is IStrategyToken, AddressResolver {
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
 
-        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, direction, underlyingAssetSymbol));
+        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, underlyingAssetSymbol));
+        TRADING_BOT = ITradingBot(tradingBotAddress);
         _addTradingBotAddress(tradingBotAddress);
     }
 
@@ -98,50 +107,108 @@ contract Strategy is IStrategyToken, AddressResolver {
 
     //Strategy functions
 
+    /**
+    * @dev Returns the details for the strategy
+    * @return (string, string, address, uint, uint, uint, uint) The strategy's name, symbol, developer, timestamp, max pool size, token price, and circulating supply
+    */
     function _getStrategyDetails() public view override returns (string memory, string memory, address, uint, uint, uint, uint) {
         return (name, symbol, developerAddress, publishedOnTimestamp, maxPoolSize, tokenPrice, circulatingSupply);
     }
 
-    function _getPositionDetails(address _user) public view override returns (string memory, string memory, uint, uint, uint) {
-        return (name, symbol, balanceOf[_user], circulatingSupply, maxPoolSize);
+    /**
+    * @dev Returns the user's position details
+    * @param user Address of the user
+    * @return (string, string, uint, uint, uint) The strategy's name, symbol, user's balance, circulating supply, and max pool size
+    */
+    function _getPositionDetails(address user) public view override returns (string memory, string memory, uint, uint, uint) {
+        return (name, symbol, balanceOf[user], circulatingSupply, maxPoolSize);
     }
 
-    function buyPosition(address from, address to, uint numberOfTokens) public override onlyProxy(msg.sender) {
+    /**
+    * @dev Transfers the LP tokens from seller to buyer
+    * @param from Address of the seller
+    * @param to Address of the buyer
+    * @param numberOfTokens Number of LP tokens of the position
+    */
+    function buyPosition(address from, address to, uint numberOfTokens) public override onlyStrategyProxy {
         _transfer(from, to, numberOfTokens);
     }
 
-    function deposit(address _user, uint amount) public override onlyProxy(msg.sender) {
+    /**
+    * @dev Deposits the given USD amount into the strategy
+    * @param user Address of the user
+    * @param amount USD value to deposit into the strategy
+    */
+    function deposit(address user, uint amount) public override onlyStrategyProxy {
         uint numberOfTokens = amount.div(tokenPrice);
-        _mint(_user, numberOfTokens);
+        _mint(user, numberOfTokens);
     }
 
-    function withdraw(address _user, uint amount) public override onlyProxy(msg.sender) {
+    /**
+    * @dev Withdraws the given USD amount from the strategy
+    * @param user Address of the user
+    * @param amount USD value to withdraw from the strategy
+    */
+    function withdraw(address user, uint amount) public override onlyStrategyProxy {
         uint numberOfTokens = amount.div(tokenPrice);
-        _burn(_user, numberOfTokens);
+        _burn(user, numberOfTokens);
     }
 
-    function getTradingBotAddress() public view override onlyProxy(msg.sender) returns (address) {
+    /**
+    * @dev Returns the address of the strategy's trading bot
+    * @return address The address of the strategy's trading bot
+    */
+    function getTradingBotAddress() public view override onlyStrategyProxy returns (address) {
         return tradingBotAddress;
     }
 
+    /**
+    * @dev Returns the address of the strategy's developer
+    * @return address The address of the strategy's developer
+    */
     function getDeveloperAddress() public view override returns (address) {
         return developerAddress;
     }
 
-    function getBalanceOf(address user) public view override onlyProxyOrTradingBotRewards(msg.sender) returns (uint) {
+    /**
+    * @dev Given the address of a user, returns the number of LP tokens the user has
+    * @param user Address of the user
+    * @return uint Number of LP tokens the user has in the strategy
+    */
+    function getBalanceOf(address user) public view override onlyProxyOrTradingBotRewards returns (uint) {
         return balanceOf[user];
     }
 
+    /**
+    * @dev Returns the number of LP tokens the strategy has in circulation
+    * @return uint Number of LP tokens in circulation
+    */
     function getCirculatingSupply() public view override returns (uint) {
         return circulatingSupply;
     }
 
+    /**
+    * @dev Returns whether the trading bot is in a trade
+    * @return bool Whether the strategy's trading bot is currently in a trade
+    */
     function checkIfBotIsInATrade() public view override returns (bool) {
-        return (TradingBot(tradingBotAddress).checkIfBotIsInATrade());
+        return TRADING_BOT.checkIfBotIsInATrade();
     }
 
-    modifier onlyProxyOrTradingBotRewards(address _caller) {
-        require(_caller == getStrategyProxyAddress() || _caller == getTradingBotRewardsAddress(), "Only proxy or trading bot rewards can call this function");
+    /* ========== MODIFIERS ========== */
+
+    modifier onlyProxyOrTradingBotRewards() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyProxy") || msg.sender == ADDRESS_RESOLVER.getContractAddress("TradingBotRewards"), "Only proxy or trading bot rewards can call this function");
+        _;
+    }
+
+    modifier onlyStrategyManager() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyManager"), "Only StrategyManager contract can call this function");
+        _;
+    }
+
+    modifier onlyStrategyProxy() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyProxy"), "Only StrategyProxy contract can call this function");
         _;
     }
 }
