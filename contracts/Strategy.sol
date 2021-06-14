@@ -14,7 +14,7 @@ import './interfaces/ITradingBot.sol';
 contract Strategy is IStrategyToken {
     using SafeMath for uint;
 
-    IAddressResolver public immutable ADDRESS_RESOLVER;
+    IAddressResolver public ADDRESS_RESOLVER;
     ITradingBot public immutable TRADING_BOT;
 
     //ERC20 state variables
@@ -60,9 +60,9 @@ contract Strategy is IStrategyToken {
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
 
-        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, underlyingAssetSymbol, ADDRESS_RESOLVER));
+        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, underlyingAssetSymbol, addressResolver));
         TRADING_BOT = ITradingBot(tradingBotAddress);
-        _addTradingBotAddress(tradingBotAddress);
+        addressResolver.addTradingBotAddress(tradingBotAddress);
     }
 
     //ERC20 functions

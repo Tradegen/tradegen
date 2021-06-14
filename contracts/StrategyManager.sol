@@ -1,13 +1,17 @@
 pragma solidity >=0.5.0;
 
-//libraries
+//Libraries
 import './libraries/SafeMath.sol';
 
-import './Strategy.sol';
-import './AddressResolver.sol';
+//Inheritance
+import './interfaces/IAddressResolver.sol';
 
-contract StrategyManager is AddressResolver {
+import './Strategy.sol';
+
+contract StrategyManager {
     using SafeMath for uint;
+
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     address[] public strategies; // stores contract address of each published strategy
     mapping (address => uint[]) public userToPublishedStrategies; //stores indexes of user's published strategies
@@ -16,24 +20,39 @@ contract StrategyManager is AddressResolver {
     mapping (string => uint) public strategySymbolToIndex; //maps to (index + 1); index 0 represents strategy not found
     mapping (string => uint) public strategyNameToIndex; //maps to (index + 1); index 0 represents strategy not found
 
-    constructor() public {
-        _setStrategyManagerAddress(address(this));
+    constructor(IAddressResolver addressResolver) public {
+        ADDRESS_RESOLVER = addressResolver;
     }
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @dev Given the address of a user, returns the index in array of strategies for each of the user's published strategies
+    * @param user Address of the user
+    * @return uint[] The indexes of user's published strategies
+    */
     function getUserPublishedStrategies(address user) external view returns(uint[] memory) {
         require(user != address(0), "Invalid address");
 
         return userToPublishedStrategies[user];
     }
 
+    /**
+    * @dev Given the address of a user, returns the index in array of strategies for each position the user has
+    * @param user Address of the user
+    * @return uint[] The indexes of strategies the user is invested in
+    */
     function getUserPositions(address user) external view returns(uint[] memory) {
         require(user != address(0), "Invalid address");
 
         return userToPositions[user];
     }
 
+    /**
+    * @dev Given the index of a strategy, returns the address of the strategy
+    * @param index Index in array of available strategies
+    * @return address Address of the strategy
+    */
     function getStrategyAddressFromIndex(uint index) external view returns(address) {
         require(index >= 0 && index < strategies.length, "Index out of range");
 
@@ -42,16 +61,26 @@ contract StrategyManager is AddressResolver {
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    function _addPosition(address _user, address _strategyAddress) internal isValidStrategyAddress(_strategyAddress) {
-        userToPositions[_user].push(addressToIndex[_strategyAddress] - 1);
+    /**
+    * @dev Adds the index of the given strategy to the user's array of invested strategies
+    * @param user Address of the user
+    * @param strategyAddress Address of the strategy
+    */
+    function _addPosition(address user, address strategyAddress) internal isValidStrategyAddress(strategyAddress) {
+        userToPositions[user].push(addressToIndex[strategyAddress] - 1);
     }
 
-    function _removePosition(address _user, address _strategyAddress) internal isValidStrategyAddress(_strategyAddress) {
+    /**
+    * @dev Removes the index of the given strategy from the user's array of invested strategies
+    * @param user Address of the user
+    * @param strategyAddress Address of the strategy
+    */
+    function _removePosition(address user, address strategyAddress) internal isValidStrategyAddress(strategyAddress) {
         uint positionIndex;
-        uint strategyIndex = addressToIndex[_strategyAddress];
+        uint strategyIndex = addressToIndex[strategyAddress];
 
         //bounded by number of strategies
-        for (positionIndex = 0; positionIndex < userToPositions[_user].length; positionIndex++)
+        for (positionIndex = 0; positionIndex < userToPositions[user].length; positionIndex++)
         {
             if (positionIndex == strategyIndex)
             {
@@ -59,12 +88,21 @@ contract StrategyManager is AddressResolver {
             }
         }
 
-        require (positionIndex < userToPositions[_user].length, "Position not found");
+        require (positionIndex < userToPositions[user].length, "Position not found");
 
-        userToPositions[_user][positionIndex] = userToPositions[_user][userToPositions[_user].length - 1];
-        delete userToPositions[_user][userToPositions[_user].length - 1];
+        userToPositions[user][positionIndex] = userToPositions[user][userToPositions[user].length - 1];
+        delete userToPositions[user][userToPositions[user].length - 1];
     }
 
+    /**
+    * @dev Adds the index of the given strategy to the user's array of invested strategies
+    * @param strategyName Name of the strategy
+    * @param strategySymbol Symbol for strategy's tokens
+    * @param strategyParams Parameters for the strategy
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    * @param developerAddress Address of the strategy's developer
+    */
     function _publishStrategy(string memory strategyName,
                             string memory strategySymbol,
                             uint strategyParams,
@@ -77,7 +115,8 @@ contract StrategyManager is AddressResolver {
                                     strategyParams,
                                     entryRules,
                                     exitRules,
-                                    developerAddress);
+                                    developerAddress,
+                                    ADDRESS_RESOLVER);
 
         address strategyAddress = address(temp);
         strategies.push(strategyAddress);
@@ -85,9 +124,16 @@ contract StrategyManager is AddressResolver {
         addressToIndex[strategyAddress] = strategies.length;
         strategySymbolToIndex[strategySymbol] = strategies.length;
         strategyNameToIndex[strategyName] = strategies.length;
-        _addStrategyAddress(strategyAddress);
+        ADDRESS_RESOLVER.addStrategyAddress(strategyAddress);
 
         emit PublishedStrategy(developerAddress, strategyAddress, strategies.length - 1, block.timestamp);
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier isValidStrategyAddress(address strategyAddress) {
+        require(ADDRESS_RESOLVER.checkIfStrategyAddressIsValid(strategyAddress), "Invalid strategy address");
+        _;
     }
 
     /* ========== EVENTS ========== */
