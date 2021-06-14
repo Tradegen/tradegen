@@ -8,7 +8,10 @@ import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 import './interfaces/IERC20.sol';
 
-contract Components is Ownable {
+//Inheritance
+import './interfaces/IComponents.sol';
+
+contract Components is IComponents, Ownable {
 
     IERC20 private immutable TRADEGEN;
     address private _userManagerAddress;
@@ -39,7 +42,7 @@ contract Components is Ownable {
     * @dev Returns the address of each default indicator
     * @return address[] The addresses of available default indicators
     */
-    function getDefaultIndicators() public view returns (address[] memory) {
+    function getDefaultIndicators() public view override returns (address[] memory) {
         return defaultIndicators;
     }
 
@@ -47,7 +50,7 @@ contract Components is Ownable {
     * @dev Returns the address of each custom indicator
     * @return address[] The addresses of available custom indicators
     */
-    function getIndicators() public view returns (address[] memory) {
+    function getIndicators() public view override returns (address[] memory) {
         return indicators;
     }
 
@@ -55,7 +58,7 @@ contract Components is Ownable {
     * @dev Returns the address of each default comparator
     * @return address[] The addresses of available default comparator
     */
-    function getDefaultComparators() public view returns (address[] memory) {
+    function getDefaultComparators() public view override returns (address[] memory) {
         return defaultComparators;
     }
 
@@ -63,7 +66,7 @@ contract Components is Ownable {
     * @dev Returns the address of each custom comparator
     * @return address[] The addresses of available custom comparator
     */
-    function getComparators() public view returns (address[] memory) {
+    function getComparators() public view override returns (address[] memory) {
         return comparators;
     }
 
@@ -72,7 +75,7 @@ contract Components is Ownable {
     * @param user Address of the user
     * @return uint[] The index in indicators array of each indicator the user purchased
     */
-    function getUserPurchasedIndicators(address user) public view returns (uint[] memory) {
+    function getUserPurchasedIndicators(address user) public view override returns (uint[] memory) {
         require(user != address(0), "Invalid user address");
 
         return userPurchasedIndicators[user];
@@ -83,7 +86,7 @@ contract Components is Ownable {
     * @param user Address of the user
     * @return uint[] The index in comparators array of each comparator the user purchased
     */
-    function getUserPurchasedComparators(address user) public view returns (uint[] memory) {
+    function getUserPurchasedComparators(address user) public view override returns (uint[] memory) {
         require(user != address(0), "Invalid user address");
 
         return userPurchasedComparators[user];
@@ -95,7 +98,7 @@ contract Components is Ownable {
     * @param indicatorIndex Index of the indicator in the indicators array
     * @return bool Whether the user purchased the given indicator
     */
-    function checkIfUserPurchasedIndicator(address user, uint indicatorIndex) public view returns (bool) {
+    function checkIfUserPurchasedIndicator(address user, uint indicatorIndex) public view override returns (bool) {
         require(user != address(0), "Invalid user address");
         require(indicatorIndex >= 0 && indicatorIndex < indicators.length, "Indicator index out of range");
 
@@ -110,7 +113,7 @@ contract Components is Ownable {
     * @param comparatorIndex Index of the comparator in the comparators array
     * @return bool Whether the user purchased the given comparator
     */
-    function checkIfUserPurchasedComparator(address user, uint comparatorIndex) public view returns (bool) {
+    function checkIfUserPurchasedComparator(address user, uint comparatorIndex) public view override returns (bool) {
         require(user != address(0), "Invalid user address");
         require(comparatorIndex >= 0 && comparatorIndex < comparators.length, "Comparators index out of range");
 
@@ -125,7 +128,7 @@ contract Components is Ownable {
     * @dev Purchase the given indicator
     * @param indicatorAddress Address of the indicator to purchase
     */
-    function buyIndicator(address indicatorAddress) public {
+    function buyIndicator(address indicatorAddress) public override {
         require(indicatorAddress != address(0), "Invalid indicator address");
         require(indicatorAddressToIndex[indicatorAddress] > 0, "Invalid indicator address");
         require(indicatorUsers[indicatorAddress][msg.sender] > 0, "Already purchased this indicator");
@@ -143,7 +146,7 @@ contract Components is Ownable {
     * @dev Purchase the given comparator
     * @param comparatorAddress Address of the comparator to purchase
     */
-    function buyComparator(address comparatorAddress) public {
+    function buyComparator(address comparatorAddress) public override {
         require(comparatorAddress != address(0), "Invalid comparator address");
         require(comparatorAddressToIndex[comparatorAddress] > 0, "Invalid comparator address");
         require(comparatorUsers[comparatorAddress][msg.sender] > 0, "Already purchased this comparator");
@@ -163,7 +166,7 @@ contract Components is Ownable {
     * @dev Adds a new indicator to the platform
     * @param indicatorAddress Address of the contract where the indicator is implemented
     */
-    function _addNewIndicator(address indicatorAddress) public onlyOwner {
+    function _addNewIndicator(address indicatorAddress) public override onlyOwner {
         require(indicatorAddress != address(0), "Invalid indicator address");
 
         indicators.push(indicatorAddress);
@@ -176,7 +179,7 @@ contract Components is Ownable {
     * @dev Adds a new comparator to the platform
     * @param comparatorAddress Address of the contract where the comparator is implemented
     */
-    function _addNewComparator(address comparatorAddress) public onlyOwner {
+    function _addNewComparator(address comparatorAddress) public override onlyOwner {
         require(comparatorAddress != address(0), "Invalid comparator address");
 
         comparators.push(comparatorAddress);
@@ -189,7 +192,7 @@ contract Components is Ownable {
     * @dev Adds default indicators and comparators to the given user
     * @param user Address of user to add default indicators and comparators to
     */
-    function _addDefaultComponentsToUser(address user) public onlyUserManager {
+    function _addDefaultComponentsToUser(address user) public override onlyUserManager {
         require(user != address(0), "Invalid user address");
 
         uint[] memory _userPurchasedIndicators = new uint[](defaultIndicators.length);
