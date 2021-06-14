@@ -2,6 +2,12 @@ pragma solidity >=0.5.0;
 
 interface ITradingBotRewards {
 
+    struct State {
+        uint88 amount;
+        uint160 circulatingSupply;
+        bool debtOrYield; //true = yield, false = debt
+    }
+
     /**
     * @dev Given the address of a trading bot, return the direction of the bot's yield and the yield amount
     * @param tradingBotAddress Address of the trading bot
