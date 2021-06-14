@@ -39,6 +39,48 @@ contract Components is IComponents, Ownable {
     /* ========== VIEWS ========== */
 
     /**
+    * @dev Returns the address of the indicator
+    * @param isDefault Whether the indicator is a default indicator
+    * @param index Index of the indicator in array of available indicators
+    * @return address Address of the indicator
+    */
+    function getIndicatorFromIndex(bool isDefault, uint index) public view override returns (address) {
+        if (isDefault)
+        {
+            require(index >= 0 && index < defaultIndicators.length, "Index out of range");
+
+            return defaultIndicators[index];
+        }
+        else
+        {
+            require(index >= 0 && index < indicators.length, "Index out of range");
+
+            return indicators[index];
+        }
+    }
+
+    /**
+    * @dev Returns the address of the comparator
+    * @param isDefault Whether the comparator is a default comparator
+    * @param index Index of the comparator in array of available comparator
+    * @return address Address of the comparator
+    */
+    function getComparatorFromIndex(bool isDefault, uint index) public view override returns (address) {
+        if (isDefault)
+        {
+            require(index >= 0 && index < defaultComparators.length, "Index out of range");
+
+            return defaultComparators[index];
+        }
+        else
+        {
+            require(index >= 0 && index < comparators.length, "Index out of range");
+
+            return comparators[index];
+        }
+    }
+
+    /**
     * @dev Returns the address of each default indicator
     * @return address[] The addresses of available default indicators
     */

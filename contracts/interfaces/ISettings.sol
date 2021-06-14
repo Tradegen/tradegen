@@ -8,6 +8,13 @@ interface ISettings {
     }
 
     /**
+    * @dev Given the index in the array of available currencies, returns the currency key at that index
+    * @param index Index in the array of available currencies
+    * @return address Currency key at given index
+    */
+    function getCurrencyKeyFromIndex(uint index) external view returns (address);
+
+    /**
     * @dev Given the name of a parameter, returns the value of the parameter
     * @param parameter The name of the parameter to get value for
     * @return uint The value of the given parameter

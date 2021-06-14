@@ -45,6 +45,17 @@ contract Settings is ISettings, Ownable {
     /* ========== VIEWS ========== */
 
     /**
+    * @dev Given the index in the array of available currencies, returns the currency key at that index
+    * @param index Index in the array of available currencies
+    * @return address Currency key at given index
+    */
+    function getCurrencyKeyFromIndex(uint index) public view override returns (address) {
+        require(index >= 0 && index < availableCurrencies.length, "Index out of range");
+
+        return availableCurrencies[index];
+    }
+
+    /**
     * @dev Given the name of a parameter, returns the value of the parameter
     * @param parameter The name of the parameter to get value for
     * @return uint The value of the given parameter

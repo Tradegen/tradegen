@@ -2,6 +2,22 @@ pragma solidity >=0.5.0;
 
 interface IComponents {
     /**
+    * @dev Returns the address of the indicator
+    * @param isDefault Whether the indicator is a default indicator
+    * @param index Index of the indicator in array of available indicators
+    * @return address Address of the indicator
+    */
+    function getIndicatorFromIndex(bool isDefault, uint index) external view returns (address);
+
+    /**
+    * @dev Returns the address of the comparator
+    * @param isDefault Whether the comparator is a default comparator
+    * @param index Index of the comparator in array of available comparator
+    * @return address Address of the comparator
+    */
+    function getComparatorFromIndex(bool isDefault, uint index) external view returns (address);
+
+    /**
     * @dev Returns the address of each default indicator
     * @return address[] The addresses of available default indicators
     */

@@ -60,7 +60,7 @@ contract Strategy is IStrategyToken {
         publishedOnTimestamp = block.timestamp;
         tokenPrice = maxPoolSize.div(maxSupply);
 
-        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, underlyingAssetSymbol));
+        tradingBotAddress = address(new TradingBot(_entryRules, _exitRules, maxTradeDuration, profitTarget, stopLoss, underlyingAssetSymbol, ADDRESS_RESOLVER));
         TRADING_BOT = ITradingBot(tradingBotAddress);
         _addTradingBotAddress(tradingBotAddress);
     }
