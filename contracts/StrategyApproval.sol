@@ -6,9 +6,21 @@ import './AddressResolver.sol';
 import './StrategyManager.sol';
 import './StakingRewards.sol';
 
+//Interfaces
 import './interfaces/IERC20.sol';
+import './interfaces/ISettings.sol';
+import './interfaces/IAddressResolver.sol';
+import './interfaces/IComponents.sol';
+import './interfaces/ITradegen.sol';
+import './interfaces/IStakingRewards.sol';
 
 contract StrategyApproval is AddressResolver, StrategyManager {
+
+    IComponents public immutable COMPONENTS;
+    ISettings public immutable SETTINGS;
+    ITradegen public immutable TRADEGEN;
+    IStakingRewards public immutable STAKING_REWARDS;
+
     struct UserVote {
         bool decision;
         bool correct;
@@ -40,26 +52,53 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     mapping (address => UserVote[]) public userVoteHistory;
     mapping (address => uint[]) public userSubmittedStrategies;
 
-    constructor() public {
-        _setStrategyApprovalAddress(address(this));
+    constructor(IAddressResolver addressResolver) StrategyManager(addressResolver) public {
+        COMPONENTS = IComponents(addressResolver.getContractAddress("Components"));
+        SETTINGS = ISettings(addressResolver.getContractAddress("Settings"));
+        TRADEGEN = ITradegen(addressResolver.getContractAddress("BaseTradegen"));
+        STAKING_REWARDS = IStakingRewards(addressResolver.getContractAddress("StakingRewards"));
     }
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @dev Given the address of a user, return the user's vote history
+    * @param user Address of the user
+    * @return UserVote[] The decision, timestamp, and strategy ID of each vote the user made
+    */
     function getUserVoteHistory(address user) public view returns (UserVote[] memory) {
         return userVoteHistory[user];
     }
 
+    /**
+    * @dev Given the address of a user, return the index of each strategy the user submitted
+    * @param user Address of the user
+    * @return uint[] The index of each strategy the user submitted
+    */
     function getUserSubmittedStrategies(address user) public view returns (uint[] memory) {
         return userSubmittedStrategies[user];
     }
 
+    /**
+    * @dev Given the index of a submitted strategy, return the details of that strategy
+    * @param index Index of the submitted strategy in the submittedStrategies array
+    * @return SubmittedStrategy The details of the submitted strategy
+    */
     function getSubmittedStrategy(uint index) public view indexIsWithinBounds(index) returns (SubmittedStrategy memory) {
         return submittedStrategies[index];
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
+    /**
+    * @dev Submits a strategy for approval, with the given details
+    * @param backtestResults Encoded stats for strategy's backtest (performed on centralized server)
+    * @param strategyParams Encoded parameters for the strategy
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    * @param strategyName Name of the strategy
+    * @param strategySymbol Symbol of the strategy's (future) token
+    */
     function submitStrategyForApproval(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategySymbol) external {
         require(_checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, strategyName, strategySymbol), "Strategy does not meet criteria");
         require(_checkIfUserPurchasedComponents(entryRules, exitRules), "Need to purchase indicator/comparator before using");
@@ -70,33 +109,42 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         emit SubmittedStrategyForApproval(msg.sender, submittedStrategies.length - 1, block.timestamp);
     }
 
+    /**
+    * @dev Vote for the submitted strategy
+    * @param index Index of the submitted strategy in the submittedStrategies array
+    * @param decision Whether to approve or reject the strategy
+    * @param backtestResults Encoded stats for strategy's backtest (performed on centralized server)
+    * @param strategyParams Encoded parameters for the strategy
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    */
     function voteForStrategy(uint index, bool decision, uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) external indexIsWithinBounds(index) strategyIsPendingApproval(index) userHasNotVotedYet(msg.sender, index) {
         require(_checkIfParamsMatch(index, strategyParams, entryRules, exitRules), "Strategy parameters do not match");
-        require(StakingRewards(getStakingRewardsAddress()).balanceOf(msg.sender) >= Settings(getSettingsAddress()).getStrategyApprovalThreshold(), "Not enough staked TGEN to vote");
+        require(STAKING_REWARDS.balanceOf(msg.sender) >= SETTINGS.getParameterValue("MinimumStakeToVote"), "Not enough staked TGEN to vote");
 
         bool meetsCriteria = _checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, submittedStrategies[index].strategyName, submittedStrategies[index].strategySymbol);
         bool correct = false;
 
-        //reward voter
+        //Reward voter
         if ((decision && meetsCriteria) || (!decision && !meetsCriteria))
         {
             correct = true;
-            uint votingReward = Settings(getSettingsAddress()).getVotingReward();
-            IERC20(getBaseTradegenAddress()).sendRewards(msg.sender, votingReward);
+            uint votingReward = SETTINGS.getParameterValue("VotingReward");
+            TRADEGEN.sendRewards(msg.sender, votingReward);
             emit ReceivedReward(msg.sender, index, votingReward, block.timestamp);
         }
-        //penalize voter
+        //Penalize voter
         else
         {
-            uint votingPenalty = Settings(getSettingsAddress()).getVotingPenalty();
-            IERC20(getBaseTradegenAddress()).sendPenalty(msg.sender, votingPenalty);
+            uint votingPenalty = SETTINGS.getParameterValue("VotingPenalty");
+            TRADEGEN.sendPenalty(msg.sender, votingPenalty);
             emit ReceivedPenalty(msg.sender, index, votingPenalty, block.timestamp);
         }
 
         submittedStrategies[index].votes.push(StrategyVote(msg.sender, uint32(block.timestamp), decision, correct));
         userVoteHistory[msg.sender].push(UserVote(decision, correct, uint32(block.timestamp), uint32(index)));
 
-        if (submittedStrategies[index].votes.length == Settings(getSettingsAddress()).getVoteLimit())
+        if (submittedStrategies[index].votes.length == SETTINGS.getParameterValue("VoteLimit"))
         {
             _processVotes(index);
         }
@@ -104,47 +152,55 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         emit VotedForStrategy(msg.sender, index, decision, block.timestamp);
     }
 
+    /**
+    * @dev Checks whether the user purchased each indicator/comparator used in the strategy's entry/exit rules
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    * @return bool Whether the user purchased each indicator and comparator used in the entry/exit rules
+    */
     function _checkIfUserPurchasedComponents(uint[] memory entryRules, uint[] memory exitRules) public view returns (bool)
     {
+        //Bounded by maximum number of entry rules (in Settings contract)
         for (uint i = 0; i < entryRules.length; i++)
         {
             uint comparator = entryRules[i] >> 96;
             uint firstIndicator = (entryRules[i] << 160) >> 248;
             uint secondIndicator = (entryRules[i] << 168) >> 248;
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
             {
                 return false;
             }
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
             {
                 return false;
             }
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedComparator(msg.sender, comparator))
+            if (!COMPONENTS.checkIfUserPurchasedComparator(msg.sender, comparator))
             {
                 return false;
             }
         }
 
+        //Bounded by maximum number of exit rules (in Settings contract)
         for (uint i = 0; i < exitRules.length; i++)
         {
             uint comparator = exitRules[i] >> 96;
             uint firstIndicator = (exitRules[i] << 160) >> 248;
             uint secondIndicator = (exitRules[i] << 168) >> 248;
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
             {
                 return false;
             }
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
             {
                 return false;
             }
 
-            if (!Components(getComponentsAddress()).checkIfUserPurchasedComparator(msg.sender, comparator))
+            if (!COMPONENTS.checkIfUserPurchasedComparator(msg.sender, comparator))
             {
                 return false;
             }
@@ -155,8 +211,29 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
     /* ========== INTERNAL FUNCTIONS ========== */
 
-    //backtestResults: first 175 bits empty, next bit = Alpha direction (positive or negative), next 24 bits = Alpha, next 20 bits = accuracy, next 16 bits = number of trades, next 20 bits = max drawdown
-    //strategyParams: first 149 bits empty, next 50 bits = max pool size, next bit = direction (long or short), next 8 bits = max trade duration, next 16 bits = underlying asset symbol ID, next 16 bits = profit target, next 16 bits = stop loss
+    /**
+    * @dev Submits a strategy for approval, with the given details
+    * @notice Encoding for backtest results:
+    *         bits 0-174: empty
+    *         bit 175: Alpha direction (positive or negative)
+    *         bits 176-199: Alpha
+    *         bits 200-219: accuracy
+    *         bits 220-235: number of trades over backtest period
+    *         bits 236-255: max drawdown
+    * @notice Encoding for strategy params:
+    *         bits 100-149: empty
+    *         bits 150-199: max pool size
+    *         bits 200-207: trade duration (number of oracle rounds)
+    *         bits 208-223: underlying symbol index
+    *         bits 224-239: profit target
+    *         bits 240-255: stop loss
+    * @param backtestResults Encoded stats for strategy's backtest (performed on centralized server)
+    * @param strategyParams Encoded parameters for the strategy
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    * @param strategyName Name of the strategy
+    * @param strategySymbol Symbol of the strategy's (future) token
+    */
     function _checkIfStrategyMeetsCriteria(uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules, string memory strategyName, string memory strategySymbol) internal view returns(bool) {
         uint numberOfTrades = (backtestResults << 220) >> 240;
         uint alphaDirection = (backtestResults << 175) >> 255;
@@ -166,9 +243,9 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         uint profitTarget = (strategyParams << 224) >> 240;
         uint stopLoss = (strategyParams << 240) >> 240;
 
-        return (Settings(getSettingsAddress()).checkIfSymbolIDIsValid(symbol) && 
-                entryRules.length <= Settings(getSettingsAddress()).getMaximumNumberOfEntryRules() &&
-                exitRules.length <= Settings(getSettingsAddress()).getMaximumNumberOfExitRules() &&
+        return (SETTINGS.getCurrencyKeyFromIndex(symbol) != address(0) && 
+                entryRules.length <= SETTINGS.getParameterValue("MaximumNumberOfEntryRules") &&
+                exitRules.length <= SETTINGS.getParameterValue("MaximumNumberOfExitRules") &&
                 bytes(strategyName).length > 0 &&
                 bytes(strategyName).length < 25 &&
                 bytes(strategySymbol).length > 0 &&
@@ -184,6 +261,14 @@ contract StrategyApproval is AddressResolver, StrategyManager {
                 maxPoolSize > 0);
     }
 
+    /**
+    * @dev Checks whether the given params match those of the submitted strategy (prevents user from spoofing strategy params)
+    * @param index Index of the submitted strategy in the submittedStrategies array
+    * @param strategyParams Encoded parameters for the strategy
+    * @param entryRules Array of encoded entry rules for the strategy
+    * @param exitRules Array of encoded exit rules for the strategy
+    * @return bool Whether the given params match those of the submitted strategy
+    */
     function _checkIfParamsMatch(uint index, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) internal view indexIsWithinBounds(index) returns(bool) {
         SubmittedStrategy memory strategy = submittedStrategies[index];
         uint[] memory submittedEntryRules = strategy.entryRules;
@@ -213,11 +298,15 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         return (strategyParams == strategy.submittedParams);
     }
 
+    /**
+    * @dev Processes the votes for the given strategy; publishes strategy to platform if approval threshold is met
+    * @param index Index of the submitted strategy in the submittedStrategies array
+    */
     function _processVotes(uint index) internal {
         uint numberOfCorrectVotes;
         SubmittedStrategy memory strategy = submittedStrategies[index];
 
-        //bounded by vote limit
+        //Bounded by vote limit
         for (uint i = 0; i < strategy.votes.length; i++)
         {
             if (strategy.votes[i].correct)
@@ -228,7 +317,7 @@ contract StrategyApproval is AddressResolver, StrategyManager {
 
         submittedStrategies[index].pendingApproval = false;
 
-        if (numberOfCorrectVotes >= Settings(getSettingsAddress()).getStrategyApprovalThreshold())
+        if (numberOfCorrectVotes >= SETTINGS.getParameterValue("StrategyApprovalThreshold"))
         {
             submittedStrategies[index].status = true;
             _publishStrategy(strategy.strategyName, strategy.strategySymbol, strategy.submittedParams, strategy.entryRules, strategy.exitRules, strategy.developer);

@@ -50,9 +50,7 @@ contract Settings is ISettings, Ownable {
     * @return address Currency key at given index
     */
     function getCurrencyKeyFromIndex(uint index) public view override returns (address) {
-        require(index >= 0 && index < availableCurrencies.length, "Index out of range");
-
-        return availableCurrencies[index];
+        return (index >= 0 && index < availableCurrencies.length) ? availableCurrencies[index] : address(0);
     }
 
     /**

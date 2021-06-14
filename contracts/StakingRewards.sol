@@ -8,19 +8,12 @@ import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/ITradegen.sol';
+import './interfaces/IStakingRewards.sol';
 
-import './AddressResolver.sol';
-import './Settings.sol';
-
-contract StakingRewards is AddressResolver {
+contract StakingRewards is IStakingRewards {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
-
-    struct State {
-        uint32 timestamp;
-        uint224 leftoverYield;
-    }
 
     uint private _totalSupply;
     mapping(address => uint) private _balances;
@@ -36,7 +29,7 @@ contract StakingRewards is AddressResolver {
     * @dev Returns the total amount of TGEN staked
     * @return uint The amount of TGEN staked in the protocol
     */
-    function totalSupply() external view returns (uint) {
+    function totalSupply() external view override returns (uint) {
         return _totalSupply;
     }
 
@@ -45,7 +38,7 @@ contract StakingRewards is AddressResolver {
     * @param account Address of the user
     * @return uint The amount of TGEN the user has staked
     */
-    function balanceOf(address account) public view returns (uint) {
+    function balanceOf(address account) public view override returns (uint) {
         return _balances[account];
     }
 
@@ -53,7 +46,7 @@ contract StakingRewards is AddressResolver {
     * @dev Wrapper for internal calculateAvailableYield() function 
     * @return uint The user's available yield
     */
-    function getAvailableYield() external view returns (uint) {
+    function getAvailableYield() external view override returns (uint) {
         return _calculateAvailableYield(msg.sender);
     }
 
@@ -63,7 +56,7 @@ contract StakingRewards is AddressResolver {
     * @dev Stakes TGEN in the protocol
     * @param amount Amount of TGEN to stake
     */
-    function stake(uint amount) external {
+    function stake(uint amount) external override {
         require(amount > 0, "Cannot stake 0");
 
         _userToState[msg.sender].timestamp = uint32(block.timestamp);
@@ -82,7 +75,7 @@ contract StakingRewards is AddressResolver {
     * @dev Unstakes TGEN from the protocol
     * @param amount Amount of TGEN to unstake
     */
-    function unstake(uint amount) external {
+    function unstake(uint amount) external override {
         require(amount > 0, "Cannot withdraw 0");
 
         _totalSupply = _totalSupply.sub(amount);
@@ -100,7 +93,7 @@ contract StakingRewards is AddressResolver {
     /**
     * @dev Wrapper for internal claimStakingRewards() function 
     */
-    function claimStakingRewards() external {
+    function claimStakingRewards() external override {
         _claimStakingRewards(msg.sender, _calculateAvailableYield(msg.sender));
     }
 
