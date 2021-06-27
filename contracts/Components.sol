@@ -30,10 +30,8 @@ contract Components is IComponents, Ownable {
     mapping (address => mapping (address => uint)) public indicatorUsers; //maps to (index + 1); index 0 represents indicator not purchased by user
     mapping (address => mapping (address => uint)) public comparatorUsers; //maps to (index + 1); index 0 represents comparator not purchased by user
 
-    constructor(IERC20 baseTradegen, address userManagerAddress) public {
-        require(userManagerAddress != address(0), "Invalid user manager address");
+    constructor(IERC20 baseTradegen) public {
         TRADEGEN = baseTradegen;
-        _userManagerAddress = userManagerAddress;
     }
 
     /* ========== VIEWS ========== */
@@ -206,28 +204,48 @@ contract Components is IComponents, Ownable {
 
     /**
     * @dev Adds a new indicator to the platform
+    * @param isDefault Whether the added indicator is a default indicator
     * @param indicatorAddress Address of the contract where the indicator is implemented
     */
-    function _addNewIndicator(address indicatorAddress) public override onlyOwner {
+    function _addNewIndicator(bool isDefault, address indicatorAddress) public override onlyOwner {
         require(indicatorAddress != address(0), "Invalid indicator address");
 
-        indicators.push(indicatorAddress);
-        indicatorAddressToIndex[indicatorAddress] = indicators.length;
+        if (isDefault)
+        {
+            defaultIndicators.push(indicatorAddress);
 
-        emit AddedIndicator(indicatorAddress, indicators.length - 1, block.timestamp);
+            emit AddedIndicator(indicatorAddress, defaultIndicators.length - 1, block.timestamp);
+        }
+        else
+        {
+            indicators.push(indicatorAddress);
+            indicatorAddressToIndex[indicatorAddress] = indicators.length;
+
+            emit AddedIndicator(indicatorAddress, indicators.length - 1, block.timestamp);
+        }
     }
 
     /**
     * @dev Adds a new comparator to the platform
+    * @param isDefault Whether the added comparator is a default indicator
     * @param comparatorAddress Address of the contract where the comparator is implemented
     */
-    function _addNewComparator(address comparatorAddress) public override onlyOwner {
+    function _addNewComparator(bool isDefault, address comparatorAddress) public override onlyOwner {
         require(comparatorAddress != address(0), "Invalid comparator address");
 
-        comparators.push(comparatorAddress);
-        comparatorAddressToIndex[comparatorAddress] = comparators.length;
+        if (isDefault)
+        {
+            defaultComparators.push(comparatorAddress);
 
-        emit AddedComparator(comparatorAddress, comparators.length - 1, block.timestamp);
+            emit AddedComparator(comparatorAddress, defaultComparators.length - 1, block.timestamp);
+        }
+        else
+        {
+            comparators.push(comparatorAddress);
+            comparatorAddressToIndex[comparatorAddress] = comparators.length;
+
+            emit AddedComparator(comparatorAddress, comparators.length - 1, block.timestamp);
+        }
     }
 
     /**
@@ -256,6 +274,16 @@ contract Components is IComponents, Ownable {
 
         userPurchasedIndicators[user] = _userPurchasedIndicators;
         userPurchasedComparators[user] = _userPurchasedComparators;
+    }
+
+    /**
+    * @dev Sets the address of the UserManager contract; meant to be called by the contract owner
+    * @param userManagerAddress Address of the UserManager contract
+    */
+    function setUserManagerAddress(address userManagerAddress) public override onlyOwner {
+        require(userManagerAddress != address(0), "Invalid address");
+
+        _userManagerAddress = userManagerAddress;
     }
 
     /* ========== MODIFIERS ========== */

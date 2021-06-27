@@ -85,19 +85,27 @@ interface IComponents {
 
     /**
     * @dev Adds a new indicator to the platform; meant to be called by the contract owner
+    * @param isDefault Whether the added indicator is a default indicator
     * @param indicatorAddress Address of the contract where the indicator is implemented
     */
-    function _addNewIndicator(address indicatorAddress) external;
+    function _addNewIndicator(bool isDefault, address indicatorAddress) external;
 
     /**
     * @dev Adds a new comparator to the platform; meant to be called by the contract owner
+    * @param isDefault Whether the added comparator is a default comparator
     * @param comparatorAddress Address of the contract where the comparator is implemented
     */
-    function _addNewComparator(address comparatorAddress) external;
+    function _addNewComparator(bool isDefault, address comparatorAddress) external;
 
     /**
     * @dev Adds default indicators and comparators to the given user; meant to be called by the UserManager contract
     * @param user Address of user to add default indicators and comparators to
     */
     function _addDefaultComponentsToUser(address user) external;
+
+    /**
+    * @dev Sets the address of the UserManager contract; meant to be called by the contract owner
+    * @param userManagerAddress Address of the UserManager contract
+    */
+    function setUserManagerAddress(address userManagerAddress) external;
 }

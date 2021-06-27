@@ -42,7 +42,7 @@ contract UserManager is AddressResolver {
     function editUsername(string memory newUsername) external userExists(msg.sender) {
         require(usernames[newUsername] == address(0), "Username already exists");
         require(bytes(newUsername).length > 0, "Username cannot be empty string");
-        require(bytes(newUsername).length <= 25, "Username cannot have more than 25 characters");
+        require(bytes(newUsername).length <= 30, "Username cannot have more than 30 characters");
 
         string memory oldUsername = users[msg.sender].username;
         users[msg.sender].username = newUsername;
@@ -59,7 +59,7 @@ contract UserManager is AddressResolver {
     function registerUser(string memory defaultRandomUsername) external {
         require(users[msg.sender].memberSinceTimestamp == 0, "User already exists");
         require(bytes(defaultRandomUsername).length > 0, "Username cannot be empty string");
-        require(bytes(defaultRandomUsername).length <= 25, "Username cannot have more than 25 characters");
+        require(bytes(defaultRandomUsername).length <= 30, "Username cannot have more than 30 characters");
 
         usernames[defaultRandomUsername] = msg.sender;
         users[msg.sender] = User(block.timestamp, defaultRandomUsername);
