@@ -7,16 +7,17 @@ contract EMA is IIndicator {
     using SafeMath for uint;
 
     struct State {
+        bool exists;
         uint8 EMAperiod;
-        uint120 currentValue;
-        uint120 previousEMA;
+        uint112 currentValue;
+        uint112 previousEMA;
         uint[] indicatorHistory;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => State) private _tradingBotStates;
+    mapping (address => mapping(uint => State)) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -56,36 +57,43 @@ contract EMA is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint param) public override {
-        require(_tradingBotStates[msg.sender].currentValue == 0, "Trading bot already exists");
+    function addTradingBot(uint index, uint param) public override {
+        require(index > 0, "Invalid index");
+        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender] = State(uint8(param), 0, 0, new uint[](0));
+        _tradingBotStates[msg.sender][index] = State(true, uint8(param), 0, 0, new uint[](0));
     }
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update
+    * @param index Index in trading bot's entry/exit rule array
     * @param latestPrice The latest price from oracle price feed
     */
-    function update(uint latestPrice) public override {
-        uint currentValue = uint256(_tradingBotStates[msg.sender].currentValue);
+    function update(uint index, uint latestPrice) public override {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+
+        uint currentValue = uint256(_tradingBotStates[msg.sender][index].currentValue);
         uint multiplier = 2;
-        multiplier = multiplier.div(uint256(_tradingBotStates[msg.sender].EMAperiod).add(1));
+        multiplier = multiplier.div(uint256(_tradingBotStates[msg.sender][index].EMAperiod).add(1));
 
-        _tradingBotStates[msg.sender].currentValue = (currentValue == 0) ? uint120(latestPrice) : uint120((multiplier.mul(latestPrice.sub(uint256(_tradingBotStates[msg.sender].previousEMA)).add(uint256(_tradingBotStates[msg.sender].previousEMA)))));
-        _tradingBotStates[msg.sender].previousEMA = uint120(currentValue);
+        _tradingBotStates[msg.sender][index].currentValue = (currentValue == 0) ? uint120(latestPrice) : uint120((multiplier.mul(latestPrice.sub(uint256(_tradingBotStates[msg.sender][index].previousEMA)).add(uint256(_tradingBotStates[msg.sender][index].previousEMA)))));
+        _tradingBotStates[msg.sender][index].previousEMA = uint112(currentValue);
 
-        _tradingBotStates[msg.sender].indicatorHistory.push(uint256(_tradingBotStates[msg.sender].currentValue));
+        _tradingBotStates[msg.sender].indicatorHistory.push(uint256(_tradingBotStates[msg.sender][index].currentValue));
     }   
 
     /**
     * @dev Given a trading bot address, returns the indicator value for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value for the given trading bot
     */
-    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
         uint[] memory temp = new uint[](1);
@@ -96,9 +104,10 @@ contract EMA is IIndicator {
     /**
     * @dev Given a trading bot address, returns the indicator value history for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value history for the given trading bot
     */
-    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
 
         return _tradingBotStates[tradingBotAddress].indicatorHistory;

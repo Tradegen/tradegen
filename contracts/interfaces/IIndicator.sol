@@ -1,4 +1,4 @@
-pragma solidity >=0.6.12;
+pragma solidity >=0.5.0;
 
 interface IIndicator {
 
@@ -22,30 +22,34 @@ interface IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint param) external;
+    function addTradingBot(uint index, uint param) external;
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update
+    * @param index Index in trading bot's entry/exit rule array
     * @param latestPrice The latest price from oracle price feed
     */
-    function update(uint latestPrice) external;
+    function update(uint index, uint latestPrice) external;
 
     /**
     * @dev Given a trading bot address, returns the indicator value for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value for the given trading bot
     */
-    function getValue(address tradingBotAddress) external view returns (uint[] memory);
+    function getValue(address tradingBotAddress, uint index) external view returns (uint[] memory);
 
     /**
     * @dev Given a trading bot address, returns the indicator value history for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value history for the given trading bot
     */
-    function getHistory(address tradingBotAddress) external view returns (uint[] memory);
+    function getHistory(address tradingBotAddress, uint index) external view returns (uint[] memory);
 
-    //Events
+    // Events
     event UpdatedPrice(address indexed indicatorAddress, uint newPrice, uint timestamp);
 }

@@ -136,7 +136,7 @@ contract TradingBot is ITradingBot {
     * @param user Address of user to transfer funds to
     * @param amount Amount of funds to transfer
     */
-    function withdraw(address user, uint amount) public onlyOwner {
+    function withdraw(address user, uint amount) public override onlyOwner {
         require(user != address(0), "Invalid user address");
 
         uint tokenToUSD = UBESWAP_ADAPTER.getPrice(_underlyingAsset);
@@ -195,14 +195,14 @@ contract TradingBot is ITradingBot {
         //Bounded by maximum number of entry rules (from Settings contract)
         for (uint i = 0; i < _entryRules.length; i++)
         {
-            IIndicator(_entryRules[i].firstIndicatorAddress).update(latestPrice);
-            IIndicator(_entryRules[i].secondIndicatorAddress).update(latestPrice);
+            IIndicator(_entryRules[i].firstIndicatorAddress).update(i.mul(2), latestPrice);
+            IIndicator(_entryRules[i].secondIndicatorAddress).update(i.mul(2).add(1), latestPrice);
         }
 
         for (uint i = 0; i < _exitRules.length; i++)
         {
-            IIndicator(_exitRules[i].firstIndicatorAddress).update(latestPrice);
-            IIndicator(_exitRules[i].secondIndicatorAddress).update(latestPrice);
+            IIndicator(_exitRules[i].firstIndicatorAddress).update(_entryRules.length.add(i.mul(2)), latestPrice);
+            IIndicator(_exitRules[i].secondIndicatorAddress).update(_entryRules.length.add(i.mul(2)).add(1), latestPrice);
         }
     }
 
@@ -213,7 +213,7 @@ contract TradingBot is ITradingBot {
     function _checkEntryRules() private returns (bool) {
         for (uint i = 0; i < _entryRules.length; i++)
         {
-            if (!IComparator(_entryRules[i].comparatorAddress).checkConditions())
+            if (!IComparator(_entryRules[i].comparatorAddress).checkConditions(i.mul(2)))
             {
                 return false;
             }
@@ -229,7 +229,7 @@ contract TradingBot is ITradingBot {
     function _checkExitRules() private returns (bool) {
         for (uint i = 0; i < _exitRules.length; i++)
         {
-            if (!IComparator(_exitRules[i].comparatorAddress).checkConditions())
+            if (!IComparator(_exitRules[i].comparatorAddress).checkConditions(_entryRules.length.add(i.mul(2))))
             {
                 return true;
             }
@@ -265,12 +265,12 @@ contract TradingBot is ITradingBot {
 
         for (uint i = 0; i < entryRules.length; i++)
         {
-            _entryRules.push(_generateRule(entryRules[i]));
+            _entryRules.push(_generateRule(i.mul(2), entryRules[i]));
         }
 
         for (uint i = 0; i < exitRules.length; i++)
         {
-             _exitRules.push(_generateRule(exitRules[i]));
+             _exitRules.push(_generateRule(entryRules.length + i.mul(2), exitRules[i]));
         }
     }
 
@@ -285,10 +285,11 @@ contract TradingBot is ITradingBot {
               bits 160-175: second indicator type
               bits 176-215: first indicator parameter
               bits 216-255: second indicator parameter
+    * @param index Index in trading bot's entry/exit rule array
     * @param rule Parameters of the rule
     * @return Rule The indicators and comparators generated from the rule's parameters
     */
-    function _generateRule(uint rule) private returns (Rule memory) {
+    function _generateRule(uint index, uint rule) private returns (Rule memory) {
         bool comparatorIsDefault = ((rule << 125) >> 255) == 1;
         uint comparator = (rule << 126) >> 240;
         bool firstIndicatorIsDefault = ((rule << 142) >> 255) == 1;
@@ -298,9 +299,9 @@ contract TradingBot is ITradingBot {
         uint firstIndicatorParam = (rule << 176) >> 216;
         uint secondIndicatorParam = (rule << 216) >> 216;
 
-        address firstIndicatorAddress = _addBotToIndicator(firstIndicatorIsDefault, firstIndicator, firstIndicatorParam);
-        address secondIndicatorAddress = _addBotToIndicator(secondIndicatorIsDefault, secondIndicator, secondIndicatorParam);
-        address comparatorAddress = _addBotToComparator(comparatorIsDefault, comparator, firstIndicatorAddress, secondIndicatorAddress);
+        address firstIndicatorAddress = _addBotToIndicator(index, firstIndicatorIsDefault, firstIndicator, firstIndicatorParam);
+        address secondIndicatorAddress = _addBotToIndicator(index + 1, secondIndicatorIsDefault, secondIndicator, secondIndicatorParam);
+        address comparatorAddress = _addBotToComparator(index, comparatorIsDefault, comparator, firstIndicatorAddress, secondIndicatorAddress);
 
         require(firstIndicatorAddress != address(0) && secondIndicatorAddress != address(0) && comparatorAddress != address(0), "Invalid address when generating rule");
 
@@ -309,34 +310,36 @@ contract TradingBot is ITradingBot {
 
     /**
     * @dev Adds trading bot to the indicator
+    * @param index Index in trading bot's entry/exit rule array
     * @param isDefault Whether indicator is a default indicator
     * @param indicatorIndex Index of indicator in array of available indicators
     * @param indicatorParam Parameter for the indicator
     * @return address Address of the indicator
     */
-    function _addBotToIndicator(bool isDefault, uint indicatorIndex, uint indicatorParam) private returns (address) {
+    function _addBotToIndicator(uint index, bool isDefault, uint indicatorIndex, uint indicatorParam) private returns (address) {
         address indicatorAddress = COMPONENTS.getIndicatorFromIndex(isDefault, indicatorIndex);
 
-        IIndicator(indicatorAddress).addTradingBot(indicatorParam);
+        IIndicator(indicatorAddress).addTradingBot(index, indicatorParam);
 
         return indicatorAddress;
     }
 
     /**
     * @dev Adds trading bot to the comparator
+    * @param index Index in trading bot's entry/exit rule array
     * @param isDefault Whether comparator is a default comparator
     * @param comparatorIndex Index of comparator in array of available comparators
     * @param firstIndicatorAddress Address of the first indicator
     * @param secondIndicatorAddress Address of the second indicator
     * @return address Address of the comparator
     */
-    function _addBotToComparator(bool isDefault, uint comparatorIndex, address firstIndicatorAddress, address secondIndicatorAddress) private returns (address) {
+    function _addBotToComparator(uint index, bool isDefault, uint comparatorIndex, address firstIndicatorAddress, address secondIndicatorAddress) private returns (address) {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
         address comparatorAddress = COMPONENTS.getComparatorFromIndex(isDefault, comparatorIndex);
 
-        IComparator(comparatorAddress).addTradingBot(firstIndicatorAddress, secondIndicatorAddress);
+        IComparator(comparatorAddress).addTradingBot(index, firstIndicatorAddress, secondIndicatorAddress);
 
         return comparatorAddress;
     }

@@ -16,16 +16,18 @@ interface IComparator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param firstIndicatorAddress Address of the comparator's first indicator
     * @param secondIndicatorAddress Address of the comparator's second indicator
     */
-    function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) external;
+    function addTradingBot(uint index, address firstIndicatorAddress, address secondIndicatorAddress) external;
 
     /**
     * @dev Returns whether the comparator's conditions are met
+    * @param index Index in trading bot's entry/exit rule array
     * @return bool Whether the comparator's conditions are met after the latest price feed update
     */
-    function checkConditions() external returns (bool);
+    function checkConditions(uint index) external returns (bool);
 
     // Events
     event UpdatedPrice(address indexed comparatorAddress, uint newPrice, uint timestamp);

@@ -45,22 +45,25 @@ contract Down is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint param) public override {}
+    function addTradingBot(uint index, uint param) public override {}
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update
+    * @param index Index in trading bot's entry/exit rule array
     * @param latestPrice The latest price from oracle price feed
     */
-    function update(uint latestPrice) public override {}   
+    function update(uint index, uint latestPrice) public override {}   
 
     /**
     * @dev Given a trading bot address, returns the indicator value for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value for the given trading bot
     */
-    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         uint[] memory temp = new uint[](1);
         temp[0] = 0;
         return temp;
@@ -69,9 +72,10 @@ contract Down is IIndicator {
     /**
     * @dev Given a trading bot address, returns the indicator value history for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value history for the given trading bot
     */
-    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         return new uint[](0);
     }
 }

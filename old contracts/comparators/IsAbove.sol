@@ -8,12 +8,13 @@ contract IsAbove is IComparator {
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
+        bool exists;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => State) private _tradingBotStates;
+    mapping (address => mapping (uint => State)) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -45,26 +46,32 @@ contract IsAbove is IComparator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param firstIndicatorAddress Address of the comparator's first indicator
     * @param secondIndicatorAddress Address of the comparator's second indicator
     */
-    function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) public override {
+    function addTradingBot(uint index, address firstIndicatorAddress, address secondIndicatorAddress) public override {
+        require(index > 0, "Invalid index");
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
-        require(_tradingBotStates[msg.sender].firstIndicatorAddress == address(0), "Trading bot already exists");
+        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
 
-        _tradingBotStates[msg.sender] = State(firstIndicatorAddress, secondIndicatorAddress);
+        _tradingBotStates[msg.sender][index] = State(firstIndicatorAddress, secondIndicatorAddress, true);
     }
 
     /**
     * @dev Returns whether the comparator's conditions are met
+    * @param index Index in trading bot's entry/exit rule array
     * @return bool Whether the comparator's conditions are met after the latest price feed update
     */
-    function checkConditions() public view override returns (bool) {
-        State storage tradingBotState = _tradingBotStates[msg.sender];
+    function checkConditions(uint index) public view override returns (bool) {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
 
-        uint[] memory firstIndicatorPriceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender);
-        uint[] memory secondIndicatorPriceHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender);
+        State storage tradingBotState = _tradingBotStates[msg.sender][index];
+
+        uint[] memory firstIndicatorPriceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, index);
+        uint[] memory secondIndicatorPriceHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, index);
 
         if (firstIndicatorPriceHistory.length == 0 || secondIndicatorPriceHistory.length == 0)
         {

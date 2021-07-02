@@ -1,13 +1,13 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
+import '../interfaces/IIndicator.sol';
 
 contract Interval is IIndicator {
 
     uint public _price;
     address public _developer;
 
-    mapping (address => uint) private _tradingBotStates;
+    mapping (address => mapping(uint => uint)) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -47,40 +47,51 @@ contract Interval is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint param) public override {
-        require(_tradingBotStates[msg.sender] == 0, "Trading bot already exists");
+    function addTradingBot(uint index, uint param) public override {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index] == 0, "Trading bot already exists");
         require(param > 0, "Invalid param");
 
-        _tradingBotStates[msg.sender] = param;
+        _tradingBotStates[msg.sender][index] = param;
     }
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update
+    * @param index Index in trading bot's entry/exit rule array
     * @param latestPrice The latest price from oracle price feed
     */
-    function update(uint latestPrice) public override {}   
+    function update(uint index, uint latestPrice) public override {}   
 
     /**
     * @dev Given a trading bot address, returns the indicator value for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value for the given trading bot
     */
-    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index] != 0, "Trading bot doesn't exist");
+
         uint[] memory temp = new uint[](1);
-        temp[0] = _tradingBotStates[tradingBotAddress];
+        temp[0] = _tradingBotStates[tradingBotAddress][index];
         return temp;
     }
 
     /**
     * @dev Given a trading bot address, returns the indicator value history for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value history for the given trading bot
     */
-    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index] != 0, "Trading bot doesn't exist");
+
         uint[] memory temp = new uint[](1);
-        temp[0] = _tradingBotStates[tradingBotAddress];
+        temp[0] = _tradingBotStates[tradingBotAddress][index];
         return temp;
     }
 }

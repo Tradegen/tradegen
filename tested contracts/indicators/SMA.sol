@@ -10,6 +10,7 @@ contract SMA is IIndicator {
     using SafeMath for uint;
 
     struct State {
+        bool exists;
         uint8 SMAperiod;
         uint128 currentValue;
         uint[] priceHistory;
@@ -19,7 +20,7 @@ contract SMA is IIndicator {
     uint public _price;
     address public _developer;
 
-    mapping (address => State) private _tradingBotStates;
+    mapping (address => mapping(uint => State)) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -59,55 +60,64 @@ contract SMA is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint param) public override {
-        require(_tradingBotStates[msg.sender].currentValue == 0, "Trading bot already exists");
+    function addTradingBot(uint index, uint param) public override {
+        require(index > 0, "Invalid index");
+        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender] = State(uint8(param), 0, new uint[](0), new uint[](0));
+        _tradingBotStates[msg.sender][index] = State(true, uint8(param), 0, new uint[](0), new uint[](0));
     }
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update
+    * @param index Index in trading bot's entry/exit rule array
     * @param latestPrice The latest price from oracle price feed
     */
-    function update(uint latestPrice) public override {
-        _tradingBotStates[msg.sender].priceHistory.push(latestPrice);
+    function update(uint index, uint latestPrice) public override {
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
 
-        if (_tradingBotStates[msg.sender].priceHistory.length > uint256(_tradingBotStates[msg.sender].SMAperiod))
+        _tradingBotStates[msg.sender][index].priceHistory.push(latestPrice);
+
+        if (_tradingBotStates[msg.sender][index].priceHistory.length > uint256(_tradingBotStates[msg.sender][index].SMAperiod))
         {
-            uint temp = uint256(_tradingBotStates[msg.sender].currentValue).mul(uint256(_tradingBotStates[msg.sender].SMAperiod));
-            uint index = _tradingBotStates[msg.sender].priceHistory.length.sub(uint256(_tradingBotStates[msg.sender].SMAperiod)).sub(1);
-            temp = temp.sub(_tradingBotStates[msg.sender].priceHistory[index]);
+            uint temp = uint256(_tradingBotStates[msg.sender][index].currentValue).mul(uint256(_tradingBotStates[msg.sender][index].SMAperiod));
+            uint index2 = _tradingBotStates[msg.sender][index].priceHistory.length.sub(uint256(_tradingBotStates[msg.sender][index].SMAperiod)).sub(1);
+            temp = temp.sub(_tradingBotStates[msg.sender][index].priceHistory[index2]);
             temp = temp.add(latestPrice);
-            temp = temp.div(uint256(_tradingBotStates[msg.sender].SMAperiod));
+            temp = temp.div(uint256(_tradingBotStates[msg.sender][index].SMAperiod));
 
-            _tradingBotStates[msg.sender].currentValue = uint128(temp); 
-            _tradingBotStates[msg.sender].indicatorHistory.push(temp);
+            _tradingBotStates[msg.sender][index].currentValue = uint128(temp); 
+            _tradingBotStates[msg.sender][index].indicatorHistory.push(temp);
         }
         else
         {
-            uint temp = uint256(_tradingBotStates[msg.sender].currentValue).mul(_tradingBotStates[msg.sender].priceHistory.length - 1);
+            uint temp = uint256(_tradingBotStates[msg.sender][index].currentValue).mul(_tradingBotStates[msg.sender][index].priceHistory.length - 1);
             temp = temp.add(latestPrice);
-            temp = temp.div(_tradingBotStates[msg.sender].priceHistory.length);
+            temp = temp.div(_tradingBotStates[msg.sender][index].priceHistory.length);
 
-            uint value = (_tradingBotStates[msg.sender].priceHistory.length == uint256(_tradingBotStates[msg.sender].SMAperiod)) ? temp : 1;
+            uint value = (_tradingBotStates[msg.sender][index].priceHistory.length == uint256(_tradingBotStates[msg.sender][index].SMAperiod)) ? temp : 1;
 
-            _tradingBotStates[msg.sender].currentValue = uint128(temp);
-            _tradingBotStates[msg.sender].indicatorHistory.push(value);
+            _tradingBotStates[msg.sender][index].currentValue = uint128(temp);
+            _tradingBotStates[msg.sender][index].indicatorHistory.push(value);
         }
     }   
 
     /**
     * @dev Given a trading bot address, returns the indicator value for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value for the given trading bot
     */
-    function getValue(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress][index];
 
         uint[] memory temp = new uint[](1);
         temp[0] = (tradingBotState.priceHistory.length >= tradingBotState.SMAperiod) ? tradingBotState.currentValue : 0;
@@ -117,12 +127,15 @@ contract SMA is IIndicator {
     /**
     * @dev Given a trading bot address, returns the indicator value history for that bot
     * @param tradingBotAddress Address of trading bot
+    * @param index Index in trading bot's entry/exit rule array
     * @return uint[] Indicator value history for the given trading bot
     */
-    function getHistory(address tradingBotAddress) public view override returns (uint[] memory) {
+    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(index > 0, "Invalid index");
+        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress];
+        State storage tradingBotState = _tradingBotStates[tradingBotAddress][index];
 
         return tradingBotState.indicatorHistory;
     }

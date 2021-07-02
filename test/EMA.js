@@ -11,31 +11,15 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const Closes = require('../build/contracts/Closes.json');
-const LatestPrice = require('../build/contracts/LatestPrice.json');
-const Down = require('../build/contracts/Down.json');
-const Up = require('../build/contracts/Up.json');
+const EMA = require('../build/contracts/EMA.json');
 
-var contractAddress = "0xE114c2F6732a89035DBE53173Ffc64D3c6224741";
+var contractAddress = "0x55e3Af68010636F010a4BfFa8103B1e007B0536a";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
-
-var latestPriceAddress = "0x7B86F9Ba5428A362b7e449685F0F5e277eDD5CBf";
-var downAddress = "0x3bcf8813C82D9231401BBB69Ee9802Fdca949A06";
-var upAddress = "0xc14656959A47671D7844B28529391F61A06e6385";
 
 function initContract()
 { 
     let instance = new web3.eth.Contract(
-        Closes.abi, contractAddress);
-
-    let latestPriceInstance = new web3.eth.Contract(
-        LatestPrice.abi, latestPriceAddress);
-
-    let downInstance = new web3.eth.Contract(
-        Down.abi, downAddress);
-
-    let upInstance = new web3.eth.Contract(
-        Up.abi, upAddress);
+        EMA.abi, contractAddress);
 
     it('Price and developer are initialized correctly', async () => {
         let data = await instance.methods.getPriceAndDeveloper().call();
@@ -95,47 +79,45 @@ function initContract()
         }
     });
 
-    it('Latest price closes down', async () => {
+    it('Update first trading bot state with increasing EMA', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         //Add first trading bot
-        let txObject = await instance.methods.addTradingBot(latestPriceAddress, downAddress);
+        let txObject = await instance.methods.addTradingBot(3);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
 
         let receipt = await tx.waitReceipt()
 
         //Update first trading bot indicator state with first value
-        let txObject2 = await latestPriceInstance.methods.update(1000);
+        let txObject2 = await instance.methods.update(1000);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
 
         let receipt2 = await tx2.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue = await latestPriceInstance.methods.getValue(account.address).call();
+        let currentValue = await instance.methods.getValue(account.address).call();
         console.log(currentValue);
 
         assert(
-            currentValue[0] == 1000,
-            'Current value should be 1000'
+            currentValue[0] == 0,
+            'Current value should be 0'
         );
 
         //Update first trading bot indicator state with second value
-        let txObject3 = await latestPriceInstance.methods.update(2000);
+        let txObject3 = await instance.methods.update(2000);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
 
         let receipt3 = await tx3.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue2 = await latestPriceInstance.methods.getValue(account.address).call();
+        let currentValue2 = await instance.methods.getValue(account.address).call();
         console.log(currentValue2);
 
         assert(
-            currentValue2[0] == 2000,
-            'Current value should be 2000'
+            currentValue2[0] == 0,
+            'Current value should be 0'
         );
-
-        let meetsConditions = await instance.methods.checkConditions().call();
 
         //Update first trading bot indicator state with third value
         let txObject4 = await instance.methods.update(3000);

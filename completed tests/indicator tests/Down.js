@@ -12,7 +12,7 @@ const kit = ContractKit.newKitFromWeb3(web3);
 
 const Down = require('../build/contracts/Down.json');
 
-var contractAddress = "0x3bcf8813C82D9231401BBB69Ee9802Fdca949A06";
+var contractAddress = "0xF993C0F47f798B1c3096Ccd15046926D344a7D47";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
 async function initContract(){
@@ -85,20 +85,20 @@ async function initContract(){
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot
-        let txObject = await instance.methods.addTradingBot(1);
+        let txObject = await instance.methods.addTradingBot(0, 1);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
 
         let receipt = await tx.waitReceipt()
         console.log(receipt);
 
         //Update indicator state
-        let txObject2 = await instance.methods.update(1);
+        let txObject2 = await instance.methods.update(0, 1);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
 
         let receipt2 = await tx2.waitReceipt()
         console.log(receipt2);
 
-        let currentValue = await instance.methods.getValue(account.address).call();
+        let currentValue = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue);
 
         assert(
@@ -106,11 +106,41 @@ async function initContract(){
             'Current value should be 0'
         );
 
-        let history = await instance.methods.getHistory(account.address).call();
+        let history = await instance.methods.getHistory(account.address, 0).call();
         console.log(history);
 
         assert(
             history.length == 0,
+            'Indicator history should have no elements'
+        );
+
+        //Add second instance of trading bot
+        let txObject3 = await instance.methods.addTradingBot(1, 1);
+        let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
+
+        let receipt3 = await tx3.waitReceipt()
+        console.log(receipt3);
+
+        //Update indicator state of second instance
+        let txObject4 = await instance.methods.update(1, 1);
+        let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
+
+        let receipt4 = await tx4.waitReceipt()
+        console.log(receipt4);
+
+        let currentValue3 = await instance.methods.getValue(account.address, 1).call();
+        console.log(currentValue3);
+
+        assert(
+            currentValue3[0] == 0,
+            'Current value should be 0'
+        );
+
+        let history2 = await instance.methods.getHistory(account.address, 1).call();
+        console.log(history2);
+
+        assert(
+            history2.length == 0,
             'Indicator history should have no elements'
         );
     });
