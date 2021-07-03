@@ -3,7 +3,7 @@ pragma solidity >=0.5.0;
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 
-contract CrossesAbove is IComparator {
+contract CrossesBelow is IComparator {
 
     struct State {
         address firstIndicatorAddress;
@@ -84,8 +84,8 @@ contract CrossesAbove is IComparator {
             return false;
         }
 
-        bool result = (tradingBotState.firstIndicatorPreviousValue < tradingBotState.secondIndicatorPreviousValue) &&
-                    (firstIndicatorHistory[firstIndicatorHistory.length - 1] > secondIndicatorHistory[secondIndicatorHistory.length - 1]);
+        bool result = (tradingBotState.firstIndicatorPreviousValue > tradingBotState.secondIndicatorPreviousValue) &&
+                    (firstIndicatorHistory[firstIndicatorHistory.length - 1] < secondIndicatorHistory[secondIndicatorHistory.length - 1]);
 
         _tradingBotStates[msg.sender][comparatorIndex].firstIndicatorPreviousValue = uint128(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
         _tradingBotStates[msg.sender][comparatorIndex].secondIndicatorPreviousValue = uint128(secondIndicatorHistory[secondIndicatorHistory.length - 1]);

@@ -11,19 +11,19 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const CrossesAbove = require('../build/contracts/CrossesAbove.json');
+const CrossesBelow = require('../build/contracts/CrossesBelow.json');
 const LatestPrice = require('../build/contracts/LatestPrice.json');
 const SMA = require('../build/contracts/SMA.json');
 
-var contractAddress = "0x8Db792d9A48Bca40BD0bE2D7E98dA11481277a4c";
+var contractAddress = "0xA8f9b2C8EFa19765f0D4bc3B9b714304f5162D2A";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var LatestPriceAddress = "0xEf4acD9C64bd2936B8b0727c9b6c0a5921Fb4063";
-var SMAAddress = "0x381726ddcC989537dDc3335cE42c0F46a4D136cF";
+var LatestPriceAddress = "0x9a7C211c2F73F7AA2055A50F8c25cc8DA478d5DB";
+var SMAAddress = "0xB35485C77081150caD69db04e41E02129eD12da2";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(CrossesAbove.abi, contractAddress);
+    let instance = new web3.eth.Contract(CrossesBelow.abi, contractAddress);
     let latestPriceInstance = new web3.eth.Contract(LatestPrice.abi, LatestPriceAddress);
     let SMAInstance = new web3.eth.Contract(SMA.abi, SMAAddress);
 
@@ -84,8 +84,8 @@ function initContract()
             console.log(err);
         }
     });
-    /*
-    it('Latest price crosses above SMA, first trading bot', async () => {
+    
+    it('Latest price crosses below SMA, first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -127,13 +127,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close down
-        let txObject6 = await latestPriceInstance.methods.update(0, 900);
+        //Update first indicator state with second value; close up
+        let txObject6 = await latestPriceInstance.methods.update(0, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await SMAInstance.methods.update(0, 900);
+        let txObject7 = await SMAInstance.methods.update(0, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -149,13 +149,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close down
-        let txObject8 = await latestPriceInstance.methods.update(0, 800);
+        //Update first indicator state with third value; close up
+        let txObject8 = await latestPriceInstance.methods.update(0, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await SMAInstance.methods.update(0, 800);
+        let txObject9 = await SMAInstance.methods.update(0, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -171,13 +171,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(0, 1900);
+        //Update first indicator state with fourth value; close down
+        let txObject10 = await latestPriceInstance.methods.update(0, 700);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await SMAInstance.methods.update(0, 1900);
+        let txObject11 = await SMAInstance.methods.update(0, 700);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -202,7 +202,7 @@ function initContract()
         );
     });
     
-    it('Latest price crosses above SMA, second instance of first trading bot', async () => {
+    it('Latest price crosses below SMA, second instance of first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -244,13 +244,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close down
-        let txObject6 = await latestPriceInstance.methods.update(1, 900);
+        //Update first indicator state with second value; close up
+        let txObject6 = await latestPriceInstance.methods.update(1, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await SMAInstance.methods.update(1, 900);
+        let txObject7 = await SMAInstance.methods.update(1, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -266,13 +266,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close down
-        let txObject8 = await latestPriceInstance.methods.update(1, 800);
+        //Update first indicator state with third value; close up
+        let txObject8 = await latestPriceInstance.methods.update(1, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await SMAInstance.methods.update(1, 800);
+        let txObject9 = await SMAInstance.methods.update(1, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -288,13 +288,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(1, 1900);
+        //Update first indicator state with fourth value; close down
+        let txObject10 = await latestPriceInstance.methods.update(1, 700);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await SMAInstance.methods.update(1, 1900);
+        let txObject11 = await SMAInstance.methods.update(1, 700);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -318,13 +318,13 @@ function initContract()
             'Status should be true'
         );
 
-        //Update first indicator state with fifth value; close up
-        let txObject12 = await latestPriceInstance.methods.update(1, 3000);
+        //Update first indicator state with fifth value; close down
+        let txObject12 = await latestPriceInstance.methods.update(1, 500);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await SMAInstance.methods.update(1, 3000);
+        let txObject13 = await SMAInstance.methods.update(1, 500);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
@@ -347,9 +347,9 @@ function initContract()
             !result5,
             'Status should be false'
         );
-    });*/
+    });
     
-    it('Latest price crosses above SMA, second trading bot', async () => {
+    it('Latest price crosses below SMA, second trading bot', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
 
@@ -391,13 +391,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close down
-        let txObject6 = await latestPriceInstance.methods.update(0, 900);
+        //Update first indicator state with second value; close up
+        let txObject6 = await latestPriceInstance.methods.update(0, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await SMAInstance.methods.update(0, 900);
+        let txObject7 = await SMAInstance.methods.update(0, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -413,13 +413,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close down
-        let txObject8 = await latestPriceInstance.methods.update(0, 800);
+        //Update first indicator state with third value; close up
+        let txObject8 = await latestPriceInstance.methods.update(0, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await SMAInstance.methods.update(0, 800);
+        let txObject9 = await SMAInstance.methods.update(0, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -435,13 +435,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(0, 1900);
+        //Update first indicator state with fourth value; close down
+        let txObject10 = await latestPriceInstance.methods.update(0, 700);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await SMAInstance.methods.update(0, 1900);
+        let txObject11 = await SMAInstance.methods.update(0, 700);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -465,13 +465,13 @@ function initContract()
             'Status should be true'
         );
 
-        //Update first indicator state with fifth value; close up
-        let txObject12 = await latestPriceInstance.methods.update(0, 3000);
+        //Update first indicator state with fifth value; close down
+        let txObject12 = await latestPriceInstance.methods.update(0, 500);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await SMAInstance.methods.update(0, 3000);
+        let txObject13 = await SMAInstance.methods.update(0, 500);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
