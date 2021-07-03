@@ -54,7 +54,7 @@ contract Closes is IComparator {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 0));
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 1));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -67,9 +67,9 @@ contract Closes is IComparator {
     * @return bool Whether the comparator's conditions are met after the latest price feed update
     */
     function checkConditions(uint comparatorIndex, uint firstIndicatorIndex, uint secondIndicatorIndex) public override returns (bool) {
-        require(comparatorIndex > 0 && comparatorIndex < _tradingBotStates[msg.sender].length, "Invalid comparator index");
-        require(firstIndicatorIndex > 0, "Invalid first indicator index");
-        require(secondIndicatorIndex > 0, "Invalid second indicator index");
+        require(comparatorIndex >= 0 && comparatorIndex < _tradingBotStates[msg.sender].length, "Invalid comparator index");
+        require(firstIndicatorIndex >= 0, "Invalid first indicator index");
+        require(secondIndicatorIndex >= 0, "Invalid second indicator index");
 
         uint[] memory priceHistory = IIndicator(_tradingBotStates[msg.sender][comparatorIndex].firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
         
@@ -77,6 +77,8 @@ contract Closes is IComparator {
         {
             if (priceHistory.length == 0)
             {
+                emit ConditionStatus(false); //test
+                
                 return false;
             }
 
@@ -86,9 +88,13 @@ contract Closes is IComparator {
                 {
                     if (priceHistory[i] <= priceHistory[i - 1])
                     {
+                        emit ConditionStatus(false); //test
+
                         return false;
                     }
                 }
+
+                emit ConditionStatus(true); //test
 
                 return true;
             }
@@ -96,6 +102,9 @@ contract Closes is IComparator {
             {
                 bool result = (priceHistory[0] > _tradingBotStates[msg.sender][comparatorIndex].previousPrice);
                 _tradingBotStates[msg.sender][comparatorIndex].previousPrice = priceHistory[0];
+
+                emit ConditionStatus(result); //test
+
                 return result;
             }
         }
@@ -103,6 +112,8 @@ contract Closes is IComparator {
         {
             if (priceHistory.length == 0)
             {
+                emit ConditionStatus(false); //test
+
                 return false;
             }
 
@@ -112,9 +123,13 @@ contract Closes is IComparator {
                 {
                     if (priceHistory[i] >= priceHistory[i - 1])
                     {
+                        emit ConditionStatus(false); //test
+
                         return false;
                     }
                 }
+
+                emit ConditionStatus(true); //test
 
                 return true;
             }
@@ -122,10 +137,17 @@ contract Closes is IComparator {
             {
                 bool result = (priceHistory[0] < _tradingBotStates[msg.sender][comparatorIndex].previousPrice);
                 _tradingBotStates[msg.sender][comparatorIndex].previousPrice = priceHistory[0];
+
+                emit ConditionStatus(result); //test
+
                 return result;
             }
         }
 
+        emit ConditionStatus(false); //test
+
         return false;
     }
+
+    event ConditionStatus(bool status); //test
 }

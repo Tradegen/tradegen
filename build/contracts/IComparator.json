@@ -60,11 +60,6 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        },
-        {
           "internalType": "address",
           "name": "firstIndicatorAddress",
           "type": "address"
@@ -76,7 +71,13 @@
         }
       ],
       "name": "addTradingBot",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -84,7 +85,17 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "index",
+          "name": "comparatorIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "firstIndicatorIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "secondIndicatorIndex",
           "type": "uint256"
         }
       ],
@@ -100,22 +111,22 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"comparatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"firstIndicatorAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"secondIndicatorAddress\",\"type\":\"address\"}],\"name\":\"addTradingBot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"checkConditions\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(uint256,address,address)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"firstIndicatorAddress\":\"Address of the comparator's first indicator\",\"index\":\"Index in trading bot's entry/exit rule array\",\"secondIndicatorAddress\":\"Address of the comparator's second indicator\"}},\"checkConditions(uint256)\":{\"details\":\"Returns whether the comparator's conditions are met\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\"},\"returns\":{\"_0\":\"bool Whether the comparator's conditions are met after the latest price feed update\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the comparator; meant to be called by the comparator developer\",\"params\":{\"newPrice\":\"The new sale price of the comparator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the comparator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the comparator and the comparator's developer\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol\":\"IComparator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol\":{\"keccak256\":\"0xd364dee8730535fe00ee3bb50d5d480bb1892d4ac778865fd2cd3d2074f7bdbe\",\"urls\":[\"bzz-raw://00611ad38d8ff58b99c5b83c3547caf1e5d6519ced1ac5f9a7d33a90b787f5fb\",\"dweb:/ipfs/Qmf3uFgytMY8a7gBTcN9G8DSaAkEuUVzu4KWX3pRNzyBcm\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"comparatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"firstIndicatorAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"secondIndicatorAddress\",\"type\":\"address\"}],\"name\":\"addTradingBot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"comparatorIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"firstIndicatorIndex\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"secondIndicatorIndex\",\"type\":\"uint256\"}],\"name\":\"checkConditions\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(address,address)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"firstIndicatorAddress\":\"Address of the comparator's first indicator\",\"secondIndicatorAddress\":\"Address of the comparator's second indicator\"},\"returns\":{\"_0\":\"uint Index of comparator in trading bot instance array\"}},\"checkConditions(uint256,uint256,uint256)\":{\"details\":\"Returns whether the comparator's conditions are met\",\"params\":{\"comparatorIndex\":\"Index of comparator in trading bot's entry/exit rule array\",\"firstIndicatorIndex\":\"Index of first indicator in trading bot's entry/exit rule array\",\"secondIndicatorIndex\":\"Index of second indicator in trading bot's entry/exit rule array\"},\"returns\":{\"_0\":\"bool Whether the comparator's conditions are met after the latest price feed update\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the comparator; meant to be called by the comparator developer\",\"params\":{\"newPrice\":\"The new sale price of the comparator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the comparator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the comparator and the comparator's developer\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol\":\"IComparator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol\":{\"keccak256\":\"0x9d2d8213a8d94329e2f32b52df4b102e4b364aa019823a31207d6f4d5c703c9d\",\"urls\":[\"bzz-raw://a1e34bd13da721acb72ba5ee664054b705ca0e099df3590b648160ac525928e9\",\"dweb:/ipfs/Qma66pVuxQw8WZY1ftayyu6zHtoPHFLQ2vFmbE69Z39YAh\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IComparator {\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the comparator\r\n    * @return (uint, address) Sale price of the comparator and the comparator's developer\r\n    */\r\n    function getPriceAndDeveloper() external view returns (uint, address);\r\n\r\n    /**\r\n    * @dev Updates the sale price of the comparator; meant to be called by the comparator developer\r\n    * @param newPrice The new sale price of the comparator\r\n    */\r\n    function editPrice(uint newPrice) external;\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param firstIndicatorAddress Address of the comparator's first indicator\r\n    * @param secondIndicatorAddress Address of the comparator's second indicator\r\n    */\r\n    function addTradingBot(uint index, address firstIndicatorAddress, address secondIndicatorAddress) external;\r\n\r\n    /**\r\n    * @dev Returns whether the comparator's conditions are met\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return bool Whether the comparator's conditions are met after the latest price feed update\r\n    */\r\n    function checkConditions(uint index) external returns (bool);\r\n\r\n    // Events\r\n    event UpdatedPrice(address indexed comparatorAddress, uint newPrice, uint timestamp);\r\n}",
+  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IComparator {\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the comparator\r\n    * @return (uint, address) Sale price of the comparator and the comparator's developer\r\n    */\r\n    function getPriceAndDeveloper() external view returns (uint, address);\r\n\r\n    /**\r\n    * @dev Updates the sale price of the comparator; meant to be called by the comparator developer\r\n    * @param newPrice The new sale price of the comparator\r\n    */\r\n    function editPrice(uint newPrice) external;\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param firstIndicatorAddress Address of the comparator's first indicator\r\n    * @param secondIndicatorAddress Address of the comparator's second indicator\r\n    * @return uint Index of comparator in trading bot instance array\r\n    */\r\n    function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) external returns (uint);\r\n\r\n    /**\r\n    * @dev Returns whether the comparator's conditions are met\r\n    * @param comparatorIndex Index of comparator in trading bot's entry/exit rule array\r\n    * @param firstIndicatorIndex Index of first indicator in trading bot's entry/exit rule array\r\n    * @param secondIndicatorIndex Index of second indicator in trading bot's entry/exit rule array\r\n    * @return bool Whether the comparator's conditions are met after the latest price feed update\r\n    */\r\n    function checkConditions(uint comparatorIndex, uint firstIndicatorIndex, uint secondIndicatorIndex) external returns (bool);\r\n\r\n    // Events\r\n    event UpdatedPrice(address indexed comparatorAddress, uint newPrice, uint timestamp);\r\n}",
   "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol",
     "exportedSymbols": {
       "IComparator": [
-        206
+        210
       ]
     },
-    "id": 207,
+    "id": 211,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
@@ -137,9 +148,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 206,
+        "id": 210,
         "linearizedBaseContracts": [
-          206
+          210
         ],
         "name": "IComparator",
         "nodeType": "ContractDefinition",
@@ -230,7 +241,7 @@
               ],
               "src": "292:15:1"
             },
-            "scope": 206,
+            "scope": 210,
             "src": "238:70:1",
             "stateMutability": "view",
             "virtual": false,
@@ -293,7 +304,7 @@
               "parameters": [],
               "src": "536:0:1"
             },
-            "scope": 206,
+            "scope": 210,
             "src": "494:43:1",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -304,10 +315,10 @@
             "documentation": {
               "id": 180,
               "nodeType": "StructuredDocumentation",
-              "src": "545:328:1",
-              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param firstIndicatorAddress Address of the comparator's first indicator\n @param secondIndicatorAddress Address of the comparator's second indicator"
+              "src": "545:333:1",
+              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param firstIndicatorAddress Address of the comparator's first indicator\n @param secondIndicatorAddress Address of the comparator's second indicator\n @return uint Index of comparator in trading bot instance array"
             },
-            "functionSelector": "5da335af",
+            "functionSelector": "174862f8",
             "id": 189,
             "implemented": false,
             "kind": "function",
@@ -316,32 +327,33 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 187,
+              "id": 185,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
                   "id": 182,
                   "mutability": "mutable",
-                  "name": "index",
+                  "name": "firstIndicatorAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 189,
-                  "src": "902:10:1",
+                  "src": "907:29:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_uint256",
-                    "typeString": "uint256"
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
                   },
                   "typeName": {
                     "id": 181,
-                    "name": "uint",
+                    "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "902:4:1",
+                    "src": "907:7:1",
+                    "stateMutability": "nonpayable",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_uint256",
-                      "typeString": "uint256"
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
                     }
                   },
                   "value": null,
@@ -351,11 +363,11 @@
                   "constant": false,
                   "id": 184,
                   "mutability": "mutable",
-                  "name": "firstIndicatorAddress",
+                  "name": "secondIndicatorAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 189,
-                  "src": "914:29:1",
+                  "src": "938:30:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -366,36 +378,7 @@
                     "id": 183,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "914:7:1",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "value": null,
-                  "visibility": "internal"
-                },
-                {
-                  "constant": false,
-                  "id": 186,
-                  "mutability": "mutable",
-                  "name": "secondIndicatorAddress",
-                  "nodeType": "VariableDeclaration",
-                  "overrides": null,
-                  "scope": 189,
-                  "src": "945:30:1",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 185,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "945:7:1",
+                    "src": "938:7:1",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -406,16 +389,45 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "901:75:1"
+              "src": "906:63:1"
             },
             "returnParameters": {
               "id": 188,
               "nodeType": "ParameterList",
-              "parameters": [],
-              "src": "985:0:1"
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 187,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 189,
+                  "src": "988:4:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 186,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "988:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "987:6:1"
             },
-            "scope": 206,
-            "src": "879:107:1",
+            "scope": 210,
+            "src": "884:110:1",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -425,11 +437,11 @@
             "documentation": {
               "id": 190,
               "nodeType": "StructuredDocumentation",
-              "src": "994:239:1",
-              "text": " @dev Returns whether the comparator's conditions are met\n @param index Index in trading bot's entry/exit rule array\n @return bool Whether the comparator's conditions are met after the latest price feed update"
+              "src": "1002:461:1",
+              "text": " @dev Returns whether the comparator's conditions are met\n @param comparatorIndex Index of comparator in trading bot's entry/exit rule array\n @param firstIndicatorIndex Index of first indicator in trading bot's entry/exit rule array\n @param secondIndicatorIndex Index of second indicator in trading bot's entry/exit rule array\n @return bool Whether the comparator's conditions are met after the latest price feed update"
             },
-            "functionSelector": "3b1aa3e6",
-            "id": 197,
+            "functionSelector": "87e5bc6c",
+            "id": 201,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -437,18 +449,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 193,
+              "id": 197,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
                   "id": 192,
                   "mutability": "mutable",
-                  "name": "index",
+                  "name": "comparatorIndex",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 197,
-                  "src": "1264:10:1",
+                  "scope": 201,
+                  "src": "1494:20:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -459,7 +471,63 @@
                     "id": 191,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1264:4:1",
+                    "src": "1494:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 194,
+                  "mutability": "mutable",
+                  "name": "firstIndicatorIndex",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 201,
+                  "src": "1516:24:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 193,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1516:4:1",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 196,
+                  "mutability": "mutable",
+                  "name": "secondIndicatorIndex",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 201,
+                  "src": "1542:25:1",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 195,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1542:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -469,21 +537,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1263:12:1"
+              "src": "1493:75:1"
             },
             "returnParameters": {
-              "id": 196,
+              "id": 200,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 195,
+                  "id": 199,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 197,
-                  "src": "1294:4:1",
+                  "scope": 201,
+                  "src": "1587:4:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -491,10 +559,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 194,
+                    "id": 198,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1294:4:1",
+                    "src": "1587:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -504,10 +572,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1293:6:1"
+              "src": "1586:6:1"
             },
-            "scope": 206,
-            "src": "1239:61:1",
+            "scope": 210,
+            "src": "1469:124:1",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -515,23 +583,23 @@
           {
             "anonymous": false,
             "documentation": null,
-            "id": 205,
+            "id": 209,
             "name": "UpdatedPrice",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 204,
+              "id": 208,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 199,
+                  "id": 203,
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "comparatorAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 205,
-                  "src": "1342:33:1",
+                  "scope": 209,
+                  "src": "1635:33:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -539,10 +607,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 198,
+                    "id": 202,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1342:7:1",
+                    "src": "1635:7:1",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -554,14 +622,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 201,
+                  "id": 205,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "newPrice",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 205,
-                  "src": "1377:13:1",
+                  "scope": 209,
+                  "src": "1670:13:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -569,10 +637,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 200,
+                    "id": 204,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1377:4:1",
+                    "src": "1670:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -583,14 +651,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 203,
+                  "id": 207,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "timestamp",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 205,
-                  "src": "1392:14:1",
+                  "scope": 209,
+                  "src": "1685:14:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -598,10 +666,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 202,
+                    "id": 206,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1392:4:1",
+                    "src": "1685:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -611,23 +679,23 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1341:66:1"
+              "src": "1634:66:1"
             },
-            "src": "1323:85:1"
+            "src": "1616:85:1"
           }
         ],
-        "scope": 207,
-        "src": "28:1383:1"
+        "scope": 211,
+        "src": "28:1676:1"
       }
     ],
-    "src": "0:1411:1"
+    "src": "0:1704:1"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IComparator.sol",
       "exportedSymbols": {
         "IComparator": [
-          206
+          210
         ]
       },
       "license": null
@@ -659,10 +727,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            206
+            210
           ],
           "name": "IComparator",
-          "scope": 207
+          "scope": 211
         },
         "children": [
           {
@@ -677,7 +745,7 @@
               ],
               "name": "getPriceAndDeveloper",
               "overrides": null,
-              "scope": 206,
+              "scope": 210,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -783,7 +851,7 @@
               ],
               "name": "editPrice",
               "overrides": null,
-              "scope": 206,
+              "scope": 210,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -851,7 +919,7 @@
           {
             "attributes": {
               "body": null,
-              "functionSelector": "5da335af",
+              "functionSelector": "174862f8",
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
@@ -860,7 +928,7 @@
               ],
               "name": "addTradingBot",
               "overrides": null,
-              "scope": 206,
+              "scope": 210,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -868,42 +936,14 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param firstIndicatorAddress Address of the comparator's first indicator\n @param secondIndicatorAddress Address of the comparator's second indicator"
+                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param firstIndicatorAddress Address of the comparator's first indicator\n @param secondIndicatorAddress Address of the comparator's second indicator\n @return uint Index of comparator in trading bot instance array"
                 },
                 "id": 180,
                 "name": "StructuredDocumentation",
-                "src": "545:328:1"
+                "src": "545:333:1"
               },
               {
                 "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
-                      "name": "index",
-                      "overrides": null,
-                      "scope": 189,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint",
-                          "type": "uint256"
-                        },
-                        "id": 181,
-                        "name": "ElementaryTypeName",
-                        "src": "902:4:1"
-                      }
-                    ],
-                    "id": 182,
-                    "name": "VariableDeclaration",
-                    "src": "902:10:1"
-                  },
                   {
                     "attributes": {
                       "constant": false,
@@ -924,14 +964,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 183,
+                        "id": 181,
                         "name": "ElementaryTypeName",
-                        "src": "914:7:1"
+                        "src": "907:7:1"
                       }
                     ],
-                    "id": 184,
+                    "id": 182,
                     "name": "VariableDeclaration",
-                    "src": "914:29:1"
+                    "src": "907:29:1"
                   },
                   {
                     "attributes": {
@@ -953,40 +993,64 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 185,
+                        "id": 183,
                         "name": "ElementaryTypeName",
-                        "src": "945:7:1"
+                        "src": "938:7:1"
                       }
                     ],
-                    "id": 186,
+                    "id": 184,
                     "name": "VariableDeclaration",
-                    "src": "945:30:1"
+                    "src": "938:30:1"
                   }
                 ],
-                "id": 187,
+                "id": 185,
                 "name": "ParameterList",
-                "src": "901:75:1"
+                "src": "906:63:1"
               },
               {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 189,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 186,
+                        "name": "ElementaryTypeName",
+                        "src": "988:4:1"
+                      }
+                    ],
+                    "id": 187,
+                    "name": "VariableDeclaration",
+                    "src": "988:4:1"
+                  }
+                ],
                 "id": 188,
                 "name": "ParameterList",
-                "src": "985:0:1"
+                "src": "987:6:1"
               }
             ],
             "id": 189,
             "name": "FunctionDefinition",
-            "src": "879:107:1"
+            "src": "884:110:1"
           },
           {
             "attributes": {
               "body": null,
-              "functionSelector": "3b1aa3e6",
+              "functionSelector": "87e5bc6c",
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
@@ -995,7 +1059,7 @@
               ],
               "name": "checkConditions",
               "overrides": null,
-              "scope": 206,
+              "scope": 210,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1003,11 +1067,11 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Returns whether the comparator's conditions are met\n @param index Index in trading bot's entry/exit rule array\n @return bool Whether the comparator's conditions are met after the latest price feed update"
+                  "text": " @dev Returns whether the comparator's conditions are met\n @param comparatorIndex Index of comparator in trading bot's entry/exit rule array\n @param firstIndicatorIndex Index of first indicator in trading bot's entry/exit rule array\n @param secondIndicatorIndex Index of second indicator in trading bot's entry/exit rule array\n @return bool Whether the comparator's conditions are met after the latest price feed update"
                 },
                 "id": 190,
                 "name": "StructuredDocumentation",
-                "src": "994:239:1"
+                "src": "1002:461:1"
               },
               {
                 "children": [
@@ -1015,9 +1079,9 @@
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "index",
+                      "name": "comparatorIndex",
                       "overrides": null,
-                      "scope": 197,
+                      "scope": 201,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1032,17 +1096,73 @@
                         },
                         "id": 191,
                         "name": "ElementaryTypeName",
-                        "src": "1264:4:1"
+                        "src": "1494:4:1"
                       }
                     ],
                     "id": 192,
                     "name": "VariableDeclaration",
-                    "src": "1264:10:1"
+                    "src": "1494:20:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "firstIndicatorIndex",
+                      "overrides": null,
+                      "scope": 201,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 193,
+                        "name": "ElementaryTypeName",
+                        "src": "1516:4:1"
+                      }
+                    ],
+                    "id": 194,
+                    "name": "VariableDeclaration",
+                    "src": "1516:24:1"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "secondIndicatorIndex",
+                      "overrides": null,
+                      "scope": 201,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 195,
+                        "name": "ElementaryTypeName",
+                        "src": "1542:4:1"
+                      }
+                    ],
+                    "id": 196,
+                    "name": "VariableDeclaration",
+                    "src": "1542:25:1"
                   }
                 ],
-                "id": 193,
+                "id": 197,
                 "name": "ParameterList",
-                "src": "1263:12:1"
+                "src": "1493:75:1"
               },
               {
                 "children": [
@@ -1052,7 +1172,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 197,
+                      "scope": 201,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -1065,24 +1185,24 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 194,
+                        "id": 198,
                         "name": "ElementaryTypeName",
-                        "src": "1294:4:1"
+                        "src": "1587:4:1"
                       }
                     ],
-                    "id": 195,
+                    "id": 199,
                     "name": "VariableDeclaration",
-                    "src": "1294:4:1"
+                    "src": "1587:4:1"
                   }
                 ],
-                "id": 196,
+                "id": 200,
                 "name": "ParameterList",
-                "src": "1293:6:1"
+                "src": "1586:6:1"
               }
             ],
-            "id": 197,
+            "id": 201,
             "name": "FunctionDefinition",
-            "src": "1239:61:1"
+            "src": "1469:124:1"
           },
           {
             "attributes": {
@@ -1100,7 +1220,7 @@
                       "mutability": "mutable",
                       "name": "comparatorAddress",
                       "overrides": null,
-                      "scope": 205,
+                      "scope": 209,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1114,14 +1234,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 198,
+                        "id": 202,
                         "name": "ElementaryTypeName",
-                        "src": "1342:7:1"
+                        "src": "1635:7:1"
                       }
                     ],
-                    "id": 199,
+                    "id": 203,
                     "name": "VariableDeclaration",
-                    "src": "1342:33:1"
+                    "src": "1635:33:1"
                   },
                   {
                     "attributes": {
@@ -1130,7 +1250,7 @@
                       "mutability": "mutable",
                       "name": "newPrice",
                       "overrides": null,
-                      "scope": 205,
+                      "scope": 209,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1143,14 +1263,14 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 200,
+                        "id": 204,
                         "name": "ElementaryTypeName",
-                        "src": "1377:4:1"
+                        "src": "1670:4:1"
                       }
                     ],
-                    "id": 201,
+                    "id": 205,
                     "name": "VariableDeclaration",
-                    "src": "1377:13:1"
+                    "src": "1670:13:1"
                   },
                   {
                     "attributes": {
@@ -1159,7 +1279,7 @@
                       "mutability": "mutable",
                       "name": "timestamp",
                       "overrides": null,
-                      "scope": 205,
+                      "scope": 209,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1172,34 +1292,34 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 202,
+                        "id": 206,
                         "name": "ElementaryTypeName",
-                        "src": "1392:4:1"
+                        "src": "1685:4:1"
                       }
                     ],
-                    "id": 203,
+                    "id": 207,
                     "name": "VariableDeclaration",
-                    "src": "1392:14:1"
+                    "src": "1685:14:1"
                   }
                 ],
-                "id": 204,
+                "id": 208,
                 "name": "ParameterList",
-                "src": "1341:66:1"
+                "src": "1634:66:1"
               }
             ],
-            "id": 205,
+            "id": 209,
             "name": "EventDefinition",
-            "src": "1323:85:1"
+            "src": "1616:85:1"
           }
         ],
-        "id": 206,
+        "id": 210,
         "name": "ContractDefinition",
-        "src": "28:1383:1"
+        "src": "28:1676:1"
       }
     ],
-    "id": 207,
+    "id": 211,
     "name": "SourceUnit",
-    "src": "0:1411:1"
+    "src": "0:1704:1"
   },
   "compiler": {
     "name": "solc",
@@ -1207,22 +1327,26 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-01T23:59:13.019Z",
+  "updatedAt": "2021-07-03T14:37:40.387Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
-      "addTradingBot(uint256,address,address)": {
+      "addTradingBot(address,address)": {
         "details": "Initializes the state of the trading bot; meant to be called by a trading bot",
         "params": {
           "firstIndicatorAddress": "Address of the comparator's first indicator",
-          "index": "Index in trading bot's entry/exit rule array",
           "secondIndicatorAddress": "Address of the comparator's second indicator"
+        },
+        "returns": {
+          "_0": "uint Index of comparator in trading bot instance array"
         }
       },
-      "checkConditions(uint256)": {
+      "checkConditions(uint256,uint256,uint256)": {
         "details": "Returns whether the comparator's conditions are met",
         "params": {
-          "index": "Index in trading bot's entry/exit rule array"
+          "comparatorIndex": "Index of comparator in trading bot's entry/exit rule array",
+          "firstIndicatorIndex": "Index of first indicator in trading bot's entry/exit rule array",
+          "secondIndicatorIndex": "Index of second indicator in trading bot's entry/exit rule array"
         },
         "returns": {
           "_0": "bool Whether the comparator's conditions are met after the latest price feed update"

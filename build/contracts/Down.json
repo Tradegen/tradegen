@@ -111,17 +111,18 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "param",
           "type": "uint256"
         }
       ],
       "name": "addTradingBot",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -192,13 +193,13 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"indicatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_developer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"_price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"param\",\"type\":\"uint256\"}],\"name\":\"addTradingBot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getValue\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"}],\"name\":\"update\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(uint256,uint256)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"param\":\"Value of the indicator's parameter\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the indicator; meant to be called by the indicator's developer\",\"params\":{\"newPrice\":\"The new sale price of the indicator\"}},\"getHistory(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value history for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value history for the given trading bot\"}},\"getName()\":{\"details\":\"Returns the name of the indicator\",\"returns\":{\"_0\":\"string Name of the indicator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the indicator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the indicator and the indicator's developer\"}},\"getValue(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value for the given trading bot\"}},\"update(uint256,uint256)\":{\"details\":\"Updates the indicator's state based on the latest price feed update\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"latestPrice\":\"The latest price from oracle price feed\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol\":\"Down\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol\":{\"keccak256\":\"0x0212b094cab16e066daa4814347c23734eff037a206fd0e8d3aa744780691e34\",\"urls\":[\"bzz-raw://f5a9f88e676acb8905c7fd790d22320517660a234cac3ace691a619a183fed11\",\"dweb:/ipfs/QmNXhNBwQTb94TxtxTZYeoanQGqj4Vb1sp9Mc9x61mCbCZ\"]},\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":{\"keccak256\":\"0x4b124e0684b3cb83a0cafc363bcd530d9568e14128a44cfca062297145557a66\",\"urls\":[\"bzz-raw://161d2c69257a1f594f37b2c8cc0ea47f39d8f60bbb4c345631a9650db6fe92dc\",\"dweb:/ipfs/QmaugrnbqxiTUh9av7aRLxMdWSoMUDUrQwbGEdmLh2BSca\"]}},\"version\":1}",
-  "bytecode": "0x608060405234801561001057600080fd5b506040516107dd3803806107dd8339818101604052602081101561003357600080fd5b810190808051906020019092919050505060008110156100bb576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601c8152602001807f5072696365206d7573742062652067726561746572207468616e20300000000081525060200191505060405180910390fd5b8060008190555033600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550506106ca806101136000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80637d6760bf116100665780637d6760bf146101a55780638bdf5803146101e0578063a22a8b2914610283578063a47575a1146102b1578063c7bf8cf5146102e957610093565b806317d7de7c14610098578063235b6ea11461011b5780632fb565e8146101395780637a9d075814610171575b600080fd5b6100a061038c565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100e05780820151818401526020810190506100c5565b50505050905090810190601f16801561010d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101236103c9565b6040518082815260200191505060405180910390f35b61016f6004803603604081101561014f57600080fd5b8101908080359060200190929190803590602001909291905050506103cf565b005b6101796103d3565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101ad6103f9565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b61022c600480360360408110156101f657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061042a565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561026f578082015181840152602081019050610254565b505050509050019250505060405180910390f35b6102af6004803603602081101561029957600080fd5b810190808035906020019092919050505061047c565b005b6102e7600480360360408110156102c757600080fd5b8101908080359060200190929190803590602001909291905050506105f9565b005b610335600480360360408110156102ff57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506105fd565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561037857808201518184015260208101905061035d565b505050509050019250505060405180910390f35b60606040518060400160405280600481526020017f446f776e00000000000000000000000000000000000000000000000000000000815250905090565b60005481565b5050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600080600054600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16915091509091565b6060600067ffffffffffffffff8111801561044457600080fd5b506040519080825280602002602001820160405280156104735781602001602082028036833780820191505090505b50905092915050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610522576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260258152602001806106706025913960400191505060405180910390fd5b6000811015610599576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601f8152602001807f5072696365206d757374206265206120706f736974697665206e756d6265720081525060200191505060405180910390fd5b806000819055503073ffffffffffffffffffffffffffffffffffffffff167ff55d9f2dbb0ce58a822e950a56c6b24b103fae2b7633f87087fc24beba1754548242604051808381526020018281526020019250505060405180910390a250565b5050565b606080600167ffffffffffffffff8111801561061857600080fd5b506040519080825280602002602001820160405280156106475781602001602082028036833780820191505090505b50905060008160008151811061065957fe5b602002602001018181525050809150509291505056fe4f6e6c792074686520646576656c6f7065722063616e206564697420746865207072696365a264697066735822122006a241b72ea766884cfe94775f3eb61a81311074000d5571bf0ecb4262f2b8d764736f6c634300060c0033",
-  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80637d6760bf116100665780637d6760bf146101a55780638bdf5803146101e0578063a22a8b2914610283578063a47575a1146102b1578063c7bf8cf5146102e957610093565b806317d7de7c14610098578063235b6ea11461011b5780632fb565e8146101395780637a9d075814610171575b600080fd5b6100a061038c565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100e05780820151818401526020810190506100c5565b50505050905090810190601f16801561010d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101236103c9565b6040518082815260200191505060405180910390f35b61016f6004803603604081101561014f57600080fd5b8101908080359060200190929190803590602001909291905050506103cf565b005b6101796103d3565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101ad6103f9565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b61022c600480360360408110156101f657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061042a565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561026f578082015181840152602081019050610254565b505050509050019250505060405180910390f35b6102af6004803603602081101561029957600080fd5b810190808035906020019092919050505061047c565b005b6102e7600480360360408110156102c757600080fd5b8101908080359060200190929190803590602001909291905050506105f9565b005b610335600480360360408110156102ff57600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506105fd565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561037857808201518184015260208101905061035d565b505050509050019250505060405180910390f35b60606040518060400160405280600481526020017f446f776e00000000000000000000000000000000000000000000000000000000815250905090565b60005481565b5050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600080600054600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16915091509091565b6060600067ffffffffffffffff8111801561044457600080fd5b506040519080825280602002602001820160405280156104735781602001602082028036833780820191505090505b50905092915050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614610522576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260258152602001806106706025913960400191505060405180910390fd5b6000811015610599576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601f8152602001807f5072696365206d757374206265206120706f736974697665206e756d6265720081525060200191505060405180910390fd5b806000819055503073ffffffffffffffffffffffffffffffffffffffff167ff55d9f2dbb0ce58a822e950a56c6b24b103fae2b7633f87087fc24beba1754548242604051808381526020018281526020019250505060405180910390a250565b5050565b606080600167ffffffffffffffff8111801561061857600080fd5b506040519080825280602002602001820160405280156106475781602001602082028036833780820191505090505b50905060008160008151811061065957fe5b602002602001018181525050809150509291505056fe4f6e6c792074686520646576656c6f7065722063616e206564697420746865207072696365a264697066735822122006a241b72ea766884cfe94775f3eb61a81311074000d5571bf0ecb4262f2b8d764736f6c634300060c0033",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"indicatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"_developer\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"_price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"param\",\"type\":\"uint256\"}],\"name\":\"addTradingBot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getValue\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"}],\"name\":\"update\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(uint256)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"param\":\"Value of the indicator's parameter\"},\"returns\":{\"_0\":\"uint Index of trading bot instance in State array\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the indicator; meant to be called by the indicator's developer\",\"params\":{\"newPrice\":\"The new sale price of the indicator\"}},\"getHistory(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value history for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value history for the given trading bot\"}},\"getName()\":{\"details\":\"Returns the name of the indicator\",\"returns\":{\"_0\":\"string Name of the indicator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the indicator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the indicator and the indicator's developer\"}},\"getValue(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value for the given trading bot\"}},\"update(uint256,uint256)\":{\"details\":\"Updates the indicator's state based on the latest price feed update\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"latestPrice\":\"The latest price from oracle price feed\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol\":\"Down\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol\":{\"keccak256\":\"0xffadfd5c25e5d566f7fe9786e861d38b41dbe8008f1427a1cc866ea79418cb5e\",\"urls\":[\"bzz-raw://2792edc201c7e94ea01e13a1370d806e3d43e47ed17e201c723e0edba1368f0c\",\"dweb:/ipfs/QmTpdXBsSkMiy8kaqg6tBwfpYyY7RpmCxKTMqi9sqoe836\"]},\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":{\"keccak256\":\"0x8e54ed6abcb39ab556bf9840f493588ccb2f78aad0b1768efab0dada61474969\",\"urls\":[\"bzz-raw://ca1508dd900f36d134d9b05bb7a3d0fc30dd10dc3d17c49374323f23010a3e8d\",\"dweb:/ipfs/QmRYydafbqgvqXpk2n3h8Jvhy5Nd9oUqaTzd3jCtUmCNVf\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516107ea3803806107ea8339818101604052602081101561003357600080fd5b810190808051906020019092919050505060008110156100bb576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601c8152602001807f5072696365206d7573742062652067726561746572207468616e20300000000081525060200191505060405180910390fd5b8060008190555033600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550506106d7806101136000396000f3fe608060405234801561001057600080fd5b50600436106100935760003560e01c80637d6760bf116100665780637d6760bf146101a55780638bdf5803146101e0578063a22a8b2914610283578063a5a6d6f7146102b1578063c7bf8cf5146102f357610093565b806317d7de7c14610098578063235b6ea11461011b5780632fb565e8146101395780637a9d075814610171575b600080fd5b6100a0610396565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100e05780820151818401526020810190506100c5565b50505050905090810190601f16801561010d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101236103d3565b6040518082815260200191505060405180910390f35b61016f6004803603604081101561014f57600080fd5b8101908080359060200190929190803590602001909291905050506103d9565b005b6101796103dd565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101ad610403565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b61022c600480360360408110156101f657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610434565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561026f578082015181840152602081019050610254565b505050509050019250505060405180910390f35b6102af6004803603602081101561029957600080fd5b8101908080359060200190929190505050610486565b005b6102dd600480360360208110156102c757600080fd5b8101908080359060200190929190505050610603565b6040518082815260200191505060405180910390f35b61033f6004803603604081101561030957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061060a565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b83811015610382578082015181840152602081019050610367565b505050509050019250505060405180910390f35b60606040518060400160405280600481526020017f446f776e00000000000000000000000000000000000000000000000000000000815250905090565b60005481565b5050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600080600054600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16915091509091565b6060600067ffffffffffffffff8111801561044e57600080fd5b5060405190808252806020026020018201604052801561047d5781602001602082028036833780820191505090505b50905092915050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461052c576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602581526020018061067d6025913960400191505060405180910390fd5b60008110156105a3576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601f8152602001807f5072696365206d757374206265206120706f736974697665206e756d6265720081525060200191505060405180910390fd5b806000819055503073ffffffffffffffffffffffffffffffffffffffff167ff55d9f2dbb0ce58a822e950a56c6b24b103fae2b7633f87087fc24beba1754548242604051808381526020018281526020019250505060405180910390a250565b6000919050565b606080600167ffffffffffffffff8111801561062557600080fd5b506040519080825280602002602001820160405280156106545781602001602082028036833780820191505090505b50905060008160008151811061066657fe5b602002602001018181525050809150509291505056fe4f6e6c792074686520646576656c6f7065722063616e206564697420746865207072696365a2646970667358221220645d26ff5e0c594c77c27bf7032c4b0c99211e41ea37fe5310373ab648de050564736f6c634300060c0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100935760003560e01c80637d6760bf116100665780637d6760bf146101a55780638bdf5803146101e0578063a22a8b2914610283578063a5a6d6f7146102b1578063c7bf8cf5146102f357610093565b806317d7de7c14610098578063235b6ea11461011b5780632fb565e8146101395780637a9d075814610171575b600080fd5b6100a0610396565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100e05780820151818401526020810190506100c5565b50505050905090810190601f16801561010d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b6101236103d3565b6040518082815260200191505060405180910390f35b61016f6004803603604081101561014f57600080fd5b8101908080359060200190929190803590602001909291905050506103d9565b005b6101796103dd565b604051808273ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b6101ad610403565b604051808381526020018273ffffffffffffffffffffffffffffffffffffffff1681526020019250505060405180910390f35b61022c600480360360408110156101f657600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050610434565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b8381101561026f578082015181840152602081019050610254565b505050509050019250505060405180910390f35b6102af6004803603602081101561029957600080fd5b8101908080359060200190929190505050610486565b005b6102dd600480360360208110156102c757600080fd5b8101908080359060200190929190505050610603565b6040518082815260200191505060405180910390f35b61033f6004803603604081101561030957600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019092919050505061060a565b6040518080602001828103825283818151815260200191508051906020019060200280838360005b83811015610382578082015181840152602081019050610367565b505050509050019250505060405180910390f35b60606040518060400160405280600481526020017f446f776e00000000000000000000000000000000000000000000000000000000815250905090565b60005481565b5050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600080600054600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16915091509091565b6060600067ffffffffffffffff8111801561044e57600080fd5b5060405190808252806020026020018201604052801561047d5781602001602082028036833780820191505090505b50905092915050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff161461052c576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252602581526020018061067d6025913960400191505060405180910390fd5b60008110156105a3576040517f08c379a000000000000000000000000000000000000000000000000000000000815260040180806020018281038252601f8152602001807f5072696365206d757374206265206120706f736974697665206e756d6265720081525060200191505060405180910390fd5b806000819055503073ffffffffffffffffffffffffffffffffffffffff167ff55d9f2dbb0ce58a822e950a56c6b24b103fae2b7633f87087fc24beba1754548242604051808381526020018281526020019250505060405180910390a250565b6000919050565b606080600167ffffffffffffffff8111801561062557600080fd5b506040519080825280602002602001820160405280156106545781602001602082028036833780820191505090505b50905060008160008151811061066657fe5b602002602001018181525050809150509291505056fe4f6e6c792074686520646576656c6f7065722063616e206564697420746865207072696365a2646970667358221220645d26ff5e0c594c77c27bf7032c4b0c99211e41ea37fe5310373ab648de050564736f6c634300060c0033",
   "immutableReferences": {},
-  "sourceMap": "70:2822:0:-:0;;;166:162;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;225:1;216:5;:10;;208:51;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;281:5;272:6;:14;;;;310:10;297;;:23;;;;;;;;;;;;;;;;;;166:162;70:2822;;;;;;",
-  "deployedSourceMap": "70:2822:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;443:96;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;107:18;;;:::i;:::-;;;;;;;;;;;;;;;;;;;1882:64;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;132:25;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;723:123;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;2746:143;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1031:315;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;1581:65;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;2240:199;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;443:96;492:13;518;;;;;;;;;;;;;;;;;;;443:96;:::o;107:18::-;;;;:::o;1882:64::-;;;:::o;132:25::-;;;;;;;;;;;;;:::o;723:123::-;785:4;791:7;819:6;;827:10;;;;;;;;;;;811:27;;;;723:123;;:::o;2746:143::-;2835:13;2879:1;2868:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2861:20;;2746:143;;;;:::o;1031:315::-;1116:10;;;;;;;;;;;1102:24;;:10;:24;;;1094:74;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1199:1;1187:8;:13;;1179:57;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1258:8;1249:6;:17;;;;1305:4;1284:54;;;1312:8;1322:15;1284:54;;;;;;;;;;;;;;;;;;;;;;;;1031:315;:::o;1581:65::-;;;:::o;2240:199::-;2327:13;2353:18;2385:1;2374:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2353:34;;2408:1;2398:4;2403:1;2398:7;;;;;;;;;;;;;:11;;;;;2427:4;2420:11;;;2240:199;;;;:::o",
-  "source": "pragma solidity >=0.6.12;\r\n\r\nimport './interfaces/IIndicator.sol';\r\n\r\ncontract Down is IIndicator {\r\n\r\n    uint public _price;\r\n    address public _developer;\r\n\r\n    constructor(uint price) public {\r\n        require(price >= 0, \"Price must be greater than 0\");\r\n\r\n        _price = price;\r\n        _developer = msg.sender;\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the name of the indicator\r\n    * @return string Name of the indicator\r\n    */\r\n    function getName() public pure override returns (string memory) {\r\n        return \"Down\";\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the indicator\r\n    * @return (uint, address) Sale price of the indicator and the indicator's developer\r\n    */\r\n    function getPriceAndDeveloper() public view override returns (uint, address) {\r\n        return (_price, _developer);\r\n    }\r\n\r\n    /**\r\n    * @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\r\n    * @param newPrice The new sale price of the indicator\r\n    */\r\n    function editPrice(uint newPrice) external override {\r\n        require(msg.sender == _developer, \"Only the developer can edit the price\");\r\n        require(newPrice >= 0, \"Price must be a positive number\");\r\n\r\n        _price = newPrice;\r\n\r\n        emit UpdatedPrice(address(this), newPrice, block.timestamp);\r\n    }\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param param Value of the indicator's parameter\r\n    */\r\n    function addTradingBot(uint index, uint param) public override {}\r\n\r\n    /**\r\n    * @dev Updates the indicator's state based on the latest price feed update\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param latestPrice The latest price from oracle price feed\r\n    */\r\n    function update(uint index, uint latestPrice) public override {}   \r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value for the given trading bot\r\n    */\r\n    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {\r\n        uint[] memory temp = new uint[](1);\r\n        temp[0] = 0;\r\n        return temp;\r\n    }\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value history for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value history for the given trading bot\r\n    */\r\n    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {\r\n        return new uint[](0);\r\n    }\r\n}",
+  "sourceMap": "70:2825:0:-:0;;;166:162;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;225:1;216:5;:10;;208:51;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;281:5;272:6;:14;;;;310:10;297;;:23;;;;;;;;;;;;;;;;;;166:162;70:2825;;;;;;",
+  "deployedSourceMap": "70:2825:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;443:96;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;107:18;;;:::i;:::-;;;;;;;;;;;;;;;;;;;1885:64;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;132:25;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;723:123;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;2749:143;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1031:315;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;1581:68;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;2243:199;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;443:96;492:13;518;;;;;;;;;;;;;;;;;;;443:96;:::o;107:18::-;;;;:::o;1885:64::-;;;:::o;132:25::-;;;;;;;;;;;;;:::o;723:123::-;785:4;791:7;819:6;;827:10;;;;;;;;;;;811:27;;;;723:123;;:::o;2749:143::-;2838:13;2882:1;2871:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2864:20;;2749:143;;;;:::o;1031:315::-;1116:10;;;;;;;;;;;1102:24;;:10;:24;;;1094:74;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1199:1;1187:8;:13;;1179:57;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1258:8;1249:6;:17;;;;1305:4;1284:54;;;1312:8;1322:15;1284:54;;;;;;;;;;;;;;;;;;;;;;;;1031:315;:::o;1581:68::-;1641:4;1581:68;;;:::o;2243:199::-;2330:13;2356:18;2388:1;2377:13;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2356:34;;2411:1;2401:4;2406:1;2401:7;;;;;;;;;;;;;:11;;;;;2430:4;2423:11;;;2243:199;;;;:::o",
+  "source": "pragma solidity >=0.6.12;\r\n\r\nimport './interfaces/IIndicator.sol';\r\n\r\ncontract Down is IIndicator {\r\n\r\n    uint public _price;\r\n    address public _developer;\r\n\r\n    constructor(uint price) public {\r\n        require(price >= 0, \"Price must be greater than 0\");\r\n\r\n        _price = price;\r\n        _developer = msg.sender;\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the name of the indicator\r\n    * @return string Name of the indicator\r\n    */\r\n    function getName() public pure override returns (string memory) {\r\n        return \"Down\";\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the indicator\r\n    * @return (uint, address) Sale price of the indicator and the indicator's developer\r\n    */\r\n    function getPriceAndDeveloper() public view override returns (uint, address) {\r\n        return (_price, _developer);\r\n    }\r\n\r\n    /**\r\n    * @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\r\n    * @param newPrice The new sale price of the indicator\r\n    */\r\n    function editPrice(uint newPrice) external override {\r\n        require(msg.sender == _developer, \"Only the developer can edit the price\");\r\n        require(newPrice >= 0, \"Price must be a positive number\");\r\n\r\n        _price = newPrice;\r\n\r\n        emit UpdatedPrice(address(this), newPrice, block.timestamp);\r\n    }\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param param Value of the indicator's parameter\r\n    * @return uint Index of trading bot instance in State array\r\n    */\r\n    function addTradingBot(uint param) public override returns (uint) {}\r\n\r\n    /**\r\n    * @dev Updates the indicator's state based on the latest price feed update\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param latestPrice The latest price from oracle price feed\r\n    */\r\n    function update(uint index, uint latestPrice) public override {}   \r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value for the given trading bot\r\n    */\r\n    function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {\r\n        uint[] memory temp = new uint[](1);\r\n        temp[0] = 0;\r\n        return temp;\r\n    }\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value history for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value history for the given trading bot\r\n    */\r\n    function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {\r\n        return new uint[](0);\r\n    }\r\n}",
   "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/Down.sol",
@@ -228,7 +229,7 @@
         "id": 2,
         "nodeType": "ImportDirective",
         "scope": 164,
-        "sourceUnit": 276,
+        "sourceUnit": 280,
         "src": "29:37:0",
         "symbolAliases": [],
         "unitAlias": ""
@@ -243,10 +244,10 @@
               "id": 3,
               "name": "IIndicator",
               "nodeType": "UserDefinedTypeName",
-              "referencedDeclaration": 275,
+              "referencedDeclaration": 279,
               "src": "87:10:0",
               "typeDescriptions": {
-                "typeIdentifier": "t_contract$_IIndicator_$275",
+                "typeIdentifier": "t_contract$_IIndicator_$279",
                 "typeString": "contract IIndicator"
               }
             },
@@ -256,7 +257,7 @@
           }
         ],
         "contractDependencies": [
-          275
+          279
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -264,7 +265,7 @@
         "id": 163,
         "linearizedBaseContracts": [
           163,
-          275
+          279
         ],
         "name": "Down",
         "nodeType": "ContractDefinition",
@@ -618,7 +619,7 @@
           },
           {
             "baseFunctions": [
-              214
+              218
             ],
             "body": {
               "id": 39,
@@ -719,7 +720,7 @@
           },
           {
             "baseFunctions": [
-              222
+              226
             ],
             "body": {
               "id": 53,
@@ -874,7 +875,7 @@
           },
           {
             "baseFunctions": [
-              228
+              232
             ],
             "body": {
               "id": 90,
@@ -1299,7 +1300,7 @@
                       "name": "UpdatedPrice",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 274,
+                      "referencedDeclaration": 278,
                       "src": "1284:12:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_event_nonpayable$_t_address_$_t_uint256_$_t_uint256_$returns$__$",
@@ -1395,21 +1396,21 @@
           },
           {
             "baseFunctions": [
-              236
+              240
             ],
             "body": {
               "id": 100,
               "nodeType": "Block",
-              "src": "1644:2:0",
+              "src": "1647:2:0",
               "statements": []
             },
             "documentation": {
               "id": 92,
               "nodeType": "StructuredDocumentation",
               "src": "1354:221:0",
-              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param param Value of the indicator's parameter"
+              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param param Value of the indicator's parameter\n @return uint Index of trading bot instance in State array"
             },
-            "functionSelector": "a47575a1",
+            "functionSelector": "a5a6d6f7",
             "id": 101,
             "implemented": true,
             "kind": "function",
@@ -1417,20 +1418,20 @@
             "name": "addTradingBot",
             "nodeType": "FunctionDefinition",
             "overrides": {
-              "id": 98,
+              "id": 96,
               "nodeType": "OverrideSpecifier",
               "overrides": [],
-              "src": "1635:8:0"
+              "src": "1623:8:0"
             },
             "parameters": {
-              "id": 97,
+              "id": 95,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
                   "id": 94,
                   "mutability": "mutable",
-                  "name": "index",
+                  "name": "param",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 101,
@@ -1453,16 +1454,23 @@
                   },
                   "value": null,
                   "visibility": "internal"
-                },
+                }
+              ],
+              "src": "1603:12:0"
+            },
+            "returnParameters": {
+              "id": 99,
+              "nodeType": "ParameterList",
+              "parameters": [
                 {
                   "constant": false,
-                  "id": 96,
+                  "id": 98,
                   "mutability": "mutable",
-                  "name": "param",
+                  "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 101,
-                  "src": "1616:10:0",
+                  "src": "1641:4:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1470,10 +1478,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 95,
+                    "id": 97,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1616:4:0",
+                    "src": "1641:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1483,34 +1491,28 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1603:24:0"
-            },
-            "returnParameters": {
-              "id": 99,
-              "nodeType": "ParameterList",
-              "parameters": [],
-              "src": "1644:0:0"
+              "src": "1640:6:0"
             },
             "scope": 163,
-            "src": "1581:65:0",
+            "src": "1581:68:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
             "baseFunctions": [
-              244
+              248
             ],
             "body": {
               "id": 110,
               "nodeType": "Block",
-              "src": "1944:2:0",
+              "src": "1947:2:0",
               "statements": []
             },
             "documentation": {
               "id": 102,
               "nodeType": "StructuredDocumentation",
-              "src": "1654:222:0",
+              "src": "1657:222:0",
               "text": " @dev Updates the indicator's state based on the latest price feed update\n @param index Index in trading bot's entry/exit rule array\n @param latestPrice The latest price from oracle price feed"
             },
             "functionSelector": "2fb565e8",
@@ -1524,7 +1526,7 @@
               "id": 108,
               "nodeType": "OverrideSpecifier",
               "overrides": [],
-              "src": "1935:8:0"
+              "src": "1938:8:0"
             },
             "parameters": {
               "id": 107,
@@ -1538,7 +1540,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 111,
-                  "src": "1898:10:0",
+                  "src": "1901:10:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1549,7 +1551,7 @@
                     "id": 103,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1898:4:0",
+                    "src": "1901:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1566,7 +1568,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 111,
-                  "src": "1910:16:0",
+                  "src": "1913:16:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1577,7 +1579,7 @@
                     "id": 105,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1910:4:0",
+                    "src": "1913:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1587,28 +1589,28 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1897:30:0"
+              "src": "1900:30:0"
             },
             "returnParameters": {
               "id": 109,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1944:0:0"
+              "src": "1947:0:0"
             },
             "scope": 163,
-            "src": "1882:64:0",
+            "src": "1885:64:0",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "public"
           },
           {
             "baseFunctions": [
-              255
+              259
             ],
             "body": {
               "id": 142,
               "nodeType": "Block",
-              "src": "2342:97:0",
+              "src": "2345:97:0",
               "statements": [
                 {
                   "assignments": [
@@ -1623,7 +1625,7 @@
                       "nodeType": "VariableDeclaration",
                       "overrides": null,
                       "scope": 142,
-                      "src": "2353:18:0",
+                      "src": "2356:18:0",
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "typeDescriptions": {
@@ -1635,7 +1637,7 @@
                           "id": 125,
                           "name": "uint",
                           "nodeType": "ElementaryTypeName",
-                          "src": "2353:4:0",
+                          "src": "2356:4:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1644,7 +1646,7 @@
                         "id": 126,
                         "length": null,
                         "nodeType": "ArrayTypeName",
-                        "src": "2353:6:0",
+                        "src": "2356:6:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                           "typeString": "uint256[]"
@@ -1668,7 +1670,7 @@
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2385:1:0",
+                        "src": "2388:1:0",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_1_by_1",
@@ -1690,7 +1692,7 @@
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "NewExpression",
-                      "src": "2374:10:0",
+                      "src": "2377:10:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_uint256_$dyn_memory_ptr_$",
                         "typeString": "function (uint256) pure returns (uint256[] memory)"
@@ -1700,7 +1702,7 @@
                           "id": 128,
                           "name": "uint",
                           "nodeType": "ElementaryTypeName",
-                          "src": "2378:4:0",
+                          "src": "2381:4:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -1709,7 +1711,7 @@
                         "id": 129,
                         "length": null,
                         "nodeType": "ArrayTypeName",
-                        "src": "2378:6:0",
+                        "src": "2381:6:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                           "typeString": "uint256[]"
@@ -1724,7 +1726,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "2374:13:0",
+                    "src": "2377:13:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
@@ -1732,7 +1734,7 @@
                     }
                   },
                   "nodeType": "VariableDeclarationStatement",
-                  "src": "2353:34:0"
+                  "src": "2356:34:0"
                 },
                 {
                   "expression": {
@@ -1751,7 +1753,7 @@
                         "nodeType": "Identifier",
                         "overloadedDeclarations": [],
                         "referencedDeclaration": 127,
-                        "src": "2398:4:0",
+                        "src": "2401:4:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
                           "typeString": "uint256[] memory"
@@ -1768,7 +1770,7 @@
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2403:1:0",
+                        "src": "2406:1:0",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
@@ -1781,7 +1783,7 @@
                       "isPure": false,
                       "lValueRequested": true,
                       "nodeType": "IndexAccess",
-                      "src": "2398:7:0",
+                      "src": "2401:7:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1799,7 +1801,7 @@
                       "kind": "number",
                       "lValueRequested": false,
                       "nodeType": "Literal",
-                      "src": "2408:1:0",
+                      "src": "2411:1:0",
                       "subdenomination": null,
                       "typeDescriptions": {
                         "typeIdentifier": "t_rational_0_by_1",
@@ -1807,7 +1809,7 @@
                       },
                       "value": "0"
                     },
-                    "src": "2398:11:0",
+                    "src": "2401:11:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1815,7 +1817,7 @@
                   },
                   "id": 139,
                   "nodeType": "ExpressionStatement",
-                  "src": "2398:11:0"
+                  "src": "2401:11:0"
                 },
                 {
                   "expression": {
@@ -1825,7 +1827,7 @@
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
                     "referencedDeclaration": 127,
-                    "src": "2427:4:0",
+                    "src": "2430:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
                       "typeString": "uint256[] memory"
@@ -1834,14 +1836,14 @@
                   "functionReturnParameters": 122,
                   "id": 141,
                   "nodeType": "Return",
-                  "src": "2420:11:0"
+                  "src": "2423:11:0"
                 }
               ]
             },
             "documentation": {
               "id": 112,
               "nodeType": "StructuredDocumentation",
-              "src": "1957:277:0",
+              "src": "1960:277:0",
               "text": " @dev Given a trading bot address, returns the indicator value for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value for the given trading bot"
             },
             "functionSelector": "c7bf8cf5",
@@ -1855,7 +1857,7 @@
               "id": 118,
               "nodeType": "OverrideSpecifier",
               "overrides": [],
-              "src": "2309:8:0"
+              "src": "2312:8:0"
             },
             "parameters": {
               "id": 117,
@@ -1869,7 +1871,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 143,
-                  "src": "2258:25:0",
+                  "src": "2261:25:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1880,7 +1882,7 @@
                     "id": 113,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2258:7:0",
+                    "src": "2261:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1898,7 +1900,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 143,
-                  "src": "2285:10:0",
+                  "src": "2288:10:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1909,7 +1911,7 @@
                     "id": 115,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2285:4:0",
+                    "src": "2288:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1919,7 +1921,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2257:39:0"
+              "src": "2260:39:0"
             },
             "returnParameters": {
               "id": 122,
@@ -1933,7 +1935,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 143,
-                  "src": "2327:13:0",
+                  "src": "2330:13:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1945,7 +1947,7 @@
                       "id": 119,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "2327:4:0",
+                      "src": "2330:4:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -1954,7 +1956,7 @@
                     "id": 120,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "2327:6:0",
+                    "src": "2330:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -1964,22 +1966,22 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2326:15:0"
+              "src": "2329:15:0"
             },
             "scope": 163,
-            "src": "2240:199:0",
+            "src": "2243:199:0",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           },
           {
             "baseFunctions": [
-              266
+              270
             ],
             "body": {
               "id": 161,
               "nodeType": "Block",
-              "src": "2850:39:0",
+              "src": "2853:39:0",
               "statements": [
                 {
                   "expression": {
@@ -1995,7 +1997,7 @@
                         "kind": "number",
                         "lValueRequested": false,
                         "nodeType": "Literal",
-                        "src": "2879:1:0",
+                        "src": "2882:1:0",
                         "subdenomination": null,
                         "typeDescriptions": {
                           "typeIdentifier": "t_rational_0_by_1",
@@ -2017,7 +2019,7 @@
                       "isPure": true,
                       "lValueRequested": false,
                       "nodeType": "NewExpression",
-                      "src": "2868:10:0",
+                      "src": "2871:10:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_uint256_$dyn_memory_ptr_$",
                         "typeString": "function (uint256) pure returns (uint256[] memory)"
@@ -2027,7 +2029,7 @@
                           "id": 155,
                           "name": "uint",
                           "nodeType": "ElementaryTypeName",
-                          "src": "2872:4:0",
+                          "src": "2875:4:0",
                           "typeDescriptions": {
                             "typeIdentifier": "t_uint256",
                             "typeString": "uint256"
@@ -2036,7 +2038,7 @@
                         "id": 156,
                         "length": null,
                         "nodeType": "ArrayTypeName",
-                        "src": "2872:6:0",
+                        "src": "2875:6:0",
                         "typeDescriptions": {
                           "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                           "typeString": "uint256[]"
@@ -2051,7 +2053,7 @@
                     "lValueRequested": false,
                     "names": [],
                     "nodeType": "FunctionCall",
-                    "src": "2868:13:0",
+                    "src": "2871:13:0",
                     "tryCall": false,
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_memory_ptr",
@@ -2061,14 +2063,14 @@
                   "functionReturnParameters": 154,
                   "id": 160,
                   "nodeType": "Return",
-                  "src": "2861:20:0"
+                  "src": "2864:20:0"
                 }
               ]
             },
             "documentation": {
               "id": 144,
               "nodeType": "StructuredDocumentation",
-              "src": "2447:293:0",
+              "src": "2450:293:0",
               "text": " @dev Given a trading bot address, returns the indicator value history for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value history for the given trading bot"
             },
             "functionSelector": "8bdf5803",
@@ -2082,7 +2084,7 @@
               "id": 150,
               "nodeType": "OverrideSpecifier",
               "overrides": [],
-              "src": "2817:8:0"
+              "src": "2820:8:0"
             },
             "parameters": {
               "id": 149,
@@ -2096,7 +2098,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 162,
-                  "src": "2766:25:0",
+                  "src": "2769:25:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2107,7 +2109,7 @@
                     "id": 145,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2766:7:0",
+                    "src": "2769:7:0",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -2125,7 +2127,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 162,
-                  "src": "2793:10:0",
+                  "src": "2796:10:0",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -2136,7 +2138,7 @@
                     "id": 147,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2793:4:0",
+                    "src": "2796:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -2146,7 +2148,7 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2765:39:0"
+              "src": "2768:39:0"
             },
             "returnParameters": {
               "id": 154,
@@ -2160,7 +2162,7 @@
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
                   "scope": 162,
-                  "src": "2835:13:0",
+                  "src": "2838:13:0",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -2172,7 +2174,7 @@
                       "id": 151,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "2835:4:0",
+                      "src": "2838:4:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
@@ -2181,7 +2183,7 @@
                     "id": 152,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "2835:6:0",
+                    "src": "2838:6:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -2191,20 +2193,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2834:15:0"
+              "src": "2837:15:0"
             },
             "scope": 163,
-            "src": "2746:143:0",
+            "src": "2749:143:0",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "public"
           }
         ],
         "scope": 164,
-        "src": "70:2822:0"
+        "src": "70:2825:0"
       }
     ],
-    "src": "0:2892:0"
+    "src": "0:2895:0"
   },
   "legacyAST": {
     "attributes": {
@@ -2232,7 +2234,7 @@
       },
       {
         "attributes": {
-          "SourceUnit": 276,
+          "SourceUnit": 280,
           "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol",
           "file": "./interfaces/IIndicator.sol",
           "scope": 164,
@@ -2249,14 +2251,14 @@
         "attributes": {
           "abstract": false,
           "contractDependencies": [
-            275
+            279
           ],
           "contractKind": "contract",
           "documentation": null,
           "fullyImplemented": true,
           "linearizedBaseContracts": [
             163,
-            275
+            279
           ],
           "name": "Down",
           "scope": 164
@@ -2271,7 +2273,7 @@
                 "attributes": {
                   "contractScope": null,
                   "name": "IIndicator",
-                  "referencedDeclaration": 275,
+                  "referencedDeclaration": 279,
                   "type": "contract IIndicator"
                 },
                 "id": 3,
@@ -2659,7 +2661,7 @@
           {
             "attributes": {
               "baseFunctions": [
-                214
+                218
               ],
               "functionSelector": "17d7de7c",
               "implemented": true,
@@ -2781,7 +2783,7 @@
           {
             "attributes": {
               "baseFunctions": [
-                222
+                226
               ],
               "functionSelector": "7d6760bf",
               "implemented": true,
@@ -2959,7 +2961,7 @@
           {
             "attributes": {
               "baseFunctions": [
-                228
+                232
               ],
               "functionSelector": "a22a8b29",
               "implemented": true,
@@ -3383,7 +3385,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 274,
+                              "referencedDeclaration": 278,
                               "type": "function (address,uint256,uint256)",
                               "value": "UpdatedPrice"
                             },
@@ -3523,9 +3525,9 @@
           {
             "attributes": {
               "baseFunctions": [
-                236
+                240
               ],
-              "functionSelector": "a47575a1",
+              "functionSelector": "a5a6d6f7",
               "implemented": true,
               "isConstructor": false,
               "kind": "function",
@@ -3541,7 +3543,7 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param param Value of the indicator's parameter"
+                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param param Value of the indicator's parameter\n @return uint Index of trading bot instance in State array"
                 },
                 "id": 92,
                 "name": "StructuredDocumentation",
@@ -3553,9 +3555,9 @@
                     null
                   ]
                 },
-                "id": 98,
+                "id": 96,
                 "name": "OverrideSpecifier",
-                "src": "1635:8:0"
+                "src": "1623:8:0"
               },
               {
                 "children": [
@@ -3563,7 +3565,7 @@
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "index",
+                      "name": "param",
                       "overrides": null,
                       "scope": 101,
                       "stateVariable": false,
@@ -3586,12 +3588,19 @@
                     "id": 94,
                     "name": "VariableDeclaration",
                     "src": "1604:10:0"
-                  },
+                  }
+                ],
+                "id": 95,
+                "name": "ParameterList",
+                "src": "1603:12:0"
+              },
+              {
+                "children": [
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "param",
+                      "name": "",
                       "overrides": null,
                       "scope": 101,
                       "stateVariable": false,
@@ -3606,30 +3615,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 95,
+                        "id": 97,
                         "name": "ElementaryTypeName",
-                        "src": "1616:4:0"
+                        "src": "1641:4:0"
                       }
                     ],
-                    "id": 96,
+                    "id": 98,
                     "name": "VariableDeclaration",
-                    "src": "1616:10:0"
+                    "src": "1641:4:0"
                   }
                 ],
-                "id": 97,
-                "name": "ParameterList",
-                "src": "1603:24:0"
-              },
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
                 "id": 99,
                 "name": "ParameterList",
-                "src": "1644:0:0"
+                "src": "1640:6:0"
               },
               {
                 "attributes": {
@@ -3640,17 +3638,17 @@
                 "children": [],
                 "id": 100,
                 "name": "Block",
-                "src": "1644:2:0"
+                "src": "1647:2:0"
               }
             ],
             "id": 101,
             "name": "FunctionDefinition",
-            "src": "1581:65:0"
+            "src": "1581:68:0"
           },
           {
             "attributes": {
               "baseFunctions": [
-                244
+                248
               ],
               "functionSelector": "2fb565e8",
               "implemented": true,
@@ -3672,7 +3670,7 @@
                 },
                 "id": 102,
                 "name": "StructuredDocumentation",
-                "src": "1654:222:0"
+                "src": "1657:222:0"
               },
               {
                 "attributes": {
@@ -3682,7 +3680,7 @@
                 },
                 "id": 108,
                 "name": "OverrideSpecifier",
-                "src": "1935:8:0"
+                "src": "1938:8:0"
               },
               {
                 "children": [
@@ -3707,12 +3705,12 @@
                         },
                         "id": 103,
                         "name": "ElementaryTypeName",
-                        "src": "1898:4:0"
+                        "src": "1901:4:0"
                       }
                     ],
                     "id": 104,
                     "name": "VariableDeclaration",
-                    "src": "1898:10:0"
+                    "src": "1901:10:0"
                   },
                   {
                     "attributes": {
@@ -3735,17 +3733,17 @@
                         },
                         "id": 105,
                         "name": "ElementaryTypeName",
-                        "src": "1910:4:0"
+                        "src": "1913:4:0"
                       }
                     ],
                     "id": 106,
                     "name": "VariableDeclaration",
-                    "src": "1910:16:0"
+                    "src": "1913:16:0"
                   }
                 ],
                 "id": 107,
                 "name": "ParameterList",
-                "src": "1897:30:0"
+                "src": "1900:30:0"
               },
               {
                 "attributes": {
@@ -3756,7 +3754,7 @@
                 "children": [],
                 "id": 109,
                 "name": "ParameterList",
-                "src": "1944:0:0"
+                "src": "1947:0:0"
               },
               {
                 "attributes": {
@@ -3767,17 +3765,17 @@
                 "children": [],
                 "id": 110,
                 "name": "Block",
-                "src": "1944:2:0"
+                "src": "1947:2:0"
               }
             ],
             "id": 111,
             "name": "FunctionDefinition",
-            "src": "1882:64:0"
+            "src": "1885:64:0"
           },
           {
             "attributes": {
               "baseFunctions": [
-                255
+                259
               ],
               "functionSelector": "c7bf8cf5",
               "implemented": true,
@@ -3799,7 +3797,7 @@
                 },
                 "id": 112,
                 "name": "StructuredDocumentation",
-                "src": "1957:277:0"
+                "src": "1960:277:0"
               },
               {
                 "attributes": {
@@ -3809,7 +3807,7 @@
                 },
                 "id": 118,
                 "name": "OverrideSpecifier",
-                "src": "2309:8:0"
+                "src": "2312:8:0"
               },
               {
                 "children": [
@@ -3835,12 +3833,12 @@
                         },
                         "id": 113,
                         "name": "ElementaryTypeName",
-                        "src": "2258:7:0"
+                        "src": "2261:7:0"
                       }
                     ],
                     "id": 114,
                     "name": "VariableDeclaration",
-                    "src": "2258:25:0"
+                    "src": "2261:25:0"
                   },
                   {
                     "attributes": {
@@ -3863,17 +3861,17 @@
                         },
                         "id": 115,
                         "name": "ElementaryTypeName",
-                        "src": "2285:4:0"
+                        "src": "2288:4:0"
                       }
                     ],
                     "id": 116,
                     "name": "VariableDeclaration",
-                    "src": "2285:10:0"
+                    "src": "2288:10:0"
                   }
                 ],
                 "id": 117,
                 "name": "ParameterList",
-                "src": "2257:39:0"
+                "src": "2260:39:0"
               },
               {
                 "children": [
@@ -3904,22 +3902,22 @@
                             },
                             "id": 119,
                             "name": "ElementaryTypeName",
-                            "src": "2327:4:0"
+                            "src": "2330:4:0"
                           }
                         ],
                         "id": 120,
                         "name": "ArrayTypeName",
-                        "src": "2327:6:0"
+                        "src": "2330:6:0"
                       }
                     ],
                     "id": 121,
                     "name": "VariableDeclaration",
-                    "src": "2327:13:0"
+                    "src": "2330:13:0"
                   }
                 ],
                 "id": 122,
                 "name": "ParameterList",
-                "src": "2326:15:0"
+                "src": "2329:15:0"
               },
               {
                 "children": [
@@ -3957,17 +3955,17 @@
                                 },
                                 "id": 125,
                                 "name": "ElementaryTypeName",
-                                "src": "2353:4:0"
+                                "src": "2356:4:0"
                               }
                             ],
                             "id": 126,
                             "name": "ArrayTypeName",
-                            "src": "2353:6:0"
+                            "src": "2356:6:0"
                           }
                         ],
                         "id": 127,
                         "name": "VariableDeclaration",
-                        "src": "2353:18:0"
+                        "src": "2356:18:0"
                       },
                       {
                         "attributes": {
@@ -4013,17 +4011,17 @@
                                     },
                                     "id": 128,
                                     "name": "ElementaryTypeName",
-                                    "src": "2378:4:0"
+                                    "src": "2381:4:0"
                                   }
                                 ],
                                 "id": 129,
                                 "name": "ArrayTypeName",
-                                "src": "2378:6:0"
+                                "src": "2381:6:0"
                               }
                             ],
                             "id": 130,
                             "name": "NewExpression",
-                            "src": "2374:10:0"
+                            "src": "2377:10:0"
                           },
                           {
                             "attributes": {
@@ -4040,17 +4038,17 @@
                             },
                             "id": 131,
                             "name": "Literal",
-                            "src": "2385:1:0"
+                            "src": "2388:1:0"
                           }
                         ],
                         "id": 132,
                         "name": "FunctionCall",
-                        "src": "2374:13:0"
+                        "src": "2377:13:0"
                       }
                     ],
                     "id": 133,
                     "name": "VariableDeclarationStatement",
-                    "src": "2353:34:0"
+                    "src": "2356:34:0"
                   },
                   {
                     "children": [
@@ -4087,7 +4085,7 @@
                                 },
                                 "id": 134,
                                 "name": "Identifier",
-                                "src": "2398:4:0"
+                                "src": "2401:4:0"
                               },
                               {
                                 "attributes": {
@@ -4104,12 +4102,12 @@
                                 },
                                 "id": 135,
                                 "name": "Literal",
-                                "src": "2403:1:0"
+                                "src": "2406:1:0"
                               }
                             ],
                             "id": 136,
                             "name": "IndexAccess",
-                            "src": "2398:7:0"
+                            "src": "2401:7:0"
                           },
                           {
                             "attributes": {
@@ -4126,17 +4124,17 @@
                             },
                             "id": 137,
                             "name": "Literal",
-                            "src": "2408:1:0"
+                            "src": "2411:1:0"
                           }
                         ],
                         "id": 138,
                         "name": "Assignment",
-                        "src": "2398:11:0"
+                        "src": "2401:11:0"
                       }
                     ],
                     "id": 139,
                     "name": "ExpressionStatement",
-                    "src": "2398:11:0"
+                    "src": "2401:11:0"
                   },
                   {
                     "attributes": {
@@ -4155,27 +4153,27 @@
                         },
                         "id": 140,
                         "name": "Identifier",
-                        "src": "2427:4:0"
+                        "src": "2430:4:0"
                       }
                     ],
                     "id": 141,
                     "name": "Return",
-                    "src": "2420:11:0"
+                    "src": "2423:11:0"
                   }
                 ],
                 "id": 142,
                 "name": "Block",
-                "src": "2342:97:0"
+                "src": "2345:97:0"
               }
             ],
             "id": 143,
             "name": "FunctionDefinition",
-            "src": "2240:199:0"
+            "src": "2243:199:0"
           },
           {
             "attributes": {
               "baseFunctions": [
-                266
+                270
               ],
               "functionSelector": "8bdf5803",
               "implemented": true,
@@ -4197,7 +4195,7 @@
                 },
                 "id": 144,
                 "name": "StructuredDocumentation",
-                "src": "2447:293:0"
+                "src": "2450:293:0"
               },
               {
                 "attributes": {
@@ -4207,7 +4205,7 @@
                 },
                 "id": 150,
                 "name": "OverrideSpecifier",
-                "src": "2817:8:0"
+                "src": "2820:8:0"
               },
               {
                 "children": [
@@ -4233,12 +4231,12 @@
                         },
                         "id": 145,
                         "name": "ElementaryTypeName",
-                        "src": "2766:7:0"
+                        "src": "2769:7:0"
                       }
                     ],
                     "id": 146,
                     "name": "VariableDeclaration",
-                    "src": "2766:25:0"
+                    "src": "2769:25:0"
                   },
                   {
                     "attributes": {
@@ -4261,17 +4259,17 @@
                         },
                         "id": 147,
                         "name": "ElementaryTypeName",
-                        "src": "2793:4:0"
+                        "src": "2796:4:0"
                       }
                     ],
                     "id": 148,
                     "name": "VariableDeclaration",
-                    "src": "2793:10:0"
+                    "src": "2796:10:0"
                   }
                 ],
                 "id": 149,
                 "name": "ParameterList",
-                "src": "2765:39:0"
+                "src": "2768:39:0"
               },
               {
                 "children": [
@@ -4302,22 +4300,22 @@
                             },
                             "id": 151,
                             "name": "ElementaryTypeName",
-                            "src": "2835:4:0"
+                            "src": "2838:4:0"
                           }
                         ],
                         "id": 152,
                         "name": "ArrayTypeName",
-                        "src": "2835:6:0"
+                        "src": "2838:6:0"
                       }
                     ],
                     "id": 153,
                     "name": "VariableDeclaration",
-                    "src": "2835:13:0"
+                    "src": "2838:13:0"
                   }
                 ],
                 "id": 154,
                 "name": "ParameterList",
-                "src": "2834:15:0"
+                "src": "2837:15:0"
               },
               {
                 "children": [
@@ -4370,17 +4368,17 @@
                                     },
                                     "id": 155,
                                     "name": "ElementaryTypeName",
-                                    "src": "2872:4:0"
+                                    "src": "2875:4:0"
                                   }
                                 ],
                                 "id": 156,
                                 "name": "ArrayTypeName",
-                                "src": "2872:6:0"
+                                "src": "2875:6:0"
                               }
                             ],
                             "id": 157,
                             "name": "NewExpression",
-                            "src": "2868:10:0"
+                            "src": "2871:10:0"
                           },
                           {
                             "attributes": {
@@ -4397,37 +4395,37 @@
                             },
                             "id": 158,
                             "name": "Literal",
-                            "src": "2879:1:0"
+                            "src": "2882:1:0"
                           }
                         ],
                         "id": 159,
                         "name": "FunctionCall",
-                        "src": "2868:13:0"
+                        "src": "2871:13:0"
                       }
                     ],
                     "id": 160,
                     "name": "Return",
-                    "src": "2861:20:0"
+                    "src": "2864:20:0"
                   }
                 ],
                 "id": 161,
                 "name": "Block",
-                "src": "2850:39:0"
+                "src": "2853:39:0"
               }
             ],
             "id": 162,
             "name": "FunctionDefinition",
-            "src": "2746:143:0"
+            "src": "2749:143:0"
           }
         ],
         "id": 163,
         "name": "ContractDefinition",
-        "src": "70:2822:0"
+        "src": "70:2825:0"
       }
     ],
     "id": 164,
     "name": "SourceUnit",
-    "src": "0:2892:0"
+    "src": "0:2895:0"
   },
   "compiler": {
     "name": "solc",
@@ -4435,15 +4433,17 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-01T23:59:13.016Z",
+  "updatedAt": "2021-07-03T14:37:40.382Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
-      "addTradingBot(uint256,uint256)": {
+      "addTradingBot(uint256)": {
         "details": "Initializes the state of the trading bot; meant to be called by a trading bot",
         "params": {
-          "index": "Index in trading bot's entry/exit rule array",
           "param": "Value of the indicator's parameter"
+        },
+        "returns": {
+          "_0": "uint Index of trading bot instance in State array"
         }
       },
       "editPrice(uint256)": {

@@ -4,15 +4,10 @@ import '../interfaces/IIndicator.sol';
 
 contract PreviousNPriceUpdates is IIndicator {
 
-    struct State {
-        uint8 N;
-        uint248 currentValue;
-    }
-
     uint public _price;
     address public _developer;
 
-    mapping (address => State[]) private _tradingBotStates;
+    mapping (address => uint[]) private _tradingBotStates;
     mapping (address => mapping (uint => uint[])) private _tradingBotHistory;
 
     constructor(uint price) public {
@@ -59,7 +54,7 @@ contract PreviousNPriceUpdates is IIndicator {
     function addTradingBot(uint param) public override returns (uint) {
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender].push(State(uint8(param), 0));
+        _tradingBotStates[msg.sender].push(param);
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -85,7 +80,7 @@ contract PreviousNPriceUpdates is IIndicator {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
         
-        uint length = (_tradingBotHistory[tradingBotAddress][index].length >= uint256(_tradingBotStates[tradingBotAddress][index].N)) ? uint256(_tradingBotStates[tradingBotAddress][index].N) : 0;
+        uint length = (_tradingBotHistory[tradingBotAddress][index].length > _tradingBotStates[tradingBotAddress][index]) ? _tradingBotStates[tradingBotAddress][index] + 1 : 0;
         uint[] memory temp = new uint[](length);
 
         for (uint i = length; i >= 1; i--)

@@ -213,7 +213,7 @@ contract TradingBot is ITradingBot {
     function _checkEntryRules() private returns (bool) {
         for (uint i = 0; i < _entryRules.length; i++)
         {
-            if (!IComparator(_entryRules[i].comparatorAddress).checkConditions(_entryRules[i].comparatorIndex))
+            if (!IComparator(_entryRules[i].comparatorAddress).checkConditions(_entryRules[i].comparatorIndex, _entryRules[i].firstIndicatorIndex, _entryRules[i].secondIndicatorIndex))
             {
                 return false;
             }
@@ -229,7 +229,7 @@ contract TradingBot is ITradingBot {
     function _checkExitRules() private returns (bool) {
         for (uint i = 0; i < _exitRules.length; i++)
         {
-            if (!IComparator(_exitRules[i].comparatorAddress).checkConditions(_exitRules[i].comparatorIndex))
+            if (!IComparator(_exitRules[i].comparatorAddress).checkConditions(_exitRules[i].comparatorIndex, _exitRules[i].firstIndicatorIndex, _exitRules[i].secondIndicatorIndex))
             {
                 return true;
             }
