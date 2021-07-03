@@ -1,14 +1,15 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
-import './interfaces/IComparator.sol';
+import '../interfaces/IIndicator.sol';
+import '../interfaces/IComparator.sol';
 
-contract Closes is IComparator {
+contract CrossesAbove is IComparator {
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
-        uint previousPrice;
+        uint128 firstIndicatorPreviousValue;
+        uint128 secondIndicatorPreviousValue;
     }
 
     uint public _price;
@@ -54,7 +55,7 @@ contract Closes is IComparator {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 1));
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 1, 1));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -71,82 +72,27 @@ contract Closes is IComparator {
         require(firstIndicatorIndex >= 0, "Invalid first indicator index");
         require(secondIndicatorIndex >= 0, "Invalid second indicator index");
 
-        uint[] memory priceHistory = IIndicator(_tradingBotStates[msg.sender][comparatorIndex].firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
-        
-        if (keccak256(bytes(IIndicator(_tradingBotStates[msg.sender][comparatorIndex].secondIndicatorAddress).getName())) == keccak256(bytes("Up")))
+        State memory tradingBotState = _tradingBotStates[msg.sender][comparatorIndex];
+
+        uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
+        uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
+
+        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0)
         {
-            if (priceHistory.length == 0)
-            {
-                emit ConditionStatus(false); //test
-                
-                return false;
-            }
-
-            if (priceHistory.length > 1)
-            {
-                for (uint i = 1; i < priceHistory.length; i++)
-                {
-                    if (priceHistory[i] <= priceHistory[i - 1])
-                    {
-                        emit ConditionStatus(false); //test
-
-                        return false;
-                    }
-                }
-
-                emit ConditionStatus(true); //test
-
-                return true;
-            }
-            else
-            {
-                bool result = (priceHistory[0] > _tradingBotStates[msg.sender][comparatorIndex].previousPrice);
-                _tradingBotStates[msg.sender][comparatorIndex].previousPrice = priceHistory[0];
-
-                emit ConditionStatus(result); //test
-
-                return result;
-            }
-        }
-        else if (keccak256(bytes(IIndicator(_tradingBotStates[msg.sender][comparatorIndex].secondIndicatorAddress).getName())) == keccak256(bytes("Down")))
-        {
-            if (priceHistory.length == 0)
-            {
-                emit ConditionStatus(false); //test
-
-                return false;
-            }
-
-            if (priceHistory.length > 1)
-            {
-                for (uint i = 1; i < priceHistory.length; i++)
-                {
-                    if (priceHistory[i] >= priceHistory[i - 1])
-                    {
-                        emit ConditionStatus(false); //test
-
-                        return false;
-                    }
-                }
-
-                emit ConditionStatus(true); //test
-
-                return true;
-            }
-            else
-            {
-                bool result = (priceHistory[0] < _tradingBotStates[msg.sender][comparatorIndex].previousPrice);
-                _tradingBotStates[msg.sender][comparatorIndex].previousPrice = priceHistory[0];
-
-                emit ConditionStatus(result); //test
-
-                return result;
-            }
+            emit ConditionStatus(false); //test
+            
+            return false;
         }
 
-        emit ConditionStatus(false); //test
+        bool result = (tradingBotState.firstIndicatorPreviousValue < tradingBotState.secondIndicatorPreviousValue) &&
+                    (firstIndicatorHistory[firstIndicatorHistory.length - 1] > secondIndicatorHistory[secondIndicatorHistory.length - 1]);
 
-        return false;
+        _tradingBotStates[msg.sender][comparatorIndex].firstIndicatorPreviousValue = uint128(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
+        _tradingBotStates[msg.sender][comparatorIndex].secondIndicatorPreviousValue = uint128(secondIndicatorHistory[secondIndicatorHistory.length - 1]);
+
+        emit ConditionStatus(result); //test
+
+        return result;
     }
 
     event ConditionStatus(bool status); //test
