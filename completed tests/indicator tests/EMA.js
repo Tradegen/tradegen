@@ -13,7 +13,7 @@ const kit = ContractKit.newKitFromWeb3(web3);
 
 const EMA = require('../build/contracts/EMA.json');
 
-var contractAddress = "0x518013B2eB4454eb1a1d28e021a63a8946571d48";
+var contractAddress = "0xb73F645d329c3cb7C38f4c9286bcb17A21903A6a";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
 function initContract()
@@ -88,15 +88,16 @@ function initContract()
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
 
         let receipt = await tx.waitReceipt()
+        console.log(tx);
 
         //Update first trading bot indicator state with first value
-        let txObject2 = await instance.methods.update(1000);
+        let txObject2 = await instance.methods.update(0, 1000);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
 
         let receipt2 = await tx2.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue = await instance.methods.getValue(account.address).call();
+        let currentValue = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue);
 
         assert(
@@ -105,13 +106,13 @@ function initContract()
         );
 
         //Update first trading bot indicator state with second value
-        let txObject3 = await instance.methods.update(2000);
+        let txObject3 = await instance.methods.update(0, 2000);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
 
         let receipt3 = await tx3.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue2 = await instance.methods.getValue(account.address).call();
+        let currentValue2 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue2);
 
         assert(
@@ -120,17 +121,17 @@ function initContract()
         );
 
         //Update first trading bot indicator state with third value
-        let txObject4 = await instance.methods.update(3000);
+        let txObject4 = await instance.methods.update(0, 3000);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
 
         let receipt4 = await tx4.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue3 = await instance.methods.getValue(account.address).call();
+        let currentValue3 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue3);
 
         //Get first trading bot trading bot state history
-        let history2 = await instance.methods.getHistory(account.address).call();
+        let history2 = await instance.methods.getHistory(account.address, 0).call();
         console.log(history2);
 
         assert(
@@ -139,13 +140,13 @@ function initContract()
         );
 
         //Update first trading bot indicator state with fourth value
-        let txObject5 = await instance.methods.update(4250);
+        let txObject5 = await instance.methods.update(0, 4250);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
 
         let receipt5 = await tx5.waitReceipt()
 
         //Get first trading bot current value
-        let currentValue4 = await instance.methods.getValue(account.address).call();
+        let currentValue4 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue4);
 
         assert(
@@ -155,7 +156,7 @@ function initContract()
         
         
         //Get first trading bot trading bot state history
-        let history = await instance.methods.getHistory(account.address).call();
+        let history = await instance.methods.getHistory(account.address, 0).call();
         console.log(history);
         
         assert(
@@ -184,6 +185,111 @@ function initContract()
         );
     });
 
+    it('Add second instance of first trading bot', async () => {
+        let account = await getAccount2();
+        kit.connection.addAccount(account.privateKey);
+
+        //Add first trading bot
+        let txObject = await instance.methods.addTradingBot(3);
+        let tx = await kit.sendTransactionObject(txObject, { from: account.address });
+
+        let receipt = await tx.waitReceipt()
+
+        //Update first trading bot indicator state with first value
+        let txObject2 = await instance.methods.update(1, 2000);
+        let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
+
+        let receipt2 = await tx2.waitReceipt()
+
+        //Get first trading bot current value
+        let currentValue = await instance.methods.getValue(account.address, 1).call();
+        console.log(currentValue);
+
+        assert(
+            currentValue[0] == 0,
+            'Current value should be 0'
+        );
+
+        //Update first trading bot indicator state with second value
+        let txObject3 = await instance.methods.update(1, 4000);
+        let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
+
+        let receipt3 = await tx3.waitReceipt()
+
+        //Get first trading bot current value
+        let currentValue2 = await instance.methods.getValue(account.address, 1).call();
+        console.log(currentValue2);
+
+        assert(
+            currentValue2[0] == 0,
+            'Current value should be 0'
+        );
+
+        //Update first trading bot indicator state with third value
+        let txObject4 = await instance.methods.update(1, 6000);
+        let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
+
+        let receipt4 = await tx4.waitReceipt()
+
+        //Get first trading bot current value
+        let currentValue3 = await instance.methods.getValue(account.address, 1).call();
+        console.log(currentValue3);
+
+        //Get first trading bot trading bot state history
+        let history2 = await instance.methods.getHistory(account.address, 1).call();
+        console.log(history2);
+
+        assert(
+            currentValue3[0] == 4500,
+            'Current value should be 4500'
+        );
+
+        //Update first trading bot indicator state with fourth value
+        let txObject5 = await instance.methods.update(1, 9000);
+        let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
+
+        let receipt5 = await tx5.waitReceipt()
+
+        //Get first trading bot current value
+        let currentValue4 = await instance.methods.getValue(account.address, 1).call();
+        console.log(currentValue4);
+
+        assert(
+            currentValue4[0] == 6750,
+            'Current value should be 6750'
+        );
+        
+        
+        //Get first trading bot trading bot state history
+        let history = await instance.methods.getHistory(account.address, 1).call();
+        console.log(history);
+        
+        assert(
+            history.length == 4,
+            'Indicator history should have four elements'
+        );
+
+        assert(
+            history[0] == 2000,
+            'First element in history should be 2000'
+        );
+
+        assert(
+            history[1] == 3000,
+            'Second element in history should be 3000'
+        );
+
+        assert(
+            history[2] == 4500,
+            'Third element in history should be 4500'
+        );
+
+        assert(
+            history[3] == 6750,
+            'Fourth element in history should be 6750'
+        );
+    });
+
     it('Update second trading bot state with decreasing EMA', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
@@ -195,13 +301,13 @@ function initContract()
         let receipt = await tx.waitReceipt()
 
         //Update second trading bot indicator state with first value
-        let txObject2 = await instance.methods.update(10000);
+        let txObject2 = await instance.methods.update(0, 10000);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
 
         let receipt2 = await tx2.waitReceipt()
 
         //Get second trading bot current value
-        let currentValue = await instance.methods.getValue(account.address).call();
+        let currentValue = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue);
 
         assert(
@@ -210,13 +316,13 @@ function initContract()
         );
 
         //Update second trading bot indicator state with second value
-        let txObject3 = await instance.methods.update(8000);
+        let txObject3 = await instance.methods.update(0, 8000);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
 
         let receipt3 = await tx3.waitReceipt()
 
         //Get second trading bot current value
-        let currentValue2 = await instance.methods.getValue(account.address).call();
+        let currentValue2 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue2);
 
         assert(
@@ -225,13 +331,13 @@ function initContract()
         );
 
         //Update second trading bot indicator state with third value
-        let txObject4 = await instance.methods.update(5000);
+        let txObject4 = await instance.methods.update(0, 5000);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
 
         let receipt4 = await tx4.waitReceipt()
 
         //Get second trading bot current value
-        let currentValue3 = await instance.methods.getValue(account.address).call();
+        let currentValue3 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue3);
 
         assert(
@@ -240,13 +346,13 @@ function initContract()
         );
 
         //Update second trading bot indicator state with fourth value
-        let txObject5 = await instance.methods.update(1000);
+        let txObject5 = await instance.methods.update(0, 1000);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
 
         let receipt5 = await tx5.waitReceipt()
 
         //Get second trading bot current value
-        let currentValue4 = await instance.methods.getValue(account.address).call();
+        let currentValue4 = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue4);
 
         assert(
@@ -255,7 +361,7 @@ function initContract()
         );
 
         //Get second trading bot trading bot state history
-        let history = await instance.methods.getHistory(account.address).call();
+        let history = await instance.methods.getHistory(account.address, 0).call();
         console.log(history);
 
         assert(

@@ -47,12 +47,10 @@ contract LatestPrice is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
     */
-    function addTradingBot(uint index, uint param) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].length == 0, "Trading bot already exists");
+    function addTradingBot(uint param) public override returns (uint) {
+        return 0;
     }
 
     /**
@@ -61,8 +59,7 @@ contract LatestPrice is IIndicator {
     * @param latestPrice The latest price from oracle price feed
     */
     function update(uint index, uint latestPrice) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].length > 0, "Trading bot doesn't exist");
+        require(index >= 0, "Invalid index");
 
         _tradingBotStates[msg.sender][index].push(latestPrice);
     }   
@@ -75,8 +72,7 @@ contract LatestPrice is IIndicator {
     */
     function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].length > 0, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress][index].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
         temp[0] = _tradingBotStates[tradingBotAddress][index][_tradingBotStates[tradingBotAddress][index].length - 1];
@@ -92,8 +88,7 @@ contract LatestPrice is IIndicator {
     */
     function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].length > 0, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress][index].length, "Invalid index");
 
         return _tradingBotStates[tradingBotAddress][index];
     }

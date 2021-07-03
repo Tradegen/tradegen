@@ -10,17 +10,16 @@ contract SMA is IIndicator {
     using SafeMath for uint;
 
     struct State {
-        bool exists;
         uint8 SMAperiod;
-        uint128 currentValue;
-        uint[] priceHistory;
-        uint[] indicatorHistory;
+        uint248 currentValue;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => mapping(uint => State)) private _tradingBotStates;
+    mapping (address => State[]) private _tradingBotStates;
+    mapping (address => mapping (uint => uint[])) private _tradingBotHistory;
+    mapping (address => mapping (uint => uint[])) private _priceHistory;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -60,15 +59,15 @@ contract SMA is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
+    * @return uint Index of trading bot instance in State array
     */
-    function addTradingBot(uint index, uint param) public override {
-        require(index > 0, "Invalid index");
-        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
+    function addTradingBot(uint param) public override returns (uint) {
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender][index] = State(true, uint8(param), 0, new uint[](0), new uint[](0));
+        _tradingBotStates[msg.sender].push(State(uint8(param), 0));
+
+        return _tradingBotStates[msg.sender].length - 1;
     }
 
     /**
@@ -77,32 +76,33 @@ contract SMA is IIndicator {
     * @param latestPrice The latest price from oracle price feed
     */
     function update(uint index, uint latestPrice) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[msg.sender].length, "Invalid index");
 
-        _tradingBotStates[msg.sender][index].priceHistory.push(latestPrice);
+        _priceHistory[msg.sender][index].push(latestPrice);
 
-        if (_tradingBotStates[msg.sender][index].priceHistory.length > uint256(_tradingBotStates[msg.sender][index].SMAperiod))
+        uint[] memory priceHistory = _priceHistory[msg.sender][index];
+
+        if (priceHistory.length > uint256(_tradingBotStates[msg.sender][index].SMAperiod))
         {
             uint temp = uint256(_tradingBotStates[msg.sender][index].currentValue).mul(uint256(_tradingBotStates[msg.sender][index].SMAperiod));
-            uint index2 = _tradingBotStates[msg.sender][index].priceHistory.length.sub(uint256(_tradingBotStates[msg.sender][index].SMAperiod)).sub(1);
-            temp = temp.sub(_tradingBotStates[msg.sender][index].priceHistory[index2]);
+            uint index2 = priceHistory.length.sub(uint256(_tradingBotStates[msg.sender][index].SMAperiod)).sub(1);
+            temp = temp.sub(priceHistory[index2]);
             temp = temp.add(latestPrice);
             temp = temp.div(uint256(_tradingBotStates[msg.sender][index].SMAperiod));
 
             _tradingBotStates[msg.sender][index].currentValue = uint128(temp); 
-            _tradingBotStates[msg.sender][index].indicatorHistory.push(temp);
+            _tradingBotHistory[msg.sender][index].push(temp);
         }
         else
         {
-            uint temp = uint256(_tradingBotStates[msg.sender][index].currentValue).mul(_tradingBotStates[msg.sender][index].priceHistory.length - 1);
+            uint temp = uint256(_tradingBotStates[msg.sender][index].currentValue).mul(priceHistory.length - 1);
             temp = temp.add(latestPrice);
-            temp = temp.div(_tradingBotStates[msg.sender][index].priceHistory.length);
+            temp = temp.div(priceHistory.length);
 
-            uint value = (_tradingBotStates[msg.sender][index].priceHistory.length == uint256(_tradingBotStates[msg.sender][index].SMAperiod)) ? temp : 1;
+            uint value = (priceHistory.length == uint256(_tradingBotStates[msg.sender][index].SMAperiod)) ? temp : 1;
 
             _tradingBotStates[msg.sender][index].currentValue = uint128(temp);
-            _tradingBotStates[msg.sender][index].indicatorHistory.push(value);
+            _tradingBotHistory[msg.sender][index].push(value);
         }
     }   
 
@@ -114,13 +114,10 @@ contract SMA is IIndicator {
     */
     function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
-
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress][index];
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
-        temp[0] = (tradingBotState.priceHistory.length >= tradingBotState.SMAperiod) ? tradingBotState.currentValue : 0;
+        temp[0] = (_priceHistory[tradingBotAddress][index].length >= uint256(_tradingBotStates[tradingBotAddress][index].SMAperiod)) ? uint256(_tradingBotStates[tradingBotAddress][index].currentValue) : 0;
         return temp;
     }
 
@@ -132,11 +129,8 @@ contract SMA is IIndicator {
     */
     function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
-        State storage tradingBotState = _tradingBotStates[tradingBotAddress][index];
-
-        return tradingBotState.indicatorHistory;
+        return _tradingBotHistory[tradingBotAddress][index];
     }
 }

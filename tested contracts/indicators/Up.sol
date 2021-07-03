@@ -46,10 +46,10 @@ contract Up is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
+    * @return uint Index of trading bot instance in State array
     */
-    function addTradingBot(uint index, uint param) public override {}
+    function addTradingBot(uint param) public override returns (uint) {}
 
     /**
     * @dev Updates the indicator's state based on the latest price feed update

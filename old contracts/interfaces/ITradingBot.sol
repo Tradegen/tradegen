@@ -6,6 +6,9 @@ interface ITradingBot {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
         address comparatorAddress;
+        uint8 firstIndicatorIndex;
+        uint8 secondIndicatorIndex;
+        uint8 comparatorIndex;
     }
 
     /**

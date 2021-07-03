@@ -5,16 +5,15 @@ import '../interfaces/IIndicator.sol';
 contract LowOfLastNPriceUpdates is IIndicator {
 
     struct State {
-        bool exists;
         uint8 N;
-        uint120 currentValue;
-        uint[] history;
+        uint248 currentValue;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => mapping(uint => State)) private _tradingBotStates;
+    mapping (address => State[]) private _tradingBotStates;
+    mapping (address => mapping (uint => uint[])) private _tradingBotHistory;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -54,15 +53,15 @@ contract LowOfLastNPriceUpdates is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
+    * @return uint Index of trading bot instance in State array
     */
-    function addTradingBot(uint index, uint param) public override {
-        require(index > 0, "Invalid index");
-        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
+    function addTradingBot(uint param) public override returns (uint) {
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender][index] = State(true, uint8(param), 0, new uint[](0));
+        _tradingBotStates[msg.sender].push(State(uint8(param), 0));
+
+        return _tradingBotStates[msg.sender].length - 1;
     }
 
     /**
@@ -71,20 +70,21 @@ contract LowOfLastNPriceUpdates is IIndicator {
     * @param latestPrice The latest price from oracle price feed
     */
     function update(uint index, uint latestPrice) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[msg.sender].length, "Invalid index");
 
-        _tradingBotStates[msg.sender][index].history.push(latestPrice);
-        uint length = (_tradingBotStates[msg.sender][index].history.length >= uint256(_tradingBotStates[msg.sender][index].N)) ? uint256(_tradingBotStates[msg.sender][index].N) : 0;
+        _tradingBotHistory[msg.sender][index].push(latestPrice);
 
-        uint low = (length == 0) ? 0 : _tradingBotStates[msg.sender][index].history[_tradingBotStates[msg.sender][index].history.length - 1];
+        uint[] memory history = _tradingBotHistory[msg.sender][index];
+        uint length = (history.length >= uint256(_tradingBotStates[msg.sender][index].N)) ? uint256(_tradingBotStates[msg.sender][index].N) : 0;
+
+        uint low = (length == 0) ? 0 : history[history.length - 1];
 
         for (uint i = 0; i < length; i++)
         {
-            low = (_tradingBotStates[msg.sender][index].history[_tradingBotStates[msg.sender][index].history.length - i - 1] < low) ? _tradingBotStates[msg.sender][index].history[_tradingBotStates[msg.sender][index].history.length - i - 1] : low;
+            low = (history[history.length - i - 1] < low) ? history[history.length - i - 1] : low;
         }
 
-        _tradingBotStates[msg.sender][index].currentValue = uint120(low);
+        _tradingBotStates[msg.sender][index].currentValue = uint248(low);
     }   
 
     /**
@@ -95,11 +95,10 @@ contract LowOfLastNPriceUpdates is IIndicator {
     */
     function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
-        temp[0] = uint256(_tradingBotStates[tradingBotAddress][index].currentValue);
+        temp[0] = (_tradingBotHistory[tradingBotAddress][index].length < uint256(_tradingBotStates[tradingBotAddress][index].N)) ? 0 : uint256(_tradingBotStates[tradingBotAddress][index].currentValue);
         return temp;
     }
 
@@ -111,9 +110,8 @@ contract LowOfLastNPriceUpdates is IIndicator {
     */
     function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
-        return _tradingBotStates[tradingBotAddress][index].history;
+        return _tradingBotHistory[tradingBotAddress][index];
     }
 }

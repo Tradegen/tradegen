@@ -7,16 +7,15 @@ contract EMA is IIndicator {
     using SafeMath for uint;
 
     struct State {
-        bool exists;
         uint8 EMAperiod;
-        uint240 currentValue;
-        uint[] indicatorHistory;
+        uint248 currentValue;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => mapping(uint => State)) private _tradingBotStates;
+    mapping (address => State[]) private _tradingBotStates;
+    mapping (address => mapping (uint => uint[])) private _tradingBotHistory;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -56,15 +55,15 @@ contract EMA is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
+    * @return uint Index of trading bot instance in State array
     */
-    function addTradingBot(uint index, uint param) public override {
-        require(index > 0, "Invalid index");
-        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
+    function addTradingBot(uint param) public override returns (uint) {
         require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender][index] = State(true, uint8(param), 0, new uint[](0));
+        _tradingBotStates[msg.sender].push(State(uint8(param), 0));
+
+        return _tradingBotStates[msg.sender].length - 1;
     }
 
     /**
@@ -73,8 +72,7 @@ contract EMA is IIndicator {
     * @param latestPrice The latest price from oracle price feed
     */
     function update(uint index, uint latestPrice) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[msg.sender].length, "Invalid index");
 
         uint currentValue = uint256(_tradingBotStates[msg.sender][index].currentValue);
         uint multiplier = 2;
@@ -82,14 +80,14 @@ contract EMA is IIndicator {
 
         if (currentValue == 0)
         {
-            _tradingBotStates[msg.sender][index].currentValue = uint240(latestPrice);
+            _tradingBotStates[msg.sender][index].currentValue = uint248(latestPrice);
         }
         else if (latestPrice >= currentValue)
         {
             uint inner = latestPrice.sub(currentValue);
             uint value = (multiplier.mul(inner).div(divisor)).add(currentValue);
 
-            _tradingBotStates[msg.sender][index].currentValue = uint240(value);
+            _tradingBotStates[msg.sender][index].currentValue = uint248(value);
         }
         else
         {
@@ -97,10 +95,10 @@ contract EMA is IIndicator {
             uint previous = currentValue.mul(multiplier).div(divisor);
             uint value = current.add(currentValue).sub(previous);
 
-            _tradingBotStates[msg.sender][index].currentValue = uint240(value);
+            _tradingBotStates[msg.sender][index].currentValue = uint248(value);
         }
 
-        _tradingBotStates[msg.sender][index].indicatorHistory.push(uint256(_tradingBotStates[msg.sender][index].currentValue));
+        _tradingBotHistory[msg.sender][index].push(uint256(_tradingBotStates[msg.sender][index].currentValue));
     }
 
     /**
@@ -111,11 +109,10 @@ contract EMA is IIndicator {
     */
     function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[tradingBotAddress][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
-        temp[0] = (_tradingBotStates[tradingBotAddress][index].indicatorHistory.length < _tradingBotStates[tradingBotAddress][index].EMAperiod) ? 0 : uint256(_tradingBotStates[tradingBotAddress][index].currentValue);
+        temp[0] = (_tradingBotHistory[tradingBotAddress][index].length < uint256(_tradingBotStates[tradingBotAddress][index].EMAperiod)) ? 0 : uint256(_tradingBotStates[tradingBotAddress][index].currentValue);
         return temp;
     }
 
@@ -127,9 +124,8 @@ contract EMA is IIndicator {
     */
     function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[tradingBotAddress][index].exists, "Trading bot doesn't exist");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
-        return _tradingBotStates[tradingBotAddress][index].indicatorHistory;
+        return _tradingBotHistory[tradingBotAddress][index];
     }
 }

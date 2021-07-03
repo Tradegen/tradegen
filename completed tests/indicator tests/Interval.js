@@ -13,7 +13,7 @@ const kit = ContractKit.newKitFromWeb3(web3);
 
 const Interval = require('../build/contracts/Interval.json');
 
-var contractAddress = "0x80699fA3d123901C42287AC1F89D90A6A9B73781";
+var contractAddress = "0x0a0DD4d4ECE0EdA1685E50c4FDee9E0D06da5108";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
 async function initContract(){
@@ -93,14 +93,13 @@ async function initContract(){
         console.log(receipt);
 
         //Update first trading bot indicator state
-        let txObject2 = await instance.methods.update(1);
+        let txObject2 = await instance.methods.update(0, 1);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
 
         let receipt2 = await tx2.waitReceipt()
-        console.log(receipt2);
 
         //Get first trading bot current value
-        let currentValue = await instance.methods.getValue(account.address).call();
+        let currentValue = await instance.methods.getValue(account.address, 0).call();
         console.log(currentValue);
 
         assert(
@@ -109,7 +108,7 @@ async function initContract(){
         );
 
         //Get first trading bot trading bot state history
-        let history = await instance.methods.getHistory(account.address).call();
+        let history = await instance.methods.getHistory(account.address, 0).call();
         console.log(history);
 
         assert(
@@ -131,17 +130,15 @@ async function initContract(){
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account2.address });
 
         let receipt3 = await tx3.waitReceipt()
-        console.log(receipt3);
 
         //Update second trading bot indicator state
-        let txObject4 = await instance.methods.update(1);
+        let txObject4 = await instance.methods.update(1, 100);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account2.address });
 
         let receipt4 = await tx4.waitReceipt()
-        console.log(receipt4);
 
         //Get second trading bot current value
-        let currentValue2 = await instance.methods.getValue(account2.address).call();
+        let currentValue2 = await instance.methods.getValue(account2.address, 1).call();
         console.log(currentValue2);
 
         assert(
@@ -150,7 +147,50 @@ async function initContract(){
         );
 
         //Get second trading bot trading bot state history
-        let history2 = await instance.methods.getHistory(account2.address).call();
+        let history2 = await instance.methods.getHistory(account2.address, 1).call();
+        console.log(history2);
+
+        assert(
+            history2.length == 1,
+            'Indicator history should have one element'
+        );
+
+        assert(
+            history2[0] == 10,
+            'First element in history should be 10'
+        );
+    });
+
+    it('Add second instance of first trading bot', async () => {
+        //Get address of second trading bot
+        let account2 = await getAccount3();
+        kit.connection.addAccount(account2.privateKey);
+
+        //Add second trading bot
+        let txObject3 = await instance.methods.addTradingBot(10);
+        let tx3 = await kit.sendTransactionObject(txObject3, { from: account2.address });
+
+        let receipt3 = await tx3.waitReceipt()
+        console.log(receipt3);
+
+        //Update second trading bot indicator state
+        let txObject4 = await instance.methods.update(1, 100);
+        let tx4 = await kit.sendTransactionObject(txObject4, { from: account2.address });
+
+        let receipt4 = await tx4.waitReceipt()
+        console.log(receipt4);
+
+        //Get second trading bot current value
+        let currentValue2 = await instance.methods.getValue(account2.address, 1).call();
+        console.log(currentValue2);
+
+        assert(
+            currentValue2[0] == 10,
+            'Current value should be 10'
+        );
+
+        //Get second trading bot trading bot state history
+        let history2 = await instance.methods.getHistory(account2.address, 1).call();
         console.log(history2);
 
         assert(

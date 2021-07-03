@@ -85,7 +85,7 @@ async function initContract(){
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot
-        let txObject = await instance.methods.addTradingBot(0, 1);
+        let txObject = await instance.methods.addTradingBot(1);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
 
         let receipt = await tx.waitReceipt()
@@ -115,7 +115,7 @@ async function initContract(){
         );
 
         //Add second instance of trading bot
-        let txObject3 = await instance.methods.addTradingBot(1, 1);
+        let txObject3 = await instance.methods.addTradingBot(1);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
 
         let receipt3 = await tx3.waitReceipt()

@@ -74,17 +74,18 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "index",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "param",
           "type": "uint256"
         }
       ],
       "name": "addTradingBot",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -155,27 +156,27 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"indicatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"param\",\"type\":\"uint256\"}],\"name\":\"addTradingBot\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getValue\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"}],\"name\":\"update\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(uint256,uint256)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"param\":\"Value of the indicator's parameter\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the indicator; meant to be called by the indicator's developer\",\"params\":{\"newPrice\":\"The new sale price of the indicator\"}},\"getHistory(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value history for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value history for the given trading bot\"}},\"getName()\":{\"details\":\"Returns the name of the indicator\",\"returns\":{\"_0\":\"string Name of the indicator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the indicator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the indicator and the indicator's developer\"}},\"getValue(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value for the given trading bot\"}},\"update(uint256,uint256)\":{\"details\":\"Updates the indicator's state based on the latest price feed update\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"latestPrice\":\"The latest price from oracle price feed\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":\"IIndicator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":{\"keccak256\":\"0x4b124e0684b3cb83a0cafc363bcd530d9568e14128a44cfca062297145557a66\",\"urls\":[\"bzz-raw://161d2c69257a1f594f37b2c8cc0ea47f39d8f60bbb4c345631a9650db6fe92dc\",\"dweb:/ipfs/QmaugrnbqxiTUh9av7aRLxMdWSoMUDUrQwbGEdmLh2BSca\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"indicatorAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"UpdatedPrice\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"param\",\"type\":\"uint256\"}],\"name\":\"addTradingBot\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"newPrice\",\"type\":\"uint256\"}],\"name\":\"editPrice\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPriceAndDeveloper\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tradingBotAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getValue\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"}],\"name\":\"update\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addTradingBot(uint256)\":{\"details\":\"Initializes the state of the trading bot; meant to be called by a trading bot\",\"params\":{\"param\":\"Value of the indicator's parameter\"},\"returns\":{\"_0\":\"uint Index of trading bot instance in State array\"}},\"editPrice(uint256)\":{\"details\":\"Updates the sale price of the indicator; meant to be called by the indicator's developer\",\"params\":{\"newPrice\":\"The new sale price of the indicator\"}},\"getHistory(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value history for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value history for the given trading bot\"}},\"getName()\":{\"details\":\"Returns the name of the indicator\",\"returns\":{\"_0\":\"string Name of the indicator\"}},\"getPriceAndDeveloper()\":{\"details\":\"Returns the sale price and the developer of the indicator\",\"returns\":{\"_0\":\"(uint, address) Sale price of the indicator and the indicator's developer\"}},\"getValue(address,uint256)\":{\"details\":\"Given a trading bot address, returns the indicator value for that bot\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"tradingBotAddress\":\"Address of trading bot\"},\"returns\":{\"_0\":\"uint[] Indicator value for the given trading bot\"}},\"update(uint256,uint256)\":{\"details\":\"Updates the indicator's state based on the latest price feed update\",\"params\":{\"index\":\"Index in trading bot's entry/exit rule array\",\"latestPrice\":\"The latest price from oracle price feed\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":\"IIndicator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol\":{\"keccak256\":\"0x8e54ed6abcb39ab556bf9840f493588ccb2f78aad0b1768efab0dada61474969\",\"urls\":[\"bzz-raw://ca1508dd900f36d134d9b05bb7a3d0fc30dd10dc3d17c49374323f23010a3e8d\",\"dweb:/ipfs/QmRYydafbqgvqXpk2n3h8Jvhy5Nd9oUqaTzd3jCtUmCNVf\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IIndicator {\r\n\r\n    /**\r\n    * @dev Returns the name of the indicator\r\n    * @return string Name of the indicator\r\n    */\r\n    function getName() external pure returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the indicator\r\n    * @return (uint, address) Sale price of the indicator and the indicator's developer\r\n    */\r\n    function getPriceAndDeveloper() external view returns (uint, address);\r\n\r\n    /**\r\n    * @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\r\n    * @param newPrice The new sale price of the indicator\r\n    */\r\n    function editPrice(uint newPrice) external;\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param param Value of the indicator's parameter\r\n    */\r\n    function addTradingBot(uint index, uint param) external;\r\n\r\n    /**\r\n    * @dev Updates the indicator's state based on the latest price feed update\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param latestPrice The latest price from oracle price feed\r\n    */\r\n    function update(uint index, uint latestPrice) external;\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value for the given trading bot\r\n    */\r\n    function getValue(address tradingBotAddress, uint index) external view returns (uint[] memory);\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value history for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value history for the given trading bot\r\n    */\r\n    function getHistory(address tradingBotAddress, uint index) external view returns (uint[] memory);\r\n\r\n    // Events\r\n    event UpdatedPrice(address indexed indicatorAddress, uint newPrice, uint timestamp);\r\n}",
+  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IIndicator {\r\n\r\n    /**\r\n    * @dev Returns the name of the indicator\r\n    * @return string Name of the indicator\r\n    */\r\n    function getName() external pure returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the sale price and the developer of the indicator\r\n    * @return (uint, address) Sale price of the indicator and the indicator's developer\r\n    */\r\n    function getPriceAndDeveloper() external view returns (uint, address);\r\n\r\n    /**\r\n    * @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\r\n    * @param newPrice The new sale price of the indicator\r\n    */\r\n    function editPrice(uint newPrice) external;\r\n\r\n    /**\r\n    * @dev Initializes the state of the trading bot; meant to be called by a trading bot\r\n    * @param param Value of the indicator's parameter\r\n    * @return uint Index of trading bot instance in State array\r\n    */\r\n    function addTradingBot(uint param) external returns (uint);\r\n\r\n    /**\r\n    * @dev Updates the indicator's state based on the latest price feed update\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @param latestPrice The latest price from oracle price feed\r\n    */\r\n    function update(uint index, uint latestPrice) external;\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value for the given trading bot\r\n    */\r\n    function getValue(address tradingBotAddress, uint index) external view returns (uint[] memory);\r\n\r\n    /**\r\n    * @dev Given a trading bot address, returns the indicator value history for that bot\r\n    * @param tradingBotAddress Address of trading bot\r\n    * @param index Index in trading bot's entry/exit rule array\r\n    * @return uint[] Indicator value history for the given trading bot\r\n    */\r\n    function getHistory(address tradingBotAddress, uint index) external view returns (uint[] memory);\r\n\r\n    // Events\r\n    event UpdatedPrice(address indexed indicatorAddress, uint newPrice, uint timestamp);\r\n}",
   "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen\\contracts\\interfaces\\IIndicator.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol",
     "exportedSymbols": {
       "IIndicator": [
-        555
+        232
       ]
     },
-    "id": 556,
+    "id": 233,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 488,
+        "id": 165,
         "literals": [
           "solidity",
           ">=",
@@ -192,9 +193,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 555,
+        "id": 232,
         "linearizedBaseContracts": [
-          555
+          232
         ],
         "name": "IIndicator",
         "nodeType": "ContractDefinition",
@@ -202,13 +203,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 489,
+              "id": 166,
               "nodeType": "StructuredDocumentation",
               "src": "58:101:1",
               "text": " @dev Returns the name of the indicator\n @return string Name of the indicator"
             },
             "functionSelector": "17d7de7c",
-            "id": 494,
+            "id": 171,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -216,23 +217,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 490,
+              "id": 167,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "181:2:1"
             },
             "returnParameters": {
-              "id": 493,
+              "id": 170,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 492,
+                  "id": 169,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 494,
+                  "scope": 171,
                   "src": "207:13:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -241,7 +242,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 491,
+                    "id": 168,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "207:6:1",
@@ -256,7 +257,7 @@
               ],
               "src": "206:15:1"
             },
-            "scope": 555,
+            "scope": 232,
             "src": "165:57:1",
             "stateMutability": "pure",
             "virtual": false,
@@ -265,13 +266,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 495,
+              "id": 172,
               "nodeType": "StructuredDocumentation",
               "src": "230:170:1",
               "text": " @dev Returns the sale price and the developer of the indicator\n @return (uint, address) Sale price of the indicator and the indicator's developer"
             },
             "functionSelector": "7d6760bf",
-            "id": 502,
+            "id": 179,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -279,23 +280,23 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 496,
+              "id": 173,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "435:2:1"
             },
             "returnParameters": {
-              "id": 501,
+              "id": 178,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 498,
+                  "id": 175,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 502,
+                  "scope": 179,
                   "src": "461:4:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -304,7 +305,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 497,
+                    "id": 174,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "461:4:1",
@@ -318,12 +319,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 500,
+                  "id": 177,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 502,
+                  "scope": 179,
                   "src": "467:7:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -332,7 +333,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 499,
+                    "id": 176,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "467:7:1",
@@ -348,7 +349,7 @@
               ],
               "src": "460:15:1"
             },
-            "scope": 555,
+            "scope": 232,
             "src": "406:70:1",
             "stateMutability": "view",
             "virtual": false,
@@ -357,13 +358,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 503,
+              "id": 180,
               "nodeType": "StructuredDocumentation",
               "src": "484:171:1",
               "text": " @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\n @param newPrice The new sale price of the indicator"
             },
             "functionSelector": "a22a8b29",
-            "id": 508,
+            "id": 185,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -371,17 +372,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 506,
+              "id": 183,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 505,
+                  "id": 182,
                   "mutability": "mutable",
                   "name": "newPrice",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 508,
+                  "scope": 185,
                   "src": "680:13:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -390,7 +391,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 504,
+                    "id": 181,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "680:4:1",
@@ -406,12 +407,12 @@
               "src": "679:15:1"
             },
             "returnParameters": {
-              "id": 507,
+              "id": 184,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "703:0:1"
             },
-            "scope": 555,
+            "scope": 232,
             "src": "661:43:1",
             "stateMutability": "nonpayable",
             "virtual": false,
@@ -420,13 +421,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 509,
+              "id": 186,
               "nodeType": "StructuredDocumentation",
               "src": "712:221:1",
-              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param param Value of the indicator's parameter"
+              "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param param Value of the indicator's parameter\n @return uint Index of trading bot instance in State array"
             },
-            "functionSelector": "a47575a1",
-            "id": 516,
+            "functionSelector": "a5a6d6f7",
+            "id": 193,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -434,17 +435,17 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 514,
+              "id": 189,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 511,
+                  "id": 188,
                   "mutability": "mutable",
-                  "name": "index",
+                  "name": "param",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 516,
+                  "scope": 193,
                   "src": "962:10:1",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -453,7 +454,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 510,
+                    "id": 187,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
                     "src": "962:4:1",
@@ -464,16 +465,23 @@
                   },
                   "value": null,
                   "visibility": "internal"
-                },
+                }
+              ],
+              "src": "961:12:1"
+            },
+            "returnParameters": {
+              "id": 192,
+              "nodeType": "ParameterList",
+              "parameters": [
                 {
                   "constant": false,
-                  "id": 513,
+                  "id": 191,
                   "mutability": "mutable",
-                  "name": "param",
+                  "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 516,
-                  "src": "974:10:1",
+                  "scope": 193,
+                  "src": "992:4:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -481,10 +489,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 512,
+                    "id": 190,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "974:4:1",
+                    "src": "992:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -494,16 +502,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "961:24:1"
+              "src": "991:6:1"
             },
-            "returnParameters": {
-              "id": 515,
-              "nodeType": "ParameterList",
-              "parameters": [],
-              "src": "994:0:1"
-            },
-            "scope": 555,
-            "src": "939:56:1",
+            "scope": 232,
+            "src": "939:59:1",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -511,13 +513,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 517,
+              "id": 194,
               "nodeType": "StructuredDocumentation",
-              "src": "1003:222:1",
+              "src": "1006:222:1",
               "text": " @dev Updates the indicator's state based on the latest price feed update\n @param index Index in trading bot's entry/exit rule array\n @param latestPrice The latest price from oracle price feed"
             },
             "functionSelector": "2fb565e8",
-            "id": 524,
+            "id": 201,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -525,18 +527,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 522,
+              "id": 199,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 519,
+                  "id": 196,
                   "mutability": "mutable",
                   "name": "index",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 524,
-                  "src": "1247:10:1",
+                  "scope": 201,
+                  "src": "1250:10:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -544,10 +546,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 518,
+                    "id": 195,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1247:4:1",
+                    "src": "1250:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -558,13 +560,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 521,
+                  "id": 198,
                   "mutability": "mutable",
                   "name": "latestPrice",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 524,
-                  "src": "1259:16:1",
+                  "scope": 201,
+                  "src": "1262:16:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -572,10 +574,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 520,
+                    "id": 197,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1259:4:1",
+                    "src": "1262:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -585,16 +587,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1246:30:1"
+              "src": "1249:30:1"
             },
             "returnParameters": {
-              "id": 523,
+              "id": 200,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1285:0:1"
+              "src": "1288:0:1"
             },
-            "scope": 555,
-            "src": "1231:55:1",
+            "scope": 232,
+            "src": "1234:55:1",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -602,13 +604,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 525,
+              "id": 202,
               "nodeType": "StructuredDocumentation",
-              "src": "1294:277:1",
+              "src": "1297:277:1",
               "text": " @dev Given a trading bot address, returns the indicator value for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value for the given trading bot"
             },
             "functionSelector": "c7bf8cf5",
-            "id": 535,
+            "id": 212,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -616,18 +618,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 530,
+              "id": 207,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 527,
+                  "id": 204,
                   "mutability": "mutable",
                   "name": "tradingBotAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 535,
-                  "src": "1595:25:1",
+                  "scope": 212,
+                  "src": "1598:25:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -635,10 +637,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 526,
+                    "id": 203,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1595:7:1",
+                    "src": "1598:7:1",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -650,13 +652,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 529,
+                  "id": 206,
                   "mutability": "mutable",
                   "name": "index",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 535,
-                  "src": "1622:10:1",
+                  "scope": 212,
+                  "src": "1625:10:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -664,10 +666,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 528,
+                    "id": 205,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1622:4:1",
+                    "src": "1625:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -677,21 +679,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1594:39:1"
+              "src": "1597:39:1"
             },
             "returnParameters": {
-              "id": 534,
+              "id": 211,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 533,
+                  "id": 210,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 535,
-                  "src": "1657:13:1",
+                  "scope": 212,
+                  "src": "1660:13:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -700,19 +702,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 531,
+                      "id": 208,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1657:4:1",
+                      "src": "1660:4:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 532,
+                    "id": 209,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1657:6:1",
+                    "src": "1660:6:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -722,10 +724,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1656:15:1"
+              "src": "1659:15:1"
             },
-            "scope": 555,
-            "src": "1577:95:1",
+            "scope": 232,
+            "src": "1580:95:1",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -733,13 +735,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 536,
+              "id": 213,
               "nodeType": "StructuredDocumentation",
-              "src": "1680:293:1",
+              "src": "1683:293:1",
               "text": " @dev Given a trading bot address, returns the indicator value history for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value history for the given trading bot"
             },
             "functionSelector": "8bdf5803",
-            "id": 546,
+            "id": 223,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -747,18 +749,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 541,
+              "id": 218,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 538,
+                  "id": 215,
                   "mutability": "mutable",
                   "name": "tradingBotAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 546,
-                  "src": "1999:25:1",
+                  "scope": 223,
+                  "src": "2002:25:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -766,10 +768,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 537,
+                    "id": 214,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1999:7:1",
+                    "src": "2002:7:1",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -781,13 +783,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 540,
+                  "id": 217,
                   "mutability": "mutable",
                   "name": "index",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 546,
-                  "src": "2026:10:1",
+                  "scope": 223,
+                  "src": "2029:10:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -795,10 +797,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 539,
+                    "id": 216,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2026:4:1",
+                    "src": "2029:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -808,21 +810,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1998:39:1"
+              "src": "2001:39:1"
             },
             "returnParameters": {
-              "id": 545,
+              "id": 222,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 544,
+                  "id": 221,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 546,
-                  "src": "2061:13:1",
+                  "scope": 223,
+                  "src": "2064:13:1",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -831,19 +833,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 542,
+                      "id": 219,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "2061:4:1",
+                      "src": "2064:4:1",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 543,
+                    "id": 220,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "2061:6:1",
+                    "src": "2064:6:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -853,10 +855,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2060:15:1"
+              "src": "2063:15:1"
             },
-            "scope": 555,
-            "src": "1979:97:1",
+            "scope": 232,
+            "src": "1982:97:1",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -864,23 +866,23 @@
           {
             "anonymous": false,
             "documentation": null,
-            "id": 554,
+            "id": 231,
             "name": "UpdatedPrice",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 553,
+              "id": 230,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 548,
+                  "id": 225,
                   "indexed": true,
                   "mutability": "mutable",
                   "name": "indicatorAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 554,
-                  "src": "2118:32:1",
+                  "scope": 231,
+                  "src": "2121:32:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -888,10 +890,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 547,
+                    "id": 224,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2118:7:1",
+                    "src": "2121:7:1",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -903,14 +905,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 550,
+                  "id": 227,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "newPrice",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 554,
-                  "src": "2152:13:1",
+                  "scope": 231,
+                  "src": "2155:13:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -918,10 +920,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 549,
+                    "id": 226,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2152:4:1",
+                    "src": "2155:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -932,14 +934,14 @@
                 },
                 {
                   "constant": false,
-                  "id": 552,
+                  "id": 229,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "timestamp",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 554,
-                  "src": "2167:14:1",
+                  "scope": 231,
+                  "src": "2170:14:1",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -947,10 +949,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 551,
+                    "id": 228,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2167:4:1",
+                    "src": "2170:4:1",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -960,23 +962,23 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2117:65:1"
+              "src": "2120:65:1"
             },
-            "src": "2099:84:1"
+            "src": "2102:84:1"
           }
         ],
-        "scope": 556,
-        "src": "28:2158:1"
+        "scope": 233,
+        "src": "28:2161:1"
       }
     ],
-    "src": "0:2186:1"
+    "src": "0:2189:1"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IIndicator.sol",
       "exportedSymbols": {
         "IIndicator": [
-          555
+          232
         ]
       },
       "license": null
@@ -991,7 +993,7 @@
             ".0"
           ]
         },
-        "id": 488,
+        "id": 165,
         "name": "PragmaDirective",
         "src": "0:24:1"
       },
@@ -1008,10 +1010,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            555
+            232
           ],
           "name": "IIndicator",
-          "scope": 556
+          "scope": 233
         },
         "children": [
           {
@@ -1026,7 +1028,7 @@
               ],
               "name": "getName",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "pure",
               "virtual": false,
               "visibility": "external"
@@ -1036,7 +1038,7 @@
                 "attributes": {
                   "text": " @dev Returns the name of the indicator\n @return string Name of the indicator"
                 },
-                "id": 489,
+                "id": 166,
                 "name": "StructuredDocumentation",
                 "src": "58:101:1"
               },
@@ -1047,7 +1049,7 @@
                   ]
                 },
                 "children": [],
-                "id": 490,
+                "id": 167,
                 "name": "ParameterList",
                 "src": "181:2:1"
               },
@@ -1059,7 +1061,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 494,
+                      "scope": 171,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -1072,22 +1074,22 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 491,
+                        "id": 168,
                         "name": "ElementaryTypeName",
                         "src": "207:6:1"
                       }
                     ],
-                    "id": 492,
+                    "id": 169,
                     "name": "VariableDeclaration",
                     "src": "207:13:1"
                   }
                 ],
-                "id": 493,
+                "id": 170,
                 "name": "ParameterList",
                 "src": "206:15:1"
               }
             ],
-            "id": 494,
+            "id": 171,
             "name": "FunctionDefinition",
             "src": "165:57:1"
           },
@@ -1103,7 +1105,7 @@
               ],
               "name": "getPriceAndDeveloper",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1113,7 +1115,7 @@
                 "attributes": {
                   "text": " @dev Returns the sale price and the developer of the indicator\n @return (uint, address) Sale price of the indicator and the indicator's developer"
                 },
-                "id": 495,
+                "id": 172,
                 "name": "StructuredDocumentation",
                 "src": "230:170:1"
               },
@@ -1124,7 +1126,7 @@
                   ]
                 },
                 "children": [],
-                "id": 496,
+                "id": 173,
                 "name": "ParameterList",
                 "src": "435:2:1"
               },
@@ -1136,7 +1138,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 502,
+                      "scope": 179,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1149,12 +1151,12 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 497,
+                        "id": 174,
                         "name": "ElementaryTypeName",
                         "src": "461:4:1"
                       }
                     ],
-                    "id": 498,
+                    "id": 175,
                     "name": "VariableDeclaration",
                     "src": "461:4:1"
                   },
@@ -1164,7 +1166,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 502,
+                      "scope": 179,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1178,22 +1180,22 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 499,
+                        "id": 176,
                         "name": "ElementaryTypeName",
                         "src": "467:7:1"
                       }
                     ],
-                    "id": 500,
+                    "id": 177,
                     "name": "VariableDeclaration",
                     "src": "467:7:1"
                   }
                 ],
-                "id": 501,
+                "id": 178,
                 "name": "ParameterList",
                 "src": "460:15:1"
               }
             ],
-            "id": 502,
+            "id": 179,
             "name": "FunctionDefinition",
             "src": "406:70:1"
           },
@@ -1209,7 +1211,7 @@
               ],
               "name": "editPrice",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1219,7 +1221,7 @@
                 "attributes": {
                   "text": " @dev Updates the sale price of the indicator; meant to be called by the indicator's developer\n @param newPrice The new sale price of the indicator"
                 },
-                "id": 503,
+                "id": 180,
                 "name": "StructuredDocumentation",
                 "src": "484:171:1"
               },
@@ -1231,7 +1233,7 @@
                       "mutability": "mutable",
                       "name": "newPrice",
                       "overrides": null,
-                      "scope": 508,
+                      "scope": 185,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1244,17 +1246,17 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 504,
+                        "id": 181,
                         "name": "ElementaryTypeName",
                         "src": "680:4:1"
                       }
                     ],
-                    "id": 505,
+                    "id": 182,
                     "name": "VariableDeclaration",
                     "src": "680:13:1"
                   }
                 ],
-                "id": 506,
+                "id": 183,
                 "name": "ParameterList",
                 "src": "679:15:1"
               },
@@ -1265,19 +1267,19 @@
                   ]
                 },
                 "children": [],
-                "id": 507,
+                "id": 184,
                 "name": "ParameterList",
                 "src": "703:0:1"
               }
             ],
-            "id": 508,
+            "id": 185,
             "name": "FunctionDefinition",
             "src": "661:43:1"
           },
           {
             "attributes": {
               "body": null,
-              "functionSelector": "a47575a1",
+              "functionSelector": "a5a6d6f7",
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
@@ -1286,7 +1288,7 @@
               ],
               "name": "addTradingBot",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1294,9 +1296,9 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param index Index in trading bot's entry/exit rule array\n @param param Value of the indicator's parameter"
+                  "text": " @dev Initializes the state of the trading bot; meant to be called by a trading bot\n @param param Value of the indicator's parameter\n @return uint Index of trading bot instance in State array"
                 },
-                "id": 509,
+                "id": 186,
                 "name": "StructuredDocumentation",
                 "src": "712:221:1"
               },
@@ -1306,9 +1308,9 @@
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "index",
+                      "name": "param",
                       "overrides": null,
-                      "scope": 516,
+                      "scope": 193,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1321,22 +1323,29 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 510,
+                        "id": 187,
                         "name": "ElementaryTypeName",
                         "src": "962:4:1"
                       }
                     ],
-                    "id": 511,
+                    "id": 188,
                     "name": "VariableDeclaration",
                     "src": "962:10:1"
-                  },
+                  }
+                ],
+                "id": 189,
+                "name": "ParameterList",
+                "src": "961:12:1"
+              },
+              {
+                "children": [
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "param",
+                      "name": "",
                       "overrides": null,
-                      "scope": 516,
+                      "scope": 193,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1349,35 +1358,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 512,
+                        "id": 190,
                         "name": "ElementaryTypeName",
-                        "src": "974:4:1"
+                        "src": "992:4:1"
                       }
                     ],
-                    "id": 513,
+                    "id": 191,
                     "name": "VariableDeclaration",
-                    "src": "974:10:1"
+                    "src": "992:4:1"
                   }
                 ],
-                "id": 514,
+                "id": 192,
                 "name": "ParameterList",
-                "src": "961:24:1"
-              },
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 515,
-                "name": "ParameterList",
-                "src": "994:0:1"
+                "src": "991:6:1"
               }
             ],
-            "id": 516,
+            "id": 193,
             "name": "FunctionDefinition",
-            "src": "939:56:1"
+            "src": "939:59:1"
           },
           {
             "attributes": {
@@ -1391,7 +1389,7 @@
               ],
               "name": "update",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1401,9 +1399,9 @@
                 "attributes": {
                   "text": " @dev Updates the indicator's state based on the latest price feed update\n @param index Index in trading bot's entry/exit rule array\n @param latestPrice The latest price from oracle price feed"
                 },
-                "id": 517,
+                "id": 194,
                 "name": "StructuredDocumentation",
-                "src": "1003:222:1"
+                "src": "1006:222:1"
               },
               {
                 "children": [
@@ -1413,7 +1411,7 @@
                       "mutability": "mutable",
                       "name": "index",
                       "overrides": null,
-                      "scope": 524,
+                      "scope": 201,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1426,14 +1424,14 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 518,
+                        "id": 195,
                         "name": "ElementaryTypeName",
-                        "src": "1247:4:1"
+                        "src": "1250:4:1"
                       }
                     ],
-                    "id": 519,
+                    "id": 196,
                     "name": "VariableDeclaration",
-                    "src": "1247:10:1"
+                    "src": "1250:10:1"
                   },
                   {
                     "attributes": {
@@ -1441,7 +1439,7 @@
                       "mutability": "mutable",
                       "name": "latestPrice",
                       "overrides": null,
-                      "scope": 524,
+                      "scope": 201,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1454,19 +1452,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 520,
+                        "id": 197,
                         "name": "ElementaryTypeName",
-                        "src": "1259:4:1"
+                        "src": "1262:4:1"
                       }
                     ],
-                    "id": 521,
+                    "id": 198,
                     "name": "VariableDeclaration",
-                    "src": "1259:16:1"
+                    "src": "1262:16:1"
                   }
                 ],
-                "id": 522,
+                "id": 199,
                 "name": "ParameterList",
-                "src": "1246:30:1"
+                "src": "1249:30:1"
               },
               {
                 "attributes": {
@@ -1475,14 +1473,14 @@
                   ]
                 },
                 "children": [],
-                "id": 523,
+                "id": 200,
                 "name": "ParameterList",
-                "src": "1285:0:1"
+                "src": "1288:0:1"
               }
             ],
-            "id": 524,
+            "id": 201,
             "name": "FunctionDefinition",
-            "src": "1231:55:1"
+            "src": "1234:55:1"
           },
           {
             "attributes": {
@@ -1496,7 +1494,7 @@
               ],
               "name": "getValue",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1506,9 +1504,9 @@
                 "attributes": {
                   "text": " @dev Given a trading bot address, returns the indicator value for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value for the given trading bot"
                 },
-                "id": 525,
+                "id": 202,
                 "name": "StructuredDocumentation",
-                "src": "1294:277:1"
+                "src": "1297:277:1"
               },
               {
                 "children": [
@@ -1518,7 +1516,7 @@
                       "mutability": "mutable",
                       "name": "tradingBotAddress",
                       "overrides": null,
-                      "scope": 535,
+                      "scope": 212,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1532,14 +1530,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 526,
+                        "id": 203,
                         "name": "ElementaryTypeName",
-                        "src": "1595:7:1"
+                        "src": "1598:7:1"
                       }
                     ],
-                    "id": 527,
+                    "id": 204,
                     "name": "VariableDeclaration",
-                    "src": "1595:25:1"
+                    "src": "1598:25:1"
                   },
                   {
                     "attributes": {
@@ -1547,7 +1545,7 @@
                       "mutability": "mutable",
                       "name": "index",
                       "overrides": null,
-                      "scope": 535,
+                      "scope": 212,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1560,19 +1558,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 528,
+                        "id": 205,
                         "name": "ElementaryTypeName",
-                        "src": "1622:4:1"
+                        "src": "1625:4:1"
                       }
                     ],
-                    "id": 529,
+                    "id": 206,
                     "name": "VariableDeclaration",
-                    "src": "1622:10:1"
+                    "src": "1625:10:1"
                   }
                 ],
-                "id": 530,
+                "id": 207,
                 "name": "ParameterList",
-                "src": "1594:39:1"
+                "src": "1597:39:1"
               },
               {
                 "children": [
@@ -1582,7 +1580,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 535,
+                      "scope": 212,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "uint256[]",
@@ -1601,29 +1599,29 @@
                               "name": "uint",
                               "type": "uint256"
                             },
-                            "id": 531,
+                            "id": 208,
                             "name": "ElementaryTypeName",
-                            "src": "1657:4:1"
+                            "src": "1660:4:1"
                           }
                         ],
-                        "id": 532,
+                        "id": 209,
                         "name": "ArrayTypeName",
-                        "src": "1657:6:1"
+                        "src": "1660:6:1"
                       }
                     ],
-                    "id": 533,
+                    "id": 210,
                     "name": "VariableDeclaration",
-                    "src": "1657:13:1"
+                    "src": "1660:13:1"
                   }
                 ],
-                "id": 534,
+                "id": 211,
                 "name": "ParameterList",
-                "src": "1656:15:1"
+                "src": "1659:15:1"
               }
             ],
-            "id": 535,
+            "id": 212,
             "name": "FunctionDefinition",
-            "src": "1577:95:1"
+            "src": "1580:95:1"
           },
           {
             "attributes": {
@@ -1637,7 +1635,7 @@
               ],
               "name": "getHistory",
               "overrides": null,
-              "scope": 555,
+              "scope": 232,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1647,9 +1645,9 @@
                 "attributes": {
                   "text": " @dev Given a trading bot address, returns the indicator value history for that bot\n @param tradingBotAddress Address of trading bot\n @param index Index in trading bot's entry/exit rule array\n @return uint[] Indicator value history for the given trading bot"
                 },
-                "id": 536,
+                "id": 213,
                 "name": "StructuredDocumentation",
-                "src": "1680:293:1"
+                "src": "1683:293:1"
               },
               {
                 "children": [
@@ -1659,7 +1657,7 @@
                       "mutability": "mutable",
                       "name": "tradingBotAddress",
                       "overrides": null,
-                      "scope": 546,
+                      "scope": 223,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1673,14 +1671,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 537,
+                        "id": 214,
                         "name": "ElementaryTypeName",
-                        "src": "1999:7:1"
+                        "src": "2002:7:1"
                       }
                     ],
-                    "id": 538,
+                    "id": 215,
                     "name": "VariableDeclaration",
-                    "src": "1999:25:1"
+                    "src": "2002:25:1"
                   },
                   {
                     "attributes": {
@@ -1688,7 +1686,7 @@
                       "mutability": "mutable",
                       "name": "index",
                       "overrides": null,
-                      "scope": 546,
+                      "scope": 223,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1701,19 +1699,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 539,
+                        "id": 216,
                         "name": "ElementaryTypeName",
-                        "src": "2026:4:1"
+                        "src": "2029:4:1"
                       }
                     ],
-                    "id": 540,
+                    "id": 217,
                     "name": "VariableDeclaration",
-                    "src": "2026:10:1"
+                    "src": "2029:10:1"
                   }
                 ],
-                "id": 541,
+                "id": 218,
                 "name": "ParameterList",
-                "src": "1998:39:1"
+                "src": "2001:39:1"
               },
               {
                 "children": [
@@ -1723,7 +1721,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 546,
+                      "scope": 223,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "uint256[]",
@@ -1742,29 +1740,29 @@
                               "name": "uint",
                               "type": "uint256"
                             },
-                            "id": 542,
+                            "id": 219,
                             "name": "ElementaryTypeName",
-                            "src": "2061:4:1"
+                            "src": "2064:4:1"
                           }
                         ],
-                        "id": 543,
+                        "id": 220,
                         "name": "ArrayTypeName",
-                        "src": "2061:6:1"
+                        "src": "2064:6:1"
                       }
                     ],
-                    "id": 544,
+                    "id": 221,
                     "name": "VariableDeclaration",
-                    "src": "2061:13:1"
+                    "src": "2064:13:1"
                   }
                 ],
-                "id": 545,
+                "id": 222,
                 "name": "ParameterList",
-                "src": "2060:15:1"
+                "src": "2063:15:1"
               }
             ],
-            "id": 546,
+            "id": 223,
             "name": "FunctionDefinition",
-            "src": "1979:97:1"
+            "src": "1982:97:1"
           },
           {
             "attributes": {
@@ -1782,7 +1780,7 @@
                       "mutability": "mutable",
                       "name": "indicatorAddress",
                       "overrides": null,
-                      "scope": 554,
+                      "scope": 231,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1796,14 +1794,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 547,
+                        "id": 224,
                         "name": "ElementaryTypeName",
-                        "src": "2118:7:1"
+                        "src": "2121:7:1"
                       }
                     ],
-                    "id": 548,
+                    "id": 225,
                     "name": "VariableDeclaration",
-                    "src": "2118:32:1"
+                    "src": "2121:32:1"
                   },
                   {
                     "attributes": {
@@ -1812,7 +1810,7 @@
                       "mutability": "mutable",
                       "name": "newPrice",
                       "overrides": null,
-                      "scope": 554,
+                      "scope": 231,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1825,14 +1823,14 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 549,
+                        "id": 226,
                         "name": "ElementaryTypeName",
-                        "src": "2152:4:1"
+                        "src": "2155:4:1"
                       }
                     ],
-                    "id": 550,
+                    "id": 227,
                     "name": "VariableDeclaration",
-                    "src": "2152:13:1"
+                    "src": "2155:13:1"
                   },
                   {
                     "attributes": {
@@ -1841,7 +1839,7 @@
                       "mutability": "mutable",
                       "name": "timestamp",
                       "overrides": null,
-                      "scope": 554,
+                      "scope": 231,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1854,34 +1852,34 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 551,
+                        "id": 228,
                         "name": "ElementaryTypeName",
-                        "src": "2167:4:1"
+                        "src": "2170:4:1"
                       }
                     ],
-                    "id": 552,
+                    "id": 229,
                     "name": "VariableDeclaration",
-                    "src": "2167:14:1"
+                    "src": "2170:14:1"
                   }
                 ],
-                "id": 553,
+                "id": 230,
                 "name": "ParameterList",
-                "src": "2117:65:1"
+                "src": "2120:65:1"
               }
             ],
-            "id": 554,
+            "id": 231,
             "name": "EventDefinition",
-            "src": "2099:84:1"
+            "src": "2102:84:1"
           }
         ],
-        "id": 555,
+        "id": 232,
         "name": "ContractDefinition",
-        "src": "28:2158:1"
+        "src": "28:2161:1"
       }
     ],
-    "id": 556,
+    "id": 233,
     "name": "SourceUnit",
-    "src": "0:2186:1"
+    "src": "0:2189:1"
   },
   "compiler": {
     "name": "solc",
@@ -1889,15 +1887,17 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-02T00:07:07.862Z",
+  "updatedAt": "2021-07-03T11:46:19.441Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
-      "addTradingBot(uint256,uint256)": {
+      "addTradingBot(uint256)": {
         "details": "Initializes the state of the trading bot; meant to be called by a trading bot",
         "params": {
-          "index": "Index in trading bot's entry/exit rule array",
           "param": "Value of the indicator's parameter"
+        },
+        "returns": {
+          "_0": "uint Index of trading bot instance in State array"
         }
       },
       "editPrice(uint256)": {

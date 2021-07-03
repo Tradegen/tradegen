@@ -7,7 +7,7 @@ contract NPercent is IIndicator {
     uint public _price;
     address public _developer;
 
-    mapping (address => mapping (uint => uint)) private _tradingBotStates;
+    mapping (address => uint[]) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -47,15 +47,15 @@ contract NPercent is IIndicator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param param Value of the indicator's parameter
+    * @return uint Index of trading bot instance in State array
     */
-    function addTradingBot(uint index, uint param) public override {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index] == 0, "Trading bot already exists");
+    function addTradingBot(uint param) public override returns (uint) {
         require(param > 0, "Invalid param");
 
-        _tradingBotStates[msg.sender][index] = param;
+        _tradingBotStates[msg.sender].push(param);
+
+        return _tradingBotStates[msg.sender].length - 1;
     }
 
     /**
@@ -72,8 +72,8 @@ contract NPercent is IIndicator {
     * @return uint[] Indicator value for the given trading bot
     */
     function getValue(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index] > 0, "Trading bot doesn't exist");
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
         temp[0] = _tradingBotStates[tradingBotAddress][index];
@@ -87,8 +87,8 @@ contract NPercent is IIndicator {
     * @return uint[] Indicator value history for the given trading bot
     */
     function getHistory(address tradingBotAddress, uint index) public view override returns (uint[] memory) {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index] > 0, "Trading bot doesn't exist");
+        require(tradingBotAddress != address(0), "Invalid trading bot address");
+        require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
         uint[] memory temp = new uint[](1);
         temp[0] = _tradingBotStates[tradingBotAddress][index];
