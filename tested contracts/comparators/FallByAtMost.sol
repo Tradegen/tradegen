@@ -1,11 +1,11 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
-import './interfaces/IComparator.sol';
+import '../interfaces/IIndicator.sol';
+import '../interfaces/IComparator.sol';
 
-import './libraries/SafeMath.sol';
+import '../libraries/SafeMath.sol';
 
-contract FallByAtLeast is IComparator {
+contract FallByAtMost is IComparator {
     using SafeMath for uint;
 
     struct State {
@@ -97,9 +97,9 @@ contract FallByAtLeast is IComparator {
         percentFall = percentFall.mul(100);
         percentFall = percentFall.div(firstIndicatorHistory[0]);
 
-        emit ConditionStatus(percentFall >= secondIndicatorHistory[0]); //test
+        emit ConditionStatus(percentFall <= secondIndicatorHistory[0]); //test
 
-        return (percentFall >= secondIndicatorHistory[0]);
+        return (percentFall <= secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test

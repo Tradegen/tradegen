@@ -3,13 +3,14 @@ pragma solidity >=0.5.0;
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 
-contract CrossesBelow is IComparator {
+import './libraries/SafeMath.sol';
+
+contract FallByAtMost is IComparator {
+    using SafeMath for uint;
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
-        uint128 firstIndicatorPreviousValue;
-        uint128 secondIndicatorPreviousValue;
     }
 
     uint public _price;
@@ -55,7 +56,7 @@ contract CrossesBelow is IComparator {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 1, 1));
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -77,22 +78,28 @@ contract CrossesBelow is IComparator {
         uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
         uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
 
-        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0)
+        if (firstIndicatorHistory.length == 0)
         {
             emit ConditionStatus(false); //test
-            
+
             return false;
         }
 
-        bool result = (tradingBotState.firstIndicatorPreviousValue > tradingBotState.secondIndicatorPreviousValue) &&
-                    (firstIndicatorHistory[firstIndicatorHistory.length - 1] < secondIndicatorHistory[secondIndicatorHistory.length - 1]);
+        //check if indicator rose in value
+        if (firstIndicatorHistory[firstIndicatorHistory.length - 1] >= firstIndicatorHistory[0])
+        {
+            emit ConditionStatus(false); //test
 
-        _tradingBotStates[msg.sender][comparatorIndex].firstIndicatorPreviousValue = uint128(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
-        _tradingBotStates[msg.sender][comparatorIndex].secondIndicatorPreviousValue = uint128(secondIndicatorHistory[secondIndicatorHistory.length - 1]);
+            return false;
+        }
 
-        emit ConditionStatus(result); //test
+        uint percentFall = firstIndicatorHistory[0].sub(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
+        percentFall = percentFall.mul(100);
+        percentFall = percentFall.div(firstIndicatorHistory[0]);
 
-        return result;
+        emit ConditionStatus(percentFall <= secondIndicatorHistory[0]); //test
+
+        return (percentFall <= secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test

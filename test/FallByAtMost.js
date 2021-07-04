@@ -11,19 +11,19 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const FallByAtLeast = require('../build/contracts/FallByAtLeast.json');
+const FallByAtMost = require('../build/contracts/FallByAtMost.json');
 const PreviousNPriceUpdates = require('../build/contracts/PreviousNPriceUpdates.json');
 const NPercent = require('../build/contracts/NPercent.json');
 
-var contractAddress = "0x5A14edB6A980929039B5dc51f8C6B4BdF3e4dEBE";
+var contractAddress = "0x943eFf8D6A1774277fFE80E41D2fA55C52f1BC95";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var PreviousNPriceUpdatesAddress = "0x0e07B3257347a3FcC4eBE9a5BA4FA550F2297Da0";
-var NPercentAddress = "0xC56f5ded3c5F848Ebb390e525D580D022B65BC25";
+var PreviousNPriceUpdatesAddress = "0xe68eFA5DE0f2e561648a69eE342784D118D7985a";
+var NPercentAddress = "0x4dF50D676b6245FB77dab4DcB22174f8f09F0eD8";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(FallByAtLeast.abi, contractAddress);
+    let instance = new web3.eth.Contract(FallByAtMost.abi, contractAddress);
     let previousNPriceUpdatesInstance = new web3.eth.Contract(PreviousNPriceUpdates.abi, PreviousNPriceUpdatesAddress);
     let NPercentInstance = new web3.eth.Contract(NPercent.abi, NPercentAddress);
 
@@ -85,7 +85,7 @@ function initContract()
         }
     });
     /*
-    it('Previous N price updates fall by at least N percent, first trading bot', async () => {
+    it('Previous N price updates fall by at most N percent, first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -170,17 +170,17 @@ function initContract()
         console.log(history3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close up
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 850);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 1500);
+        let txObject11 = await NPercentInstance.methods.update(0, 850);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -200,12 +200,12 @@ function initContract()
         console.log(result4);
 
         assert(
-            !result4,
-            'Status should be false'
+            result4,
+            'Status should be true'
         );
     });
     
-    it('Previous N price updates fall by at least N percent, second instance of first trading bot', async () => {
+    it('Previous N price updates fall by at most N percent, second instance of first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -290,17 +290,17 @@ function initContract()
         console.log(history3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close up
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(1, 1500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(1, 850);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(1, 1500);
+        let txObject11 = await NPercentInstance.methods.update(1, 850);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -320,12 +320,12 @@ function initContract()
         console.log(result4);
 
         assert(
-            !result4,
-            'Status should be false'
+            result4,
+            'Status should be true'
         );
     });*/
     
-    it('Previous N price updates fall by at least N percent, second trading bot', async () => {
+    it('Previous N price updates fall by at most N percent, second trading bot', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
 
@@ -367,12 +367,12 @@ function initContract()
         );
 
         //Update first indicator state with second value; close down
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1900);
+        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 900);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(0, 1900);
+        let txObject7 = await NPercentInstance.methods.update(0, 900);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -410,17 +410,17 @@ function initContract()
         console.log(history3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close up
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 850);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 1500);
+        let txObject11 = await NPercentInstance.methods.update(0, 850);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
