@@ -88,6 +88,10 @@ contract Interval is IIndicator {
         uint lower = uint256(_tradingBotStates[tradingBotAddress][index].latestPrice).sub(difference);
         uint upper = lower.add(uint256(_tradingBotStates[tradingBotAddress][index].interval));
 
+        uint lowerErrorBound = upper.mul(999).div(1000); //check if above 0.1% lower bound of upper interval
+        lower = (uint256(_tradingBotStates[tradingBotAddress][index].latestPrice) >= lowerErrorBound) ? upper : lower;
+        upper = (uint256(_tradingBotStates[tradingBotAddress][index].latestPrice) >= lowerErrorBound) ? upper.add(uint256(_tradingBotStates[tradingBotAddress][index].interval)) : upper;
+
         uint[] memory temp = new uint[](2);
         temp[0] = lower;
         temp[1] = upper;
