@@ -8,13 +8,12 @@ contract IsBelow is IComparator {
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
-        bool exists;
     }
 
     uint public _price;
     address public _developer;
 
-    mapping (address => mapping (uint => State)) private _tradingBotStates;
+    mapping (address => State[]) private _tradingBotStates;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -46,38 +45,47 @@ contract IsBelow is IComparator {
 
     /**
     * @dev Initializes the state of the trading bot; meant to be called by a trading bot
-    * @param index Index in trading bot's entry/exit rule array
     * @param firstIndicatorAddress Address of the comparator's first indicator
     * @param secondIndicatorAddress Address of the comparator's second indicator
+    * @return uint Index of comparator in trading bot instance array
     */
-    function addTradingBot(uint index, address firstIndicatorAddress, address secondIndicatorAddress) public override {
-        require(index > 0, "Invalid index");
+    function addTradingBot(address firstIndicatorAddress, address secondIndicatorAddress) public override returns (uint) {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
-        require(!_tradingBotStates[msg.sender][index].exists, "Trading bot already exists");
 
-        _tradingBotStates[msg.sender][index] = State(firstIndicatorAddress, secondIndicatorAddress, true);
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress));
+
+        return _tradingBotStates[msg.sender].length - 1;
     }
 
     /**
     * @dev Returns whether the comparator's conditions are met
-    * @param index Index in trading bot's entry/exit rule array
+    * @param comparatorIndex Index of comparator in trading bot's entry/exit rule array
+    * @param firstIndicatorIndex Index of first indicator in trading bot's entry/exit rule array
+    * @param secondIndicatorIndex Index of second indicator in trading bot's entry/exit rule array
     * @return bool Whether the comparator's conditions are met after the latest price feed update
     */
-    function checkConditions(uint index) public view override returns (bool) {
-        require(index > 0, "Invalid index");
-        require(_tradingBotStates[msg.sender][index].exists, "Trading bot doesn't exist");
+    function checkConditions(uint comparatorIndex, uint firstIndicatorIndex, uint secondIndicatorIndex) public override returns (bool) {
+        require(comparatorIndex >= 0 && comparatorIndex < _tradingBotStates[msg.sender].length, "Invalid comparator index");
+        require(firstIndicatorIndex >= 0, "Invalid first indicator index");
+        require(secondIndicatorIndex >= 0, "Invalid second indicator index");
 
-        State storage tradingBotState = _tradingBotStates[msg.sender][index];
+        State memory tradingBotState = _tradingBotStates[msg.sender][comparatorIndex];
 
-        uint[] memory firstIndicatorPriceHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, index);
-        uint[] memory secondIndicatorPriceHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, index);
+        uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
+        uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
 
-        if (firstIndicatorPriceHistory.length == 0 || secondIndicatorPriceHistory.length == 0)
+        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0 || secondIndicatorHistory[0] == 0)
         {
+            emit ConditionStatus(false); //test
+
             return false;
         }
 
-        return (firstIndicatorPriceHistory[firstIndicatorPriceHistory.length - 1] < secondIndicatorPriceHistory[secondIndicatorPriceHistory.length - 1]);
+        emit ConditionStatus(firstIndicatorHistory[0] < secondIndicatorHistory[0]); //test
+
+        return (firstIndicatorHistory[0] < secondIndicatorHistory[0]);
     }
+
+    event ConditionStatus(bool status); //test
 }

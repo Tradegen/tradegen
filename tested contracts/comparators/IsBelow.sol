@@ -1,9 +1,9 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
-import './interfaces/IComparator.sol';
+import '../interfaces/IIndicator.sol';
+import '../interfaces/IComparator.sol';
 
-contract IsAbove is IComparator {
+contract IsBelow is IComparator {
 
     struct State {
         address firstIndicatorAddress;
@@ -82,9 +82,9 @@ contract IsAbove is IComparator {
             return false;
         }
 
-        emit ConditionStatus(firstIndicatorHistory[0] > secondIndicatorHistory[0]); //test
+        emit ConditionStatus(firstIndicatorHistory[0] < secondIndicatorHistory[0]); //test
 
-        return (firstIndicatorHistory[0] > secondIndicatorHistory[0]);
+        return (firstIndicatorHistory[0] < secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test

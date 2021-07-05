@@ -72,8 +72,6 @@ contract LowOfLastNPriceUpdates is IIndicator {
     function update(uint index, uint latestPrice) public override {
         require(index >= 0 && index < _tradingBotStates[msg.sender].length, "Invalid index");
 
-        _tradingBotHistory[msg.sender][index].push(latestPrice);
-
         uint[] memory history = _tradingBotHistory[msg.sender][index];
         uint length = (history.length >= uint256(_tradingBotStates[msg.sender][index].N)) ? uint256(_tradingBotStates[msg.sender][index].N) : 0;
 
@@ -85,6 +83,7 @@ contract LowOfLastNPriceUpdates is IIndicator {
         }
 
         _tradingBotStates[msg.sender][index].currentValue = uint248(low);
+        _tradingBotHistory[msg.sender][index].push(latestPrice);
     }   
 
     /**

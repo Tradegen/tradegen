@@ -2,7 +2,7 @@ pragma solidity >=0.5.0;
 
 import './interfaces/IIndicator.sol';
 
-contract HighOfLastNPriceUpdates is IIndicator {
+contract LowOfLastNPriceUpdates is IIndicator {
 
     struct State {
         uint8 N;
@@ -27,7 +27,7 @@ contract HighOfLastNPriceUpdates is IIndicator {
     * @return string Name of the indicator
     */
     function getName() public pure override returns (string memory) {
-        return "HighOfLastNPriceUpdates";
+        return "LowOfLastNPriceUpdates";
     }
 
     /**
@@ -74,14 +74,15 @@ contract HighOfLastNPriceUpdates is IIndicator {
 
         uint[] memory history = _tradingBotHistory[msg.sender][index];
         uint length = (history.length >= uint256(_tradingBotStates[msg.sender][index].N)) ? uint256(_tradingBotStates[msg.sender][index].N) : 0;
-        uint high = 0;
+
+        uint low = (length == 0) ? 0 : history[history.length - 1];
 
         for (uint i = 0; i < length; i++)
         {
-            high = (history[history.length - i - 1] > high) ? history[history.length - i - 1] : high;
+            low = (history[history.length - i - 1] < low) ? history[history.length - i - 1] : low;
         }
 
-        _tradingBotStates[msg.sender][index].currentValue = uint248(high);
+        _tradingBotStates[msg.sender][index].currentValue = uint248(low);
         _tradingBotHistory[msg.sender][index].push(latestPrice);
     }   
 
