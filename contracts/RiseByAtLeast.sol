@@ -3,7 +3,10 @@ pragma solidity >=0.5.0;
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 
-contract IsBelow is IComparator {
+import './libraries/SafeMath.sol';
+
+contract RiseByAtLeast is IComparator {
+    using SafeMath for uint;
 
     struct State {
         address firstIndicatorAddress;
@@ -75,16 +78,28 @@ contract IsBelow is IComparator {
         uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
         uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
 
-        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0 || secondIndicatorHistory[0] == 0)
+        if (firstIndicatorHistory.length == 0)
         {
             emit ConditionStatus(false); //test
 
             return false;
         }
 
-        emit ConditionStatus(firstIndicatorHistory[0] < secondIndicatorHistory[0]); //test
+        //check if indicator fell in value
+        if (firstIndicatorHistory[firstIndicatorHistory.length - 1] <= firstIndicatorHistory[0])
+        {
+            emit ConditionStatus(false); //test
 
-        return (firstIndicatorHistory[0] < secondIndicatorHistory[0]);
+            return false;
+        }
+
+        uint percentRise = firstIndicatorHistory[firstIndicatorHistory.length - 1].sub(firstIndicatorHistory[0]);
+        percentRise = percentRise.mul(100);
+        percentRise = percentRise.div(firstIndicatorHistory[0]);
+
+        emit ConditionStatus(percentRise >= secondIndicatorHistory[0]); //test
+
+        return (percentRise >= secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test

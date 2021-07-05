@@ -5,7 +5,7 @@ import '../interfaces/IComparator.sol';
 
 import '../libraries/SafeMath.sol';
 
-contract FallByAtLeast is IComparator {
+contract RiseByAtLeast is IComparator {
     using SafeMath for uint;
 
     struct State {
@@ -85,21 +85,21 @@ contract FallByAtLeast is IComparator {
             return false;
         }
 
-        //check if indicator rose in value
-        if (firstIndicatorHistory[firstIndicatorHistory.length - 1] >= firstIndicatorHistory[0])
+        //check if indicator fell in value
+        if (firstIndicatorHistory[firstIndicatorHistory.length - 1] <= firstIndicatorHistory[0])
         {
             emit ConditionStatus(false); //test
 
             return false;
         }
 
-        uint percentFall = firstIndicatorHistory[0].sub(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
-        percentFall = percentFall.mul(100);
-        percentFall = percentFall.div(firstIndicatorHistory[0]);
+        uint percentRise = firstIndicatorHistory[firstIndicatorHistory.length - 1].sub(firstIndicatorHistory[0]);
+        percentRise = percentRise.mul(100);
+        percentRise = percentRise.div(firstIndicatorHistory[0]);
 
-        emit ConditionStatus(percentFall >= secondIndicatorHistory[0]); //test
+        emit ConditionStatus(percentRise >= secondIndicatorHistory[0]); //test
 
-        return (percentFall >= secondIndicatorHistory[0]);
+        return (percentRise >= secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test
