@@ -11,19 +11,19 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const RiseByAtLeast = require('../build/contracts/RiseByAtLeast.json');
+const RiseByAtMost = require('../build/contracts/RiseByAtMost.json');
 const PreviousNPriceUpdates = require('../build/contracts/PreviousNPriceUpdates.json');
 const NPercent = require('../build/contracts/NPercent.json');
 
-var contractAddress = "0xa10F338DDE3eFBb3D461AdEe7B039000fb54ad10";
+var contractAddress = "0x22733D222aEf0b160E334c34b404f2eb88513731";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var PreviousNPriceUpdatesAddress = "0x9fB0eB9eB90209D2f4a2579bC9512fF19921939C";
-var NPercentAddress = "0xD780f69f7c5962b59123dD14852fACdb32D3571C";
+var PreviousNPriceUpdatesAddress = "0xbef4b42Bd8c7B209F85E13CD4478999Ce6D9AE8A";
+var NPercentAddress = "0x32E9636d372C57f10660776d85DcD1982af5A449";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(RiseByAtLeast.abi, contractAddress);
+    let instance = new web3.eth.Contract(RiseByAtMost.abi, contractAddress);
     let previousNPriceUpdatesInstance = new web3.eth.Contract(PreviousNPriceUpdates.abi, PreviousNPriceUpdatesAddress);
     let NPercentInstance = new web3.eth.Contract(NPercent.abi, NPercentAddress);
 
@@ -85,7 +85,7 @@ function initContract()
         }
     });
     
-    it('Previous N price updates rise by at least N percent, first trading bot', async () => {
+    it('Previous N price updates rise by at most N percent, first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -127,12 +127,12 @@ function initContract()
         );
 
         //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1100);
+        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1050);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(0, 1100);
+        let txObject7 = await NPercentInstance.methods.update(0, 1050);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -149,12 +149,12 @@ function initContract()
         );
 
         //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1200);
+        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1150);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(0, 1200);
+        let txObject9 = await NPercentInstance.methods.update(0, 1150);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -170,17 +170,17 @@ function initContract()
         console.log(result3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1140);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 500);
+        let txObject11 = await NPercentInstance.methods.update(0, 1140);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -200,12 +200,38 @@ function initContract()
         console.log(result4);
 
         assert(
-            !result4,
+            result4,
+            'Status should be true'
+        );
+
+        //Update first indicator state with fifth value; close down
+        let txObject12 = await previousNPriceUpdatesInstance.methods.update(0, 1040);
+        let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
+        let receipt12 = await tx12.waitReceipt();
+
+        //Update second indicator state with fifth value
+        let txObject13 = await NPercentInstance.methods.update(0, 1040);
+        let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
+        let receipt13 = await tx13.waitReceipt();
+
+        //Get first trading bot trading bot state history
+        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
+        console.log(history5);
+
+        //Get comparator status
+        let status5 = await instance.methods.checkConditions(0, 0, 0);
+        let txStatus5 = await kit.sendTransactionObject(status5, { from: account.address });
+        let receiptStatus5 = await txStatus5.waitReceipt();
+        let result5 = receiptStatus5.events.ConditionStatus.returnValues.status;
+        console.log(result5);
+
+        assert(
+            !result5,
             'Status should be false'
         );
     });
     
-    it('Previous N price updates rise by at least N percent, second instance of first trading bot', async () => {
+    it('Previous N price updates rise by at most N percent, second instance of first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -247,12 +273,12 @@ function initContract()
         );
 
         //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(1, 1100);
+        let txObject6 = await previousNPriceUpdatesInstance.methods.update(1, 1050);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(1, 1100);
+        let txObject7 = await NPercentInstance.methods.update(1, 1050);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -269,12 +295,12 @@ function initContract()
         );
 
         //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(1, 1200);
+        let txObject8 = await previousNPriceUpdatesInstance.methods.update(1, 1150);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(1, 1200);
+        let txObject9 = await NPercentInstance.methods.update(1, 1150);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -290,17 +316,17 @@ function initContract()
         console.log(result3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(1, 500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(1, 1140);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(1, 500);
+        let txObject11 = await NPercentInstance.methods.update(1, 1140);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -320,12 +346,38 @@ function initContract()
         console.log(result4);
 
         assert(
-            !result4,
+            result4,
+            'Status should be true'
+        );
+
+        //Update first indicator state with fifth value; close down
+        let txObject12 = await previousNPriceUpdatesInstance.methods.update(1, 1040);
+        let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
+        let receipt12 = await tx12.waitReceipt();
+
+        //Update second indicator state with fifth value
+        let txObject13 = await NPercentInstance.methods.update(1, 1040);
+        let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
+        let receipt13 = await tx13.waitReceipt();
+
+        //Get first trading bot trading bot state history
+        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 1).call();
+        console.log(history5);
+
+        //Get comparator status
+        let status5 = await instance.methods.checkConditions(1, 1, 1);
+        let txStatus5 = await kit.sendTransactionObject(status5, { from: account.address });
+        let receiptStatus5 = await txStatus5.waitReceipt();
+        let result5 = receiptStatus5.events.ConditionStatus.returnValues.status;
+        console.log(result5);
+
+        assert(
+            !result5,
             'Status should be false'
         );
     });
     
-    it('Previous N price updates rise by at least N percent, second trading bot', async () => {
+    it('Previous N price updates rise by at most N percent, second trading bot', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
 
@@ -367,12 +419,12 @@ function initContract()
         );
 
         //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1100);
+        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1050);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(0, 1100);
+        let txObject7 = await NPercentInstance.methods.update(0, 1050);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -389,12 +441,12 @@ function initContract()
         );
 
         //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1200);
+        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1150);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(0, 1200);
+        let txObject9 = await NPercentInstance.methods.update(0, 1150);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -410,17 +462,17 @@ function initContract()
         console.log(result3);
 
         assert(
-            result3,
-            'Status should be true'
+            !result3,
+            'Status should be false'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 500);
+        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1140);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 500);
+        let txObject11 = await NPercentInstance.methods.update(0, 1140);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -440,7 +492,33 @@ function initContract()
         console.log(result4);
 
         assert(
-            !result4,
+            result4,
+            'Status should be true'
+        );
+
+        //Update first indicator state with fifth value; close down
+        let txObject12 = await previousNPriceUpdatesInstance.methods.update(0, 1040);
+        let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
+        let receipt12 = await tx12.waitReceipt();
+
+        //Update second indicator state with fifth value
+        let txObject13 = await NPercentInstance.methods.update(0, 1040);
+        let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
+        let receipt13 = await tx13.waitReceipt();
+
+        //Get first trading bot trading bot state history
+        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
+        console.log(history5);
+
+        //Get comparator status
+        let status5 = await instance.methods.checkConditions(0, 0, 0);
+        let txStatus5 = await kit.sendTransactionObject(status5, { from: account.address });
+        let receiptStatus5 = await txStatus5.waitReceipt();
+        let result5 = receiptStatus5.events.ConditionStatus.returnValues.status;
+        console.log(result5);
+
+        assert(
+            !result5,
             'Status should be false'
         );
     });

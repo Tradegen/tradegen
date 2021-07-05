@@ -5,7 +5,7 @@ import './interfaces/IComparator.sol';
 
 import './libraries/SafeMath.sol';
 
-contract RiseByAtLeast is IComparator {
+contract RiseByAtMost is IComparator {
     using SafeMath for uint;
 
     struct State {
@@ -97,9 +97,9 @@ contract RiseByAtLeast is IComparator {
         percentRise = percentRise.mul(100);
         percentRise = percentRise.div(firstIndicatorHistory[0]);
 
-        emit ConditionStatus(percentRise >= secondIndicatorHistory[0]); //test
+        emit ConditionStatus(percentRise <= secondIndicatorHistory[0]); //test
 
-        return (percentRise >= secondIndicatorHistory[0]);
+        return (percentRise <= secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test
