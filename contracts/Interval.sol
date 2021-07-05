@@ -1,7 +1,7 @@
 pragma solidity >=0.5.0;
 
-import '../interfaces/IIndicator.sol';
-import '../libraries/SafeMath.sol';
+import './interfaces/IIndicator.sol';
+import './libraries/SafeMath.sol';
 
 contract Interval is IIndicator {
     using SafeMath for uint;

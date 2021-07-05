@@ -5,12 +5,14 @@ import './interfaces/IComparator.sol';
 
 import './libraries/SafeMath.sol';
 
-contract FallByAtMost is IComparator {
+contract FallsTo is IComparator {
     using SafeMath for uint;
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
+        uint128 firstIndicatorPreviousValue;
+        uint128 secondIndicatorPreviousValue;
     }
 
     uint public _price;
@@ -56,7 +58,7 @@ contract FallByAtMost is IComparator {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress));
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 0, 0));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -78,29 +80,23 @@ contract FallByAtMost is IComparator {
         uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
         uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
 
-        if (firstIndicatorHistory.length == 0)
+        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0)
         {
-            emit ConditionStatus(false); //test
-
             return false;
         }
 
-        //check if indicator rose in value
-        if (firstIndicatorHistory[firstIndicatorHistory.length - 1] >= firstIndicatorHistory[0])
-        {
-            emit ConditionStatus(false); //test
+        //first indicator can be within +/- 0.1% of second indicator value and still meet conditions
+        uint previousUpperErrorBound = uint256(tradingBotState.secondIndicatorPreviousValue).mul(1001).div(1000);
+        uint currentLowerErrorBound = secondIndicatorHistory[secondIndicatorHistory.length - 1].mul(999).div(1000);
+        uint currentUpperErrorBound = secondIndicatorHistory[secondIndicatorHistory.length - 1].mul(1001).div(1000);
 
-            return false;
-        }
+        bool result = (tradingBotState.firstIndicatorPreviousValue > previousUpperErrorBound)
+                    && (firstIndicatorHistory[firstIndicatorHistory.length - 1] >= currentLowerErrorBound)
+                    && (firstIndicatorHistory[firstIndicatorHistory.length - 1] <= currentUpperErrorBound);
 
-        uint percentFall = firstIndicatorHistory[0].sub(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
-        percentFall = percentFall.mul(100);
-        percentFall = percentFall.div(firstIndicatorHistory[0]);
+        _tradingBotStates[msg.sender][comparatorIndex].firstIndicatorPreviousValue = uint128(firstIndicatorHistory[firstIndicatorHistory.length - 1]);
+        _tradingBotStates[msg.sender][comparatorIndex].secondIndicatorPreviousValue = uint128(secondIndicatorHistory[secondIndicatorHistory.length - 1]);
 
-        emit ConditionStatus(percentFall <= secondIndicatorHistory[0]); //test
-
-        return (percentFall <= secondIndicatorHistory[0]);
+        return result;
     }
-
-    event ConditionStatus(bool status); //test
 }

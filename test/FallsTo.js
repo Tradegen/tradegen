@@ -11,21 +11,21 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const FallByAtMost = require('../build/contracts/FallByAtMost.json');
-const PreviousNPriceUpdates = require('../build/contracts/PreviousNPriceUpdates.json');
-const NPercent = require('../build/contracts/NPercent.json');
+const FallsTo = require('../build/contracts/FallsTo.json');
+const LatestPrice = require('../build/contracts/LatestPrice.json');
+const Interval = require('../build/contracts/Interval.json');
 
-var contractAddress = "0x943eFf8D6A1774277fFE80E41D2fA55C52f1BC95";
+var contractAddress = "0xAa63bBa20aC8acbA5fcb8Cd5BACAc21D0d127C5B";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var PreviousNPriceUpdatesAddress = "0xe68eFA5DE0f2e561648a69eE342784D118D7985a";
-var NPercentAddress = "0x4dF50D676b6245FB77dab4DcB22174f8f09F0eD8";
+var LatestPriceAddress = "0x6dfe8140CcbC0fE262a07f63d3e59e8b573F0b7C";
+var IntervalAddress = "0xDA0762dA2678382d28E054E09940d95444D6e465";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(FallByAtMost.abi, contractAddress);
-    let previousNPriceUpdatesInstance = new web3.eth.Contract(PreviousNPriceUpdates.abi, PreviousNPriceUpdatesAddress);
-    let NPercentInstance = new web3.eth.Contract(NPercent.abi, NPercentAddress);
+    let instance = new web3.eth.Contract(FallsTo.abi, contractAddress);
+    let latestPriceInstance = new web3.eth.Contract(LatestPrice.abi, LatestPriceAddress);
+    let intervalInstance = new web3.eth.Contract(Interval.abi, IntervalAddress);
 
     it('Price and developer are initialized correctly', async () => {
         let data = await instance.methods.getPriceAndDeveloper().call();
@@ -84,8 +84,8 @@ function initContract()
             console.log(err);
         }
     });
-    /*
-    it('Previous N price updates fall by at most N percent, first trading bot', async () => {
+    
+    it('Latest price falls to interval, first trading bot closes above upper bound', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
@@ -323,7 +323,7 @@ function initContract()
             result4,
             'Status should be true'
         );
-    });*/
+    });
     
     it('Previous N price updates fall by at most N percent, second trading bot', async () => {
         let account = await getAccount3();
