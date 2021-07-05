@@ -1,20 +1,19 @@
 pragma solidity >=0.5.0;
 
 import './interfaces/IIndicator.sol';
-import './libraries/SafeMath.sol';
 
-contract Interval is IIndicator {
-    using SafeMath for uint;
+contract HighOfLastNPriceUpdates is IIndicator {
+
+    struct State {
+        uint8 N;
+        uint248 currentValue;
+    }
 
     uint public _price;
     address public _developer;
 
-    struct State {
-        uint128 interval;
-        uint128 latestPrice;
-    }
-
     mapping (address => State[]) private _tradingBotStates;
+    mapping (address => mapping (uint => uint[])) private _tradingBotHistory;
 
     constructor(uint price) public {
         require(price >= 0, "Price must be greater than 0");
@@ -28,7 +27,7 @@ contract Interval is IIndicator {
     * @return string Name of the indicator
     */
     function getName() public pure override returns (string memory) {
-        return "Interval";
+        return "HighOfLastNPriceUpdates";
     }
 
     /**
@@ -58,9 +57,9 @@ contract Interval is IIndicator {
     * @return uint Index of trading bot instance in State array
     */
     function addTradingBot(uint param) public override returns (uint) {
-        require(param > 0, "Invalid param");
+        require(param > 1 && param <= 200, "Param must be between 2 and 200");
 
-        _tradingBotStates[msg.sender].push(State(uint128(param), 0));
+        _tradingBotStates[msg.sender].push(State(uint8(param), 0));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -71,7 +70,19 @@ contract Interval is IIndicator {
     * @param latestPrice The latest price from oracle price feed
     */
     function update(uint index, uint latestPrice) public override {
-        _tradingBotStates[msg.sender][index].latestPrice = uint128(latestPrice);
+        require(index >= 0 && index < _tradingBotStates[msg.sender].length, "Invalid index");
+
+        uint[] memory history = _tradingBotHistory[msg.sender][index];
+        uint length = (history.length >= uint256(_tradingBotStates[msg.sender][index].N)) ? uint256(_tradingBotStates[msg.sender][index].N) : 0;
+        uint high = 0;
+
+        for (uint i = 0; i < length; i++)
+        {
+            high = (history[history.length - i - 1] > high) ? history[history.length - i - 1] : high;
+        }
+
+        _tradingBotStates[msg.sender][index].currentValue = uint248(high);
+        _tradingBotHistory[msg.sender][index].push(latestPrice);
     }   
 
     /**
@@ -84,17 +95,8 @@ contract Interval is IIndicator {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
-        uint difference = uint256(_tradingBotStates[tradingBotAddress][index].latestPrice) % uint256(_tradingBotStates[tradingBotAddress][index].interval);
-        uint lower = uint256(_tradingBotStates[tradingBotAddress][index].latestPrice).sub(difference);
-        uint upper = lower.add(uint256(_tradingBotStates[tradingBotAddress][index].interval));
-
-        uint lowerErrorBound = upper.mul(999).div(1000); //check if above 0.1% lower bound of upper interval
-        lower = (uint256(_tradingBotStates[tradingBotAddress][index].latestPrice) >= lowerErrorBound) ? upper : lower;
-        upper = (uint256(_tradingBotStates[tradingBotAddress][index].latestPrice) >= lowerErrorBound) ? upper.add(uint256(_tradingBotStates[tradingBotAddress][index].interval)) : upper;
-
-        uint[] memory temp = new uint[](2);
-        temp[0] = lower;
-        temp[1] = upper;
+        uint[] memory temp = new uint[](1);
+        temp[0] = (_tradingBotHistory[tradingBotAddress][index].length < uint256(_tradingBotStates[tradingBotAddress][index].N)) ? 0 : uint256(_tradingBotStates[tradingBotAddress][index].currentValue);
         return temp;
     }
 
@@ -108,8 +110,6 @@ contract Interval is IIndicator {
         require(tradingBotAddress != address(0), "Invalid trading bot address");
         require(index >= 0 && index < _tradingBotStates[tradingBotAddress].length, "Invalid index");
 
-        uint[] memory temp = new uint[](1);
-        temp[0] = uint256(_tradingBotStates[tradingBotAddress][index].latestPrice);
-        return temp;
+        return _tradingBotHistory[tradingBotAddress][index];
     }
 }

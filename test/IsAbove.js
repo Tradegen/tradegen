@@ -11,21 +11,21 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const FallsTo = require('../build/contracts/FallsTo.json');
+const IsAbove = require('../build/contracts/IsAbove.json');
 const LatestPrice = require('../build/contracts/LatestPrice.json');
-const Interval = require('../build/contracts/Interval.json');
+const HighOfLastNPriceUpdates = require('../build/contracts/HighOfLastNPriceUpdates.json');
 
-var contractAddress = "0x5775A47Fc8C4D779BF32af79C2a6884A5d1Db3B8";
+var contractAddress = "0x6CD85207e870fa90fd7E306D4adfaA5b546e866D";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var LatestPriceAddress = "0xca74945F2c9002BD98d5A7336FdC9172C729DA87";
-var IntervalAddress = "0xbA3e894f134B6C07f1175B9a49001619078f3035";
+var HighOfLastNPriceUpdatesAddress = "0x099ef3560e91C423dafcC9020ce56DBe6456EA0c";
+var LatestPriceAddress = "0x2A138Ed0B84fA2006a9892eA43b9E1F4452d69f2";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(FallsTo.abi, contractAddress);
+    let instance = new web3.eth.Contract(IsAbove.abi, contractAddress);
     let latestPriceInstance = new web3.eth.Contract(LatestPrice.abi, LatestPriceAddress);
-    let intervalInstance = new web3.eth.Contract(Interval.abi, IntervalAddress);
+    let highOfLastNPriceUpdatesInstance = new web3.eth.Contract(HighOfLastNPriceUpdates.abi, HighOfLastNPriceUpdatesAddress);
 
     it('Price and developer are initialized correctly', async () => {
         let data = await instance.methods.getPriceAndDeveloper().call();
@@ -85,32 +85,32 @@ function initContract()
         }
     });
     
-    it('Latest price falls to interval, first trading bot', async () => {
+    it('Latest price is above high of last N price updates, first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await latestPriceInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(1000);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await intervalInstance.methods.addTradingBot(100);
+        let txObject2 = await highOfLastNPriceUpdatesInstance.methods.addTradingBot(2);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, HighOfLastNPriceUpdatesAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await latestPriceInstance.methods.update(0, 1050);
+        let txObject4 = await latestPriceInstance.methods.update(0, 1000);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await intervalInstance.methods.update(0, 1050);
+        let txObject5 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1000);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -126,13 +126,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close above upper bound (1001)
-        let txObject6 = await latestPriceInstance.methods.update(0, 1015);
+        //Update first indicator state with second value
+        let txObject6 = await latestPriceInstance.methods.update(0, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await intervalInstance.methods.update(0, 1015);
+        let txObject7 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -148,13 +148,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close within bounds (999 - 1001)
-        let txObject8 = await latestPriceInstance.methods.update(0, 1000);
+        //Update first indicator state with third value
+        let txObject8 = await latestPriceInstance.methods.update(0, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await intervalInstance.methods.update(0, 1000);
+        let txObject9 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -165,25 +165,12 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
-        //Get comparator bounds
-        let status6 = await instance.methods.checkConditions(0, 0, 0);
-        let txStatus6 = await kit.sendTransactionObject(status6, { from: account.address });
-        let receiptStatus6 = await txStatus6.waitReceipt();
-        let previousUpperErrorBound = receiptStatus3.events.Bounds.returnValues.previousUpperBound;
-        let currentLowerErrorBound = receiptStatus3.events.Bounds.returnValues.currentLowerBound;
-        let currentUpperErrorBound = receiptStatus3.events.Bounds.returnValues.currentUpperBound;
-        var temp = [];
-        temp.push(previousUpperErrorBound);
-        temp.push(currentLowerErrorBound);
-        temp.push(currentUpperErrorBound);
-        console.log(temp);
-
         //Get first trading bot trading bot state history
         let history3 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
         console.log(history3);
 
         //Get first trading bot trading bot state history
-        let history4 = await intervalInstance.methods.getValue(account.address, 0).call();
+        let history4 = await highOfLastNPriceUpdatesInstance.methods.getValue(account.address, 0).call();
         console.log(history4);
 
         assert(
@@ -191,13 +178,13 @@ function initContract()
             'Status should be true'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(0, 1050);
+        //Update first indicator state with fourth value
+        let txObject10 = await latestPriceInstance.methods.update(0, 1150);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await intervalInstance.methods.update(0, 1050);
+        let txObject11 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1150);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -217,13 +204,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close below lower bound (999)
-        let txObject12 = await latestPriceInstance.methods.update(0, 950);
+        //Update first indicator state with fifth value
+        let txObject12 = await latestPriceInstance.methods.update(0, 1250);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await intervalInstance.methods.update(0, 950);
+        let txObject13 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1250);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
@@ -239,37 +226,37 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
-    
-    it('Latest price falls to interval, second instance of first trading bot', async () => {
+
+    it('Latest price is above high of last N price updates, second instance of first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await latestPriceInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(1000);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await intervalInstance.methods.addTradingBot(100);
+        let txObject2 = await highOfLastNPriceUpdatesInstance.methods.addTradingBot(2);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, HighOfLastNPriceUpdatesAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await latestPriceInstance.methods.update(1, 990);
+        let txObject4 = await latestPriceInstance.methods.update(1, 1000);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await intervalInstance.methods.update(1, 990);
+        let txObject5 = await highOfLastNPriceUpdatesInstance.methods.update(1, 1000);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -285,13 +272,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close above upper bound (1001)
-        let txObject6 = await latestPriceInstance.methods.update(1, 1015);
+        //Update first indicator state with second value
+        let txObject6 = await latestPriceInstance.methods.update(1, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await intervalInstance.methods.update(1, 1015);
+        let txObject7 = await highOfLastNPriceUpdatesInstance.methods.update(1, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -307,13 +294,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close within bounds (999 - 1001)
-        let txObject8 = await latestPriceInstance.methods.update(1, 999);
+        //Update first indicator state with third value
+        let txObject8 = await latestPriceInstance.methods.update(1, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await intervalInstance.methods.update(1, 999);
+        let txObject9 = await highOfLastNPriceUpdatesInstance.methods.update(1, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -324,22 +311,12 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
-        //Get comparator bounds
-        let previousUpperErrorBound = receiptStatus3.events.Bounds.returnValues.previousUpperBound;
-        let currentLowerErrorBound = receiptStatus3.events.Bounds.returnValues.currentLowerBound;
-        let currentUpperErrorBound = receiptStatus3.events.Bounds.returnValues.currentUpperBound;
-        var temp = [];
-        temp.push(previousUpperErrorBound);
-        temp.push(currentLowerErrorBound);
-        temp.push(currentUpperErrorBound);
-        console.log(temp);
-
         //Get first trading bot trading bot state history
         let history3 = await latestPriceInstance.methods.getHistory(account.address, 1).call();
         console.log(history3);
 
         //Get first trading bot trading bot state history
-        let history4 = await intervalInstance.methods.getValue(account.address, 1).call();
+        let history4 = await highOfLastNPriceUpdatesInstance.methods.getValue(account.address, 1).call();
         console.log(history4);
 
         assert(
@@ -347,13 +324,13 @@ function initContract()
             'Status should be true'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(1, 1002);
+        //Update first indicator state with fourth value
+        let txObject10 = await latestPriceInstance.methods.update(1, 1150);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await intervalInstance.methods.update(1, 1002);
+        let txObject11 = await highOfLastNPriceUpdatesInstance.methods.update(1, 1150);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -373,13 +350,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close below lower bound (999)
-        let txObject12 = await latestPriceInstance.methods.update(1, 998);
+        //Update first indicator state with fifth value
+        let txObject12 = await latestPriceInstance.methods.update(1, 1250);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await intervalInstance.methods.update(1, 998);
+        let txObject13 = await highOfLastNPriceUpdatesInstance.methods.update(1, 1250);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
@@ -395,37 +372,37 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
     
-    it('Latest price falls to interval, second trading bot', async () => {
+    it('Latest price is above high of last N price updates, second trading bot', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await latestPriceInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(1000);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await intervalInstance.methods.addTradingBot(100);
+        let txObject2 = await highOfLastNPriceUpdatesInstance.methods.addTradingBot(2);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, HighOfLastNPriceUpdatesAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await latestPriceInstance.methods.update(0, 1050);
+        let txObject4 = await latestPriceInstance.methods.update(0, 1000);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await intervalInstance.methods.update(0, 1050);
+        let txObject5 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1000);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -441,13 +418,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close above upper bound (1001)
-        let txObject6 = await latestPriceInstance.methods.update(0, 1015);
+        //Update first indicator state with second value
+        let txObject6 = await latestPriceInstance.methods.update(0, 1100);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await intervalInstance.methods.update(0, 1015);
+        let txObject7 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1100);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -463,13 +440,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close within bounds (999 - 1001)
-        let txObject8 = await latestPriceInstance.methods.update(0, 1000);
+        //Update first indicator state with third value
+        let txObject8 = await latestPriceInstance.methods.update(0, 1200);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await intervalInstance.methods.update(0, 1000);
+        let txObject9 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1200);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
 
@@ -480,22 +457,12 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
-        //Get comparator bounds
-        let previousUpperErrorBound = receiptStatus3.events.Bounds.returnValues.previousUpperBound;
-        let currentLowerErrorBound = receiptStatus3.events.Bounds.returnValues.currentLowerBound;
-        let currentUpperErrorBound = receiptStatus3.events.Bounds.returnValues.currentUpperBound;
-        var temp = [];
-        temp.push(previousUpperErrorBound);
-        temp.push(currentLowerErrorBound);
-        temp.push(currentUpperErrorBound);
-        console.log(temp);
-
         //Get first trading bot trading bot state history
         let history3 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
         console.log(history3);
 
         //Get first trading bot trading bot state history
-        let history4 = await intervalInstance.methods.getValue(account.address, 0).call();
+        let history4 = await highOfLastNPriceUpdatesInstance.methods.getValue(account.address, 0).call();
         console.log(history4);
 
         assert(
@@ -503,13 +470,13 @@ function initContract()
             'Status should be true'
         );
 
-        //Update first indicator state with fourth value; close up
-        let txObject10 = await latestPriceInstance.methods.update(0, 1050);
+        //Update first indicator state with fourth value
+        let txObject10 = await latestPriceInstance.methods.update(0, 1150);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await intervalInstance.methods.update(0, 1050);
+        let txObject11 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1150);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
@@ -529,13 +496,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close below lower bound (999)
-        let txObject12 = await latestPriceInstance.methods.update(0, 950);
+        //Update first indicator state with fifth value
+        let txObject12 = await latestPriceInstance.methods.update(0, 1250);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await intervalInstance.methods.update(0, 950);
+        let txObject13 = await highOfLastNPriceUpdatesInstance.methods.update(0, 1250);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
@@ -551,8 +518,8 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
 }

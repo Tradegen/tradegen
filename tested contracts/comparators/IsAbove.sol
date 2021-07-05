@@ -1,18 +1,13 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
-import './interfaces/IComparator.sol';
+import '../interfaces/IIndicator.sol';
+import '../interfaces/IComparator.sol';
 
-import './libraries/SafeMath.sol';
-
-contract FallsTo is IComparator {
-    using SafeMath for uint;
+contract IsAbove is IComparator {
 
     struct State {
         address firstIndicatorAddress;
         address secondIndicatorAddress;
-        uint128 firstIndicatorPreviousValue;
-        uint128 secondIndicatorPreviousValue;
     }
 
     uint public _price;
@@ -58,7 +53,7 @@ contract FallsTo is IComparator {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress, 0, 0));
+        _tradingBotStates[msg.sender].push(State(firstIndicatorAddress, secondIndicatorAddress));
 
         return _tradingBotStates[msg.sender].length - 1;
     }
@@ -80,31 +75,17 @@ contract FallsTo is IComparator {
         uint[] memory firstIndicatorHistory = IIndicator(tradingBotState.firstIndicatorAddress).getValue(msg.sender, firstIndicatorIndex);
         uint[] memory secondIndicatorHistory = IIndicator(tradingBotState.secondIndicatorAddress).getValue(msg.sender, secondIndicatorIndex);
 
-        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0)
+        if (firstIndicatorHistory.length == 0 || secondIndicatorHistory.length == 0 || secondIndicatorHistory[0] == 0)
         {
             emit ConditionStatus(false); //test
 
             return false;
         }
 
-        //first indicator can be within +/- 0.1% of second indicator value and still meet conditions
-        uint previousUpperErrorBound = uint256(tradingBotState.secondIndicatorPreviousValue).mul(1001).div(1000);
-        uint currentLowerErrorBound = secondIndicatorHistory[0].mul(999).div(1000);
-        uint currentUpperErrorBound = secondIndicatorHistory[0].mul(1001).div(1000);
+        emit ConditionStatus(firstIndicatorHistory[0] > secondIndicatorHistory[0]); //test
 
-        bool result = (tradingBotState.firstIndicatorPreviousValue > previousUpperErrorBound)
-                    && (firstIndicatorHistory[0] >= currentLowerErrorBound)
-                    && (firstIndicatorHistory[0] <= currentUpperErrorBound);
-
-        _tradingBotStates[msg.sender][comparatorIndex].firstIndicatorPreviousValue = uint128(firstIndicatorHistory[0]);
-        _tradingBotStates[msg.sender][comparatorIndex].secondIndicatorPreviousValue = uint128(secondIndicatorHistory[0]);
-
-        emit ConditionStatus(result); //test
-        emit Bounds(previousUpperErrorBound, currentLowerErrorBound, currentUpperErrorBound); //test
-
-        return result;
+        return (firstIndicatorHistory[0] > secondIndicatorHistory[0]);
     }
 
     event ConditionStatus(bool status); //test
-    event Bounds(uint previousUpperBound, uint currentLowerBound, uint currentUpperBound); //test
 }
