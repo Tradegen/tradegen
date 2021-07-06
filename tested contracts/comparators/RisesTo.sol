@@ -1,9 +1,9 @@
 pragma solidity >=0.5.0;
 
-import './interfaces/IIndicator.sol';
-import './interfaces/IComparator.sol';
+import '../interfaces/IIndicator.sol';
+import '../interfaces/IComparator.sol';
 
-import './libraries/SafeMath.sol';
+import '../libraries/SafeMath.sol';
 
 contract RisesTo is IComparator {
     using SafeMath for uint;

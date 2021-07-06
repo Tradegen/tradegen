@@ -8,6 +8,8 @@ import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/ITradegen.sol';
+
+//Inheritance
 import './interfaces/IStakingRewards.sol';
 
 contract StakingRewards is IStakingRewards {
