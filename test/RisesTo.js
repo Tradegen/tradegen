@@ -11,21 +11,21 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const RiseByAtMost = require('../build/contracts/RiseByAtMost.json');
-const PreviousNPriceUpdates = require('../build/contracts/PreviousNPriceUpdates.json');
-const NPercent = require('../build/contracts/NPercent.json');
+const RisesTo = require('../build/contracts/RisesTo.json');
+const LatestPrice = require('../build/contracts/LatestPrice.json');
+const Interval = require('../build/contracts/Interval.json');
 
-var contractAddress = "0x22733D222aEf0b160E334c34b404f2eb88513731";
+var contractAddress = "0x46285b7F88C14475a87e9966Fc963F8011DAC77f";
 var ownerAddress = "0xb10199414D158A264e25A5ec06b463c0cD8457Bb";
 
-var PreviousNPriceUpdatesAddress = "0xbef4b42Bd8c7B209F85E13CD4478999Ce6D9AE8A";
-var NPercentAddress = "0x32E9636d372C57f10660776d85DcD1982af5A449";
+var LatestPriceAddress = "0x4A8bDB5A920dA6Af80186192fd6c669794766FCA";
+var IntervalAddress = "0x3047CFcc6ae5D58e98018951884F243cDF71F446";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(RiseByAtMost.abi, contractAddress);
-    let previousNPriceUpdatesInstance = new web3.eth.Contract(PreviousNPriceUpdates.abi, PreviousNPriceUpdatesAddress);
-    let NPercentInstance = new web3.eth.Contract(NPercent.abi, NPercentAddress);
+    let instance = new web3.eth.Contract(RisesTo.abi, contractAddress);
+    let latestPriceInstance = new web3.eth.Contract(LatestPrice.abi, LatestPriceAddress);
+    let intervalInstance = new web3.eth.Contract(Interval.abi, IntervalAddress);
 
     it('Price and developer are initialized correctly', async () => {
         let data = await instance.methods.getPriceAndDeveloper().call();
@@ -85,32 +85,32 @@ function initContract()
         }
     });
     
-    it('Previous N price updates rise by at most N percent, first trading bot', async () => {
+    it('Latest price rises to interval, first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await previousNPriceUpdatesInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(2);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await NPercentInstance.methods.addTradingBot(10);
+        let txObject2 = await intervalInstance.methods.addTradingBot(100);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(PreviousNPriceUpdatesAddress, NPercentAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await previousNPriceUpdatesInstance.methods.update(0, 1000);
+        let txObject4 = await latestPriceInstance.methods.update(0, 990);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await NPercentInstance.methods.update(0, 1000);
+        let txObject5 = await intervalInstance.methods.update(0, 990);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -126,13 +126,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1050);
+        //Update first indicator state with second value; close below lower bound (999)
+        let txObject6 = await latestPriceInstance.methods.update(0, 995);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(0, 1050);
+        let txObject7 = await intervalInstance.methods.update(0, 995);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -148,19 +148,15 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1150);
+        //Update first indicator state with third value; close within bounds (999 - 1001)
+        let txObject8 = await latestPriceInstance.methods.update(0, 1000);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(0, 1150);
+        let txObject9 = await intervalInstance.methods.update(0, 1000);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
-
-        //Get first trading bot trading bot state history
-        let history3 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
-        console.log(history3);
 
         //Get comparator status
         let status3 = await instance.methods.checkConditions(0, 0, 0);
@@ -169,28 +165,32 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
+        //Get first trading bot trading bot state history
+        let history3 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
+        console.log(history3);
+
+        //Get first trading bot trading bot state history
+        let history4 = await intervalInstance.methods.getValue(account.address, 0).call();
+        console.log(history4);
+
         assert(
-            !result3,
-            'Status should be false'
+            result3,
+            'Status should be true'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1140);
+        let txObject10 = await latestPriceInstance.methods.update(0, 950);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 1140);
+        let txObject11 = await intervalInstance.methods.update(0, 950);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
+        let history = await latestPriceInstance.methods.getHistory(account.address, 0).call();
         console.log(history);
-
-        //Get first trading bot trading bot state history
-        let history2 = await NPercentInstance.methods.getHistory(account.address, 0).call();
-        console.log(history2);
 
         //Get comparator status
         let status4 = await instance.methods.checkConditions(0, 0, 0);
@@ -200,23 +200,23 @@ function initContract()
         console.log(result4);
 
         assert(
-            result4,
-            'Status should be true'
+            !result4,
+            'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close down
-        let txObject12 = await previousNPriceUpdatesInstance.methods.update(0, 1040);
+        //Update first indicator state with fifth value; close within upper bound (1001)
+        let txObject12 = await latestPriceInstance.methods.update(0, 1001);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await NPercentInstance.methods.update(0, 1040);
+        let txObject13 = await intervalInstance.methods.update(0, 1001);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
-        console.log(history5);
+        let history2 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
+        console.log(history2);
 
         //Get comparator status
         let status5 = await instance.methods.checkConditions(0, 0, 0);
@@ -226,37 +226,37 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
     
-    it('Previous N price updates rise by at most N percent, second instance of first trading bot', async () => {
+    it('Latest price rises to interval, second instance of first trading bot', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await previousNPriceUpdatesInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(2);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await NPercentInstance.methods.addTradingBot(10);
+        let txObject2 = await intervalInstance.methods.addTradingBot(100);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(PreviousNPriceUpdatesAddress, NPercentAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await previousNPriceUpdatesInstance.methods.update(1, 1000);
+        let txObject4 = await latestPriceInstance.methods.update(1, 990);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await NPercentInstance.methods.update(1, 1000);
+        let txObject5 = await intervalInstance.methods.update(1, 990);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -272,13 +272,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(1, 1050);
+        //Update first indicator state with second value; close below lower bound (999)
+        let txObject6 = await latestPriceInstance.methods.update(1, 995);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(1, 1050);
+        let txObject7 = await intervalInstance.methods.update(1, 995);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -294,19 +294,15 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(1, 1150);
+        //Update first indicator state with third value; close within bounds (999 - 1001)
+        let txObject8 = await latestPriceInstance.methods.update(1, 1000);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(1, 1150);
+        let txObject9 = await intervalInstance.methods.update(1, 1000);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
-
-        //Get first trading bot trading bot state history
-        let history3 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 1).call();
-        console.log(history3);
 
         //Get comparator status
         let status3 = await instance.methods.checkConditions(1, 1, 1);
@@ -315,28 +311,32 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
+        //Get first trading bot trading bot state history
+        let history3 = await latestPriceInstance.methods.getHistory(account.address, 1).call();
+        console.log(history3);
+
+        //Get first trading bot trading bot state history
+        let history4 = await intervalInstance.methods.getValue(account.address, 1).call();
+        console.log(history4);
+
         assert(
-            !result3,
-            'Status should be false'
+            result3,
+            'Status should be true'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(1, 1140);
+        let txObject10 = await latestPriceInstance.methods.update(1, 950);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(1, 1140);
+        let txObject11 = await intervalInstance.methods.update(1, 950);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 1).call();
+        let history = await latestPriceInstance.methods.getHistory(account.address, 1).call();
         console.log(history);
-
-        //Get first trading bot trading bot state history
-        let history2 = await NPercentInstance.methods.getHistory(account.address, 1).call();
-        console.log(history2);
 
         //Get comparator status
         let status4 = await instance.methods.checkConditions(1, 1, 1);
@@ -346,23 +346,23 @@ function initContract()
         console.log(result4);
 
         assert(
-            result4,
-            'Status should be true'
+            !result4,
+            'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close down
-        let txObject12 = await previousNPriceUpdatesInstance.methods.update(1, 1040);
+        //Update first indicator state with fifth value; close within upper bound (1001)
+        let txObject12 = await latestPriceInstance.methods.update(1, 1001);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await NPercentInstance.methods.update(1, 1040);
+        let txObject13 = await intervalInstance.methods.update(1, 1001);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 1).call();
-        console.log(history5);
+        let history2 = await latestPriceInstance.methods.getHistory(account.address, 1).call();
+        console.log(history2);
 
         //Get comparator status
         let status5 = await instance.methods.checkConditions(1, 1, 1);
@@ -372,37 +372,37 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
     
-    it('Previous N price updates rise by at most N percent, second trading bot', async () => {
+    it('Latest price rises to interval, second trading bot', async () => {
         let account = await getAccount3();
         kit.connection.addAccount(account.privateKey);
 
         //Add trading bot to first indicator
-        let txObject = await previousNPriceUpdatesInstance.methods.addTradingBot(2);
+        let txObject = await latestPriceInstance.methods.addTradingBot(2);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address });
         let receipt = await tx.waitReceipt();
 
         //Add trading bot to second indicator
-        let txObject2 = await NPercentInstance.methods.addTradingBot(10);
+        let txObject2 = await intervalInstance.methods.addTradingBot(100);
         let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address });
         let receipt2 = await tx2.waitReceipt();
 
         //Add trading bot to comparator
-        let txObject3 = await instance.methods.addTradingBot(PreviousNPriceUpdatesAddress, NPercentAddress);
+        let txObject3 = await instance.methods.addTradingBot(LatestPriceAddress, IntervalAddress);
         let tx3 = await kit.sendTransactionObject(txObject3, { from: account.address });
         let receipt3 = await tx3.waitReceipt();
 
         //Update first indicator state with first value
-        let txObject4 = await previousNPriceUpdatesInstance.methods.update(0, 1000);
+        let txObject4 = await latestPriceInstance.methods.update(0, 990);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address });
         let receipt4 = await tx4.waitReceipt();
 
         //Update second indicator state with first value
-        let txObject5 = await NPercentInstance.methods.update(0, 1000);
+        let txObject5 = await intervalInstance.methods.update(0, 990);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address });
         let receipt5 = await tx5.waitReceipt();
 
@@ -418,13 +418,13 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with second value; close up
-        let txObject6 = await previousNPriceUpdatesInstance.methods.update(0, 1050);
+        //Update first indicator state with second value; close below lower bound (999)
+        let txObject6 = await latestPriceInstance.methods.update(0, 995);
         let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address });
         let receipt6 = await tx6.waitReceipt();
 
         //Update second indicator state with second value
-        let txObject7 = await NPercentInstance.methods.update(0, 1050);
+        let txObject7 = await intervalInstance.methods.update(0, 995);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address });
         let receipt7 = await tx7.waitReceipt();
 
@@ -440,19 +440,15 @@ function initContract()
             'Status should be false'
         );
 
-        //Update first indicator state with third value; close up
-        let txObject8 = await previousNPriceUpdatesInstance.methods.update(0, 1150);
+        //Update first indicator state with third value; close within bounds (999 - 1001)
+        let txObject8 = await latestPriceInstance.methods.update(0, 1000);
         let tx8 = await kit.sendTransactionObject(txObject8, { from: account.address });
         let receipt8 = await tx8.waitReceipt();
 
         //Update second indicator state with third value
-        let txObject9 = await NPercentInstance.methods.update(0, 1150);
+        let txObject9 = await intervalInstance.methods.update(0, 1000);
         let tx9 = await kit.sendTransactionObject(txObject9, { from: account.address });
         let receipt9 = await tx9.waitReceipt();
-
-        //Get first trading bot trading bot state history
-        let history3 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
-        console.log(history3);
 
         //Get comparator status
         let status3 = await instance.methods.checkConditions(0, 0, 0);
@@ -461,28 +457,32 @@ function initContract()
         let result3 = receiptStatus3.events.ConditionStatus.returnValues.status;
         console.log(result3);
 
+        //Get first trading bot trading bot state history
+        let history3 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
+        console.log(history3);
+
+        //Get first trading bot trading bot state history
+        let history4 = await intervalInstance.methods.getValue(account.address, 0).call();
+        console.log(history4);
+
         assert(
-            !result3,
-            'Status should be false'
+            result3,
+            'Status should be true'
         );
 
         //Update first indicator state with fourth value; close down
-        let txObject10 = await previousNPriceUpdatesInstance.methods.update(0, 1140);
+        let txObject10 = await latestPriceInstance.methods.update(0, 950);
         let tx10 = await kit.sendTransactionObject(txObject10, { from: account.address });
         let receipt10 = await tx10.waitReceipt();
 
         //Update second indicator state with fourth value
-        let txObject11 = await NPercentInstance.methods.update(0, 1140);
+        let txObject11 = await intervalInstance.methods.update(0, 950);
         let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address });
         let receipt11 = await tx11.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
+        let history = await latestPriceInstance.methods.getHistory(account.address, 0).call();
         console.log(history);
-
-        //Get first trading bot trading bot state history
-        let history2 = await NPercentInstance.methods.getHistory(account.address, 0).call();
-        console.log(history2);
 
         //Get comparator status
         let status4 = await instance.methods.checkConditions(0, 0, 0);
@@ -492,23 +492,23 @@ function initContract()
         console.log(result4);
 
         assert(
-            result4,
-            'Status should be true'
+            !result4,
+            'Status should be false'
         );
 
-        //Update first indicator state with fifth value; close down
-        let txObject12 = await previousNPriceUpdatesInstance.methods.update(0, 1040);
+        //Update first indicator state with fifth value; close within upper bound (1001)
+        let txObject12 = await latestPriceInstance.methods.update(0, 1001);
         let tx12 = await kit.sendTransactionObject(txObject12, { from: account.address });
         let receipt12 = await tx12.waitReceipt();
 
         //Update second indicator state with fifth value
-        let txObject13 = await NPercentInstance.methods.update(0, 1040);
+        let txObject13 = await intervalInstance.methods.update(0, 1001);
         let tx13 = await kit.sendTransactionObject(txObject13, { from: account.address });
         let receipt13 = await tx13.waitReceipt();
 
         //Get first trading bot trading bot state history
-        let history5 = await previousNPriceUpdatesInstance.methods.getHistory(account.address, 0).call();
-        console.log(history5);
+        let history2 = await latestPriceInstance.methods.getHistory(account.address, 0).call();
+        console.log(history2);
 
         //Get comparator status
         let status5 = await instance.methods.checkConditions(0, 0, 0);
@@ -518,8 +518,8 @@ function initContract()
         console.log(result5);
 
         assert(
-            !result5,
-            'Status should be false'
+            result5,
+            'Status should be true'
         );
     });
 }
