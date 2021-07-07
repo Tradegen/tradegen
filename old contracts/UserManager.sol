@@ -1,14 +1,10 @@
 pragma solidity >=0.5.0;
 
-//Interfaces
-import './interfaces/IComponents.sol';
-
+//Inheritance
 import './Components.sol';
 import './AddressResolver.sol';
 
-contract UserManager is AddressResolver {
-
-    IComponents public immutable COMPONENTS;
+contract UserManager is Components, AddressResolver {
 
     struct User {
         uint memberSinceTimestamp;
@@ -19,7 +15,6 @@ contract UserManager is AddressResolver {
     mapping (string => address) public usernames;
 
     constructor(IComponents components) public {
-        COMPONENTS = components;
     }
 
     /* ========== VIEWS ========== */
@@ -65,7 +60,7 @@ contract UserManager is AddressResolver {
         users[msg.sender] = User(block.timestamp, defaultRandomUsername);
 
         //Adds default indicators and comparators to the user
-        COMPONENTS._addDefaultComponentsToUser(msg.sender);
+        _addDefaultComponentsToUser(msg.sender);
 
         emit RegisteredUser(msg.sender, block.timestamp);
     }
