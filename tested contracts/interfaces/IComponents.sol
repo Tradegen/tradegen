@@ -46,14 +46,14 @@ interface IComponents {
     * @param user Address of the user
     * @return uint[] The index in indicators array of each indicator the user purchased
     */
-    function getUserPurchasedIndicators(address user) external view returns (uint[] memory);
+    function getUserPurchasedIndicators(address user) external view returns (address[] memory);
 
     /**
     * @dev Returns index of each comparator the user purchased
     * @param user Address of the user
     * @return uint[] The index in comparators array of each comparator the user purchased
     */
-    function getUserPurchasedComparators(address user) external view returns (uint[] memory);
+    function getUserPurchasedComparators(address user) external view returns (address[] memory);
 
     /**
     * @dev Checks whether the user purchased the given indicator

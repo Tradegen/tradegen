@@ -1,10 +1,6 @@
 pragma solidity >=0.5.0;
 
-//Inheritance
-import './Components.sol';
-import './AddressResolver.sol';
-
-contract UserManager is Components, AddressResolver {
+contract UserManager {
 
     struct User {
         uint memberSinceTimestamp;
@@ -14,8 +10,7 @@ contract UserManager is Components, AddressResolver {
     mapping (address => User) public users;
     mapping (string => address) public usernames;
 
-    constructor(IERC20 baseTradegenAddress) Components(baseTradegenAddress) public {
-    }
+    constructor() public {}
 
     /* ========== VIEWS ========== */
 
@@ -58,9 +53,6 @@ contract UserManager is Components, AddressResolver {
 
         usernames[defaultRandomUsername] = msg.sender;
         users[msg.sender] = User(block.timestamp, defaultRandomUsername);
-
-        //Adds default indicators and comparators to the user
-        _addDefaultComponentsToUser(msg.sender);
 
         emit RegisteredUser(msg.sender, block.timestamp);
     }

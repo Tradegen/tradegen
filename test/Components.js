@@ -12,8 +12,10 @@ const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
 const Components = require('../build/contracts/Components.json');
+const TradegenERC20 = require('../build/contracts/TradegenERC20.json');
 
-var contractAddress = "0x4141aFe307F33Ae209f875DA3a12F4582CB1534C";
+var contractAddress = "0x1bA2768b32e882E439FBAAa8D1C0E1eD55f7C799";
+var tradegenContractAddress = "0xb79d64d9Acc251b04A3Ca9f811EFf49Bde52BbbC";
 var tempContractAddress = "0x79F1f525E6b3c2949F83DDB5D685237e3B352D54"; //doesn't point to contract
 var testIndicatorAddress = "0xd97870cB0a9C8f614a3B74FfD9e3E93BeCca7ac3";
 var testComparatorAddress = "0x9a3DDe7C4bC45D773654E24e141036A621eF8BF8";
@@ -47,6 +49,7 @@ const risesToAddress = "0x12E0a215e7d4b62e9205A3C72C4E55bc27085A07";
 function initContract()
 { 
     let instance = new web3.eth.Contract(Components.abi, contractAddress);
+    let tradegenInstance = new web3.eth.Contract(TradegenERC20.abi, tradegenContractAddress);
     
     it('Add default indicators from owner', async () => {
         let account = await getAccount();
@@ -252,7 +255,7 @@ function initContract()
             'Eleventh address should be Up'
         );
     });
-
+    
     it('Add default comparators from owner', async () => {
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
@@ -364,7 +367,7 @@ function initContract()
             'Eleventh element in default comparators should be RisesTo'
         );
     });
-
+    
     it('Get default comparators by index', async () => {
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
@@ -464,7 +467,7 @@ function initContract()
 
         try 
         {
-            let txObject = await instance.methods._addNewIndicator(true, tempContractAddress);
+            let txObject = await instance.methods._addNewIndicator(true, testIndicatorAddress);
             let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
             let receipt = await tx.waitReceipt()
 
@@ -481,14 +484,14 @@ function initContract()
             console.log(err);
         }
     });
-
+    
     it('Add default comparator from different account', async () => {
         let account = await getAccount2();
         kit.connection.addAccount(account.privateKey);
 
         try 
         {
-            let txObject = await instance.methods._addNewComparator(true, tempContractAddress);
+            let txObject = await instance.methods._addNewComparator(true, testComparatorAddress);
             let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
             let receipt = await tx.waitReceipt()
 
@@ -534,8 +537,16 @@ function initContract()
             firstAddress == testIndicatorAddress,
             'First address should be TestIndicator'
         );
-    });
 
+        let result = await instance.methods.checkIfUserPurchasedIndicator(account.address, 0).call();
+        console.log(result);
+
+        assert(
+            result,
+            'Developer should have TestIndicator as purchased indicator'
+        );
+    });
+    
     it('Add non-default comparator from owner', async () => {
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
@@ -563,6 +574,285 @@ function initContract()
         assert(
             firstAddress == testComparatorAddress,
             'First address should be TestComparator'
+        );
+
+        let result = await instance.methods.checkIfUserPurchasedComparator(account.address, 0).call();
+        console.log(result);
+
+        assert(
+            result,
+            'Developer should have TestComparator as purchased comparator'
+        );
+    });
+    
+    it('Buy indicator from developer', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        try 
+        {
+            let txObject = await instance.methods.buyIndicator(testIndicatorAddress);
+            let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+            let receipt = await tx.waitReceipt()
+
+            let data = await instance.methods.getUserPurchasedIndicators(account.address).call();
+            console.log(data);
+
+            assert(
+                data.length == 12,
+                'There should be 12 purchased indicators'
+            );
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    });
+    
+    it('Buy comparator from developer', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        try 
+        {
+            let txObject = await instance.methods.buyComparator(testComparatorAddress);
+            let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+            let receipt = await tx.waitReceipt()
+
+            let data = await instance.methods.getUserPurchasedComparator(account.address).call();
+            console.log(data);
+
+            assert(
+                data.length == 12,
+                'There should be 12 purchased comparators'
+            );
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+    });
+    
+    it('Get user purchased indicators', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let purchasedIndicators = await instance.methods.getUserPurchasedIndicators(account.address).call();
+        console.log(purchasedIndicators);
+
+        assert(
+            purchasedIndicators.length == 12,
+            'There should be 12 purchased indicators'
+        );
+
+        assert(
+            purchasedIndicators[0] == downAddress,
+            'First indicator should be Down'
+        );
+
+        assert(
+            purchasedIndicators[1] == EMAAddress,
+            'Second indicator should be EMA'
+        );
+
+        assert(
+            purchasedIndicators[2] == highOfLastNPriceUpdatesAddress,
+            'Third indicator should be HighOfLastNPriceUpdates'
+        );
+
+        assert(
+            purchasedIndicators[3] == intervalAddress,
+            'Fourth indicator should be Interval'
+        );
+
+        assert(
+            purchasedIndicators[4] == latestPriceAddress,
+            'Fifth indicator should be LatestPrice'
+        );
+
+        assert(
+            purchasedIndicators[5] == lowOfLastNPriceUpdatesAddress,
+            'Sixth indicator should be LowOfLastNPriceUpdates'
+        );
+
+        assert(
+            purchasedIndicators[6] == NPercentAddress,
+            'Seventh indicator should be NPercent'
+        );
+
+        assert(
+            purchasedIndicators[7] == NthPriceUpdateAddress,
+            'Eighth indicator should be NthPriceUpdate'
+        );
+
+        assert(
+            purchasedIndicators[8] == previousNPriceUpdatesAddress,
+            'Ninth indicator should be PreviousNPriceUpdates'
+        );
+
+        assert(
+            purchasedIndicators[9] == SMAAddress,
+            'Tenth indicator should be SMA'
+        );
+
+        assert(
+            purchasedIndicators[10] == upAddress,
+            'Eleventh indicator should be Up'
+        );
+
+        assert(
+            purchasedIndicators[11] == testIndicatorAddress,
+            'Last indicator should be TestIndicator'
+        );
+    });
+    
+    it('Get user purchased comparators', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let purchasedComparators = await instance.methods.getUserPurchasedComparators(account.address).call();
+        console.log(purchasedComparators);
+
+        assert(
+            purchasedComparators.length == 12,
+            'There should be 12 purchased comparators'
+        );
+
+        assert(
+            purchasedComparators[0] == closesAddress,
+            'First comparator should be Closes'
+        );
+
+        assert(
+            purchasedComparators[1] == crossesAboveAddress,
+            'Second comparator should be CrossesAbove'
+        );
+
+        assert(
+            purchasedComparators[2] == crossesBelowAddress,
+            'Third comparator should be CrossesBelow'
+        );
+
+        assert(
+            purchasedComparators[3] == fallByAtLeastAddress,
+            'Fourth comparator should be FallByAtLeast'
+        );
+
+        assert(
+            purchasedComparators[4] == fallByAtMostAddress,
+            'Fifth comparator should be FallByAtMost'
+        );
+
+        assert(
+            purchasedComparators[5] == fallsToAddress,
+            'Sixth comparator should be FallsTo'
+        );
+
+        assert(
+            purchasedComparators[6] == isAboveAddress,
+            'Seventh comparator should be IsAbove'
+        );
+
+        assert(
+            purchasedComparators[7] == isBelowAddress,
+            'Eighth comparator should be IsBelow'
+        );
+
+        assert(
+            purchasedComparators[8] == riseByAtLeastAddress,
+            'Ninth comparator should be RiseByAtLeast'
+        );
+
+        assert(
+            purchasedComparators[9] == riseByAtMostAddress,
+            'Tenth comparator should be RiseByAtMost'
+        );
+
+        assert(
+            purchasedComparators[10] == risesToAddress,
+            'Eleventh comparator should be RisesTo'
+        );
+
+        assert(
+            purchasedComparators[11] == testComparatorAddress,
+            'Last comparator should be TestComparator'
+        );
+    });
+    
+    it('Buy indicator from non-developer', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let account2 = await getAccount2();
+        kit.connection.addAccount(account2.privateKey);
+        
+        //Transfer TGEN to user to pay for indicator
+        let txObject = await tradegenInstance.methods.transfer(account2.address, 100);
+        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+        let receipt = await tx.waitReceipt();
+
+        let txObject2 = await tradegenInstance.methods.approve(account.address, 10); //TestIndicator price is 10 TGEN
+        let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address }); 
+        let receipt2 = await tx2.waitReceipt();
+
+        let txObject3 = await instance.methods.buyIndicator(testIndicatorAddress);
+        let tx3 = await kit.sendTransactionObject(txObject3, { from: account2.address }); 
+        let receipt3 = await tx3.waitReceipt();
+
+        let data = await instance.methods.getUserPurchasedIndicators(account2.address).call();
+        console.log(data);
+
+        assert(
+            data.length == 12,
+            'There should be 12 purchased indicators'
+        );
+        
+        let result = await instance.methods.checkIfUserPurchasedIndicator(account2.address, 0).call();
+        console.log(result);
+
+        assert(
+            result,
+            'User should have TestIndicator as purchased indicator'
+        );
+    });
+    
+    it('Buy comparator from non-developer', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let account2 = await getAccount2();
+        kit.connection.addAccount(account2.privateKey);
+
+        //Transfer TGEN to user to pay for comparator
+        let txObject = await tradegenInstance.methods.transfer(account2.address, 100);
+        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+        let receipt = await tx.waitReceipt();
+        console.log("!!!!!!!!");
+
+        let txObject2 = await tradegenInstance.methods.approve(account.address, 10); //TestComparator price is 10 TGEN
+        let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address }); 
+        let receipt2 = await tx2.waitReceipt();
+        console.log("????????????");
+
+        let txObject3 = await instance.methods.buyComparator(testComparatorAddress);
+        let tx3 = await kit.sendTransactionObject(txObject3, { from: account2.address }); 
+        let receipt3 = await tx3.waitReceipt();
+        console.log("18929487");
+
+        let data = await instance.methods.getUserPurchasedComparators(account2.address).call();
+        console.log(data);
+
+        assert(
+            data.length == 12,
+            'There should be 12 purchased comparators'
+        );
+
+        let result = await instance.methods.checkIfUserPurchasedComparator(account2.address, 0).call();
+        console.log(result);
+
+        assert(
+            result,
+            'User should have TestComparator as purchased comparator'
         );
     });
 }
