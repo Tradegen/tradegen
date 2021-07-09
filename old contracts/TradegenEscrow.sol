@@ -2,6 +2,7 @@ pragma solidity >=0.5.0;
 
 // Inheritance
 import "./Ownable.sol";
+import "./interfaces/ITradegenEscrow.sol";
 
 // Libraires
 import "./libraries/SafeMath.sol";
@@ -9,7 +10,7 @@ import "./libraries/SafeMath.sol";
 // Internal references
 import "./interfaces/IERC20.sol";
 
-contract TradegenEscrow is Ownable{
+contract TradegenEscrow is Ownable, ITradegenEscrow {
     using SafeMath for uint;
 
     IERC20 public TRADEGEN;
@@ -18,7 +19,7 @@ contract TradegenEscrow is Ownable{
      * These are the times at which each given quantity of TGEN vests. */
     mapping(address => uint[2][]) public vestingSchedules;
 
-    /* An account's total vested TGEN balance to save recomputing this for fee extraction purposes. */
+    /* An account's total vested TGEN balance to save recomputing this */
     mapping(address => uint) public totalVestedAccountBalance;
 
     /* The total remaining vested balance, for verifying the actual Tradegen balance of this contract against. */
@@ -41,14 +42,14 @@ contract TradegenEscrow is Ownable{
     /**
      * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
      */
-    function balanceOf(address account) public view returns (uint) {
+    function balanceOf(address account) public view override returns (uint) {
         return totalVestedAccountBalance[account];
     }
 
     /**
      * @notice The number of vesting dates in an account's schedule.
      */
-    function numVestingEntries(address account) public view returns (uint) {
+    function numVestingEntries(address account) public view override returns (uint) {
         return vestingSchedules[account].length;
     }
 
@@ -56,28 +57,28 @@ contract TradegenEscrow is Ownable{
      * @notice Get a particular schedule entry for an account.
      * @return A pair of uints: (timestamp, TGEN quantity).
      */
-    function getVestingScheduleEntry(address account, uint index) public view returns (uint[2] memory) {
+    function getVestingScheduleEntry(address account, uint index) public view override returns (uint[2] memory) {
         return vestingSchedules[account][index];
     }
 
     /**
      * @notice Get the time at which a given schedule entry will vest.
      */
-    function getVestingTime(address account, uint index) public view returns (uint) {
+    function getVestingTime(address account, uint index) public view override returns (uint) {
         return getVestingScheduleEntry(account, index)[TIME_INDEX];
     }
 
     /**
      * @notice Get the quantity of TGEN associated with a given schedule entry.
      */
-    function getVestingQuantity(address account, uint index) public view returns (uint) {
+    function getVestingQuantity(address account, uint index) public view override returns (uint) {
         return getVestingScheduleEntry(account, index)[QUANTITY_INDEX];
     }
 
     /**
      * @notice Obtain the index of the next schedule entry that will vest for a given user.
      */
-    function getNextVestingIndex(address account) public view returns (uint) {
+    function getNextVestingIndex(address account) public view override returns (uint) {
         uint len = numVestingEntries(account);
 
         for (uint i = 0; i < len; i++)
@@ -94,7 +95,7 @@ contract TradegenEscrow is Ownable{
     /**
      * @notice Obtain the next schedule entry that will vest for a given user.
      * @return A pair of uints: (timestamp, TGEN quantity). */
-    function getNextVestingEntry(address account) public view returns (uint[2] memory) {
+    function getNextVestingEntry(address account) public view override returns (uint[2] memory) {
         uint index = getNextVestingIndex(account);
         if (index == numVestingEntries(account))
         {
@@ -107,14 +108,14 @@ contract TradegenEscrow is Ownable{
     /**
      * @notice Obtain the time at which the next schedule entry will vest for a given user.
      */
-    function getNextVestingTime(address account) external view returns (uint) {
+    function getNextVestingTime(address account) external view override returns (uint) {
         return getNextVestingEntry(account)[TIME_INDEX];
     }
 
     /**
      * @notice Obtain the quantity which the next schedule entry will vest for a given user.
      */
-    function getNextVestingQuantity(address account) external view returns (uint) {
+    function getNextVestingQuantity(address account) external view override returns (uint) {
         return getNextVestingEntry(account)[QUANTITY_INDEX];
     }
 
@@ -197,7 +198,7 @@ contract TradegenEscrow is Ownable{
     /**
      * @notice Allow a user to withdraw any TGEN in their schedule that have vested.
      */
-    function vest() external {
+    function vest() external override {
         uint numEntries = numVestingEntries(msg.sender);
         uint total;
 
