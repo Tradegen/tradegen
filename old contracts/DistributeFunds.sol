@@ -10,7 +10,7 @@ import "./interfaces/ITradegenEscrow.sol";
 // Libraires
 import "./libraries/SafeMath.sol";
 
-contract TradegenEscrow is Ownable {
+contract DistributeFunds is Ownable {
     using SafeMath for uint;
 
     IERC20 public TRADEGEN;
