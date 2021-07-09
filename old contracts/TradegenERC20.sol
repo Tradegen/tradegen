@@ -15,7 +15,6 @@ contract TradegenERC20 is IERC20 {
     mapping(address => uint) public override balanceOf;
     mapping(address => mapping(address => uint)) public override allowance;
 
-
     constructor() public {
         uint initialSupply = 1000000000; // 1 billion tokens minted initially
         initialSupply = initialSupply.mul(10 ** decimals); // convert initial supply to support 18 decimals
