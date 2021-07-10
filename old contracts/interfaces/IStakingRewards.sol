@@ -42,4 +42,11 @@ interface IStakingRewards {
     * @dev Wrapper for internal claimStakingRewards() function 
     */
     function claimStakingRewards() external;
+
+    /**
+    * @dev Slashes the user's stake after a dubious vote and transfers the amount to StrategyVotingEscrow contract
+    * @param user Address of the user
+    * @param amount Amount of TGEN to remove from stake
+    */
+    function slashStake(address user, uint amount) external;
 }

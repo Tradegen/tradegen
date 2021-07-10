@@ -11,15 +11,12 @@ import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IComponents.sol';
-import './interfaces/ITradegen.sol';
 import './interfaces/IStakingRewards.sol';
+import './interfaces/IStrategyVotingEscrow.sol';
 
 contract StrategyApproval is AddressResolver, StrategyManager {
 
-    IComponents public immutable COMPONENTS;
-    ISettings public immutable SETTINGS;
-    ITradegen public immutable TRADEGEN;
-    IStakingRewards public immutable STAKING_REWARDS;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     struct UserVote {
         bool decision;
@@ -51,12 +48,10 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     SubmittedStrategy[] public submittedStrategies;
     mapping (address => UserVote[]) public userVoteHistory;
     mapping (address => uint[]) public userSubmittedStrategies;
+    mapping (address => uint) public availableRewards;
 
     constructor(IAddressResolver addressResolver) StrategyManager(addressResolver) public {
-        COMPONENTS = IComponents(addressResolver.getContractAddress("Components"));
-        SETTINGS = ISettings(addressResolver.getContractAddress("Settings"));
-        TRADEGEN = ITradegen(addressResolver.getContractAddress("BaseTradegen"));
-        STAKING_REWARDS = IStakingRewards(addressResolver.getContractAddress("StakingRewards"));
+        ADDRESS_RESOLVER = addressResolver;
     }
 
     /* ========== VIEWS ========== */
@@ -119,8 +114,11 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     * @param exitRules Array of encoded exit rules for the strategy
     */
     function voteForStrategy(uint index, bool decision, uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) external indexIsWithinBounds(index) strategyIsPendingApproval(index) userHasNotVotedYet(msg.sender, index) {
+        address stakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StakingRewards");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+
         require(_checkIfParamsMatch(index, strategyParams, entryRules, exitRules), "Strategy parameters do not match");
-        require(STAKING_REWARDS.balanceOf(msg.sender) >= SETTINGS.getParameterValue("MinimumStakeToVote"), "Not enough staked TGEN to vote");
+        require(IStakingRewards(stakingRewardsAddress).balanceOf(msg.sender) >= ISettings(settingsAddress).getParameterValue("MinimumStakeToVote"), "Not enough staked TGEN to vote");
 
         bool meetsCriteria = _checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, submittedStrategies[index].strategyName, submittedStrategies[index].strategySymbol);
         bool correct = false;
@@ -129,27 +127,51 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         if ((decision && meetsCriteria) || (!decision && !meetsCriteria))
         {
             correct = true;
-            uint votingReward = SETTINGS.getParameterValue("VotingReward");
-            TRADEGEN.sendRewards(msg.sender, votingReward);
-            emit ReceivedReward(msg.sender, index, votingReward, block.timestamp);
+            uint votingReward = ISettings(settingsAddress).getParameterValue("VotingReward");
+            availableRewards[msg.sender] = availableRewards[msg.sender].add(votingReward);
         }
         //Penalize voter
         else
         {
-            uint votingPenalty = SETTINGS.getParameterValue("VotingPenalty");
-            TRADEGEN.sendPenalty(msg.sender, votingPenalty);
-            emit ReceivedPenalty(msg.sender, index, votingPenalty, block.timestamp);
+            uint votingPenalty = ISettings(settingsAddress).getParameterValue("VotingPenalty");
+            
+            if (availableRewards[msg.sender] >= votingPenalty)
+            {
+                availableRewards[msg.sender] = availableRewards[msg.sender].sub(votingPenalty);
+            }
+            else
+            {
+                uint leftover = votingPenalty.sub(availableRewards[msg.sender]);
+                availableRewards[msg.sender] = 0;
+                IStakingRewards(stakingRewardsAddress).slashStake(msg.sender, leftover);
+            }
+
+            emit ReceivedPenalty(msg.sender, votingPenalty, block.timestamp);
         }
 
         submittedStrategies[index].votes.push(StrategyVote(msg.sender, uint32(block.timestamp), decision, correct));
         userVoteHistory[msg.sender].push(UserVote(decision, correct, uint32(block.timestamp), uint32(index)));
 
-        if (submittedStrategies[index].votes.length == SETTINGS.getParameterValue("VoteLimit"))
+        if (submittedStrategies[index].votes.length == ISettings(settingsAddress).getParameterValue("VoteLimit"))
         {
             _processVotes(index);
         }
 
         emit VotedForStrategy(msg.sender, index, decision, block.timestamp);
+    }
+
+    /**
+    * @dev Claims available rewards for the user
+    */
+    function claimRewards() public {
+        require(availableRewards[msg.sender] > 0, "No rewards available");
+
+        uint amount = availableRewards[msg.sender];
+        address strategyVotingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("StrategyVotingEscrow");
+        availableRewards[msg.sender] = 0;
+        IStrategyVotingEscrow(strategyVotingEscrowAddress).claimRewards(msg.sender, amount);
+
+        emit ReceivedReward(msg.sender, amount, block.timestamp);
     }
 
     /**
@@ -160,6 +182,8 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     */
     function _checkIfUserPurchasedComponents(uint[] memory entryRules, uint[] memory exitRules) public view returns (bool)
     {
+        address componentsAddress = ADDRESS_RESOLVER.getContractAddress("Components");
+
         //Bounded by maximum number of entry rules (in Settings contract)
         for (uint i = 0; i < entryRules.length; i++)
         {
@@ -167,17 +191,17 @@ contract StrategyApproval is AddressResolver, StrategyManager {
             uint firstIndicator = (entryRules[i] << 160) >> 248;
             uint secondIndicator = (entryRules[i] << 168) >> 248;
 
-            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
             {
                 return false;
             }
 
-            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
             {
                 return false;
             }
 
-            if (!COMPONENTS.checkIfUserPurchasedComparator(msg.sender, comparator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedComparator(msg.sender, comparator))
             {
                 return false;
             }
@@ -190,17 +214,17 @@ contract StrategyApproval is AddressResolver, StrategyManager {
             uint firstIndicator = (exitRules[i] << 160) >> 248;
             uint secondIndicator = (exitRules[i] << 168) >> 248;
 
-            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedIndicator(msg.sender, firstIndicator))
             {
                 return false;
             }
 
-            if (!COMPONENTS.checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedIndicator(msg.sender, secondIndicator))
             {
                 return false;
             }
 
-            if (!COMPONENTS.checkIfUserPurchasedComparator(msg.sender, comparator))
+            if (!IComponents(componentsAddress).checkIfUserPurchasedComparator(msg.sender, comparator))
             {
                 return false;
             }
@@ -243,7 +267,9 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         uint profitTarget = (strategyParams << 224) >> 240;
         uint stopLoss = (strategyParams << 240) >> 240;
 
-        return (SETTINGS.getCurrencyKeyFromIndex(symbol) != address(0) && 
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+
+        return (ISettings(settingsAddress).getCurrencyKeyFromIndex(symbol) != address(0) && 
                 entryRules.length <= SETTINGS.getParameterValue("MaximumNumberOfEntryRules") &&
                 exitRules.length <= SETTINGS.getParameterValue("MaximumNumberOfExitRules") &&
                 bytes(strategyName).length > 0 &&
@@ -316,8 +342,9 @@ contract StrategyApproval is AddressResolver, StrategyManager {
         }
 
         submittedStrategies[index].pendingApproval = false;
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
 
-        if (numberOfCorrectVotes >= SETTINGS.getParameterValue("StrategyApprovalThreshold"))
+        if (numberOfCorrectVotes >= ISettings(settingsAddress).getParameterValue("StrategyApprovalThreshold"))
         {
             submittedStrategies[index].status = true;
             _publishStrategy(strategy.strategyName, strategy.strategySymbol, strategy.submittedParams, strategy.entryRules, strategy.exitRules, strategy.developer);
@@ -366,6 +393,6 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     event VotedForStrategy(address indexed user, uint index, bool decision, uint timestamp);
     event ApprovedStrategy(uint index, uint timestamp);
     event RejectedStrategy(uint index, uint timestamp);
-    event ReceivedReward(address indexed user, uint index, uint amount, uint timestamp);
-    event ReceivedPenalty(address indexed user, uint index, uint amount, uint timestamp);
+    event ReceivedReward(address indexed user, uint amount, uint timestamp);
+    event ReceivedPenalty(address indexed user, uint amount, uint timestamp);
 }
