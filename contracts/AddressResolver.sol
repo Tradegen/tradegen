@@ -24,6 +24,8 @@ contract AddressResolver is IAddressResolver, Ownable {
     * @return address The address associated with the given contract name
     */
     function getContractAddress(string memory contractName) public view override returns(address) {
+        require (contractAddresses[contractName] != address(0), "AddressResolver: contract not found");
+        
         return contractAddresses[contractName];
     }
 
