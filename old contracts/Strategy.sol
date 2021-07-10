@@ -30,7 +30,7 @@ contract Strategy is IStrategyToken {
 
     //Custom token state variables
     uint public maxPoolSize;
-    uint public tokenPrice;
+    uint public override tokenPrice;
     uint public circulatingSupply;
 
     mapping(address => uint) public balanceOf;

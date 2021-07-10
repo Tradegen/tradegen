@@ -13,6 +13,7 @@ import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ITradingBotRewards.sol';
 import './interfaces/ISettings.sol';
+import './interfaces/IFeePool.sol';
 
 contract StrategyProxy is Marketplace, StrategyManager {
     using SafeMath for uint;
@@ -75,15 +76,16 @@ contract StrategyProxy is Marketplace, StrategyManager {
     */
     function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) noYieldToClaim(msg.sender, strategyAddress) {
         address tradingBotAddress = IStrategyToken(strategyAddress).getTradingBotAddress();
-        address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+        address feePoolAddress = ADDRESS_RESOLVER.getContractAddress("FeePool");
 
         uint transactionFee = amount.mul(ISettings(settingsAddress).getParameterValue("TransactionFee")).div(1000);
 
         //Deposits cUSD into trading bot and sends transaction fee to strategy's developer; call approve() on frontend before sending transaction
         IERC20(stableCoinAddress).transferFrom(msg.sender, tradingBotAddress, amount);
-        IERC20(stableCoinAddress).transferFrom(msg.sender, developerAddress, transactionFee);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, feePoolAddress, transactionFee);
+        IFeePool(feePoolAddress).addTransactionFees(msg.sender, transactionFee);
 
         //Mint LP tokens for the user
         IStrategyToken(strategyAddress).deposit(msg.sender, amount);
@@ -156,9 +158,9 @@ contract StrategyProxy is Marketplace, StrategyManager {
     function buyPosition(address user, uint marketplaceListingIndex) external {
         (uint advertisedPrice, uint numberOfTokens, address strategyAddress) = getMarketplaceListing(user, marketplaceListingIndex);
 
-        address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+        address feePoolAddress = ADDRESS_RESOLVER.getContractAddress("FeePool");
 
         uint amount = numberOfTokens.mul(advertisedPrice);
         uint transactionFee = amount.mul(ISettings(settingsAddress).getParameterValue("TransactionFee")).div(1000);
@@ -167,7 +169,8 @@ contract StrategyProxy is Marketplace, StrategyManager {
 
         //Transfers cUSD from buyer to seller and sends transaction fee to strategy's developer; call approve() on frontend before sending transaction
         IERC20(stableCoinAddress).transferFrom(msg.sender, user, amount);
-        IERC20(stableCoinAddress).transferFrom(msg.sender, developerAddress, transactionFee);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, feePoolAddress, transactionFee);
+        IFeePool(feePoolAddress).addTransactionFees(msg.sender, transactionFee);
 
         _cancelListing(user, marketplaceListingIndex);
 
