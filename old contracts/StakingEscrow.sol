@@ -14,28 +14,28 @@ import "./interfaces/IAddressResolver.sol";
 contract StakingEscrow is Ownable, IStakingEscrow {
     using SafeMath for uint;
 
-    IERC20 public TRADEGEN;
-    address public stakingRewardsAddress;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     constructor(IAddressResolver _addressResolver) public Ownable() {
-        address tradegenAddress = _addressResolver.getContractAddress("BaseTradegen");
-
-        TRADEGEN = IERC20(tradegenAddress);
-        stakingRewardsAddress = _addressResolver.getContractAddress("StakingRewards");
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
-        require(amount > 0, "No staking rewards to claim");
-        require(TRADEGEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
 
-        TRADEGEN.transfer(user, amount);
+        require(amount > 0, "No staking rewards to claim");
+        require(IERC20(baseTradegenAddress).balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+
+        IERC20(baseTradegenAddress).transfer(user, amount);
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier onlyStakingRewards() {
+        address stakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StakingRewards");
+        
         require(msg.sender == stakingRewardsAddress, "Only the StakingRewards contract can call this function");
         _;
     }

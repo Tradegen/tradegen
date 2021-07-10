@@ -14,28 +14,28 @@ import "./interfaces/IAddressResolver.sol";
 contract PoolRewardsEscrow is Ownable, IPoolRewardsEscrow {
     using SafeMath for uint;
 
-    IERC20 public TRADEGEN;
-    address public poolRewardsAddress;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     constructor(IAddressResolver _addressResolver) public Ownable() {
-        address tradegenAddress = _addressResolver.getContractAddress("BaseTradegen");
-
-        TRADEGEN = IERC20(tradegenAddress);
-        poolRewardsAddress = _addressResolver.getContractAddress("UserPoolFarm");
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function claimPoolRewards(address user, uint amount) public override onlyUserPoolFarm {
-        require(amount > 0, "No pool rewards to claim");
-        require(TRADEGEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
 
-        TRADEGEN.transfer(user, amount);
+        require(amount > 0, "No pool rewards to claim");
+        require(IERC20(baseTradegenAddress).balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+
+        IERC20(baseTradegenAddress).transfer(user, amount);
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier onlyUserPoolFarm() {
+        address poolRewardsAddress = ADDRESS_RESOLVER.getContractAddress("UserPoolFarm");
+
         require(msg.sender == poolRewardsAddress, "Only the UserPoolFarm contract can call this function");
         _;
     }

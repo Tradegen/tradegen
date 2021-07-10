@@ -14,28 +14,28 @@ import "./interfaces/IAddressResolver.sol";
 contract StrategyVotingEscrow is Ownable, IStrategyVotingEscrow {
     using SafeMath for uint;
 
-    IERC20 public TRADEGEN;
-    address public strategyVotingAddress;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     constructor(IAddressResolver _addressResolver) public Ownable() {
-        address tradegenAddress = _addressResolver.getContractAddress("BaseTradegen");
-
-        TRADEGEN = IERC20(tradegenAddress);
-        strategyVotingAddress = _addressResolver.getContractAddress("StrategyApproval");
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function claimRewards(address user, uint amount) public override onlyStrategyApproval {
-        require(amount > 0, "No strategy voting rewards to claim");
-        require(TRADEGEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
 
-        TRADEGEN.transfer(user, amount);
+        require(amount > 0, "No strategy voting rewards to claim");
+        require(IERC20(baseTradegenAddress).balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+
+        IERC20(baseTradegenAddress).transfer(user, amount);
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier onlyStrategyApproval() {
+        address strategyVotingAddress = ADDRESS_RESOLVER.getContractAddress("StrategyApproval");
+        
         require(msg.sender == strategyVotingAddress, "Only the StrategyApproval contract can call this function");
         _;
     }
