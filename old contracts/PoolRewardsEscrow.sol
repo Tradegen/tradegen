@@ -5,29 +5,29 @@ import './libraries/SafeMath.sol';
 
 // Inheritance
 import "./Ownable.sol";
-import './interfaces/IStakingEscrow.sol';
+import './interfaces/IPoolRewardsEscrow.sol';
 
 // Internal references
 import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 
-contract StakingEscrow is Ownable, IStakingEscrow {
+contract PoolRewardsEscrow is Ownable, IPoolRewardsEscrow {
     using SafeMath for uint;
 
     IERC20 public TRADEGEN;
-    address public stakingRewardsAddress;
+    address public poolRewardsAddress;
 
     constructor(IAddressResolver _addressResolver) public Ownable() {
         address tradegenAddress = _addressResolver.getContractAddress("BaseTradegen");
 
         TRADEGEN = IERC20(tradegenAddress);
-        stakingRewardsAddress = _addressResolver.getContractAddress("StakingRewards");
+        poolRewardsAddress = _addressResolver.getContractAddress("UserPoolFarm");
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
-        require(amount > 0, "No staking rewards to claim");
+    function claimPoolRewards(address user, uint amount) public override onlyUserPoolFarm {
+        require(amount > 0, "No pool rewards to claim");
         require(TRADEGEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
 
         TRADEGEN.transfer(user, amount);
@@ -35,8 +35,8 @@ contract StakingEscrow is Ownable, IStakingEscrow {
 
     /* ========== MODIFIERS ========== */
 
-    modifier onlyStakingRewards() {
-        require(msg.sender == stakingRewardsAddress, "Only the StakingRewards contract can call this function");
+    modifier onlyUserPoolFarm() {
+        require(msg.sender == poolRewardsAddress, "Only the UserPoolFarm contract can call this function");
         _;
     }
 }

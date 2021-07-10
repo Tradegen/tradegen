@@ -7,7 +7,6 @@ import './libraries/SafeMath.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
-import './interfaces/ITradegen.sol';
 import './interfaces/IStakingEscrow.sol';
 
 //Inheritance

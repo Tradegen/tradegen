@@ -2,33 +2,38 @@ pragma solidity >=0.5.0;
 
 //Interfaces
 import './interfaces/IPool.sol';
-import './interfaces/ITradegen.sol';
-import './interfaces/IUserPoolFarm.sol';
+import './interfaces/IAddressResolver.sol';
+import './interfaces/IPoolRewardsEscrow.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';
 
 //Inheritance
 import './Ownable.sol';
+import './interfaces/IUserPoolFarm.sol';
 
 contract UserPoolFarm is IUserPoolFarm, Ownable {
     using SafeMath for uint;
 
-    ITradegen public immutable TRADEGEN;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
     address private _poolManagerAddress;
 
-    RewardRate[] public rewardsRateHistory; //Stores previous reward rates and the timestamp each rate was changed
-    uint public weeklyRewardsRate;
+    //Stores previous reward rates and the timestamp each rate was updated
+    //Current rewards rate is at last index
+    RewardRate[] public rewardsRateHistory; 
     uint public cumulativeSupply;
 
     mapping (address => PoolState) public poolStates;
     mapping (address => mapping (address => UserState)) public userStates; //pool->user->state
     mapping (address => address[]) public userInvestedPools;
 
-    constructor(ITradegen baseTradegen, address poolManagerAddress) public Ownable() {
-        TRADEGEN = baseTradegen;
-        _poolManagerAddress = poolManagerAddress;
-        rewardsRateHistory.push(RewardRate(uint128(block.timestamp), 0));
+    constructor(IAddressResolver _addressResolver, uint initialRewardsRate) public Ownable() {
+        require(address(_addressResolver) != address(0), "Invalid address for addressResolver");
+        require(initialRewardsRate >= 0, "Initial rewards rate must be positve");
+
+        ADDRESS_RESOLVER = _addressResolver;
+        _poolManagerAddress = _addressResolver.getContractAddress("PoolManager");
+        rewardsRateHistory.push(RewardRate(uint128(block.timestamp), uint128(initialRewardsRate)));
     }
 
     /* ========== VIEWS ========== */
@@ -92,6 +97,22 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
         return _calculateAvailableYield(msg.sender, poolAddress);
     }
 
+    /**
+    * @dev Given a user and a pool address, returns the number of LP tokens the user can stake from the pool
+    * @param user Address of the user
+    * @param poolAddress Address of the pool
+    * @return uint Number of LP tokens available to stake for the given pool
+    */
+    function getAvailableTokensToStake(address user, address poolAddress) public view override returns (uint) {
+        require(user != address(0), "Invalid user address");
+        require(poolAddress != address(0), "Invalid pool address");
+
+        //Number of LP tokens the user has in the pool
+        uint balanceInUserPool = IPool(poolAddress).getUserTokenBalance(user);
+
+        return balanceInUserPool.sub(uint256(userStates[poolAddress][user].balance));
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
@@ -100,15 +121,13 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     * @param amount The number of LP tokens to stake in the pool
     */
     function stake(address poolAddress, uint amount) external override {
-        require(amount > 0, "Cannot stake 0");
+        require(amount > 0, "Cannot stake 0 tokens");
         require(poolAddress != address(0), "Invalid pool address");
-        require(poolStates[poolAddress].validPool, "Invalid pool address");
+        require(poolStates[poolAddress].validPool, "Pool not found");
 
-        //Number of LP tokens the user has in the pool
-        uint balanceInUserPool = IPool(poolAddress).getUserTokenBalance(msg.sender);
-        uint numberOfTokensAvailableToStake = balanceInUserPool.sub(uint256(userStates[poolAddress][msg.sender].balance));
+        uint numberOfTokensAvailableToStake = getAvailableTokensToStake(msg.sender, poolAddress);
 
-        require(numberOfTokensAvailableToStake >= amount, "Not enough funds in user pool");
+        require(numberOfTokensAvailableToStake >= amount, "Not enough LP tokens in the pool");
 
         userStates[poolAddress][msg.sender].timestamp = uint32(block.timestamp);
         userStates[poolAddress][msg.sender].leftoverYield = uint104(_calculateAvailableYield(msg.sender, poolAddress));
@@ -144,18 +163,16 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     * @param amount The number of LP tokens to unstake from the pool
     */
     function unstake(address poolAddress, uint amount) external override {
-        require(amount > 0, "Cannot withdraw 0");
+        require(amount > 0, "Cannot withdraw 0 tokens");
         require(poolAddress != address(0), "Invalid pool address");
-        require(poolStates[poolAddress].validPool, "Invalid pool address");
+        require(poolStates[poolAddress].validPool, "Pool not found");
 
         uint balance = uint256(userStates[poolAddress][msg.sender].balance);
 
-        require(balance >= amount, "Not enough funds");
+        require(balance >= amount, "Not enough LP tokens");
 
         poolStates[poolAddress].circulatingSupply = uint128(uint256(poolStates[poolAddress].circulatingSupply).sub(amount));
-
         userStates[poolAddress][msg.sender].balance = uint104(uint256(balance).sub(amount));
-
         cumulativeSupply.sub(amount);
 
         //remove poolAddress from user's invested pools if user has 0 balance left
@@ -186,7 +203,7 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     */
     function claimRewards(address poolAddress) external override {
         require(poolAddress != address(0), "Invalid pool address");
-        require(poolStates[poolAddress].validPool, "Invalid pool address");
+        require(poolStates[poolAddress].validPool, "Pool not found");
 
         _claimRewards(msg.sender, poolAddress, _calculateAvailableYield(msg.sender, poolAddress));
     }
@@ -215,6 +232,13 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
         }
 
         //Account for the current rewards rate
+        uint lastTimestamp = uint256(rewardsRateHistory[rewardsRateHistory.length - 1].timestamp);
+        //Check if user staked after the latest rewards rate update
+        if (uint256(userStates[poolAddress][user].timestamp) > lastTimestamp)
+        {
+            lastTimestamp = uint256(userStates[poolAddress][user].timestamp);
+        }
+
         timestampDelta = block.timestamp.sub(uint256(userStates[poolAddress][user].timestamp));
         cumulativeRawYield.add(timestampDelta.mul(uint256(rewardsRateHistory[rewardsRateHistory.length - 1].weeklyRewardsRate)));
 
@@ -234,7 +258,10 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
         userStates[poolAddress][user].leftoverYield = uint104(_calculateAvailableYield(user, poolAddress).sub(amount));
         userStates[poolAddress][user].timestamp = uint32(block.timestamp);
         userStates[poolAddress][user].lastClaimIndex = uint16(rewardsRateHistory.length - 1);
-        TRADEGEN.sendRewards(user, amount);
+
+        //Claim rewards from escrow contract
+        address poolRewardsEscrowAddress = ADDRESS_RESOLVER.getContractAddress("PoolRewardsEscrow");
+        IPoolRewardsEscrow(poolRewardsEscrowAddress).claimPoolRewards(msg.sender, amount);
 
         emit ClaimedRewards(user, poolAddress, amount, block.timestamp);
     }
@@ -248,9 +275,10 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
         require(poolStates[poolAddress].validPool, "Invalid pool address");
 
         uint poolSupply = uint256(poolStates[poolAddress].circulatingSupply);
+        uint weeklyRewardsRate = uint256(rewardsRateHistory[rewardsRateHistory.length - 1].weeklyRewardsRate);
 
         //Ratio of pool's circulating supply to cumulative supply across all pools
-        return poolSupply.mul(uint256(rewardsRateHistory[rewardsRateHistory.length - 1].weeklyRewardsRate)).div(cumulativeSupply);
+        return poolSupply.mul(weeklyRewardsRate).div(cumulativeSupply);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

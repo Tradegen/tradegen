@@ -87,4 +87,12 @@ interface IUserPoolFarm {
     * @param poolAddress Address of the pool
     */
     function initializePool(address poolAddress) external;
+
+    /**
+    * @dev Given a user and a pool address, returns the number of LP tokens the user can stake from the pool
+    * @param user Address of the user
+    * @param poolAddress Address of the pool
+    * @return uint Number of LP tokens available to stake for the given pool
+    */
+    function getAvailableTokensToStake(address user, address poolAddress) external view returns (uint);
 }
