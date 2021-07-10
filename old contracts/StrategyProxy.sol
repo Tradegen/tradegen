@@ -17,10 +17,6 @@ import './interfaces/ISettings.sol';
 contract StrategyProxy is Marketplace, StrategyManager {
     using SafeMath for uint;
 
-    ITradingBotRewards public immutable TRADING_BOT_REWARDS;
-    IERC20 public immutable STABLE_COIN;
-    ISettings public immutable SETTINGS;
-
     struct StrategyDetails {
         string name;
         string strategySymbol;
@@ -42,9 +38,6 @@ contract StrategyProxy is Marketplace, StrategyManager {
     }
 
     constructor(IAddressResolver addressResolver) public StrategyManager(addressResolver) Marketplace(addressResolver) {
-        TRADING_BOT_REWARDS = ITradingBotRewards(addressResolver.getContractAddress("TradingBotRewards"));
-        STABLE_COIN = IERC20(ISettings(addressResolver.getContractAddress("Settings")).getStableCoinAddress());
-        SETTINGS = ISettings(addressResolver.getContractAddress("Settings"));
     }
 
     /* ========== VIEWS ========== */
@@ -83,12 +76,14 @@ contract StrategyProxy is Marketplace, StrategyManager {
     function depositFundsIntoStrategy(address strategyAddress, uint amount) external isValidStrategyAddress(strategyAddress) noYieldToClaim(msg.sender, strategyAddress) {
         address tradingBotAddress = IStrategyToken(strategyAddress).getTradingBotAddress();
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
 
-        uint transactionFee = amount.mul(SETTINGS.getParameterValue("TransactionFee")).div(1000);
+        uint transactionFee = amount.mul(ISettings(settingsAddress).getParameterValue("TransactionFee")).div(1000);
 
         //Deposits cUSD into trading bot and sends transaction fee to strategy's developer; call approve() on frontend before sending transaction
-        STABLE_COIN.transferFrom(msg.sender, tradingBotAddress, amount);
-        STABLE_COIN.transferFrom(msg.sender, developerAddress, transactionFee);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, tradingBotAddress, amount);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, developerAddress, transactionFee);
 
         //Mint LP tokens for the user
         IStrategyToken(strategyAddress).deposit(msg.sender, amount);
@@ -125,7 +120,7 @@ contract StrategyProxy is Marketplace, StrategyManager {
         uint tokenPrice = IStrategyToken(strategyAddress).tokenPrice();
         uint availableToWithdraw = (tokenBalance.sub(numberOfTokensForSale)).mul(tokenPrice);
 
-        require(availbleToWithdraw >= amount, "Not enough funds in strategy");
+        require(availableToWithdraw >= amount, "Not enough funds in strategy");
         
         //Check if user has position
         uint strategyIndex = addressToIndex[strategyAddress] - 1;
@@ -162,15 +157,17 @@ contract StrategyProxy is Marketplace, StrategyManager {
         (uint advertisedPrice, uint numberOfTokens, address strategyAddress) = getMarketplaceListing(user, marketplaceListingIndex);
 
         address developerAddress = IStrategyToken(strategyAddress).getDeveloperAddress();
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
 
         uint amount = numberOfTokens.mul(advertisedPrice);
-        uint transactionFee = amount.mul(SETTINGS.getParameterValue("TransactionFee")).div(1000);
+        uint transactionFee = amount.mul(ISettings(settingsAddress).getParameterValue("TransactionFee")).div(1000);
         
         IStrategyToken(strategyAddress).buyPosition(user, msg.sender, numberOfTokens);
 
         //Transfers cUSD from buyer to seller and sends transaction fee to strategy's developer; call approve() on frontend before sending transaction
-        STABLE_COIN.transferFrom(msg.sender, user, amount);
-        STABLE_COIN.transferFrom(msg.sender, developerAddress, transactionFee);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, user, amount);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, developerAddress, transactionFee);
 
         _cancelListing(user, marketplaceListingIndex);
 
@@ -184,22 +181,27 @@ contract StrategyProxy is Marketplace, StrategyManager {
     * @param amount Amount of debt or yield to claim
     */
     function _claim(address user, bool debtOrYield, uint amount) public onlyTradingBot {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
         //transfer profit from bot to user
         if (debtOrYield)
         {
-            STABLE_COIN.transferFrom(msg.sender, user, amount);
+            IERC20(stableCoinAddress).transferFrom(msg.sender, user, amount);
         }
         //transfer loss from bot to user
         else
         {
-            STABLE_COIN.transferFrom(user, msg.sender, amount);
+            IERC20(stableCoinAddress).transferFrom(user, msg.sender, amount);
         }
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier noYieldToClaim(address user, address tradingBotAddress) {
-        (, uint amount) = TRADING_BOT_REWARDS.getUserAvailableYieldForBot(user, tradingBotAddress);
+        address tradingBotRewardsAddress = ADDRESS_RESOLVER.getContractAddress("TradingBotRewards");
+
+        (, uint amount) = ITradingBotRewards(tradingBotRewardsAddress).getUserAvailableYieldForBot(user, tradingBotAddress);
         require(amount == 0, "Need to claim yield first");
         _;
     }

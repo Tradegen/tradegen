@@ -18,11 +18,6 @@ contract Pool is IPool {
     using SafeMath for uint;
 
     IAddressResolver public ADDRESS_RESOLVER;
-    ISettings public SETTINGS;
-    IUserPoolFarm public immutable FARM;
-    IERC20 public immutable STABLE_COIN;
-    ITradegen public immutable TRADEGEN;
-    IBaseUbeswapAdapter public immutable UBESWAP_ADAPTER;
    
     string public _name;
     uint public _supply;
@@ -40,11 +35,6 @@ contract Pool is IPool {
         _manager = manager;
         _performanceFee = performanceFee;
         ADDRESS_RESOLVER = addressResolver;
-        FARM = IUserPoolFarm(ADDRESS_RESOLVER.getContractAddress("UserPoolFarm"));
-        SETTINGS = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings"));
-        STABLE_COIN = IERC20(SETTINGS.getStableCoinAddress());
-        TRADEGEN = ITradegen(ADDRESS_RESOLVER.getContractAddress("BaseTradegen"));
-        UBESWAP_ADAPTER = IBaseUbeswapAdapter(ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter"));
     }
 
     /* ========== VIEWS ========== */
@@ -103,7 +93,10 @@ contract Pool is IPool {
     * @return uint Amount of stable coin the pool has available
     */
     function getAvailableFunds() public view override returns (uint) {
-        return STABLE_COIN.balanceOf(address(this));
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        return IERC20(stableCoinAddress).balanceOf(address(this));
     }
 
     /**
@@ -156,7 +149,10 @@ contract Pool is IPool {
             investorToIndex[msg.sender] = investors.length;
         }
 
-        STABLE_COIN.transferFrom(msg.sender, address(this), amount);
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
         balanceOf[msg.sender].add(amount); //add 1 LP token per cUSD
         _supply.add(amount);
 
@@ -174,15 +170,19 @@ contract Pool is IPool {
         require(user != address(0), "Invalid user address");
         require(amount > 0, "Withdrawal must be greater than 0");
 
+        address farmAddress = ADDRESS_RESOLVER.getContractAddress("UserPoolFarm");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+
         uint userBalance = getUserBalance(user);
-        uint numberOfLPTokensStaked = FARM.balanceOf(user, address(this));
+        uint numberOfLPTokensStaked = IUserPoolFarm(farmAddress).balanceOf(user, address(this));
         uint availableTokensToWithdraw = userBalance.sub(numberOfLPTokensStaked);
 
         require(availableTokensToWithdraw >= amount, "Not enough funds");
 
         uint poolBalance = getPoolBalance();
         uint numberOfLPTokens = amount.mul(poolBalance).div(_supply);
-        uint TGENtoUSD = UBESWAP_ADAPTER.getPrice(address(TRADEGEN));
+        uint TGENtoUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(baseTradegenAddress);
         uint TGENequivalent = amount.mul(TGENtoUSD);
         uint fee = (userBalance > balanceOf[user]) ? _payPerformanceFee(user, userBalance, amount, TGENtoUSD) : 0;
 
@@ -220,24 +220,26 @@ contract Pool is IPool {
     * @param numberOfTokens Number of tokens of the given currency
     */
     function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external override onlyManager {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
         require(numberOfTokens > 0, "Number of tokens must be greater than 0");
         require(currencyKey != address(0), "Invalid currency key");
-        require(SETTINGS.checkIfCurrencyIsAvailable(currencyKey), "Currency key is not available");
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(currencyKey), "Currency key is not available");
 
-        uint tokenToUSD = UBESWAP_ADAPTER.getPrice(currencyKey);
-        address stableCoinAddress = address(STABLE_COIN);
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(currencyKey);
         uint numberOfTokensReceived;
 
         //buying
         if (buyOrSell)
         {
-            require(cUSDdebt == 0, "Need to settle debt before making an opening trade");
             require(getAvailableFunds() >= numberOfTokens.mul(tokenToUSD), "Not enough funds");
 
             uint amountInUSD = numberOfTokens.div(tokenToUSD);
             uint minAmountOut = numberOfTokens.mul(98).div(100); //max slippage 2%
 
-            numberOfTokensReceived = UBESWAP_ADAPTER.swapFromPool(stableCoinAddress, currencyKey, amountInUSD, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, minAmountOut);
         }
         //selling
         else
@@ -257,7 +259,7 @@ contract Pool is IPool {
             uint amountInUSD = numberOfTokens.mul(tokenToUSD);
             uint minAmountOut = amountInUSD.mul(98).div(100); //max slippage 2%
 
-            numberOfTokensReceived = UBESWAP_ADAPTER.swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, minAmountOut);
 
             //remove position key if no funds left in currency
             if (IERC20(currencyKey).balanceOf(msg.sender) == 0)
@@ -281,11 +283,14 @@ contract Pool is IPool {
     * @return uint The amount of performance fee paid (in cUSD)
     */
     function _payPerformanceFee(address user, uint userBalance, uint amount, uint exchangeRate) internal returns (uint) {
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+
         uint profit = userBalance.sub(balanceOf[user]);
         uint ratio = amount.mul(profit).div(userBalance);
         uint fee = ratio.mul(exchangeRate).mul(_performanceFee).div(100);
 
-        TRADEGEN.sendRewards(_manager, fee);
+        //IERC20(baseTradegenAddress).sendRewards(_manager, fee);
+        //TODO: send performance fee to pool manager
 
         emit PaidPerformanceFee(user, address(this), fee, block.timestamp);
 
@@ -300,12 +305,14 @@ contract Pool is IPool {
     }
 
     modifier onlyPoolProxy() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("PoolProxy"), "Only PoolProxy contract can call this function");
+        address poolProxyAddress = ADDRESS_RESOLVER.getContractAddress("PoolProxy");
+        require(msg.sender == poolProxyAddress, "Only PoolProxy contract can call this function");
         _;
     }
 
     modifier onlyPoolManager() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("PoolManager"), "Only PoolManager contract can call this function");
+        address poolManagerAddress = ADDRESS_RESOLVER.getContractAddress("PoolManager");
+        require(msg.sender == poolManagerAddress, "Only PoolManager contract can call this function");
         _;
     }
 

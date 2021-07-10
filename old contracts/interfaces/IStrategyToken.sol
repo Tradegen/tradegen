@@ -67,4 +67,10 @@ interface IStrategyToken {
     * @return bool Whether the strategy's trading bot is currently in a trade
     */
     function checkIfBotIsInATrade() external view returns (bool);
+
+    /**
+    * @dev Returns the strategy's token price
+    * @return uint Strategy's token price
+    */
+    function tokenPrice() external view returns (uint);
 }

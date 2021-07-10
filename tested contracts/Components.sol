@@ -1,19 +1,18 @@
 pragma solidity >=0.5.0;
 
-//Inheritance
-import './Ownable.sol';
-
 //Interfaces
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 import './interfaces/IERC20.sol';
+import './interfaces/IAddressResolver.sol';
 
 //Inheritance
 import './interfaces/IComponents.sol';
+import './Ownable.sol';
 
 contract Components is IComponents, Ownable {
 
-    IERC20 private immutable TRADEGEN;
+    IAddressResolver private immutable ADDRESS_RESOLVER;
 
     address[] public defaultIndicators;
     address[] public defaultComparators;
@@ -29,8 +28,8 @@ contract Components is IComponents, Ownable {
     mapping (address => mapping (address => uint)) public indicatorUsers; //maps to (index + 1); index 0 represents indicator not purchased by user
     mapping (address => mapping (address => uint)) public comparatorUsers; //maps to (index + 1); index 0 represents comparator not purchased by user
 
-    constructor(IERC20 baseTradegen) public {
-        TRADEGEN = baseTradegen;
+    constructor(IAddressResolver _addressResolver) public {
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== VIEWS ========== */
@@ -114,24 +113,10 @@ contract Components is IComponents, Ownable {
     * @param user Address of the user
     * @return uint[] The index in indicators array of each indicator the user purchased
     */
-    function getUserPurchasedIndicators(address user) public view override returns (address[] memory) {
+    function getUserPurchasedIndicators(address user) public view override returns (uint[] memory) {
         require(user != address(0), "Invalid user address");
 
-        uint length = defaultIndicators.length + userPurchasedIndicators[user].length;
-        address[] memory temp = new address[](length);
-
-        for (uint i = 0; i < defaultIndicators.length; i++)
-        {
-            temp[i] = defaultIndicators[i];
-        }
-
-        for (uint i = 0; i < userPurchasedIndicators[user].length; i++)
-        {
-            uint index = userPurchasedIndicators[user][i];
-            temp[defaultIndicators.length + i] = indicators[index];
-        }
-
-        return temp;
+        return userPurchasedIndicators[user];
     }
 
     /**
@@ -139,24 +124,10 @@ contract Components is IComponents, Ownable {
     * @param user Address of the user
     * @return uint[] The index in comparators array of each comparator the user purchased
     */
-    function getUserPurchasedComparators(address user) public view override returns (address[] memory) {
+    function getUserPurchasedComparators(address user) public view override returns (uint[] memory) {
         require(user != address(0), "Invalid user address");
 
-        uint length = defaultComparators.length + userPurchasedComparators[user].length;
-        address[] memory temp = new address[](length);
-
-        for (uint i = 0; i < defaultComparators.length; i++)
-        {
-            temp[i] = defaultComparators[i];
-        }
-
-        for (uint i = 0; i < userPurchasedComparators[user].length; i++)
-        {
-            uint index = userPurchasedComparators[user][i];
-            temp[defaultComparators.length + i] = comparators[index];
-        }
-
-        return temp;
+        return userPurchasedComparators[user];
     }
 
     /**
@@ -189,30 +160,6 @@ contract Components is IComponents, Ownable {
         return comparatorUsers[comparatorAddress][user] > 0;
     }
 
-    /* ========== INTERNAL FUNCTIONS ========== */
-
-    /**
-    * @dev Adds default indicators and comparators to the given user
-    * @param user Address of user to add default indicators and comparators to
-    */
-    function _addDefaultComponentsToUser(address user) internal {
-        require(user != address(0), "Invalid user address");
-
-        //Add default indicators to the user's array of purchased indicators
-        for (uint i = 0; i < defaultIndicators.length; i++)
-        {
-            userPurchasedIndicators[user].push(indicatorAddressToIndex[defaultIndicators[i]] - 1);
-            indicatorUsers[defaultIndicators[i]][user] = indicatorAddressToIndex[defaultIndicators[i]];
-        }
-
-        //Add default comparators to the user's array of purchased comparators
-        for (uint i = 0; i < defaultComparators.length; i++)
-        {
-            userPurchasedComparators[user].push(comparatorAddressToIndex[defaultComparators[i]] - 1);
-            comparatorUsers[defaultComparators[i]][user] = comparatorAddressToIndex[defaultComparators[i]];
-        }
-    }
-
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
@@ -222,12 +169,13 @@ contract Components is IComponents, Ownable {
     function buyIndicator(address indicatorAddress) public override {
         require(indicatorAddress != address(0), "Invalid indicator address");
         require(indicatorAddressToIndex[indicatorAddress] > 0, "Invalid indicator address");
-        require(indicatorUsers[indicatorAddress][msg.sender] == 0, "Already purchased this indicator");
+        require(indicatorUsers[indicatorAddress][msg.sender] > 0, "Already purchased this indicator");
 
         (uint price, address developer) = IIndicator(indicatorAddress).getPriceAndDeveloper();
 
         //Send TGEN payment to indicator's developer; call TradegenERC20.approve() on frontend before sending transaction
-        TRADEGEN.transferFrom(msg.sender, developer, price);
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        IERC20(baseTradegenAddress).transferFrom(msg.sender, developer, price);
 
         indicatorUsers[indicatorAddress][msg.sender] = indicatorAddressToIndex[indicatorAddress];
         userPurchasedIndicators[msg.sender].push(indicatorAddressToIndex[indicatorAddress] - 1);
@@ -240,12 +188,13 @@ contract Components is IComponents, Ownable {
     function buyComparator(address comparatorAddress) public override {
         require(comparatorAddress != address(0), "Invalid comparator address");
         require(comparatorAddressToIndex[comparatorAddress] > 0, "Invalid comparator address");
-        require(comparatorUsers[comparatorAddress][msg.sender] == 0, "Already purchased this comparator");
+        require(comparatorUsers[comparatorAddress][msg.sender] > 0, "Already purchased this comparator");
 
         (uint price, address developer) = IComparator(comparatorAddress).getPriceAndDeveloper();
 
         //Send TGEN payment to comparator's developer; call TradegenERC20.approve() on frontend before sending transaction
-        TRADEGEN.transferFrom(msg.sender, developer, price);
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        IERC20(baseTradegenAddress).transferFrom(msg.sender, developer, price);
 
         comparatorUsers[comparatorAddress][msg.sender] = comparatorAddressToIndex[comparatorAddress];
         userPurchasedComparators[msg.sender].push(comparatorAddressToIndex[comparatorAddress] - 1);
@@ -269,12 +218,8 @@ contract Components is IComponents, Ownable {
         }
         else
         {
-            (, address developer) = IIndicator(indicatorAddress).getPriceAndDeveloper();
-
             indicators.push(indicatorAddress);
             indicatorAddressToIndex[indicatorAddress] = indicators.length;
-            userPurchasedIndicators[developer].push(indicators.length - 1);
-            indicatorUsers[indicatorAddress][developer] = indicators.length;
 
             emit AddedIndicator(indicatorAddress, indicators.length - 1, block.timestamp);
         }
@@ -296,15 +241,47 @@ contract Components is IComponents, Ownable {
         }
         else
         {
-            (, address developer) = IComparator(comparatorAddress).getPriceAndDeveloper();
-
             comparators.push(comparatorAddress);
             comparatorAddressToIndex[comparatorAddress] = comparators.length;
-            userPurchasedComparators[developer].push(comparators.length - 1);
-            comparatorUsers[comparatorAddress][developer] = comparators.length;
 
             emit AddedComparator(comparatorAddress, comparators.length - 1, block.timestamp);
         }
+    }
+
+    /**
+    * @dev Adds default indicators and comparators to the given user
+    * @param user Address of user to add default indicators and comparators to
+    */
+    function _addDefaultComponentsToUser(address user) public override onlyUserManager {
+        require(user != address(0), "Invalid user address");
+
+        uint[] memory _userPurchasedIndicators = new uint[](defaultIndicators.length);
+        uint[] memory _userPurchasedComparators = new uint[](defaultComparators.length);
+
+        //Add default indicators to the user's array of purchased indicators
+        for (uint i = 0; i < defaultIndicators.length; i++)
+        {
+            _userPurchasedIndicators[i] = indicatorAddressToIndex[defaultIndicators[i]] - 1;
+            indicatorUsers[defaultIndicators[i]][user] = indicatorAddressToIndex[defaultIndicators[i]];
+        }
+
+        //Add default comparators to the user's array of purchased comparators
+        for (uint i = 0; i < defaultComparators.length; i++)
+        {
+            _userPurchasedComparators[i] = comparatorAddressToIndex[defaultComparators[i]] - 1;
+            comparatorUsers[defaultComparators[i]][user] = comparatorAddressToIndex[defaultComparators[i]];
+        }
+
+        userPurchasedIndicators[user] = _userPurchasedIndicators;
+        userPurchasedComparators[user] = _userPurchasedComparators;
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier onlyUserManager() {
+        address userManagerAddress = ADDRESS_RESOLVER.getContractAddress("UserManager");
+        require(msg.sender == userManagerAddress, "Only the UserManager contract can call this function");
+        _;
     }
 
     /* ========== EVENTS ========== */

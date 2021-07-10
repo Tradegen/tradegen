@@ -5,7 +5,7 @@ import "./Ownable.sol";
 
 // Internal references
 import "./interfaces/IERC20.sol";
-import "./interfaces/ITradegenEscrow.sol";
+import "./interfaces/IAddressResolver.sol";
 
 // Libraires
 import "./libraries/SafeMath.sol";
@@ -13,7 +13,7 @@ import "./libraries/SafeMath.sol";
 contract DistributeFunds is Ownable {
     using SafeMath for uint;
 
-    IERC20 public TRADEGEN;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     struct Recipient {
         uint balance;
@@ -28,8 +28,8 @@ contract DistributeFunds is Ownable {
     mapping (string => uint) public nameToIndex; //Maps to (index + 1); index 0 represents recipient not found
     mapping (address => uint) public addressToIndex; //Maps to (index + 1); index 0 represents recipient not found
 
-    constructor(IERC20 _tradegen) public Ownable() {
-        TRADEGEN = IERC20(_tradegen);
+    constructor(IAddressResolver _addressResolver) public Ownable() {
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== VIEW FUNCTIONS ========== */
@@ -72,11 +72,13 @@ contract DistributeFunds is Ownable {
     * @param name Name of recipient
     */
     function addRecipient(address account, uint quantity, string memory name) public onlyOwner {
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+
         require(account != address(0), "Invalid address");
         require(nameToIndex[name] == 0, "Name already exists");
         require(addressToIndex[account] == 0, "Address already exists");
         require(quantity > 0, "Quantity must be greater than 0");
-        require(amountDistributed.add(quantity) <= TRADEGEN.totalSupply(), "Not enough TGEN available");
+        require(amountDistributed.add(quantity) <= IERC20(baseTradegenAddress).totalSupply(), "Not enough TGEN available");
 
         recipients.push(Recipient(quantity, account, name));
         amountDistributed.add(quantity);
@@ -84,7 +86,7 @@ contract DistributeFunds is Ownable {
         addressToIndex[account] = recipients.length;
 
         //Transfer TGEN to recipient
-        TRADEGEN.transferFrom(msg.sender, account, quantity);
+        IERC20(baseTradegenAddress).transferFrom(msg.sender, account, quantity);
 
         emit AddedRecipient(account, quantity, name);
     }

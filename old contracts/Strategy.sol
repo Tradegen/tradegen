@@ -200,17 +200,24 @@ contract Strategy is IStrategyToken {
     /* ========== MODIFIERS ========== */
 
     modifier onlyProxyOrTradingBotRewards() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyProxy") || msg.sender == ADDRESS_RESOLVER.getContractAddress("TradingBotRewards"), "Only proxy or trading bot rewards can call this function");
+        address strategyProxyAddress = ADDRESS_RESOLVER.getContractAddress("StrategyProxy");
+        address tradingBotRewardsAddress = ADDRESS_RESOLVER.getContractAddress("TradingBotRewards");
+
+        require(msg.sender == strategyProxyAddress || msg.sender == tradingBotRewardsAddress, "Only proxy or trading bot rewards can call this function");
         _;
     }
 
     modifier onlyStrategyManager() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyManager"), "Only StrategyManager contract can call this function");
+        address strategyManagerAddress = ADDRESS_RESOLVER.getContractAddress("StrategyManager");
+
+        require(msg.sender == strategyManagerAddress, "Only StrategyManager contract can call this function");
         _;
     }
 
     modifier onlyStrategyProxy() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("StrategyProxy"), "Only StrategyProxy contract can call this function");
+        address strategyProxyAddress = ADDRESS_RESOLVER.getContractAddress("StrategyProxy");
+        
+        require(msg.sender == strategyProxyAddress, "Only StrategyProxy contract can call this function");
         _;
     }
 }

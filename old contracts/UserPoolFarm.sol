@@ -16,7 +16,6 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
-    address private _poolManagerAddress;
 
     //Stores previous reward rates and the timestamp each rate was updated
     //Current rewards rate is at last index
@@ -32,7 +31,6 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
         require(initialRewardsRate >= 0, "Initial rewards rate must be positve");
 
         ADDRESS_RESOLVER = _addressResolver;
-        _poolManagerAddress = _addressResolver.getContractAddress("PoolManager");
         rewardsRateHistory.push(RewardRate(uint128(block.timestamp), uint128(initialRewardsRate)));
     }
 
@@ -309,7 +307,9 @@ contract UserPoolFarm is IUserPoolFarm, Ownable {
     /* ========== MODIFIERS ========== */
 
     modifier onlyPoolManager() {
-        require(msg.sender == _poolManagerAddress, "Only the PoolManager contract can call this function");
+        address poolManagerAddress = ADDRESS_RESOLVER.getContractAddress("PoolManager");
+
+        require(msg.sender == poolManagerAddress, "Only the PoolManager contract can call this function");
         _;
     }
 

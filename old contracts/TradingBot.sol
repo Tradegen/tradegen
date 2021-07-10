@@ -20,12 +20,7 @@ import './adapters/interfaces/IBaseUbeswapAdapter.sol';
 contract TradingBot is ITradingBot {
     using SafeMath for uint;
 
-    IERC20 public immutable STABLE_COIN;
-    IERC20 public immutable TOKEN;
-    IBaseUbeswapAdapter public immutable UBESWAP_ADAPTER;
     IAddressResolver public ADDRESS_RESOLVER;
-    ITradingBotRewards public immutable TRADING_BOT_REWARDS;
-    IComponents public COMPONENTS;
 
     //parameters
     Rule[] private _entryRules;
@@ -52,19 +47,11 @@ contract TradingBot is ITradingBot {
                 IAddressResolver addressResolver) public onlyStrategy {
 
         ADDRESS_RESOLVER = addressResolver;
-        TRADING_BOT_REWARDS = ITradingBotRewards(addressResolver.getContractAddress("TradingBotRewards"));
-        COMPONENTS = IComponents(addressResolver.getContractAddress("Components"));
 
         _underlyingAsset = ISettings(addressResolver.getContractAddress("Settings")).getCurrencyKeyFromIndex(underlyingAssetID);
-
-        STABLE_COIN = IERC20(ISettings(addressResolver.getContractAddress("Settings")).getStableCoinAddress());
-        TOKEN = IERC20(_underlyingAsset);
-        UBESWAP_ADAPTER = IBaseUbeswapAdapter(addressResolver.getContractAddress("BaseUbeswapAdapter"));
-        
         _maxTradeDuration = maxTradeDuration;
         _profitTarget = profitTarget;
         _stopLoss = stopLoss;
-
         _strategyAddress = msg.sender;
 
         _generateRules(entryRules, exitRules);
@@ -117,12 +104,13 @@ contract TradingBot is ITradingBot {
         {
             if (_checkProfitTarget(latestPrice) || _checkStopLoss(latestPrice) || _currentTradeDuration >= _maxTradeDuration)
             {
+                address tradingBotRewardsAddress = ADDRESS_RESOLVER.getContractAddress("TradingBotRewards");
                 (, uint exitPrice) = _placeOrder(false);
                 (bool profitOrLoss, uint amount) = _calculateProfitOrLoss(exitPrice);
                 _currentOrderEntryPrice = 0;
                 _currentOrderSize = 0;
                 _currentTradeDuration = 0;
-                TRADING_BOT_REWARDS.updateRewards(profitOrLoss, amount, IStrategyToken(_strategyAddress).getCirculatingSupply());
+                ITradingBotRewards(tradingBotRewardsAddress).updateRewards(profitOrLoss, amount, IStrategyToken(_strategyAddress).getCirculatingSupply());
             }
             else
             {
@@ -139,11 +127,12 @@ contract TradingBot is ITradingBot {
     function withdraw(address user, uint amount) public override onlyOwner {
         require(user != address(0), "Invalid user address");
 
-        uint tokenToUSD = UBESWAP_ADAPTER.getPrice(_underlyingAsset);
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(_underlyingAsset);
         uint numberOfTokens = amount.div(tokenToUSD);
 
-        TOKEN.approve(user, numberOfTokens);
-        TOKEN.transferFrom(address(this), user, numberOfTokens);
+        IERC20(_underlyingAsset).approve(user, numberOfTokens);
+        IERC20(_underlyingAsset).transferFrom(address(this), user, numberOfTokens);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -154,9 +143,13 @@ contract TradingBot is ITradingBot {
     * @return (uint, uint) Number of tokens received and the price executed
     */
     function _placeOrder(bool buyOrSell) private returns (uint, uint) {
-        uint stableCoinBalance = STABLE_COIN.balanceOf(address(this));
-        uint tokenBalance = TOKEN.balanceOf(address(this));
-        uint tokenToUSD = UBESWAP_ADAPTER.getPrice(_underlyingAsset);
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        uint stableCoinBalance = IERC20(stableCoinAddress).balanceOf(address(this));
+        uint tokenBalance = IERC20(_underlyingAsset).balanceOf(address(this));
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(_underlyingAsset);
         uint numberOfTokens = buyOrSell ? stableCoinBalance : tokenBalance;
         uint amountInUSD = buyOrSell ? numberOfTokens.div(tokenToUSD) : numberOfTokens.mul(tokenToUSD);
         uint minAmountOut = buyOrSell ? numberOfTokens.mul(98).div(100) : amountInUSD.mul(98).div(100); //max slippage 2%
@@ -165,12 +158,12 @@ contract TradingBot is ITradingBot {
         //buying
         if (buyOrSell)
         {
-            numberOfTokensReceived = UBESWAP_ADAPTER.swapFromBot(address(STABLE_COIN), _underlyingAsset, amountInUSD, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromBot(stableCoinAddress, _underlyingAsset, amountInUSD, minAmountOut);
         }
         //selling
         else
         {
-            numberOfTokensReceived = UBESWAP_ADAPTER.swapFromBot(_underlyingAsset, address(STABLE_COIN), numberOfTokens, minAmountOut);
+            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromBot(_underlyingAsset, stableCoinAddress, numberOfTokens, minAmountOut);
         }
 
         emit PlacedOrder(address(this), block.timestamp, _underlyingAsset, 0, 0, buyOrSell);
@@ -315,7 +308,8 @@ contract TradingBot is ITradingBot {
     * @return address Address of the indicator
     */
     function _addBotToIndicator(bool isDefault, uint indicatorIndex, uint indicatorParam) private returns (address, uint) {
-        address indicatorAddress = COMPONENTS.getIndicatorFromIndex(isDefault, indicatorIndex);
+        address componentsAddress = ADDRESS_RESOLVER.getContractAddress("Components");
+        address indicatorAddress = IComponents(componentsAddress).getIndicatorFromIndex(isDefault, indicatorIndex);
 
         uint index = IIndicator(indicatorAddress).addTradingBot(indicatorParam);
 
@@ -334,7 +328,8 @@ contract TradingBot is ITradingBot {
         require(firstIndicatorAddress != address(0), "Invalid first indicator address");
         require(secondIndicatorAddress != address(0), "Invalid second indicator address");
 
-        address comparatorAddress = COMPONENTS.getComparatorFromIndex(isDefault, comparatorIndex);
+        address componentsAddress = ADDRESS_RESOLVER.getContractAddress("Components");
+        address comparatorAddress = IComponents(componentsAddress).getComparatorFromIndex(isDefault, comparatorIndex);
 
         uint index = IComparator(comparatorAddress).addTradingBot(firstIndicatorAddress, secondIndicatorAddress);
 

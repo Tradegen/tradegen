@@ -9,11 +9,12 @@ import "./libraries/SafeMath.sol";
 
 // Internal references
 import "./interfaces/IERC20.sol";
+import "./interfaces/IAddressResolver.sol";
 
 contract TradegenEscrow is Ownable, ITradegenEscrow {
     using SafeMath for uint;
 
-    IERC20 public TRADEGEN;
+    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
      * These are the times at which each given quantity of TGEN vests. */
@@ -33,8 +34,8 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IERC20 _tradegen) public Ownable() {
-        TRADEGEN = IERC20(_tradegen);
+    constructor(IAddressResolver _addressResolver) public Ownable() {
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== VIEW FUNCTIONS ========== */
@@ -128,6 +129,8 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
      * @param quantity The quantity of TGEN that will vest.
      */
     function appendVestingEntry(address account, uint time, uint quantity) public onlyOwner {
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+
         /* No empty or already-passed vesting entries allowed. */
         require(block.timestamp < time, "Time must be in the future");
         require(quantity != 0, "Quantity cannot be zero");
@@ -135,7 +138,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
         /* There must be enough balance in the contract to provide for the vesting entry. */
         totalVestedBalance = totalVestedBalance.add(quantity);
         require(
-            totalVestedBalance <= TRADEGEN.balanceOf(address(this)),
+            totalVestedBalance <= IERC20(baseTradegenAddress).balanceOf(address(this)),
             "Must be enough balance in the contract to provide for the vesting entry"
         );
 
@@ -222,9 +225,10 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
         if (total != 0)
         {
+            address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
             totalVestedBalance = totalVestedBalance.sub(total);
             totalVestedAccountBalance[msg.sender] = totalVestedAccountBalance[msg.sender].sub(total);
-            TRADEGEN.transfer(msg.sender, total);
+            IERC20(baseTradegenAddress).transfer(msg.sender, total);
 
             emit Vested(msg.sender, block.timestamp, total);
         }

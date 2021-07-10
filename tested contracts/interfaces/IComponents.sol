@@ -46,14 +46,14 @@ interface IComponents {
     * @param user Address of the user
     * @return uint[] The index in indicators array of each indicator the user purchased
     */
-    function getUserPurchasedIndicators(address user) external view returns (address[] memory);
+    function getUserPurchasedIndicators(address user) external view returns (uint[] memory);
 
     /**
     * @dev Returns index of each comparator the user purchased
     * @param user Address of the user
     * @return uint[] The index in comparators array of each comparator the user purchased
     */
-    function getUserPurchasedComparators(address user) external view returns (address[] memory);
+    function getUserPurchasedComparators(address user) external view returns (uint[] memory);
 
     /**
     * @dev Checks whether the user purchased the given indicator
@@ -96,4 +96,10 @@ interface IComponents {
     * @param comparatorAddress Address of the contract where the comparator is implemented
     */
     function _addNewComparator(bool isDefault, address comparatorAddress) external;
+
+    /**
+    * @dev Adds default indicators and comparators to the given user; meant to be called by the UserManager contract
+    * @param user Address of user to add default indicators and comparators to
+    */
+    function _addDefaultComponentsToUser(address user) external;
 }

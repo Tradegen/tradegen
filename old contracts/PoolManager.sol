@@ -7,12 +7,12 @@ import './interfaces/IAddressResolver.sol';
 //Libraries
 import './libraries/SafeMath.sol';
 
+//Internal references
 import './Pool.sol';
 
 contract PoolManager {
     using SafeMath for uint;
 
-    IUserPoolFarm public immutable FARM;
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
     address[] public pools;
@@ -20,8 +20,7 @@ contract PoolManager {
     mapping (address => uint[]) public userToPositions;
     mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
 
-    constructor(IUserPoolFarm userPoolFarm, IAddressResolver addressResolver) public {
-        FARM = userPoolFarm;
+    constructor(IAddressResolver addressResolver) public {
         ADDRESS_RESOLVER = addressResolver;
     }
 
@@ -92,6 +91,7 @@ contract PoolManager {
     */
     function _createPool(string memory poolName, uint performanceFee, address manager) internal {
 
+        address farmAddress = ADDRESS_RESOLVER.getContractAddress("UserPoolFarm");
         Pool temp = new Pool(poolName, performanceFee, manager, ADDRESS_RESOLVER);
 
         address poolAddress = address(temp);
@@ -99,7 +99,7 @@ contract PoolManager {
         userToPools[manager].push(pools.length);
         addressToIndex[poolAddress] = pools.length;
         ADDRESS_RESOLVER.addPoolAddress(poolAddress);
-        FARM.initializePool(poolAddress);
+        IUserPoolFarm(farmAddress).initializePool(poolAddress);
 
         emit CreatedPool(manager, poolAddress, pools.length - 1, block.timestamp);
     }

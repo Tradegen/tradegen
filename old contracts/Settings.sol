@@ -93,7 +93,7 @@ contract Settings is ISettings, Ownable {
     * @dev Returns the addresses and names of supported oracle APIs
     * @return OracleData[] An array of oracle API addresses and names
     */
-    function getOracleAPIs() public view override returns(OracleData[] memory) {
+    function getOracleAPIs() public view override returns(address[] memory) {
         OracleData[] memory temp = new OracleData[](oracleAPIAddresses.length);
 
         for (uint i = 0; i < oracleAPIAddresses.length; i++)

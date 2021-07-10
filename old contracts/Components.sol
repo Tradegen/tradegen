@@ -1,20 +1,18 @@
 pragma solidity >=0.5.0;
 
-//Inheritance
-import './Ownable.sol';
-
 //Interfaces
 import './interfaces/IIndicator.sol';
 import './interfaces/IComparator.sol';
 import './interfaces/IERC20.sol';
+import './interfaces/IAddressResolver.sol';
 
 //Inheritance
 import './interfaces/IComponents.sol';
+import './Ownable.sol';
 
 contract Components is IComponents, Ownable {
 
-    IERC20 private immutable TRADEGEN;
-    address private _userManagerAddress;
+    IAddressResolver private immutable ADDRESS_RESOLVER;
 
     address[] public defaultIndicators;
     address[] public defaultComparators;
@@ -30,8 +28,8 @@ contract Components is IComponents, Ownable {
     mapping (address => mapping (address => uint)) public indicatorUsers; //maps to (index + 1); index 0 represents indicator not purchased by user
     mapping (address => mapping (address => uint)) public comparatorUsers; //maps to (index + 1); index 0 represents comparator not purchased by user
 
-    constructor(IERC20 baseTradegen) public {
-        TRADEGEN = baseTradegen;
+    constructor(IAddressResolver _addressResolver) public {
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== VIEWS ========== */
@@ -176,7 +174,8 @@ contract Components is IComponents, Ownable {
         (uint price, address developer) = IIndicator(indicatorAddress).getPriceAndDeveloper();
 
         //Send TGEN payment to indicator's developer; call TradegenERC20.approve() on frontend before sending transaction
-        TRADEGEN.transferFrom(msg.sender, developer, price);
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        IERC20(baseTradegenAddress).transferFrom(msg.sender, developer, price);
 
         indicatorUsers[indicatorAddress][msg.sender] = indicatorAddressToIndex[indicatorAddress];
         userPurchasedIndicators[msg.sender].push(indicatorAddressToIndex[indicatorAddress] - 1);
@@ -194,7 +193,8 @@ contract Components is IComponents, Ownable {
         (uint price, address developer) = IComparator(comparatorAddress).getPriceAndDeveloper();
 
         //Send TGEN payment to comparator's developer; call TradegenERC20.approve() on frontend before sending transaction
-        TRADEGEN.transferFrom(msg.sender, developer, price);
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        IERC20(baseTradegenAddress).transferFrom(msg.sender, developer, price);
 
         comparatorUsers[comparatorAddress][msg.sender] = comparatorAddressToIndex[comparatorAddress];
         userPurchasedComparators[msg.sender].push(comparatorAddressToIndex[comparatorAddress] - 1);
@@ -276,20 +276,11 @@ contract Components is IComponents, Ownable {
         userPurchasedComparators[user] = _userPurchasedComparators;
     }
 
-    /**
-    * @dev Sets the address of the UserManager contract; meant to be called by the contract owner
-    * @param userManagerAddress Address of the UserManager contract
-    */
-    function setUserManagerAddress(address userManagerAddress) public override onlyOwner {
-        require(userManagerAddress != address(0), "Invalid address");
-
-        _userManagerAddress = userManagerAddress;
-    }
-
     /* ========== MODIFIERS ========== */
 
     modifier onlyUserManager() {
-        require(msg.sender == _userManagerAddress, "Only the UserManager contract can call this function");
+        address userManagerAddress = ADDRESS_RESOLVER.getContractAddress("UserManager");
+        require(msg.sender == userManagerAddress, "Only the UserManager contract can call this function");
         _;
     }
 

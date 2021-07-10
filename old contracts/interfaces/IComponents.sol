@@ -102,10 +102,4 @@ interface IComponents {
     * @param user Address of user to add default indicators and comparators to
     */
     function _addDefaultComponentsToUser(address user) external;
-
-    /**
-    * @dev Sets the address of the UserManager contract; meant to be called by the contract owner
-    * @param userManagerAddress Address of the UserManager contract
-    */
-    function setUserManagerAddress(address userManagerAddress) external;
 }

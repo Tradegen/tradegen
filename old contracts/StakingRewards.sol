@@ -17,7 +17,6 @@ contract StakingRewards is IStakingRewards {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
-    address public strategyApprovalAddress;
 
     uint private _totalSupply;
     mapping(address => uint) private _balances;
@@ -25,7 +24,6 @@ contract StakingRewards is IStakingRewards {
 
     constructor(IAddressResolver addressResolver) public {
         ADDRESS_RESOLVER = addressResolver;
-        strategyApprovalAddress = addressResolver.getContractAddress("StrategyApproval");
     }
 
     /* ========== VIEWS ========== */
@@ -159,6 +157,8 @@ contract StakingRewards is IStakingRewards {
     /* ========== MODIFIERS ========== */
 
     modifier onlyStrategyApproval() {
+        address strategyApprovalAddress = ADDRESS_RESOLVER.getContractAddress("StrategyApproval");
+        
         require(msg.sender == strategyApprovalAddress, "Only the StrategyApproval contract can call this function");
         _;
     }

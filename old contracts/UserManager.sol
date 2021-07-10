@@ -2,9 +2,11 @@ pragma solidity >=0.5.0;
 
 //Inheritance
 import './Components.sol';
-import './AddressResolver.sol';
 
-contract UserManager is Components, AddressResolver {
+//Interfaces
+import './interfaces/IAddressResolver.sol';
+
+contract UserManager is Components {
 
     struct User {
         uint memberSinceTimestamp;
@@ -14,7 +16,7 @@ contract UserManager is Components, AddressResolver {
     mapping (address => User) public users;
     mapping (string => address) public usernames;
 
-    constructor(IERC20 baseTradegenAddress) Components(baseTradegenAddress) public {
+    constructor(IAddressResolver _addressResolver) Components(_addressResolver) public {
     }
 
     /* ========== VIEWS ========== */
