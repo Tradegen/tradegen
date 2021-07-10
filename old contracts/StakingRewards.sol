@@ -8,6 +8,7 @@ import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/ITradegen.sol';
+import './interfaces/IStakingEscrow.sol';
 
 //Inheritance
 import './interfaces/IStakingRewards.sol';
@@ -87,16 +88,27 @@ contract StakingRewards is IStakingRewards {
         IERC20(ADDRESS_RESOLVER.getContractAddress("TradegenERC20")).transferFrom(address(this), msg.sender, amount);
 
         //Claim available yield on behalf of the user
-        _claimStakingRewards(msg.sender, _calculateAvailableYield(msg.sender));
+        claimStakingRewards();
 
         emit Unstaked(msg.sender, amount, block.timestamp);
     }
 
     /**
-    * @dev Wrapper for internal claimStakingRewards() function 
+    * @dev Claims available staking rewards for the user
     */
-    function claimStakingRewards() external override {
-        _claimStakingRewards(msg.sender, _calculateAvailableYield(msg.sender));
+    function claimStakingRewards() public override {
+        address stakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("StakingEscrow");
+        uint availableRewards = _calculateAvailableYield(msg.sender);
+
+        if (availableRewards > 0)
+        {
+            _userToState[msg.sender].leftoverYield = 0;
+            _userToState[msg.sender].timestamp = uint32(block.timestamp);
+
+            IStakingEscrow(stakingEscrowAddress).claimStakingRewards(msg.sender, availableRewards);
+
+            emit ClaimedStakingRewards(msg.sender, availableRewards, block.timestamp);
+        }
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -112,25 +124,11 @@ contract StakingRewards is IStakingRewards {
             return 0;
         }
 
-        uint yieldRate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("StakingYield").div(100); //convert % to decimal
-        uint newYield = (block.timestamp.sub(_userToState[user].timestamp).mul(yieldRate).mul(_balances[user])).div(365 days);
+        uint weeklyStakingRewards = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyStakingRewards");
+        uint elapsedTime = block.timestamp.sub(_userToState[user].timestamp);
+        uint newYield = elapsedTime.mul(weeklyStakingRewards).mul(_balances[user]).div(7 days).div(_totalSupply);
 
         return uint256(_userToState[user].leftoverYield).add(newYield);
-    }
-
-    /**
-    * @dev Claims available yield for the user
-    * @param user Address of the user
-    * @param amount Amount of TGEN yield to claim
-    */
-    function _claimStakingRewards(address user, uint amount) internal {
-        _userToState[user].leftoverYield = uint224(_calculateAvailableYield(user).sub(amount));
-        _userToState[user].timestamp = uint32(block.timestamp);
-
-        //Send TGEN rewards to user
-        ITradegen(ADDRESS_RESOLVER.getContractAddress("BaseTradegen")).sendRewards(user, amount);
-
-        emit ClaimedStakingRewards(user, amount, block.timestamp);
     }
 
     /* ========== EVENTS ========== */

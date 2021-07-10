@@ -28,7 +28,7 @@ contract Settings is ISettings, Ownable {
 
     /**
     * @notice Initial parameters and values:
-    *         StakingYield - 50%; 
+    *         WeeklyStakingRewards - 500,000 TGEN; 
     *         TransactionFee - 0.3%;
     *         VoteLimit - 10;
     *         VotingReward - 3 TGEN;
