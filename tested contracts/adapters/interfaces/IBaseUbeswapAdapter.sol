@@ -1,6 +1,6 @@
 pragma solidity >=0.5.0;
 
-import './IUniswapV2Router02.sol';
+import '../../interfaces/IUniswapV2Router02.sol';
 
 interface IBaseUbeswapAdapter {
     function MAX_SLIPPAGE_PERCENT() external returns (uint);
