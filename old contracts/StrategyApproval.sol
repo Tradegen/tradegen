@@ -11,7 +11,6 @@ import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IComponents.sol';
-import './interfaces/IStakingRewards.sol';
 import './interfaces/IStrategyVotingEscrow.sol';
 
 contract StrategyApproval is AddressResolver, StrategyManager {
@@ -114,11 +113,9 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     * @param exitRules Array of encoded exit rules for the strategy
     */
     function voteForStrategy(uint index, bool decision, uint backtestResults, uint strategyParams, uint[] memory entryRules, uint[] memory exitRules) external indexIsWithinBounds(index) strategyIsPendingApproval(index) userHasNotVotedYet(msg.sender, index) {
-        address stakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StakingRewards");
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
 
         require(_checkIfParamsMatch(index, strategyParams, entryRules, exitRules), "Strategy parameters do not match");
-        require(IStakingRewards(stakingRewardsAddress).balanceOf(msg.sender) >= ISettings(settingsAddress).getParameterValue("MinimumStakeToVote"), "Not enough staked TGEN to vote");
 
         bool meetsCriteria = _checkIfStrategyMeetsCriteria(backtestResults, strategyParams, entryRules, exitRules, submittedStrategies[index].strategyName, submittedStrategies[index].strategySymbol);
         bool correct = false;
@@ -129,24 +126,6 @@ contract StrategyApproval is AddressResolver, StrategyManager {
             correct = true;
             uint votingReward = ISettings(settingsAddress).getParameterValue("VotingReward");
             availableRewards[msg.sender] = availableRewards[msg.sender].add(votingReward);
-        }
-        //Penalize voter
-        else
-        {
-            uint votingPenalty = ISettings(settingsAddress).getParameterValue("VotingPenalty");
-            
-            if (availableRewards[msg.sender] >= votingPenalty)
-            {
-                availableRewards[msg.sender] = availableRewards[msg.sender].sub(votingPenalty);
-            }
-            else
-            {
-                uint leftover = votingPenalty.sub(availableRewards[msg.sender]);
-                availableRewards[msg.sender] = 0;
-                IStakingRewards(stakingRewardsAddress).slashStake(msg.sender, leftover);
-            }
-
-            emit ReceivedPenalty(msg.sender, votingPenalty, block.timestamp);
         }
 
         submittedStrategies[index].votes.push(StrategyVote(msg.sender, uint32(block.timestamp), decision, correct));
@@ -394,5 +373,4 @@ contract StrategyApproval is AddressResolver, StrategyManager {
     event ApprovedStrategy(uint index, uint timestamp);
     event RejectedStrategy(uint index, uint timestamp);
     event ReceivedReward(address indexed user, uint amount, uint timestamp);
-    event ReceivedPenalty(address indexed user, uint amount, uint timestamp);
 }

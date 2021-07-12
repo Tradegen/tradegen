@@ -32,8 +32,6 @@ contract Settings is ISettings, Ownable {
     *         TransactionFee - 0.3%;
     *         VoteLimit - 10;
     *         VotingReward - 3 TGEN;
-    *         VotingPenalty - 15 TGEN;
-    *         MinimumStakeToVote - 50 TGEN;
     *         StrategyApprovalThreshold - 80%;
     *         MaximumNumberOfEntryRules - 7;
     *         MaximumNumberOfExitRules - 7;

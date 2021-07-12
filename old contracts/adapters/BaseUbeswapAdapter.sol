@@ -116,7 +116,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         uint fromAssetPrice = getPrice(assetToSwapFrom); //cUSD price of asset
         uint toAssetPrice = getPrice(assetToSwapTo); //cUSD price of asset
 
-        uint expectedMinAmountOut = amountToSwap.mul(fromAssetPrice.mul(10**toAssetDecimals)).mul(MAX_SLIPPAGE_PERCENT).div(toAssetPrice.mul(10**fromAssetDecimals)).div(100);
+        uint expectedMinAmountOut = amountToSwap.mul(fromAssetPrice).mul(100 - MAX_SLIPPAGE_PERCENT).div(toAssetPrice).div(100);
 
         require(expectedMinAmountOut < minAmountOut, 'minAmountOut exceed max slippage');
 
