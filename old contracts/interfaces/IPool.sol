@@ -16,7 +16,13 @@ interface IPool {
     * @dev Returns the name of the pool
     * @return string The name of the pool
     */
-    function getPoolName() external view returns (string memory);
+    function name() external view returns (string memory);
+
+    /**
+    * @dev Returns the address of the pool's farm
+    * @return address Address of the pool's farm
+    */
+    function getFarmAddress() external view returns (address);
 
     /**
     * @dev Return the pool manager's address
@@ -25,16 +31,10 @@ interface IPool {
     function getManagerAddress() external view returns (address);
 
     /**
-    * @dev Returns the name and address of each investor in the pool
-    * @return InvestorAndBalance[] The address and balance of each investor in the pool
-    */
-    function getInvestors() external view returns (InvestorAndBalance[] memory);
-
-    /**
     * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value
-    * @return (PositionKeyAndBalance[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions
+    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions
     */
-    function getPositionsAndTotal() external view returns (PositionKeyAndBalance[] memory, uint);
+    function getPositionsAndTotal() external view returns (address[] memory, uint[] memory, uint);
 
     /**
     * @dev Returns the amount of stable coins the pool has to invest
@@ -52,24 +52,25 @@ interface IPool {
     * @dev Returns the balance of the user in USD
     * @return uint Balance of the user in USD
     */
-    function getUserBalance(address user) external view returns (uint);
+    function getUSDBalance(address user) external view returns (uint);
 
     /**
     * @dev Returns the number of LP tokens the user has
     * @param user Address of the user
     * @return uint Number of LP tokens the user has
     */
-    function getUserTokenBalance(address user) external view returns (uint);
+    function balanceOf(address user) external view returns (uint);
 
     /**
     * @dev Deposits the given USD amount into the pool
+    * @param user Address of the user
     * @param amount Amount of USD to deposit into the pool
     */
-    function deposit(uint amount) external;
+    function deposit(address user, uint amount) external;
 
     /**
     * @dev Withdraws the given USD amount on behalf of the user
-    * @param user Address of user to withdraw
+    * @param user Address of the user
     * @param amount Amount of USD to withdraw from the pool
     */
     function withdraw(address user, uint amount) external;
@@ -81,4 +82,10 @@ interface IPool {
     * @param numberOfTokens Number of tokens of the given currency
     */
     function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external;
+
+    /**
+    * @dev Updates the pool's farm address
+    * @param farmAddress Address of the pool's farm
+    */
+    function setFarmAddress(address farmAddress) external;
 }
