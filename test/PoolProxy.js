@@ -11,11 +11,11 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const BaseUbeswapAdapter = require('../build/contracts/BaseUbeswapAdapter.json');
+const PoolProxy = require('../build/contracts/PoolProxy.json');
 const AddressResolver = require('../build/contracts/AddressResolver.json');
 const Settings = require('../build/contracts/Settings.json');
 
-var contractAddress = "0x778A681265e08b870e41b26B9aE278eFA61776fA";
+var contractAddress = "0x583f9AA2f0B799aE9Cb08AAA1D6e8606E62c4bED";
 var addressResolverAddress = "0x9452D986e6A206AcC93122B81598d9D97E0bAaa3";
 var settingsAddress = "0xC67DCC69EFDa1a60610366B74b5B10c7E695b374";
 var ubeswapRouterAddress = "0xe3d8bd6aed4f159bc8000a9cd47cffdb95f96121";
@@ -27,7 +27,7 @@ var cMCO2 = "0xe1Aef5200e6A38Ea69aD544c479bD1a176C8a510";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(BaseUbeswapAdapter.abi, contractAddress);
+    let instance = new web3.eth.Contract(PoolProxy.abi, contractAddress);
     let addressResolverInstance = new web3.eth.Contract(AddressResolver.abi, addressResolverAddress);
     let settingsInstance = new web3.eth.Contract(Settings.abi, settingsAddress);
     

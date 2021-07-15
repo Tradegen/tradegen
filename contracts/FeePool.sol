@@ -10,7 +10,7 @@ import './interfaces/IFeePool.sol';
 // Internal references
 import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
-import "./adapters/interfaces/IBaseUbeswapAdapter.sol";
+import "./interfaces/IBaseUbeswapAdapter.sol";
 
 contract FeePool is Ownable, IFeePool {
     using SafeMath for uint;

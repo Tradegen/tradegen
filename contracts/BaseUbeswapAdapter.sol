@@ -32,11 +32,17 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     function getPrice(address currencyKey) public view override returns(uint) {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        //Check if currency key is cUSD
+        if (currencyKey == stableCoinAddress)
+        {
+            return 10 ** _getDecimals(currencyKey);
+        }
 
         require(currencyKey != address(0), "Invalid currency key");
         require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(currencyKey), "Currency is not available");
 
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
         address[] memory path = new address[](2);
         path[0] = currencyKey;
         path[1] = stableCoinAddress;
