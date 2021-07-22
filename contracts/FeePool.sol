@@ -103,15 +103,30 @@ contract FeePool is Ownable, IFeePool {
         require(userUSDBalance >= amountInUSD, "Not enough fees available");
         require(assetBalanceInUSD >= amountInUSD, "Fee pool doesn't have enough tokens in asset");
 
-        uint poolUSDBalance = getPoolBalance();
         uint numberOfAssetTokens = amountInUSD.div(USDperAssetToken);
-        uint numberOfFeeTokens = totalSupply.mul(amountInUSD).div(poolUSDBalance);
+        uint numberOfFeeTokens = balances[msg.sender].mul(amountInUSD).div(userUSDBalance);
 
         balances[msg.sender] = balances[msg.sender].sub(numberOfFeeTokens);
         totalSupply = totalSupply.sub(numberOfFeeTokens);
 
-        IERC20(currencyKey).approve(msg.sender, numberOfAssetTokens);
-        IERC20(currencyKey).transferFrom(address(this), msg.sender, numberOfAssetTokens);
+        IERC20(currencyKey).transfer(msg.sender, numberOfAssetTokens);
+
+        //Find index of position in positionKeys array
+        uint index;
+        for (index = 0; index < positionKeys.length; index++)
+        {
+            if (positionKeys[index] == currencyKey)
+            {
+                break;
+            }
+        }
+
+        //Remove position key if no balance left
+        if (IERC20(positionKeys[index]).balanceOf(address(this)) == 0)
+        {
+            positionKeys[index] = positionKeys[positionKeys.length - 1];
+            positionKeys.pop();
+        }
 
         emit ClaimedFees(msg.sender, currencyKey, amountInUSD, block.timestamp);
     }
@@ -119,18 +134,35 @@ contract FeePool is Ownable, IFeePool {
     /**
     * @notice Adds fees to user
     * @notice Function gets called by Pool whenever users withdraw for a profit
-    * @notice 1 fee token is minted per cUSD
     * @param user Address of the user
-    * @param numberOfFeeTokens Number of fee tokens to mint
+    * @param feeAmount USD value of fee
     */
-    function addFees(address user, uint numberOfFeeTokens) public override onlyPoolOrStrategy {
-        require(numberOfFeeTokens > 0, "Amount must be greater than 0");
+    function addFees(address user, uint feeAmount) public override onlyPoolOrStrategy {
+        require(feeAmount > 0, "Amount must be greater than 0");
         require(user != address(0), "Invalid address");
 
+        uint poolBalance = getPoolBalance();
+        uint numberOfFeeTokens = (totalSupply > 0) ? totalSupply.mul(feeAmount).div(poolBalance) : feeAmount;
         balances[user] = balances[user].add(numberOfFeeTokens);
         totalSupply = totalSupply.add(numberOfFeeTokens);
 
-        emit AddedFees(user, numberOfFeeTokens, block.timestamp);
+        emit AddedFees(user, feeAmount, block.timestamp);
+    }
+
+    /**
+    * @notice Adds currency key to positionKeys array if no position yet
+    * @notice Function gets called by Pool whenever users pay performance fee
+    * @param positions Address of each position the pool/bot had when paying fee
+    */
+    function addPositionKeys(address[] memory positions) public override onlyPoolOrStrategy {
+        //Add positions to positionKeys array if no existing position
+        for (uint i = 0; i < positions.length; i++)
+        {
+            if (IERC20(positions[i]).balanceOf(address(this)) == 0)
+            {
+                positionKeys.push(positions[i]);
+            }
+        }
     }
 
     /* ========== MODIFIERS ========== */

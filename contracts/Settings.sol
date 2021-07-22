@@ -28,14 +28,13 @@ contract Settings is ISettings, Ownable {
 
     /**
     * @notice Initial parameters and values:
-    *         WeeklyStakingRewards - 500,000 TGEN; 
     *         TransactionFee - 0.3%;
     *         VoteLimit - 10;
     *         VotingReward - 3 TGEN;
     *         StrategyApprovalThreshold - 80%;
     *         MaximumNumberOfEntryRules - 7;
     *         MaximumNumberOfExitRules - 7;
-    *         MaximumNumberOfPoolsPerUser - 1;
+    *         MaximumNumberOfPoolsPerUser - 2;
     *         MaximumPerformanceFee - 30%;
     */
     constructor() public Ownable() {}

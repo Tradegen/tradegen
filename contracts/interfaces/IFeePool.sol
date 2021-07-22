@@ -12,11 +12,10 @@ interface IFeePool {
     /**
     * @notice Adds fees to user
     * @notice Function gets called by Pool whenever users withdraw for a profit
-    * @notice 1 fee token is minted per cUSD
     * @param user Address of the user
-    * @param numberOfFeeTokens Number of fee tokens to mint
+    * @param feeAmount USD value of fee
     */
-    function addFees(address user, uint numberOfFeeTokens) external;
+    function addFees(address user, uint feeAmount) external;
 
     /**
     * @notice Allow a user to claim available fees in the specified currency
@@ -42,4 +41,11 @@ interface IFeePool {
     * @return uint Balance of the user in USD
     */
     function getUSDBalance(address user) external view returns (uint);
+
+    /**
+    * @notice Adds currency key to positionKeys array if no position yet
+    * @notice Function gets called by Pool whenever users pay performance fee
+    * @param positions Address of each position the pool/bot had when paying fee
+    */
+    function addPositionKeys(address[] memory positions) external;
 }

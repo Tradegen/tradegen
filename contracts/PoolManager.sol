@@ -36,54 +36,73 @@ contract PoolManager {
     }
 
     /**
-    * @dev Returns the index of each pool the user manages
+    * @dev Returns the address of each pool the user manages
     * @param user Address of the user
-    * @return uint[] The index in pools array of each pool the user manages
+    * @return address[] The address of each pool the user manages
     */
-    function _getUserManagedPools(address user) internal view returns(uint[] memory) {
+    function _getUserManagedPools(address user) internal view returns(address[] memory) {
         require(user != address(0), "Invalid address");
 
-        return userToManagedPools[user];
+        address[] memory addresses = new address[](userToManagedPools[user].length);
+        uint[] memory indexes = userToManagedPools[user];
+
+        for (uint i = 0; i < addresses.length; i++)
+        {
+            uint index = indexes[i];
+            addresses[i] = pools[index];
+        }
+
+        return addresses;
     }
 
     /**
-    * @dev Returns the index of each pool the user is invested in
+    * @dev Returns the address of each pool the user is invested in
     * @param user Address of the user
-    * @return uint[] The index in pools array of each pool the user is invested in
+    * @return address[] The address of each pool the user is invested in
     */
-    function _getUserInvestedPools(address user) internal view returns(uint[] memory) {
+    function _getUserInvestedPools(address user) internal view returns(address[] memory) {
         require(user != address(0), "Invalid address");
 
-        return userToInvestedPools[user];
+        address[] memory addresses = new address[](userToInvestedPools[user].length);
+        uint[] memory indexes = userToInvestedPools[user];
+
+        for (uint i = 0; i < addresses.length; i++)
+        {
+            uint index = indexes[i];
+            addresses[i] = pools[index];
+        }
+
+        return addresses;
     }
 
     /**
-    * @dev Returns the index of each pool the user is staked in
+    * @dev Returns the address of each pool the user is staked in
     * @param user Address of the user
-    * @return uint[] The index in pools array of each pool the user is staked in
+    * @return address[] The address of each pool the user is staked in
     * @return uint Number of pools the user is staked in
     */
-    function _getUserStakedPools(address user) internal view returns(uint[] memory, uint) {
+    function _getUserStakedPools(address user) internal view returns(address[] memory, uint) {
         require(user != address(0), "Invalid address");
 
         uint numberOfStakedPools = 0;
-        uint[] memory stakedPoolIndexes = new uint[](userToInvestedPools[user].length);
+        address[] memory stakedPools = new address[](userToInvestedPools[user].length);
+        uint[] memory investedPools = userToInvestedPools[user];
 
-        for (uint i = 0; i < stakedPoolIndexes.length; i++)
+        for (uint i = 0; i < stakedPools.length; i++)
         {
-            uint index = userToInvestedPools[user][i] - 1;
+            uint index = investedPools[i];
             address poolAddress = pools[index];
             address farmAddress = IPool(poolAddress).getFarmAddress();
             uint stakedBalance = (farmAddress != address(0)) ? IStakingRewards(farmAddress).balanceOf(user) : 0;
 
             if (stakedBalance > 0)
             {
-                stakedPoolIndexes[numberOfStakedPools] = i;
+                stakedPools[numberOfStakedPools] = poolAddress;
                 numberOfStakedPools++;
             }
         }
 
-        return (stakedPoolIndexes, numberOfStakedPools);
+        return (stakedPools, numberOfStakedPools);
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
@@ -132,7 +151,7 @@ contract PoolManager {
 
         address poolAddress = address(temp);
         pools.push(poolAddress);
-        userToManagedPools[manager].push(pools.length);
+        userToManagedPools[manager].push(pools.length - 1);
         addressToIndex[poolAddress] = pools.length;
 
         emit CreatedPool(manager, poolAddress, pools.length - 1, block.timestamp);
@@ -144,46 +163,25 @@ contract PoolManager {
     * @dev Deposit cUSD into the given pool
     * @param user Address of the user
     * @param poolAddress Address of the pool
-    * @param amount Amount of cUSD to deposit into the pool
     */
-    function _deposit(address user, address poolAddress, uint amount) internal isValidPoolAddress(poolAddress) {
+    function _deposit(address user, address poolAddress) internal {
         if (IPool(poolAddress).balanceOf(user) == 0)
         {
             uint index = addressToIndex[poolAddress] - 1;
             userToInvestedPools[user].push(index);
-        }
-
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
-        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
-
-        IPool(poolAddress).deposit(user, amount);
+        } 
     }
 
     /**
     * @dev Withdraw cUSD from the given pool
     * @param user Address of the user
     * @param poolAddress Address of the pool
-    * @param amount Amount of cUSD to withdraw from the pool
     */
-    function _withdraw(address user, address poolAddress, uint amount) internal isValidPoolAddress(poolAddress) {
-        IPool(poolAddress).withdraw(user, amount);
-
+    function _withdraw(address user, address poolAddress) internal {
         if (IPool(poolAddress).balanceOf(user) == 0)
         {
             _removePosition(user, poolAddress);
         }
-    }
-
-    /**
-    * @dev Places an order to buy/sell the given currency on behalf of the pool
-    * @param poolAddress Address of the pool
-    * @param currencyKey Address of currency to trade
-    * @param buyOrSell Whether the user is buying or selling
-    * @param numberOfTokens Number of tokens of the given currency
-    */
-    function _placeOrder(address poolAddress, address currencyKey, bool buyOrSell, uint numberOfTokens) internal isValidPoolAddress(poolAddress) onlyManager(poolAddress) {
-        IPool(poolAddress).placeOrder(currencyKey, buyOrSell, numberOfTokens);
     }
 
     /* ========== MODIFIERS ========== */
