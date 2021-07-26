@@ -130,11 +130,6 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
-        {
           "internalType": "uint256",
           "name": "amount",
           "type": "uint256"
@@ -147,11 +142,6 @@
     },
     {
       "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        },
         {
           "internalType": "uint256",
           "name": "amount",
@@ -213,27 +203,27 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableFunds\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFarmAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getManagerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPerformanceFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPoolBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPositionsAndTotal\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUSDBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"buyOrSell\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"}],\"name\":\"placeOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"setFarmAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"balanceOf(address)\":{\"details\":\"Returns the number of LP tokens the user has\",\"params\":{\"user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint Number of LP tokens the user has\"}},\"deposit(address,uint256)\":{\"details\":\"Deposits the given USD amount into the pool\",\"params\":{\"amount\":\"Amount of USD to deposit into the pool\",\"user\":\"Address of the user\"}},\"getAvailableFunds()\":{\"details\":\"Returns the amount of stable coins the pool has to invest\",\"returns\":{\"_0\":\"uint Amount of stable coin the pool has available\"}},\"getFarmAddress()\":{\"details\":\"Returns the address of the pool's farm\",\"returns\":{\"_0\":\"address Address of the pool's farm\"}},\"getManagerAddress()\":{\"details\":\"Return the pool manager's address\",\"returns\":{\"_0\":\"address Address of the pool's manager\"}},\"getPerformanceFee()\":{\"details\":\"Returns the pool's performance fee\",\"returns\":{\"_0\":\"uint The pool's performance fee\"}},\"getPoolBalance()\":{\"details\":\"Returns the value of the pool in USD\",\"returns\":{\"_0\":\"uint Value of the pool in USD\"}},\"getPositionsAndTotal()\":{\"details\":\"Returns the currency address and balance of each position the pool has, as well as the cumulative value\",\"returns\":{\"_0\":\"(address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions\"}},\"getUSDBalance(address)\":{\"details\":\"Returns the balance of the user in USD\",\"returns\":{\"_0\":\"uint Balance of the user in USD\"}},\"name()\":{\"details\":\"Returns the name of the pool\",\"returns\":{\"_0\":\"string The name of the pool\"}},\"placeOrder(address,bool,uint256)\":{\"details\":\"Places an order to buy/sell the given currency\",\"params\":{\"buyOrSell\":\"Whether the user is buying or selling\",\"currencyKey\":\"Address of currency to trade\",\"numberOfTokens\":\"Number of tokens of the given currency\"}},\"setFarmAddress(address)\":{\"details\":\"Updates the pool's farm address\",\"params\":{\"farmAddress\":\"Address of the pool's farm\"}},\"withdraw(address,uint256)\":{\"details\":\"Withdraws the given USD amount on behalf of the user\",\"params\":{\"amount\":\"Amount of USD to withdraw from the pool\",\"user\":\"Address of the user\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol\":\"IPool\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol\":{\"keccak256\":\"0xbd0e5aac3002db20188b4b03d1ad87d8b46dc05f18456a544a52668004237f99\",\"urls\":[\"bzz-raw://6fb0f0f38813dc1fb994840ab4319e3f32f4278eb835243bd0c8cb0c37db828c\",\"dweb:/ipfs/QmUMNsrPZGaFgTvkQtTB7NCXkYbZAePYGAGNRAgHBmqas4\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableFunds\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getFarmAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getManagerAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPerformanceFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPoolBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPositionsAndTotal\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUSDBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"buyOrSell\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"}],\"name\":\"placeOrder\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"setFarmAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"withdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"balanceOf(address)\":{\"details\":\"Returns the number of LP tokens the user has\",\"params\":{\"user\":\"Address of the user\"},\"returns\":{\"_0\":\"uint Number of LP tokens the user has\"}},\"deposit(uint256)\":{\"details\":\"Deposits the given USD amount into the pool\",\"params\":{\"amount\":\"Amount of USD to deposit into the pool\"}},\"getAvailableFunds()\":{\"details\":\"Returns the amount of stable coins the pool has to invest\",\"returns\":{\"_0\":\"uint Amount of stable coin the pool has available\"}},\"getFarmAddress()\":{\"details\":\"Returns the address of the pool's farm\",\"returns\":{\"_0\":\"address Address of the pool's farm\"}},\"getManagerAddress()\":{\"details\":\"Return the pool manager's address\",\"returns\":{\"_0\":\"address Address of the pool's manager\"}},\"getPerformanceFee()\":{\"details\":\"Returns the pool's performance fee\",\"returns\":{\"_0\":\"uint The pool's performance fee\"}},\"getPoolBalance()\":{\"details\":\"Returns the value of the pool in USD\",\"returns\":{\"_0\":\"uint Value of the pool in USD\"}},\"getPositionsAndTotal()\":{\"details\":\"Returns the currency address and balance of each position the pool has, as well as the cumulative value\",\"returns\":{\"_0\":\"(address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions\"}},\"getUSDBalance(address)\":{\"details\":\"Returns the balance of the user in USD\",\"returns\":{\"_0\":\"uint Balance of the user in USD\"}},\"name()\":{\"details\":\"Returns the name of the pool\",\"returns\":{\"_0\":\"string The name of the pool\"}},\"placeOrder(address,bool,uint256)\":{\"details\":\"Places an order to buy/sell the given currency\",\"params\":{\"buyOrSell\":\"Whether the user is buying or selling\",\"currencyKey\":\"Address of currency to trade\",\"numberOfTokens\":\"Number of tokens of the given currency\"}},\"setFarmAddress(address)\":{\"details\":\"Updates the pool's farm address\",\"params\":{\"farmAddress\":\"Address of the pool's farm\"}},\"withdraw(uint256)\":{\"details\":\"Withdraws the given USD amount on behalf of the user\",\"params\":{\"amount\":\"Amount of USD to withdraw from the pool\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"deposit(uint256)\":{\"notice\":\"Call cUSD.approve() before calling this function\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol\":\"IPool\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol\":{\"keccak256\":\"0xd4b696b878fbe6a0ed99449e23d03d171bbabf48a00187068a188570ec089c50\",\"urls\":[\"bzz-raw://5db4c640e1c9e72b3084d229f3483767695efa97c5a0373a2128f4eb56dd71a7\",\"dweb:/ipfs/QmUe8vMC1pm8jwX5brYoDegQGNWqSNhKKmU7v3msFYnhTJ\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IPool {\r\n\r\n    struct PositionKeyAndBalance {\r\n        address positionKey;\r\n        uint balance;\r\n    }\r\n\r\n    struct InvestorAndBalance {\r\n        address investor;\r\n        uint balance;\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the name of the pool\r\n    * @return string The name of the pool\r\n    */\r\n    function name() external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the address of the pool's farm\r\n    * @return address Address of the pool's farm\r\n    */\r\n    function getFarmAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Return the pool manager's address\r\n    * @return address Address of the pool's manager\r\n    */\r\n    function getManagerAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\r\n    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions\r\n    */\r\n    function getPositionsAndTotal() external view returns (address[] memory, uint[] memory, uint);\r\n\r\n    /**\r\n    * @dev Returns the amount of stable coins the pool has to invest\r\n    * @return uint Amount of stable coin the pool has available\r\n    */\r\n    function getAvailableFunds() external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the value of the pool in USD\r\n    * @return uint Value of the pool in USD\r\n    */\r\n    function getPoolBalance() external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the balance of the user in USD\r\n    * @return uint Balance of the user in USD\r\n    */\r\n    function getUSDBalance(address user) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the number of LP tokens the user has\r\n    * @param user Address of the user\r\n    * @return uint Number of LP tokens the user has\r\n    */\r\n    function balanceOf(address user) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Deposits the given USD amount into the pool\r\n    * @param user Address of the user\r\n    * @param amount Amount of USD to deposit into the pool\r\n    */\r\n    function deposit(address user, uint amount) external;\r\n\r\n    /**\r\n    * @dev Withdraws the given USD amount on behalf of the user\r\n    * @param user Address of the user\r\n    * @param amount Amount of USD to withdraw from the pool\r\n    */\r\n    function withdraw(address user, uint amount) external;\r\n\r\n    /**\r\n    * @dev Places an order to buy/sell the given currency\r\n    * @param currencyKey Address of currency to trade\r\n    * @param buyOrSell Whether the user is buying or selling\r\n    * @param numberOfTokens Number of tokens of the given currency\r\n    */\r\n    function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external;\r\n\r\n    /**\r\n    * @dev Updates the pool's farm address\r\n    * @param farmAddress Address of the pool's farm\r\n    */\r\n    function setFarmAddress(address farmAddress) external;\r\n\r\n    /**\r\n    * @dev Returns the pool's performance fee\r\n    * @return uint The pool's performance fee\r\n    */\r\n    function getPerformanceFee() external view returns (uint);\r\n}",
-  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen\\contracts\\interfaces\\IPool.sol",
+  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IPool {\r\n\r\n    struct PositionKeyAndBalance {\r\n        address positionKey;\r\n        uint balance;\r\n    }\r\n\r\n    struct InvestorAndBalance {\r\n        address investor;\r\n        uint balance;\r\n    }\r\n\r\n    /**\r\n    * @dev Returns the name of the pool\r\n    * @return string The name of the pool\r\n    */\r\n    function name() external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the address of the pool's farm\r\n    * @return address Address of the pool's farm\r\n    */\r\n    function getFarmAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Return the pool manager's address\r\n    * @return address Address of the pool's manager\r\n    */\r\n    function getManagerAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\r\n    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions\r\n    */\r\n    function getPositionsAndTotal() external view returns (address[] memory, uint[] memory, uint);\r\n\r\n    /**\r\n    * @dev Returns the amount of stable coins the pool has to invest\r\n    * @return uint Amount of stable coin the pool has available\r\n    */\r\n    function getAvailableFunds() external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the value of the pool in USD\r\n    * @return uint Value of the pool in USD\r\n    */\r\n    function getPoolBalance() external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the balance of the user in USD\r\n    * @return uint Balance of the user in USD\r\n    */\r\n    function getUSDBalance(address user) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the number of LP tokens the user has\r\n    * @param user Address of the user\r\n    * @return uint Number of LP tokens the user has\r\n    */\r\n    function balanceOf(address user) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Deposits the given USD amount into the pool\r\n    * @notice Call cUSD.approve() before calling this function\r\n    * @param amount Amount of USD to deposit into the pool\r\n    */\r\n    function deposit(uint amount) external;\r\n\r\n    /**\r\n    * @dev Withdraws the given USD amount on behalf of the user\r\n    * @param amount Amount of USD to withdraw from the pool\r\n    */\r\n    function withdraw(uint amount) external;\r\n\r\n    /**\r\n    * @dev Places an order to buy/sell the given currency\r\n    * @param currencyKey Address of currency to trade\r\n    * @param buyOrSell Whether the user is buying or selling\r\n    * @param numberOfTokens Number of tokens of the given currency\r\n    */\r\n    function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) external;\r\n\r\n    /**\r\n    * @dev Updates the pool's farm address\r\n    * @param farmAddress Address of the pool's farm\r\n    */\r\n    function setFarmAddress(address farmAddress) external;\r\n\r\n    /**\r\n    * @dev Returns the pool's performance fee\r\n    * @return uint The pool's performance fee\r\n    */\r\n    function getPerformanceFee() external view returns (uint);\r\n}",
+  "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol",
     "exportedSymbols": {
       "IPool": [
-        3393
+        820
       ]
     },
-    "id": 3394,
+    "id": 821,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 3286,
+        "id": 717,
         "literals": [
           "solidity",
           ">=",
@@ -241,7 +231,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:9"
+        "src": "0:24:5"
       },
       {
         "abstract": false,
@@ -250,26 +240,26 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 3393,
+        "id": 820,
         "linearizedBaseContracts": [
-          3393
+          820
         ],
         "name": "IPool",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "canonicalName": "IPool.PositionKeyAndBalance",
-            "id": 3291,
+            "id": 722,
             "members": [
               {
                 "constant": false,
-                "id": 3288,
+                "id": 719,
                 "mutability": "mutable",
                 "name": "positionKey",
                 "nodeType": "VariableDeclaration",
                 "overrides": null,
-                "scope": 3291,
-                "src": "93:19:9",
+                "scope": 722,
+                "src": "93:19:5",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -277,10 +267,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 3287,
+                  "id": 718,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "93:7:9",
+                  "src": "93:7:5",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -292,13 +282,13 @@
               },
               {
                 "constant": false,
-                "id": 3290,
+                "id": 721,
                 "mutability": "mutable",
                 "name": "balance",
                 "nodeType": "VariableDeclaration",
                 "overrides": null,
-                "scope": 3291,
-                "src": "123:12:9",
+                "scope": 722,
+                "src": "123:12:5",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -306,10 +296,10 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 3289,
+                  "id": 720,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
-                  "src": "123:4:9",
+                  "src": "123:4:5",
                   "typeDescriptions": {
                     "typeIdentifier": "t_uint256",
                     "typeString": "uint256"
@@ -321,23 +311,23 @@
             ],
             "name": "PositionKeyAndBalance",
             "nodeType": "StructDefinition",
-            "scope": 3393,
-            "src": "53:90:9",
+            "scope": 820,
+            "src": "53:90:5",
             "visibility": "public"
           },
           {
             "canonicalName": "IPool.InvestorAndBalance",
-            "id": 3296,
+            "id": 727,
             "members": [
               {
                 "constant": false,
-                "id": 3293,
+                "id": 724,
                 "mutability": "mutable",
                 "name": "investor",
                 "nodeType": "VariableDeclaration",
                 "overrides": null,
-                "scope": 3296,
-                "src": "188:16:9",
+                "scope": 727,
+                "src": "188:16:5",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -345,10 +335,10 @@
                   "typeString": "address"
                 },
                 "typeName": {
-                  "id": 3292,
+                  "id": 723,
                   "name": "address",
                   "nodeType": "ElementaryTypeName",
-                  "src": "188:7:9",
+                  "src": "188:7:5",
                   "stateMutability": "nonpayable",
                   "typeDescriptions": {
                     "typeIdentifier": "t_address",
@@ -360,13 +350,13 @@
               },
               {
                 "constant": false,
-                "id": 3295,
+                "id": 726,
                 "mutability": "mutable",
                 "name": "balance",
                 "nodeType": "VariableDeclaration",
                 "overrides": null,
-                "scope": 3296,
-                "src": "215:12:9",
+                "scope": 727,
+                "src": "215:12:5",
                 "stateVariable": false,
                 "storageLocation": "default",
                 "typeDescriptions": {
@@ -374,10 +364,10 @@
                   "typeString": "uint256"
                 },
                 "typeName": {
-                  "id": 3294,
+                  "id": 725,
                   "name": "uint",
                   "nodeType": "ElementaryTypeName",
-                  "src": "215:4:9",
+                  "src": "215:4:5",
                   "typeDescriptions": {
                     "typeIdentifier": "t_uint256",
                     "typeString": "uint256"
@@ -389,20 +379,20 @@
             ],
             "name": "InvestorAndBalance",
             "nodeType": "StructDefinition",
-            "scope": 3393,
-            "src": "151:84:9",
+            "scope": 820,
+            "src": "151:84:5",
             "visibility": "public"
           },
           {
             "body": null,
             "documentation": {
-              "id": 3297,
+              "id": 728,
               "nodeType": "StructuredDocumentation",
-              "src": "243:95:9",
+              "src": "243:95:5",
               "text": " @dev Returns the name of the pool\n @return string The name of the pool"
             },
             "functionSelector": "06fdde03",
-            "id": 3302,
+            "id": 733,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -410,24 +400,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3298,
+              "id": 729,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "357:2:9"
+              "src": "357:2:5"
             },
             "returnParameters": {
-              "id": 3301,
+              "id": 732,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3300,
+                  "id": 731,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3302,
-                  "src": "383:13:9",
+                  "scope": 733,
+                  "src": "383:13:5",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -435,10 +425,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 3299,
+                    "id": 730,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "383:6:9",
+                    "src": "383:6:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -448,10 +438,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "382:15:9"
+              "src": "382:15:5"
             },
-            "scope": 3393,
-            "src": "344:54:9",
+            "scope": 820,
+            "src": "344:54:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -459,13 +449,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3303,
+              "id": 734,
               "nodeType": "StructuredDocumentation",
-              "src": "406:112:9",
+              "src": "406:112:5",
               "text": " @dev Returns the address of the pool's farm\n @return address Address of the pool's farm"
             },
             "functionSelector": "6e1d9d2d",
-            "id": 3308,
+            "id": 739,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -473,24 +463,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3304,
+              "id": 735,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "547:2:9"
+              "src": "547:2:5"
             },
             "returnParameters": {
-              "id": 3307,
+              "id": 738,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3306,
+                  "id": 737,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3308,
-                  "src": "573:7:9",
+                  "scope": 739,
+                  "src": "573:7:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -498,10 +488,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3305,
+                    "id": 736,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "573:7:9",
+                    "src": "573:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -512,10 +502,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "572:9:9"
+              "src": "572:9:5"
             },
-            "scope": 3393,
-            "src": "524:58:9",
+            "scope": 820,
+            "src": "524:58:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -523,13 +513,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3309,
+              "id": 740,
               "nodeType": "StructuredDocumentation",
-              "src": "590:110:9",
+              "src": "590:110:5",
               "text": " @dev Return the pool manager's address\n @return address Address of the pool's manager"
             },
             "functionSelector": "c162d7da",
-            "id": 3314,
+            "id": 745,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -537,24 +527,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3310,
+              "id": 741,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "732:2:9"
+              "src": "732:2:5"
             },
             "returnParameters": {
-              "id": 3313,
+              "id": 744,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3312,
+                  "id": 743,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3314,
-                  "src": "758:7:9",
+                  "scope": 745,
+                  "src": "758:7:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -562,10 +552,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3311,
+                    "id": 742,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "758:7:9",
+                    "src": "758:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -576,10 +566,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "757:9:9"
+              "src": "757:9:5"
             },
-            "scope": 3393,
-            "src": "706:61:9",
+            "scope": 820,
+            "src": "706:61:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -587,13 +577,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3315,
+              "id": 746,
               "nodeType": "StructuredDocumentation",
-              "src": "775:266:9",
+              "src": "775:266:5",
               "text": " @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\n @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions"
             },
             "functionSelector": "ac08c574",
-            "id": 3326,
+            "id": 757,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -601,24 +591,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3316,
+              "id": 747,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1076:2:9"
+              "src": "1076:2:5"
             },
             "returnParameters": {
-              "id": 3325,
+              "id": 756,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3319,
+                  "id": 750,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3326,
-                  "src": "1102:16:9",
+                  "scope": 757,
+                  "src": "1102:16:5",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -627,20 +617,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3317,
+                      "id": 748,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1102:7:9",
+                      "src": "1102:7:5",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 3318,
+                    "id": 749,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1102:9:9",
+                    "src": "1102:9:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -651,13 +641,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 3322,
+                  "id": 753,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3326,
-                  "src": "1120:13:9",
+                  "scope": 757,
+                  "src": "1120:13:5",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -666,19 +656,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 3320,
+                      "id": 751,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1120:4:9",
+                      "src": "1120:4:5",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 3321,
+                    "id": 752,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1120:6:9",
+                    "src": "1120:6:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -689,13 +679,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 3324,
+                  "id": 755,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3326,
-                  "src": "1135:4:9",
+                  "scope": 757,
+                  "src": "1135:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -703,10 +693,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3323,
+                    "id": 754,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1135:4:9",
+                    "src": "1135:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -716,10 +706,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1101:39:9"
+              "src": "1101:39:5"
             },
-            "scope": 3393,
-            "src": "1047:94:9",
+            "scope": 820,
+            "src": "1047:94:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -727,13 +717,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3327,
+              "id": 758,
               "nodeType": "StructuredDocumentation",
-              "src": "1149:146:9",
+              "src": "1149:146:5",
               "text": " @dev Returns the amount of stable coins the pool has to invest\n @return uint Amount of stable coin the pool has available"
             },
             "functionSelector": "5195bd29",
-            "id": 3332,
+            "id": 763,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -741,24 +731,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3328,
+              "id": 759,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1327:2:9"
+              "src": "1327:2:5"
             },
             "returnParameters": {
-              "id": 3331,
+              "id": 762,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3330,
+                  "id": 761,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3332,
-                  "src": "1353:4:9",
+                  "scope": 763,
+                  "src": "1353:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -766,10 +756,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3329,
+                    "id": 760,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1353:4:9",
+                    "src": "1353:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -779,10 +769,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1352:6:9"
+              "src": "1352:6:5"
             },
-            "scope": 3393,
-            "src": "1301:58:9",
+            "scope": 820,
+            "src": "1301:58:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -790,13 +780,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3333,
+              "id": 764,
               "nodeType": "StructuredDocumentation",
-              "src": "1367:105:9",
+              "src": "1367:105:5",
               "text": " @dev Returns the value of the pool in USD\n @return uint Value of the pool in USD"
             },
             "functionSelector": "abd70aa2",
-            "id": 3338,
+            "id": 769,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -804,24 +794,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3334,
+              "id": 765,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1501:2:9"
+              "src": "1501:2:5"
             },
             "returnParameters": {
-              "id": 3337,
+              "id": 768,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3336,
+                  "id": 767,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3338,
-                  "src": "1527:4:9",
+                  "scope": 769,
+                  "src": "1527:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -829,10 +819,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3335,
+                    "id": 766,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1527:4:9",
+                    "src": "1527:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -842,10 +832,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1526:6:9"
+              "src": "1526:6:5"
             },
-            "scope": 3393,
-            "src": "1478:55:9",
+            "scope": 820,
+            "src": "1478:55:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -853,13 +843,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3339,
+              "id": 770,
               "nodeType": "StructuredDocumentation",
-              "src": "1541:109:9",
+              "src": "1541:109:5",
               "text": " @dev Returns the balance of the user in USD\n @return uint Balance of the user in USD"
             },
             "functionSelector": "2322e3b9",
-            "id": 3346,
+            "id": 777,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -867,18 +857,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3342,
+              "id": 773,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3341,
+                  "id": 772,
                   "mutability": "mutable",
                   "name": "user",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3346,
-                  "src": "1679:12:9",
+                  "scope": 777,
+                  "src": "1679:12:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -886,10 +876,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3340,
+                    "id": 771,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1679:7:9",
+                    "src": "1679:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -900,21 +890,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1678:14:9"
+              "src": "1678:14:5"
             },
             "returnParameters": {
-              "id": 3345,
+              "id": 776,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3344,
+                  "id": 775,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3346,
-                  "src": "1716:4:9",
+                  "scope": 777,
+                  "src": "1716:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -922,10 +912,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3343,
+                    "id": 774,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1716:4:9",
+                    "src": "1716:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -935,10 +925,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1715:6:9"
+              "src": "1715:6:5"
             },
-            "scope": 3393,
-            "src": "1656:66:9",
+            "scope": 820,
+            "src": "1656:66:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -946,13 +936,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3347,
+              "id": 778,
               "nodeType": "StructuredDocumentation",
-              "src": "1730:160:9",
+              "src": "1730:160:5",
               "text": " @dev Returns the number of LP tokens the user has\n @param user Address of the user\n @return uint Number of LP tokens the user has"
             },
             "functionSelector": "70a08231",
-            "id": 3354,
+            "id": 785,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -960,18 +950,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3350,
+              "id": 781,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3349,
+                  "id": 780,
                   "mutability": "mutable",
                   "name": "user",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3354,
-                  "src": "1915:12:9",
+                  "scope": 785,
+                  "src": "1915:12:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -979,10 +969,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3348,
+                    "id": 779,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1915:7:9",
+                    "src": "1915:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -993,21 +983,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1914:14:9"
+              "src": "1914:14:5"
             },
             "returnParameters": {
-              "id": 3353,
+              "id": 784,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3352,
+                  "id": 783,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3354,
-                  "src": "1952:4:9",
+                  "scope": 785,
+                  "src": "1952:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1015,10 +1005,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3351,
+                    "id": 782,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1952:4:9",
+                    "src": "1952:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1028,10 +1018,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1951:6:9"
+              "src": "1951:6:5"
             },
-            "scope": 3393,
-            "src": "1896:62:9",
+            "scope": 820,
+            "src": "1896:62:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -1039,13 +1029,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3355,
+              "id": 786,
               "nodeType": "StructuredDocumentation",
-              "src": "1966:166:9",
-              "text": " @dev Deposits the given USD amount into the pool\n @param user Address of the user\n @param amount Amount of USD to deposit into the pool"
+              "src": "1966:191:5",
+              "text": " @dev Deposits the given USD amount into the pool\n @notice Call cUSD.approve() before calling this function\n @param amount Amount of USD to deposit into the pool"
             },
-            "functionSelector": "47e7ef24",
-            "id": 3362,
+            "functionSelector": "b6b55f25",
+            "id": 791,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1053,47 +1043,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3360,
+              "id": 789,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3357,
-                  "mutability": "mutable",
-                  "name": "user",
-                  "nodeType": "VariableDeclaration",
-                  "overrides": null,
-                  "scope": 3362,
-                  "src": "2155:12:9",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 3356,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "2155:7:9",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "value": null,
-                  "visibility": "internal"
-                },
-                {
-                  "constant": false,
-                  "id": 3359,
+                  "id": 788,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3362,
-                  "src": "2169:11:9",
+                  "scope": 791,
+                  "src": "2180:11:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1101,10 +1062,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3358,
+                    "id": 787,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2169:4:9",
+                    "src": "2180:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1114,16 +1075,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2154:27:9"
+              "src": "2179:13:5"
             },
             "returnParameters": {
-              "id": 3361,
+              "id": 790,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2190:0:9"
+              "src": "2201:0:5"
             },
-            "scope": 3393,
-            "src": "2138:53:9",
+            "scope": 820,
+            "src": "2163:39:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1131,13 +1092,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3363,
+              "id": 792,
               "nodeType": "StructuredDocumentation",
-              "src": "2199:176:9",
-              "text": " @dev Withdraws the given USD amount on behalf of the user\n @param user Address of the user\n @param amount Amount of USD to withdraw from the pool"
+              "src": "2210:137:5",
+              "text": " @dev Withdraws the given USD amount on behalf of the user\n @param amount Amount of USD to withdraw from the pool"
             },
-            "functionSelector": "f3fef3a3",
-            "id": 3370,
+            "functionSelector": "2e1a7d4d",
+            "id": 797,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1145,47 +1106,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3368,
+              "id": 795,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3365,
-                  "mutability": "mutable",
-                  "name": "user",
-                  "nodeType": "VariableDeclaration",
-                  "overrides": null,
-                  "scope": 3370,
-                  "src": "2399:12:9",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 3364,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "2399:7:9",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "value": null,
-                  "visibility": "internal"
-                },
-                {
-                  "constant": false,
-                  "id": 3367,
+                  "id": 794,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3370,
-                  "src": "2413:11:9",
+                  "scope": 797,
+                  "src": "2371:11:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1193,10 +1125,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3366,
+                    "id": 793,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2413:4:9",
+                    "src": "2371:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1206,16 +1138,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2398:27:9"
+              "src": "2370:13:5"
             },
             "returnParameters": {
-              "id": 3369,
+              "id": 796,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2434:0:9"
+              "src": "2392:0:5"
             },
-            "scope": 3393,
-            "src": "2381:54:9",
+            "scope": 820,
+            "src": "2353:40:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1223,13 +1155,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3371,
+              "id": 798,
               "nodeType": "StructuredDocumentation",
-              "src": "2443:255:9",
+              "src": "2401:255:5",
               "text": " @dev Places an order to buy/sell the given currency\n @param currencyKey Address of currency to trade\n @param buyOrSell Whether the user is buying or selling\n @param numberOfTokens Number of tokens of the given currency"
             },
             "functionSelector": "f2962559",
-            "id": 3380,
+            "id": 807,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1237,18 +1169,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3378,
+              "id": 805,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3373,
+                  "id": 800,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3380,
-                  "src": "2724:19:9",
+                  "scope": 807,
+                  "src": "2682:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1256,10 +1188,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3372,
+                    "id": 799,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2724:7:9",
+                    "src": "2682:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1271,13 +1203,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 3375,
+                  "id": 802,
                   "mutability": "mutable",
                   "name": "buyOrSell",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3380,
-                  "src": "2745:14:9",
+                  "scope": 807,
+                  "src": "2703:14:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1285,10 +1217,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 3374,
+                    "id": 801,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2745:4:9",
+                    "src": "2703:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -1299,13 +1231,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 3377,
+                  "id": 804,
                   "mutability": "mutable",
                   "name": "numberOfTokens",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3380,
-                  "src": "2761:19:9",
+                  "scope": 807,
+                  "src": "2719:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1313,10 +1245,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3376,
+                    "id": 803,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2761:4:9",
+                    "src": "2719:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1326,16 +1258,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2723:58:9"
+              "src": "2681:58:5"
             },
             "returnParameters": {
-              "id": 3379,
+              "id": 806,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2790:0:9"
+              "src": "2748:0:5"
             },
-            "scope": 3393,
-            "src": "2704:87:9",
+            "scope": 820,
+            "src": "2662:87:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1343,13 +1275,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3381,
+              "id": 808,
               "nodeType": "StructuredDocumentation",
-              "src": "2799:108:9",
+              "src": "2757:108:5",
               "text": " @dev Updates the pool's farm address\n @param farmAddress Address of the pool's farm"
             },
             "functionSelector": "d9799809",
-            "id": 3386,
+            "id": 813,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1357,18 +1289,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3384,
+              "id": 811,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3383,
+                  "id": 810,
                   "mutability": "mutable",
                   "name": "farmAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3386,
-                  "src": "2937:19:9",
+                  "scope": 813,
+                  "src": "2895:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1376,10 +1308,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3382,
+                    "id": 809,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2937:7:9",
+                    "src": "2895:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1390,16 +1322,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2936:21:9"
+              "src": "2894:21:5"
             },
             "returnParameters": {
-              "id": 3385,
+              "id": 812,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2966:0:9"
+              "src": "2924:0:5"
             },
-            "scope": 3393,
-            "src": "2913:54:9",
+            "scope": 820,
+            "src": "2871:54:5",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1407,13 +1339,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 3387,
+              "id": 814,
               "nodeType": "StructuredDocumentation",
-              "src": "2975:105:9",
+              "src": "2933:105:5",
               "text": " @dev Returns the pool's performance fee\n @return uint The pool's performance fee"
             },
             "functionSelector": "235c3603",
-            "id": 3392,
+            "id": 819,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1421,24 +1353,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 3388,
+              "id": 815,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3112:2:9"
+              "src": "3070:2:5"
             },
             "returnParameters": {
-              "id": 3391,
+              "id": 818,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3390,
+                  "id": 817,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 3392,
-                  "src": "3138:4:9",
+                  "scope": 819,
+                  "src": "3096:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1446,10 +1378,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 3389,
+                    "id": 816,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3138:4:9",
+                    "src": "3096:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1459,27 +1391,27 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3137:6:9"
+              "src": "3095:6:5"
             },
-            "scope": 3393,
-            "src": "3086:58:9",
+            "scope": 820,
+            "src": "3044:58:5",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 3394,
-        "src": "28:3119:9"
+        "scope": 821,
+        "src": "28:3077:5"
       }
     ],
-    "src": "0:3147:9"
+    "src": "0:3105:5"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IPool.sol",
       "exportedSymbols": {
         "IPool": [
-          3393
+          820
         ]
       },
       "license": null
@@ -1494,9 +1426,9 @@
             ".0"
           ]
         },
-        "id": 3286,
+        "id": 717,
         "name": "PragmaDirective",
-        "src": "0:24:9"
+        "src": "0:24:5"
       },
       {
         "attributes": {
@@ -1511,17 +1443,17 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            3393
+            820
           ],
           "name": "IPool",
-          "scope": 3394
+          "scope": 821
         },
         "children": [
           {
             "attributes": {
               "canonicalName": "IPool.PositionKeyAndBalance",
               "name": "PositionKeyAndBalance",
-              "scope": 3393,
+              "scope": 820,
               "visibility": "public"
             },
             "children": [
@@ -1531,7 +1463,7 @@
                   "mutability": "mutable",
                   "name": "positionKey",
                   "overrides": null,
-                  "scope": 3291,
+                  "scope": 722,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "address",
@@ -1545,14 +1477,14 @@
                       "stateMutability": "nonpayable",
                       "type": "address"
                     },
-                    "id": 3287,
+                    "id": 718,
                     "name": "ElementaryTypeName",
-                    "src": "93:7:9"
+                    "src": "93:7:5"
                   }
                 ],
-                "id": 3288,
+                "id": 719,
                 "name": "VariableDeclaration",
-                "src": "93:19:9"
+                "src": "93:19:5"
               },
               {
                 "attributes": {
@@ -1560,7 +1492,7 @@
                   "mutability": "mutable",
                   "name": "balance",
                   "overrides": null,
-                  "scope": 3291,
+                  "scope": 722,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "uint256",
@@ -1573,25 +1505,25 @@
                       "name": "uint",
                       "type": "uint256"
                     },
-                    "id": 3289,
+                    "id": 720,
                     "name": "ElementaryTypeName",
-                    "src": "123:4:9"
+                    "src": "123:4:5"
                   }
                 ],
-                "id": 3290,
+                "id": 721,
                 "name": "VariableDeclaration",
-                "src": "123:12:9"
+                "src": "123:12:5"
               }
             ],
-            "id": 3291,
+            "id": 722,
             "name": "StructDefinition",
-            "src": "53:90:9"
+            "src": "53:90:5"
           },
           {
             "attributes": {
               "canonicalName": "IPool.InvestorAndBalance",
               "name": "InvestorAndBalance",
-              "scope": 3393,
+              "scope": 820,
               "visibility": "public"
             },
             "children": [
@@ -1601,7 +1533,7 @@
                   "mutability": "mutable",
                   "name": "investor",
                   "overrides": null,
-                  "scope": 3296,
+                  "scope": 727,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "address",
@@ -1615,14 +1547,14 @@
                       "stateMutability": "nonpayable",
                       "type": "address"
                     },
-                    "id": 3292,
+                    "id": 723,
                     "name": "ElementaryTypeName",
-                    "src": "188:7:9"
+                    "src": "188:7:5"
                   }
                 ],
-                "id": 3293,
+                "id": 724,
                 "name": "VariableDeclaration",
-                "src": "188:16:9"
+                "src": "188:16:5"
               },
               {
                 "attributes": {
@@ -1630,7 +1562,7 @@
                   "mutability": "mutable",
                   "name": "balance",
                   "overrides": null,
-                  "scope": 3296,
+                  "scope": 727,
                   "stateVariable": false,
                   "storageLocation": "default",
                   "type": "uint256",
@@ -1643,19 +1575,19 @@
                       "name": "uint",
                       "type": "uint256"
                     },
-                    "id": 3294,
+                    "id": 725,
                     "name": "ElementaryTypeName",
-                    "src": "215:4:9"
+                    "src": "215:4:5"
                   }
                 ],
-                "id": 3295,
+                "id": 726,
                 "name": "VariableDeclaration",
-                "src": "215:12:9"
+                "src": "215:12:5"
               }
             ],
-            "id": 3296,
+            "id": 727,
             "name": "StructDefinition",
-            "src": "151:84:9"
+            "src": "151:84:5"
           },
           {
             "attributes": {
@@ -1669,7 +1601,7 @@
               ],
               "name": "name",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1679,9 +1611,9 @@
                 "attributes": {
                   "text": " @dev Returns the name of the pool\n @return string The name of the pool"
                 },
-                "id": 3297,
+                "id": 728,
                 "name": "StructuredDocumentation",
-                "src": "243:95:9"
+                "src": "243:95:5"
               },
               {
                 "attributes": {
@@ -1690,9 +1622,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3298,
+                "id": 729,
                 "name": "ParameterList",
-                "src": "357:2:9"
+                "src": "357:2:5"
               },
               {
                 "children": [
@@ -1702,7 +1634,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3302,
+                      "scope": 733,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -1715,24 +1647,24 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 3299,
+                        "id": 730,
                         "name": "ElementaryTypeName",
-                        "src": "383:6:9"
+                        "src": "383:6:5"
                       }
                     ],
-                    "id": 3300,
+                    "id": 731,
                     "name": "VariableDeclaration",
-                    "src": "383:13:9"
+                    "src": "383:13:5"
                   }
                 ],
-                "id": 3301,
+                "id": 732,
                 "name": "ParameterList",
-                "src": "382:15:9"
+                "src": "382:15:5"
               }
             ],
-            "id": 3302,
+            "id": 733,
             "name": "FunctionDefinition",
-            "src": "344:54:9"
+            "src": "344:54:5"
           },
           {
             "attributes": {
@@ -1746,7 +1678,7 @@
               ],
               "name": "getFarmAddress",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1756,9 +1688,9 @@
                 "attributes": {
                   "text": " @dev Returns the address of the pool's farm\n @return address Address of the pool's farm"
                 },
-                "id": 3303,
+                "id": 734,
                 "name": "StructuredDocumentation",
-                "src": "406:112:9"
+                "src": "406:112:5"
               },
               {
                 "attributes": {
@@ -1767,9 +1699,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3304,
+                "id": 735,
                 "name": "ParameterList",
-                "src": "547:2:9"
+                "src": "547:2:5"
               },
               {
                 "children": [
@@ -1779,7 +1711,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3308,
+                      "scope": 739,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1793,24 +1725,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3305,
+                        "id": 736,
                         "name": "ElementaryTypeName",
-                        "src": "573:7:9"
+                        "src": "573:7:5"
                       }
                     ],
-                    "id": 3306,
+                    "id": 737,
                     "name": "VariableDeclaration",
-                    "src": "573:7:9"
+                    "src": "573:7:5"
                   }
                 ],
-                "id": 3307,
+                "id": 738,
                 "name": "ParameterList",
-                "src": "572:9:9"
+                "src": "572:9:5"
               }
             ],
-            "id": 3308,
+            "id": 739,
             "name": "FunctionDefinition",
-            "src": "524:58:9"
+            "src": "524:58:5"
           },
           {
             "attributes": {
@@ -1824,7 +1756,7 @@
               ],
               "name": "getManagerAddress",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1834,9 +1766,9 @@
                 "attributes": {
                   "text": " @dev Return the pool manager's address\n @return address Address of the pool's manager"
                 },
-                "id": 3309,
+                "id": 740,
                 "name": "StructuredDocumentation",
-                "src": "590:110:9"
+                "src": "590:110:5"
               },
               {
                 "attributes": {
@@ -1845,9 +1777,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3310,
+                "id": 741,
                 "name": "ParameterList",
-                "src": "732:2:9"
+                "src": "732:2:5"
               },
               {
                 "children": [
@@ -1857,7 +1789,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3314,
+                      "scope": 745,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1871,24 +1803,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3311,
+                        "id": 742,
                         "name": "ElementaryTypeName",
-                        "src": "758:7:9"
+                        "src": "758:7:5"
                       }
                     ],
-                    "id": 3312,
+                    "id": 743,
                     "name": "VariableDeclaration",
-                    "src": "758:7:9"
+                    "src": "758:7:5"
                   }
                 ],
-                "id": 3313,
+                "id": 744,
                 "name": "ParameterList",
-                "src": "757:9:9"
+                "src": "757:9:5"
               }
             ],
-            "id": 3314,
+            "id": 745,
             "name": "FunctionDefinition",
-            "src": "706:61:9"
+            "src": "706:61:5"
           },
           {
             "attributes": {
@@ -1902,7 +1834,7 @@
               ],
               "name": "getPositionsAndTotal",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1912,9 +1844,9 @@
                 "attributes": {
                   "text": " @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\n @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions"
                 },
-                "id": 3315,
+                "id": 746,
                 "name": "StructuredDocumentation",
-                "src": "775:266:9"
+                "src": "775:266:5"
               },
               {
                 "attributes": {
@@ -1923,9 +1855,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3316,
+                "id": 747,
                 "name": "ParameterList",
-                "src": "1076:2:9"
+                "src": "1076:2:5"
               },
               {
                 "children": [
@@ -1935,7 +1867,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3326,
+                      "scope": 757,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -1955,19 +1887,19 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 3317,
+                            "id": 748,
                             "name": "ElementaryTypeName",
-                            "src": "1102:7:9"
+                            "src": "1102:7:5"
                           }
                         ],
-                        "id": 3318,
+                        "id": 749,
                         "name": "ArrayTypeName",
-                        "src": "1102:9:9"
+                        "src": "1102:9:5"
                       }
                     ],
-                    "id": 3319,
+                    "id": 750,
                     "name": "VariableDeclaration",
-                    "src": "1102:16:9"
+                    "src": "1102:16:5"
                   },
                   {
                     "attributes": {
@@ -1975,7 +1907,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3326,
+                      "scope": 757,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "uint256[]",
@@ -1994,19 +1926,19 @@
                               "name": "uint",
                               "type": "uint256"
                             },
-                            "id": 3320,
+                            "id": 751,
                             "name": "ElementaryTypeName",
-                            "src": "1120:4:9"
+                            "src": "1120:4:5"
                           }
                         ],
-                        "id": 3321,
+                        "id": 752,
                         "name": "ArrayTypeName",
-                        "src": "1120:6:9"
+                        "src": "1120:6:5"
                       }
                     ],
-                    "id": 3322,
+                    "id": 753,
                     "name": "VariableDeclaration",
-                    "src": "1120:13:9"
+                    "src": "1120:13:5"
                   },
                   {
                     "attributes": {
@@ -2014,7 +1946,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3326,
+                      "scope": 757,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2027,24 +1959,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3323,
+                        "id": 754,
                         "name": "ElementaryTypeName",
-                        "src": "1135:4:9"
+                        "src": "1135:4:5"
                       }
                     ],
-                    "id": 3324,
+                    "id": 755,
                     "name": "VariableDeclaration",
-                    "src": "1135:4:9"
+                    "src": "1135:4:5"
                   }
                 ],
-                "id": 3325,
+                "id": 756,
                 "name": "ParameterList",
-                "src": "1101:39:9"
+                "src": "1101:39:5"
               }
             ],
-            "id": 3326,
+            "id": 757,
             "name": "FunctionDefinition",
-            "src": "1047:94:9"
+            "src": "1047:94:5"
           },
           {
             "attributes": {
@@ -2058,7 +1990,7 @@
               ],
               "name": "getAvailableFunds",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2068,9 +2000,9 @@
                 "attributes": {
                   "text": " @dev Returns the amount of stable coins the pool has to invest\n @return uint Amount of stable coin the pool has available"
                 },
-                "id": 3327,
+                "id": 758,
                 "name": "StructuredDocumentation",
-                "src": "1149:146:9"
+                "src": "1149:146:5"
               },
               {
                 "attributes": {
@@ -2079,9 +2011,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3328,
+                "id": 759,
                 "name": "ParameterList",
-                "src": "1327:2:9"
+                "src": "1327:2:5"
               },
               {
                 "children": [
@@ -2091,7 +2023,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3332,
+                      "scope": 763,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2104,24 +2036,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3329,
+                        "id": 760,
                         "name": "ElementaryTypeName",
-                        "src": "1353:4:9"
+                        "src": "1353:4:5"
                       }
                     ],
-                    "id": 3330,
+                    "id": 761,
                     "name": "VariableDeclaration",
-                    "src": "1353:4:9"
+                    "src": "1353:4:5"
                   }
                 ],
-                "id": 3331,
+                "id": 762,
                 "name": "ParameterList",
-                "src": "1352:6:9"
+                "src": "1352:6:5"
               }
             ],
-            "id": 3332,
+            "id": 763,
             "name": "FunctionDefinition",
-            "src": "1301:58:9"
+            "src": "1301:58:5"
           },
           {
             "attributes": {
@@ -2135,7 +2067,7 @@
               ],
               "name": "getPoolBalance",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2145,9 +2077,9 @@
                 "attributes": {
                   "text": " @dev Returns the value of the pool in USD\n @return uint Value of the pool in USD"
                 },
-                "id": 3333,
+                "id": 764,
                 "name": "StructuredDocumentation",
-                "src": "1367:105:9"
+                "src": "1367:105:5"
               },
               {
                 "attributes": {
@@ -2156,9 +2088,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3334,
+                "id": 765,
                 "name": "ParameterList",
-                "src": "1501:2:9"
+                "src": "1501:2:5"
               },
               {
                 "children": [
@@ -2168,7 +2100,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3338,
+                      "scope": 769,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2181,24 +2113,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3335,
+                        "id": 766,
                         "name": "ElementaryTypeName",
-                        "src": "1527:4:9"
+                        "src": "1527:4:5"
                       }
                     ],
-                    "id": 3336,
+                    "id": 767,
                     "name": "VariableDeclaration",
-                    "src": "1527:4:9"
+                    "src": "1527:4:5"
                   }
                 ],
-                "id": 3337,
+                "id": 768,
                 "name": "ParameterList",
-                "src": "1526:6:9"
+                "src": "1526:6:5"
               }
             ],
-            "id": 3338,
+            "id": 769,
             "name": "FunctionDefinition",
-            "src": "1478:55:9"
+            "src": "1478:55:5"
           },
           {
             "attributes": {
@@ -2212,7 +2144,7 @@
               ],
               "name": "getUSDBalance",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2222,9 +2154,9 @@
                 "attributes": {
                   "text": " @dev Returns the balance of the user in USD\n @return uint Balance of the user in USD"
                 },
-                "id": 3339,
+                "id": 770,
                 "name": "StructuredDocumentation",
-                "src": "1541:109:9"
+                "src": "1541:109:5"
               },
               {
                 "children": [
@@ -2234,7 +2166,7 @@
                       "mutability": "mutable",
                       "name": "user",
                       "overrides": null,
-                      "scope": 3346,
+                      "scope": 777,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2248,19 +2180,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3340,
+                        "id": 771,
                         "name": "ElementaryTypeName",
-                        "src": "1679:7:9"
+                        "src": "1679:7:5"
                       }
                     ],
-                    "id": 3341,
+                    "id": 772,
                     "name": "VariableDeclaration",
-                    "src": "1679:12:9"
+                    "src": "1679:12:5"
                   }
                 ],
-                "id": 3342,
+                "id": 773,
                 "name": "ParameterList",
-                "src": "1678:14:9"
+                "src": "1678:14:5"
               },
               {
                 "children": [
@@ -2270,7 +2202,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3346,
+                      "scope": 777,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2283,24 +2215,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3343,
+                        "id": 774,
                         "name": "ElementaryTypeName",
-                        "src": "1716:4:9"
+                        "src": "1716:4:5"
                       }
                     ],
-                    "id": 3344,
+                    "id": 775,
                     "name": "VariableDeclaration",
-                    "src": "1716:4:9"
+                    "src": "1716:4:5"
                   }
                 ],
-                "id": 3345,
+                "id": 776,
                 "name": "ParameterList",
-                "src": "1715:6:9"
+                "src": "1715:6:5"
               }
             ],
-            "id": 3346,
+            "id": 777,
             "name": "FunctionDefinition",
-            "src": "1656:66:9"
+            "src": "1656:66:5"
           },
           {
             "attributes": {
@@ -2314,7 +2246,7 @@
               ],
               "name": "balanceOf",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2324,9 +2256,9 @@
                 "attributes": {
                   "text": " @dev Returns the number of LP tokens the user has\n @param user Address of the user\n @return uint Number of LP tokens the user has"
                 },
-                "id": 3347,
+                "id": 778,
                 "name": "StructuredDocumentation",
-                "src": "1730:160:9"
+                "src": "1730:160:5"
               },
               {
                 "children": [
@@ -2336,7 +2268,7 @@
                       "mutability": "mutable",
                       "name": "user",
                       "overrides": null,
-                      "scope": 3354,
+                      "scope": 785,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2350,19 +2282,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3348,
+                        "id": 779,
                         "name": "ElementaryTypeName",
-                        "src": "1915:7:9"
+                        "src": "1915:7:5"
                       }
                     ],
-                    "id": 3349,
+                    "id": 780,
                     "name": "VariableDeclaration",
-                    "src": "1915:12:9"
+                    "src": "1915:12:5"
                   }
                 ],
-                "id": 3350,
+                "id": 781,
                 "name": "ParameterList",
-                "src": "1914:14:9"
+                "src": "1914:14:5"
               },
               {
                 "children": [
@@ -2372,7 +2304,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3354,
+                      "scope": 785,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2385,29 +2317,29 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3351,
+                        "id": 782,
                         "name": "ElementaryTypeName",
-                        "src": "1952:4:9"
+                        "src": "1952:4:5"
                       }
                     ],
-                    "id": 3352,
+                    "id": 783,
                     "name": "VariableDeclaration",
-                    "src": "1952:4:9"
+                    "src": "1952:4:5"
                   }
                 ],
-                "id": 3353,
+                "id": 784,
                 "name": "ParameterList",
-                "src": "1951:6:9"
+                "src": "1951:6:5"
               }
             ],
-            "id": 3354,
+            "id": 785,
             "name": "FunctionDefinition",
-            "src": "1896:62:9"
+            "src": "1896:62:5"
           },
           {
             "attributes": {
               "body": null,
-              "functionSelector": "47e7ef24",
+              "functionSelector": "b6b55f25",
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
@@ -2416,7 +2348,7 @@
               ],
               "name": "deposit",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2424,11 +2356,11 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Deposits the given USD amount into the pool\n @param user Address of the user\n @param amount Amount of USD to deposit into the pool"
+                  "text": " @dev Deposits the given USD amount into the pool\n @notice Call cUSD.approve() before calling this function\n @param amount Amount of USD to deposit into the pool"
                 },
-                "id": 3355,
+                "id": 786,
                 "name": "StructuredDocumentation",
-                "src": "1966:166:9"
+                "src": "1966:191:5"
               },
               {
                 "children": [
@@ -2436,38 +2368,9 @@
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "user",
-                      "overrides": null,
-                      "scope": 3362,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 3356,
-                        "name": "ElementaryTypeName",
-                        "src": "2155:7:9"
-                      }
-                    ],
-                    "id": 3357,
-                    "name": "VariableDeclaration",
-                    "src": "2155:12:9"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
                       "name": "amount",
                       "overrides": null,
-                      "scope": 3362,
+                      "scope": 791,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2480,19 +2383,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3358,
+                        "id": 787,
                         "name": "ElementaryTypeName",
-                        "src": "2169:4:9"
+                        "src": "2180:4:5"
                       }
                     ],
-                    "id": 3359,
+                    "id": 788,
                     "name": "VariableDeclaration",
-                    "src": "2169:11:9"
+                    "src": "2180:11:5"
                   }
                 ],
-                "id": 3360,
+                "id": 789,
                 "name": "ParameterList",
-                "src": "2154:27:9"
+                "src": "2179:13:5"
               },
               {
                 "attributes": {
@@ -2501,19 +2404,19 @@
                   ]
                 },
                 "children": [],
-                "id": 3361,
+                "id": 790,
                 "name": "ParameterList",
-                "src": "2190:0:9"
+                "src": "2201:0:5"
               }
             ],
-            "id": 3362,
+            "id": 791,
             "name": "FunctionDefinition",
-            "src": "2138:53:9"
+            "src": "2163:39:5"
           },
           {
             "attributes": {
               "body": null,
-              "functionSelector": "f3fef3a3",
+              "functionSelector": "2e1a7d4d",
               "implemented": false,
               "isConstructor": false,
               "kind": "function",
@@ -2522,7 +2425,7 @@
               ],
               "name": "withdraw",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2530,11 +2433,11 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Withdraws the given USD amount on behalf of the user\n @param user Address of the user\n @param amount Amount of USD to withdraw from the pool"
+                  "text": " @dev Withdraws the given USD amount on behalf of the user\n @param amount Amount of USD to withdraw from the pool"
                 },
-                "id": 3363,
+                "id": 792,
                 "name": "StructuredDocumentation",
-                "src": "2199:176:9"
+                "src": "2210:137:5"
               },
               {
                 "children": [
@@ -2542,38 +2445,9 @@
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
-                      "name": "user",
-                      "overrides": null,
-                      "scope": 3370,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 3364,
-                        "name": "ElementaryTypeName",
-                        "src": "2399:7:9"
-                      }
-                    ],
-                    "id": 3365,
-                    "name": "VariableDeclaration",
-                    "src": "2399:12:9"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
                       "name": "amount",
                       "overrides": null,
-                      "scope": 3370,
+                      "scope": 797,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2586,19 +2460,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3366,
+                        "id": 793,
                         "name": "ElementaryTypeName",
-                        "src": "2413:4:9"
+                        "src": "2371:4:5"
                       }
                     ],
-                    "id": 3367,
+                    "id": 794,
                     "name": "VariableDeclaration",
-                    "src": "2413:11:9"
+                    "src": "2371:11:5"
                   }
                 ],
-                "id": 3368,
+                "id": 795,
                 "name": "ParameterList",
-                "src": "2398:27:9"
+                "src": "2370:13:5"
               },
               {
                 "attributes": {
@@ -2607,14 +2481,14 @@
                   ]
                 },
                 "children": [],
-                "id": 3369,
+                "id": 796,
                 "name": "ParameterList",
-                "src": "2434:0:9"
+                "src": "2392:0:5"
               }
             ],
-            "id": 3370,
+            "id": 797,
             "name": "FunctionDefinition",
-            "src": "2381:54:9"
+            "src": "2353:40:5"
           },
           {
             "attributes": {
@@ -2628,7 +2502,7 @@
               ],
               "name": "placeOrder",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2638,9 +2512,9 @@
                 "attributes": {
                   "text": " @dev Places an order to buy/sell the given currency\n @param currencyKey Address of currency to trade\n @param buyOrSell Whether the user is buying or selling\n @param numberOfTokens Number of tokens of the given currency"
                 },
-                "id": 3371,
+                "id": 798,
                 "name": "StructuredDocumentation",
-                "src": "2443:255:9"
+                "src": "2401:255:5"
               },
               {
                 "children": [
@@ -2650,7 +2524,7 @@
                       "mutability": "mutable",
                       "name": "currencyKey",
                       "overrides": null,
-                      "scope": 3380,
+                      "scope": 807,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2664,14 +2538,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3372,
+                        "id": 799,
                         "name": "ElementaryTypeName",
-                        "src": "2724:7:9"
+                        "src": "2682:7:5"
                       }
                     ],
-                    "id": 3373,
+                    "id": 800,
                     "name": "VariableDeclaration",
-                    "src": "2724:19:9"
+                    "src": "2682:19:5"
                   },
                   {
                     "attributes": {
@@ -2679,7 +2553,7 @@
                       "mutability": "mutable",
                       "name": "buyOrSell",
                       "overrides": null,
-                      "scope": 3380,
+                      "scope": 807,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -2692,14 +2566,14 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 3374,
+                        "id": 801,
                         "name": "ElementaryTypeName",
-                        "src": "2745:4:9"
+                        "src": "2703:4:5"
                       }
                     ],
-                    "id": 3375,
+                    "id": 802,
                     "name": "VariableDeclaration",
-                    "src": "2745:14:9"
+                    "src": "2703:14:5"
                   },
                   {
                     "attributes": {
@@ -2707,7 +2581,7 @@
                       "mutability": "mutable",
                       "name": "numberOfTokens",
                       "overrides": null,
-                      "scope": 3380,
+                      "scope": 807,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2720,19 +2594,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3376,
+                        "id": 803,
                         "name": "ElementaryTypeName",
-                        "src": "2761:4:9"
+                        "src": "2719:4:5"
                       }
                     ],
-                    "id": 3377,
+                    "id": 804,
                     "name": "VariableDeclaration",
-                    "src": "2761:19:9"
+                    "src": "2719:19:5"
                   }
                 ],
-                "id": 3378,
+                "id": 805,
                 "name": "ParameterList",
-                "src": "2723:58:9"
+                "src": "2681:58:5"
               },
               {
                 "attributes": {
@@ -2741,14 +2615,14 @@
                   ]
                 },
                 "children": [],
-                "id": 3379,
+                "id": 806,
                 "name": "ParameterList",
-                "src": "2790:0:9"
+                "src": "2748:0:5"
               }
             ],
-            "id": 3380,
+            "id": 807,
             "name": "FunctionDefinition",
-            "src": "2704:87:9"
+            "src": "2662:87:5"
           },
           {
             "attributes": {
@@ -2762,7 +2636,7 @@
               ],
               "name": "setFarmAddress",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2772,9 +2646,9 @@
                 "attributes": {
                   "text": " @dev Updates the pool's farm address\n @param farmAddress Address of the pool's farm"
                 },
-                "id": 3381,
+                "id": 808,
                 "name": "StructuredDocumentation",
-                "src": "2799:108:9"
+                "src": "2757:108:5"
               },
               {
                 "children": [
@@ -2784,7 +2658,7 @@
                       "mutability": "mutable",
                       "name": "farmAddress",
                       "overrides": null,
-                      "scope": 3386,
+                      "scope": 813,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2798,19 +2672,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 3382,
+                        "id": 809,
                         "name": "ElementaryTypeName",
-                        "src": "2937:7:9"
+                        "src": "2895:7:5"
                       }
                     ],
-                    "id": 3383,
+                    "id": 810,
                     "name": "VariableDeclaration",
-                    "src": "2937:19:9"
+                    "src": "2895:19:5"
                   }
                 ],
-                "id": 3384,
+                "id": 811,
                 "name": "ParameterList",
-                "src": "2936:21:9"
+                "src": "2894:21:5"
               },
               {
                 "attributes": {
@@ -2819,14 +2693,14 @@
                   ]
                 },
                 "children": [],
-                "id": 3385,
+                "id": 812,
                 "name": "ParameterList",
-                "src": "2966:0:9"
+                "src": "2924:0:5"
               }
             ],
-            "id": 3386,
+            "id": 813,
             "name": "FunctionDefinition",
-            "src": "2913:54:9"
+            "src": "2871:54:5"
           },
           {
             "attributes": {
@@ -2840,7 +2714,7 @@
               ],
               "name": "getPerformanceFee",
               "overrides": null,
-              "scope": 3393,
+              "scope": 820,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2850,9 +2724,9 @@
                 "attributes": {
                   "text": " @dev Returns the pool's performance fee\n @return uint The pool's performance fee"
                 },
-                "id": 3387,
+                "id": 814,
                 "name": "StructuredDocumentation",
-                "src": "2975:105:9"
+                "src": "2933:105:5"
               },
               {
                 "attributes": {
@@ -2861,9 +2735,9 @@
                   ]
                 },
                 "children": [],
-                "id": 3388,
+                "id": 815,
                 "name": "ParameterList",
-                "src": "3112:2:9"
+                "src": "3070:2:5"
               },
               {
                 "children": [
@@ -2873,7 +2747,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 3392,
+                      "scope": 819,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2886,34 +2760,34 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 3389,
+                        "id": 816,
                         "name": "ElementaryTypeName",
-                        "src": "3138:4:9"
+                        "src": "3096:4:5"
                       }
                     ],
-                    "id": 3390,
+                    "id": 817,
                     "name": "VariableDeclaration",
-                    "src": "3138:4:9"
+                    "src": "3096:4:5"
                   }
                 ],
-                "id": 3391,
+                "id": 818,
                 "name": "ParameterList",
-                "src": "3137:6:9"
+                "src": "3095:6:5"
               }
             ],
-            "id": 3392,
+            "id": 819,
             "name": "FunctionDefinition",
-            "src": "3086:58:9"
+            "src": "3044:58:5"
           }
         ],
-        "id": 3393,
+        "id": 820,
         "name": "ContractDefinition",
-        "src": "28:3119:9"
+        "src": "28:3077:5"
       }
     ],
-    "id": 3394,
+    "id": 821,
     "name": "SourceUnit",
-    "src": "0:3147:9"
+    "src": "0:3105:5"
   },
   "compiler": {
     "name": "solc",
@@ -2921,7 +2795,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-20T02:22:18.310Z",
+  "updatedAt": "2021-07-26T16:45:46.157Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -2934,11 +2808,10 @@
           "_0": "uint Number of LP tokens the user has"
         }
       },
-      "deposit(address,uint256)": {
+      "deposit(uint256)": {
         "details": "Deposits the given USD amount into the pool",
         "params": {
-          "amount": "Amount of USD to deposit into the pool",
-          "user": "Address of the user"
+          "amount": "Amount of USD to deposit into the pool"
         }
       },
       "getAvailableFunds()": {
@@ -3003,11 +2876,10 @@
           "farmAddress": "Address of the pool's farm"
         }
       },
-      "withdraw(address,uint256)": {
+      "withdraw(uint256)": {
         "details": "Withdraws the given USD amount on behalf of the user",
         "params": {
-          "amount": "Amount of USD to withdraw from the pool",
-          "user": "Address of the user"
+          "amount": "Amount of USD to withdraw from the pool"
         }
       }
     },
@@ -3015,7 +2887,11 @@
   },
   "userdoc": {
     "kind": "user",
-    "methods": {},
+    "methods": {
+      "deposit(uint256)": {
+        "notice": "Call cUSD.approve() before calling this function"
+      }
+    },
     "version": 1
   }
 }

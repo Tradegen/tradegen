@@ -11,34 +11,34 @@ const getAccount3 = require('../get_account').getAccount3;
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
 
-const PoolProxy = require('../build/contracts/PoolProxy.json');
+const PoolFactory = require('../build/contracts/PoolFactory.json');
 const AddressResolver = require('../build/contracts/AddressResolver.json');
 const Settings = require('../build/contracts/Settings.json');
 const Pool = require('../build/contracts/Pool.json');
 const TestUbeswapAdapter = require('../build/contracts/TestUbeswapAdapter.json');
 const FeePool = require('../build/contracts/FeePool.json');
 
-var contractAddress = "0xb90bF01712562D261663a7a20379d8617b4e2BeC";
-var addressResolverAddress = "0xcc80811fF192C5984980fB5511F520E5b38A5B27";
-var settingsAddress = "0xf643B58B9dDE5a72138500aFAA64BD56eFf95621";
+var contractAddress = "0x43831D75272A628cA63c8AF6D4E9B0042702a4c8";
+var addressResolverAddress = "0x814D4d5476dF0E9200278e9eAA67f59b96b00374";
+var settingsAddress = "0x933526C273Fc54707c7E713E9d25587a4fE7168D";
 const ubeswapRouterAddress = "0xe3d8bd6aed4f159bc8000a9cd47cffdb95f96121";
-var feePoolAddress = "0xdcd95BD8D61A7e9B5b031f5c52eA9951760c1b8E";
-var testUbeswapAdapterAddress = "0x30d8d8C81BfE7D3990565867468A9DCB59f880f6";
+var feePoolAddress = "0x69d17d31D77A2DA2eBdb175BBF31799F6CfD019B";
+var testUbeswapAdapterAddress = "0x65F87cD1071312FACd9845Af69fc85C9df4c3faa";
 
 var cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 var CELO = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
 
 function initContract()
 { 
-    let instance = new web3.eth.Contract(PoolProxy.abi, contractAddress);
+    let instance = new web3.eth.Contract(PoolFactory.abi, contractAddress);
     let addressResolverInstance = new web3.eth.Contract(AddressResolver.abi, addressResolverAddress);
     let settingsInstance = new web3.eth.Contract(Settings.abi, settingsAddress);
     let testUbeswapAdapterInstance = new web3.eth.Contract(TestUbeswapAdapter.abi, testUbeswapAdapterAddress);
     let feePoolInstance = new web3.eth.Contract(FeePool.abi, feePoolAddress);
     let secondPoolInstance;
 
-    var firstPoolAddress = "0xe04B9C4640f268E444dc4223CC592c6eF66b00A0";
-    var secondPoolAddress = "0xd22703508B1Cbb8B64413819d96b1E4dA0Bc106D";
+    var firstPoolAddress = "0x4bc7d84FBc17918D8dDF5D368Bb25FE04B072536";
+    var secondPoolAddress = "";
     var numberOfTokensReceived;
     var numberOfTokensSwapped;
     
@@ -46,12 +46,12 @@ function initContract()
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
         /*
-        //Add PoolProxy contract address to AddressResolver if needed
-        let txObject = await addressResolverInstance.methods.setContractAddress("PoolProxy", contractAddress);
+        //Add PoolFactory contract address to AddressResolver if needed
+        let txObject = await addressResolverInstance.methods.setContractAddress("PoolFactory", contractAddress);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
         let receipt = await tx.waitReceipt();
 
-        let data = await addressResolverInstance.methods.getContractAddress("PoolProxy").call();
+        let data = await addressResolverInstance.methods.getContractAddress("PoolFactory").call();
         console.log(data);*/
         /*
         //Add UbeswapRouter contract address to AddressResolver if needed
@@ -76,17 +76,17 @@ function initContract()
         let receipt3 = await tx3.waitReceipt();
 
         let data3 = await addressResolverInstance.methods.getContractAddress("Settings").call();
-        console.log(data3);
-
+        console.log(data3);*/
+        /*
         //Add BaseUbeswapAdapter contract address to AddressResolver if needed
-        //Use TestUbeswapAdapter
+        //Use TestUbeswapAdapter instead of BaseUbeswapAdapter
         let txObject4 = await addressResolverInstance.methods.setContractAddress("BaseUbeswapAdapter", testUbeswapAdapterAddress);
         let tx4 = await kit.sendTransactionObject(txObject4, { from: account.address }); 
         let receipt4 = await tx4.waitReceipt();
 
         let data4 = await addressResolverInstance.methods.getContractAddress("BaseUbeswapAdapter").call();
-        console.log(data4);
-
+        console.log(data4);*/
+        /*
         //Set stable coin address
         let txObject5 = await settingsInstance.methods.setStableCoinAddress(cUSD);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address }); 
@@ -200,30 +200,16 @@ function initContract()
         let balance = await kit.getTotalBalance(account.address);
 
         let stableToken = kit.contracts.wrapperCache.StableToken.contract;
-        let txObject = await stableToken.methods.approve(contractAddress, 1000000);
+        let txObject = await stableToken.methods.approve(firstPoolAddress, 1000000);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
         let receipt = await tx.waitReceipt();
-
+        
         //Deposit 1000000 cUSD into pool
-        let txObject1 = await instance.methods.deposit(firstPoolAddress, 1000000);
+        let txObject1 = await firstPoolInstance.methods.deposit(1000000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
-        let result1 = receipt1.events.DepositedFundsIntoPool.returnValues.poolAddress;
+        let result1 = receipt1.events.Deposit.returnValues;
         console.log(result1);
-
-        //Check first user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -310,30 +296,16 @@ function initContract()
         let balance = await kit.getTotalBalance(account.address);
         
         let stableToken = kit.contracts.wrapperCache.StableToken.contract;
-        let txObject = await stableToken.methods.approve(contractAddress, 1000000);
+        let txObject = await stableToken.methods.approve(firstPoolAddress, 1000000);
         let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
         let receipt = await tx.waitReceipt();
-
+        
         //Deposit 1000000 cUSD into pool
-        let txObject1 = await instance.methods.deposit(firstPoolAddress, 1000000);
+        let txObject1 = await firstPoolInstance.methods.deposit(1000000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
-        let result1 = receipt1.events.DepositedFundsIntoPool.returnValues.poolAddress;
-        console.log(result1);
-
-        //Check first user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
+        //let result1 = receipt1.events.DepositedFundsIntoPool.returnValues.poolAddress;
+        //console.log(result1);
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -416,37 +388,29 @@ function initContract()
 
         let firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
 
+        console.log("First user's balances: ")
         let initialBalance = await kit.getTotalBalance(account.address);
         console.log(initialBalance);
+
+        console.log("Pool's balances: ")
+        let initialBalance2 = await kit.getTotalBalance(firstPoolAddress);
+        console.log(initialBalance2);
         
         //Withdraw 1000000 cUSD from pool
-        let txObject1 = await instance.methods.withdraw(firstPoolAddress, 1000000);
+        let txObject1 = await firstPoolInstance.methods.withdraw(1000000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
-        let result1 = receipt1.events.WithdrewFundsFromPool.returnValues.poolAddress;
-        console.log(result1);
+        //let result1 = receipt1.events.WithdrewFundsFromPool.returnValues.poolAddress;
+        //console.log(result1);
 
+        console.log("Fee pool's balances: ")
         let feePoolBalance = await kit.getTotalBalance(feePoolAddress);
         console.log(feePoolBalance);
-
-        //Check first user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
         console.log(data2);
-
+        
         assert(
             data2['0'].length == 1,
             'First pool should have 1 element in position array'
@@ -517,6 +481,7 @@ function initContract()
             'Pool should have total supply of 1000000'
         );
 
+        console.log("First user's new balances: ")
         let newBalance = await kit.getTotalBalance(account.address);
         console.log(newBalance);
     });*/
@@ -526,33 +491,20 @@ function initContract()
         kit.connection.addAccount(account.privateKey);
 
         let firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
-
+        
         //Update CELO price to show profit
         let txObject22 = await testUbeswapAdapterInstance.methods.setPrice(5);
         let tx22 = await kit.sendTransactionObject(txObject22, { from: account.address }); 
         let receipt22 = await tx22.waitReceipt();
         
         //Buy CELO with ~1/2 of pool USD balance
-        let txObject1 = await instance.methods.placeOrder(firstPoolAddress, CELO, true, 100000);
+        let txObject1 = await firstPoolInstance.methods.placeOrder(CELO, true, 100000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
 
+        console.log("Pool's balances: ")
         let initialBalance = await kit.getTotalBalance(firstPoolAddress);
         console.log(initialBalance);
-
-        //Check first user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -642,26 +594,12 @@ function initContract()
         let firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
 
         //Sell pool's CELO
-        let txObject1 = await instance.methods.placeOrder(firstPoolAddress, CELO, false, 96415);
+        let txObject1 = await firstPoolInstance.methods.placeOrder(CELO, false, 133009);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
         
         let initialBalance = await kit.getTotalBalance(firstPoolAddress);
         console.log(initialBalance);
-
-        //Check first user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -746,7 +684,7 @@ function initContract()
         try
         {
             //Buy CELO with ~1/2 of pool USD balance
-            let txObject1 = await instance.methods.placeOrder(firstPoolAddress, CELO, true, 100000);
+            let txObject1 = await firstPoolInstance.methods.placeOrder(CELO, true, 100000);
             let tx1 = await kit.sendTransactionObject(txObject1, { from: account2.address }); 
             let receipt1 = await tx1.waitReceipt();
         }
@@ -829,52 +767,24 @@ function initContract()
         let balance = await kit.getTotalBalance(account2.address);
         
         let stableToken = kit.contracts.wrapperCache.StableToken.contract;
-        let txObject = await stableToken.methods.approve(contractAddress, 500000);
+        let txObject = await stableToken.methods.approve(firstPoolAddress, 500000);
         let tx = await kit.sendTransactionObject(txObject, { from: account2.address }); 
         let receipt = await tx.waitReceipt();
 
         //Deposit 500000 cUSD into pool
-        let txObject1 = await instance.methods.deposit(firstPoolAddress, 500000);
+        let txObject1 = await firstPoolInstance.methods.deposit(500000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account2.address }); 
         let receipt1 = await tx1.waitReceipt();
-        let result1 = receipt1.events.DepositedFundsIntoPool.returnValues.poolAddress;
+        let result1 = receipt1.events.Deposit.returnValues;
         console.log(result1);
-
-        //Check second user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account2.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'Second user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in second user invested pools array should be firstPoolAddress'
-        );
-
-        //Check first user's invested pools
-        let data2 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data2);
-
-        assert(
-            data2.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data2[0] == firstPoolAddress,
-            'First element in first user invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data3 = await firstPoolInstance.methods.getPositionsAndTotal().call();
         console.log(data3);
         
         assert(
-            data3['0'].length == 2,
-            'First pool should have 2 elements in position array'
+            data3['0'].length == 1,
+            'First pool should have 1 element in position array'
         );
 
         assert(
@@ -883,8 +793,8 @@ function initContract()
         );
         
         assert(
-            data3['1'].length == 2,
-            'First pool should have 2 elements in balance array'
+            data3['1'].length == 1,
+            'First pool should have 1 element in balance array'
         );
 
         console.log("Pool USD balance: ");
@@ -957,8 +867,8 @@ function initContract()
         console.log(result1);
 
         firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
-        secondPoolInstance = new web3.eth.Contract(Pool.abi, secondPoolAddress);
-
+        secondPoolInstance = new web3.eth.Contract(Pool.abi, result1);
+        
         //Check available pools
         let data1 = await instance.methods.getAvailablePools().call();
         console.log(data1);
@@ -974,7 +884,7 @@ function initContract()
         );
 
         assert(
-            data1[1] == secondPoolAddress,
+            data1[1] == result1,
             'Second element in pools array should be secondPoolAddress'
         );
 
@@ -1060,16 +970,6 @@ function initContract()
         kit.connection.addAccount(account2.privateKey);
 
         let firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
-        /*
-        //Update CELO price to show profit
-        let txObject22 = await testUbeswapAdapterInstance.methods.setPrice(5);
-        let tx22 = await kit.sendTransactionObject(txObject22, { from: account.address }); 
-        let receipt22 = await tx22.waitReceipt();
-
-        //Buy CELO with ~1/2 of pool USD balance
-        let txObject11 = await instance.methods.placeOrder(firstPoolAddress, CELO, true, 100000);
-        let tx11 = await kit.sendTransactionObject(txObject11, { from: account.address }); 
-        let receipt11 = await tx11.waitReceipt();
 
         //Update CELO price to show profit
         let txObject = await testUbeswapAdapterInstance.methods.setPrice(6);
@@ -1080,42 +980,14 @@ function initContract()
         let balance = await kit.getTotalBalance(account.address);
         
         let stableToken = kit.contracts.wrapperCache.StableToken.contract;
-        let txObject0 = await stableToken.methods.approve(contractAddress, 1000000);
+        let txObject0 = await stableToken.methods.approve(firstPoolAddress, 1000000);
         let tx0 = await kit.sendTransactionObject(txObject0, { from: account.address }); 
         let receipt0 = await tx0.waitReceipt();
 
         //Deposit 1000000 cUSD into pool
-        let txObject1 = await instance.methods.deposit(firstPoolAddress, 1000000);
+        let txObject1 = await firstPoolInstance.methods.deposit(1000000);
         let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
-
-        //Check second user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account2.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'Second user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in second user invested pools array should be firstPoolAddress'
-        );
-
-        //Check first user's invested pools
-        let data2 = await instance.methods.getUserInvestedPools(account.address).call();
-        console.log(data2);
-
-        assert(
-            data2.length == 1,
-            'First user should have 1 invested pool'
-        );
-
-        assert(
-            data2[0] == firstPoolAddress,
-            'First element in first user invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data3 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -1192,7 +1064,7 @@ function initContract()
             'Pool should have total supply of at least 2450000'
         );
     });*/
-    
+    /*
     it('Withdraw from pool for profit without liquidating', async () => {
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
@@ -1202,7 +1074,7 @@ function initContract()
 
         let firstPoolInstance = new web3.eth.Contract(Pool.abi, firstPoolAddress);
 
-        let initialBalance = await kit.getTotalBalance(account2.address);
+        let initialBalance = await kit.getTotalBalance(account.address);
         console.log(initialBalance);
         
         //Update CELO price to show profit
@@ -1211,26 +1083,12 @@ function initContract()
         let receipt = await tx.waitReceipt();
         
         //Withdraw 250000 cUSD from pool
-        let txObject1 = await instance.methods.withdraw(firstPoolAddress, 250000);
-        let tx1 = await kit.sendTransactionObject(txObject1, { from: account2.address }); 
+        let txObject1 = await firstPoolInstance.methods.withdraw(500000);
+        let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
         let receipt1 = await tx1.waitReceipt();
 
         let feePoolBalance = await kit.getTotalBalance(feePoolAddress);
         console.log(feePoolBalance);
-
-        //Check second user's invested pools
-        let data1 = await instance.methods.getUserInvestedPools(account2.address).call();
-        console.log(data1);
-
-        assert(
-            data1.length == 1,
-            'Second user should have 1 invested pool'
-        );
-
-        assert(
-            data1[0] == firstPoolAddress,
-            'First element in invested pools array should be firstPoolAddress'
-        );
 
         //Check first pool's positions and total balance
         let data2 = await firstPoolInstance.methods.getPositionsAndTotal().call();
@@ -1259,19 +1117,19 @@ function initContract()
         let data4 = await firstPoolInstance.methods.getPoolBalance().call();
         console.log(data4);
         
-        //Get second user's USD balance
-        let data5 = await firstPoolInstance.methods.getUSDBalance(account2.address).call();
+        //Get first user's USD balance
+        let data5 = await firstPoolInstance.methods.getUSDBalance(account.address).call();
         console.log(data5);
 
-        //Get second user's LP token balance
-        let data6 = await firstPoolInstance.methods.balanceOf(account2.address).call();
+        //Get first user's LP token balance
+        let data6 = await firstPoolInstance.methods.balanceOf(account.address).call();
         console.log(data6);
 
         //Get pool's total supply of LP tokens
         let data7 = await firstPoolInstance.methods.totalSupply().call();
         console.log(data7);
 
-        let newBalance = await kit.getTotalBalance(account2.address);
+        let newBalance = await kit.getTotalBalance(account.address);
         console.log(newBalance);
 
         //Get fee pool's total supply of fee tokens
@@ -1294,9 +1152,101 @@ function initContract()
         let data12 = await firstPoolInstance.methods._totalDeposits().call();
         console.log(data12);
 
-        //Get pool's deposits for second user
-        let data13 = await firstPoolInstance.methods._deposits(account2.address).call();
+        //Get pool's deposits for first user
+        let data13 = await firstPoolInstance.methods._deposits(account.address).call();
         console.log(data13);
+    });*/
+    /*
+    it('Collect performance fees', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let feePoolBalance = await kit.getTotalBalance(feePoolAddress);
+        console.log(feePoolBalance);
+
+        //Get first user's USD balance in fee pool
+        let data = await feePoolInstance.methods.getUSDBalance(account.address).call();
+        console.log(data);
+
+        //Get fee pool's positions and total
+        let data2 = await feePoolInstance.methods.getPositionsAndTotal().call();
+        console.log(data2);
+
+        //Get first user's token balance in fee pool
+        let data3 = await feePoolInstance.methods.getTokenBalance(account.address).call();
+        console.log(data3);
+        
+        //Collect available performance fees
+        let txObject1 = await feePoolInstance.methods.claimAvailableFees(CELO, 100);
+        let tx1 = await kit.sendTransactionObject(txObject1, { from: account.address }); 
+        let receipt1 = await tx1.waitReceipt();
+
+        //Get fee pool's total supply of fee tokens
+        let data8 = await feePoolInstance.methods.totalSupply().call();
+        console.log(data8);
+
+        //Get fee pool's fee token balance for first user
+        let data9 = await feePoolInstance.methods.getTokenBalance(account.address).call();
+        console.log(data9);
+
+        //Get fee pool's fee USD balance for first user
+        let data10 = await feePoolInstance.methods.getUSDBalance(account.address).call();
+        console.log(data10);
+
+        //Get fee pool's fee positions and balances
+        let data11 = await feePoolInstance.methods.getPositionsAndTotal().call();
+        console.log(data11);
+    });*/
+
+    it('Attempt to claim fees when no fees available', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        let account2 = await getAccount2();
+        kit.connection.addAccount(account2.privateKey);
+
+        let feePoolBalance = await kit.getTotalBalance(feePoolAddress);
+        console.log(feePoolBalance);
+
+        //Get second user's USD balance in fee pool
+        let data = await feePoolInstance.methods.getUSDBalance(account2.address).call();
+        console.log(data);
+
+        //Get fee pool's positions and total
+        let data2 = await feePoolInstance.methods.getPositionsAndTotal().call();
+        console.log(data2);
+
+        //Get second user's token balance in fee pool
+        let data3 = await feePoolInstance.methods.getTokenBalance(account2.address).call();
+        console.log(data3);
+        
+        try
+        {
+            //Collect available performance fees
+            let txObject1 = await feePoolInstance.methods.claimAvailableFees(CELO, 100);
+            let tx1 = await kit.sendTransactionObject(txObject1, { from: account2.address }); 
+            let receipt1 = await tx1.waitReceipt();
+        }
+        catch(err)
+        {
+            console.log(err);
+        }
+
+        //Get fee pool's total supply of fee tokens
+        let data8 = await feePoolInstance.methods.totalSupply().call();
+        console.log(data8);
+
+        //Get fee pool's fee token balance for first user
+        let data9 = await feePoolInstance.methods.getTokenBalance(account.address).call();
+        console.log(data9);
+
+        //Get fee pool's fee USD balance for first user
+        let data10 = await feePoolInstance.methods.getUSDBalance(account.address).call();
+        console.log(data10);
+
+        //Get fee pool's fee positions and balances
+        let data11 = await feePoolInstance.methods.getPositionsAndTotal().call();
+        console.log(data11);
     });
 }
 

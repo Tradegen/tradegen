@@ -130,9 +130,9 @@ contract TestUbeswapAdapter is IBaseUbeswapAdapter {
     */
     function _swapExactTokensForTokens(address addressToSwapFrom, address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) internal returns (uint) {
         uint amountOut = getAmountsOut(amountToSwap, assetToSwapFrom, assetToSwapTo);
-        uint expectedMinAmountOut = amountOut.mul(100 - MAX_SLIPPAGE_PERCENT).div(100);
+        uint expectedMinAmountOut = minAmountOut.mul(100 - MAX_SLIPPAGE_PERCENT).div(100);
 
-        require(expectedMinAmountOut < minAmountOut, 'BaseUbeswapAdapter: minAmountOut exceeds max slippage');
+        require(amountOut >= expectedMinAmountOut, 'BaseUbeswapAdapter: minAmountOut exceeds max slippage');
 
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
         // Approves the transfer for the swap. Approves for 0 first to comply with tokens that implement the anti frontrunning approval fix.

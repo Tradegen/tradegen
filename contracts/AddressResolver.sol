@@ -94,7 +94,7 @@ contract AddressResolver is IAddressResolver, Ownable {
     * @dev Adds a new user pool address; meant to be called by the PoolManager contract
     * @param poolAddress The address of the user pool
     */
-    function addPoolAddress(address poolAddress) external override onlyPoolProxy isValidAddress(poolAddress) {
+    function addPoolAddress(address poolAddress) external override onlyPoolFactory isValidAddress(poolAddress) {
         require(_poolAddresses[poolAddress] != poolAddress, "Pool already exists");
 
         _poolAddresses[poolAddress] = poolAddress;
@@ -113,17 +113,17 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     modifier onlyStrategy() {
-        require(msg.sender == _strategyAddresses[msg.sender], "Only the Strategy contract can call this function");
+        require(msg.sender == _strategyAddresses[msg.sender], "AddressResolver: Only the Strategy contract can call this function");
         _;
     }
 
     modifier onlyStrategyManager() {
-        require(msg.sender == contractAddresses["StrategyManager"], "Only the StrategyManager contract can call this function");
+        require(msg.sender == contractAddresses["StrategyManager"], "AddressResolver: Only the StrategyManager contract can call this function");
         _;
     }
 
-    modifier onlyPoolProxy() {
-        require(msg.sender == contractAddresses["PoolProxy"], "Only the PoolProxy contract can call this function");
+    modifier onlyPoolFactory() {
+        require(msg.sender == contractAddresses["PoolFactory"], "AddressResolver: Only the PoolFactory contract can call this function");
         _;
     }
 
