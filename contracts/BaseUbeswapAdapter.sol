@@ -184,9 +184,6 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @return uint The number of tokens LP tokens minted
     */
     function _addLiquidity(address addressToAddFrom, address tokenA, address tokenB, uint amountA, uint amountB) internal returns (uint) {
-        uint amountAMin = amountA.mul(98).div(100);
-        uint amountBMin = amountB.mul(98).div(100);
-        uint deadline = block.timestamp.add(10 minutes);
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
 
         // Approves the transfer for the swap. Approves for 0 first to comply with tokens that implement the anti frontrunning approval fix.
@@ -197,7 +194,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         IERC20(tokenB).approve(ubeswapRouterAddress, 0);
         IERC20(tokenB).approve(ubeswapRouterAddress, amountB);
 
-        (,, uint numberOfLPTokens) = IUniswapV2Router02(ubeswapRouterAddress).addLiquidity(tokenA, tokenB, amountA, amountB, amountAMin, amountBMin, addressToAddFrom, deadline);
+        (,, uint numberOfLPTokens) = IUniswapV2Router02(ubeswapRouterAddress).addLiquidity(tokenA, tokenB, amountA, amountB, 0, 0, addressToAddFrom, block.timestamp.add(10 minutes));
 
         emit AddedLiquidity(addressToAddFrom, tokenA, tokenB, amountA, amountB, numberOfLPTokens, block.timestamp);
 
@@ -213,10 +210,9 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @return (uint, uint) Amount of tokenA and tokenB withdrawn
     */
     function _removeLiquidity(address addressToRemoveFrom, address tokenA, address tokenB, uint numberOfLPTokens) internal returns (uint, uint) {
-        uint deadline = block.timestamp.add(10 minutes);
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
 
-        (uint amountAReceived, uint amountBReceived) = IUniswapV2Router02(ubeswapRouterAddress).removeLiquidity(tokenA, tokenB, numberOfLPTokens, 0, 0, addressToRemoveFrom, deadline);
+        (uint amountAReceived, uint amountBReceived) = IUniswapV2Router02(ubeswapRouterAddress).removeLiquidity(tokenA, tokenB, numberOfLPTokens, 0, 0, addressToRemoveFrom, block.timestamp.add(10 minutes));
         emit RemovedLiquidity(addressToRemoveFrom, tokenA, tokenB, amountAReceived, amountBReceived, block.timestamp);
 
         return (amountAReceived, amountBReceived);
