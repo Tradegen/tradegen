@@ -111,6 +111,33 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
     }
 
+    /**
+    * @dev Adds liquidity for the two given tokens; meant to be called from a pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @return uint The number of tokens LP tokens minted
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB) public override returns (uint) {
+        require(ADDRESS_RESOLVER.checkIfPoolAddressIsValid(msg.sender), "Only the pool can call this function");
+
+        return _addLiquidity(msg.sender, tokenA, tokenB, amountA, amountB);
+    }
+
+    /**
+    * @dev Removes liquidity for the two given tokens; meant to be called from a pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param numberOfLPTokens Number of LP tokens for the given pair
+    * @return (uint, uint) Amount of tokenA and tokenB withdrawn
+    */
+    function removeLiquidity(address tokenA, address tokenB, uint numberOfLPTokens) public override returns (uint, uint) {
+        require(ADDRESS_RESOLVER.checkIfPoolAddressIsValid(msg.sender), "Only the pool can call this function");
+
+        return _removeLiquidity(msg.sender, tokenA, tokenB, numberOfLPTokens);
+    }
+
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
@@ -142,9 +169,57 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
 
         uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).swapExactTokensForTokens(amountToSwap, minAmountOut, path, addressToSwapFrom, block.timestamp);
 
-        emit Swapped(assetToSwapFrom, assetToSwapTo, amounts[0], amounts[amounts.length - 1], block.timestamp);
+        emit Swapped(addressToSwapFrom, assetToSwapFrom, assetToSwapTo, amounts[0], amounts[amounts.length - 1], block.timestamp);
 
         return amounts[amounts.length - 1];
+    }
+
+    /**
+    * @dev Adds liquidity for the two given tokens
+    * @param addressToAddFrom Address of the pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @return uint The number of tokens LP tokens minted
+    */
+    function _addLiquidity(address addressToAddFrom, address tokenA, address tokenB, uint amountA, uint amountB) internal returns (uint) {
+        uint amountAMin = amountA.mul(98).div(100);
+        uint amountBMin = amountB.mul(98).div(100);
+        uint deadline = block.timestamp.add(10 minutes);
+        address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
+
+        // Approves the transfer for the swap. Approves for 0 first to comply with tokens that implement the anti frontrunning approval fix.
+        IERC20(tokenA).approve(ubeswapRouterAddress, 0);
+        IERC20(tokenA).approve(ubeswapRouterAddress, amountA);
+
+        // Approves the transfer for the swap. Approves for 0 first to comply with tokens that implement the anti frontrunning approval fix.
+        IERC20(tokenB).approve(ubeswapRouterAddress, 0);
+        IERC20(tokenB).approve(ubeswapRouterAddress, amountB);
+
+        (,, uint numberOfLPTokens) = IUniswapV2Router02(ubeswapRouterAddress).addLiquidity(tokenA, tokenB, amountA, amountB, amountAMin, amountBMin, addressToAddFrom, deadline);
+
+        emit AddedLiquidity(addressToAddFrom, tokenA, tokenB, amountA, amountB, numberOfLPTokens, block.timestamp);
+
+        return numberOfLPTokens;
+    }
+
+    /**
+    * @dev Removes liquidity for the two given tokens
+    * @param addressToRemoveFrom Address of the pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param numberOfLPTokens Number of LP tokens for the given pair
+    * @return (uint, uint) Amount of tokenA and tokenB withdrawn
+    */
+    function _removeLiquidity(address addressToRemoveFrom, address tokenA, address tokenB, uint numberOfLPTokens) internal returns (uint, uint) {
+        uint deadline = block.timestamp.add(10 minutes);
+        address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
+
+        (uint amountAReceived, uint amountBReceived) = IUniswapV2Router02(ubeswapRouterAddress).removeLiquidity(tokenA, tokenB, numberOfLPTokens, 0, 0, addressToRemoveFrom, deadline);
+        emit RemovedLiquidity(addressToRemoveFrom, tokenA, tokenB, amountAReceived, amountBReceived, block.timestamp);
+
+        return (amountAReceived, amountBReceived);
     }
 
     /**
@@ -157,5 +232,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
 
     /* ========== EVENTS ========== */
 
-    event Swapped(address fromAsset, address toAsset, uint fromAmount, uint receivedAmount, uint timestamp);
+    event Swapped(address addressSwappedFrom, address fromAsset, address toAsset, uint fromAmount, uint receivedAmount, uint timestamp);
+    event AddedLiquidity(address addressAddedFrom, address tokenA, address tokenB, uint amountA, uint amountB, uint numberOfLPTokens, uint timestamp);
+    event RemovedLiquidity(address addressRemovedFrom, address tokenA, address tokenB, uint amountAReceived, uint amountBReceived, uint timestamp);
 }

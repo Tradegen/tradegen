@@ -40,4 +40,23 @@ interface IBaseUbeswapAdapter {
     * @return uint The number of tokens received
     */
     function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
+
+    /**
+    * @dev Adds liquidity for the two given tokens; meant to be called from a pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @return uint The number of tokens LP tokens minted
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB) external returns (uint);
+
+    /**
+    * @dev Removes liquidity for the two given tokens; meant to be called from a pool
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param numberOfLPTokens Number of LP tokens for the given pair
+    * @return (uint, uint) Amount of tokenA and tokenB withdrawn
+    */
+    function removeLiquidity(address tokenA, address tokenB, uint numberOfLPTokens) external returns (uint, uint);
 }
