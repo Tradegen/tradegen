@@ -132,20 +132,20 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IFeePool {\r\n\r\n    /**\r\n    * @notice Returns the number of fee tokens the user has\r\n    * @param account Address of the user\r\n    * @return uint Number of fee tokens\r\n    */\r\n    function getTokenBalance(address account) external view returns (uint);\r\n\r\n    /**\r\n    * @notice Adds fees to user\r\n    * @notice Function gets called by Pool whenever users withdraw for a profit\r\n    * @param user Address of the user\r\n    * @param feeAmount USD value of fee\r\n    */\r\n    function addFees(address user, uint feeAmount) external;\r\n\r\n    /**\r\n    * @notice Allow a user to claim available fees in the specified currency\r\n    * @param currencyKey Address of the currency to claim \r\n    * @param numberOfTokens Number of tokens to claim in the given currency\r\n    */\r\n    function claimAvailableFees(address currencyKey, uint numberOfTokens) external;\r\n\r\n    /**\r\n    * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\r\n    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions\r\n    */\r\n    function getPositionsAndTotal() external view returns (address[] memory, uint[] memory, uint);\r\n\r\n    /**\r\n    * @dev Returns the value of the pool in USD\r\n    * @return uint Value of the pool in USD\r\n    */\r\n    function getPoolBalance() external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the balance of the user in USD\r\n    * @return uint Balance of the user in USD\r\n    */\r\n    function getUSDBalance(address user) external view returns (uint);\r\n\r\n    /**\r\n    * @notice Adds currency key to positionKeys array if no position yet\r\n    * @notice Function gets called by Pool whenever users pay performance fee\r\n    * @param positions Address of each position the pool/bot had when paying fee\r\n    */\r\n    function addPositionKeys(address[] memory positions) external;\r\n}",
-  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen\\contracts\\interfaces\\IFeePool.sol",
+  "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IFeePool.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IFeePool.sol",
     "exportedSymbols": {
       "IFeePool": [
-        990
+        1434
       ]
     },
-    "id": 991,
+    "id": 1435,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 932,
+        "id": 1376,
         "literals": [
           "solidity",
           ">=",
@@ -153,7 +153,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:5"
+        "src": "0:24:6"
       },
       {
         "abstract": false,
@@ -162,9 +162,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 990,
+        "id": 1434,
         "linearizedBaseContracts": [
-          990
+          1434
         ],
         "name": "IFeePool",
         "nodeType": "ContractDefinition",
@@ -172,13 +172,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 933,
+              "id": 1377,
               "nodeType": "StructuredDocumentation",
-              "src": "56:155:5",
+              "src": "56:155:6",
               "text": " @notice Returns the number of fee tokens the user has\n @param account Address of the user\n @return uint Number of fee tokens"
             },
             "functionSelector": "3aecd0e3",
-            "id": 940,
+            "id": 1384,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -186,18 +186,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 936,
+              "id": 1380,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 935,
+                  "id": 1379,
                   "mutability": "mutable",
                   "name": "account",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 940,
-                  "src": "242:15:5",
+                  "scope": 1384,
+                  "src": "242:15:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -205,10 +205,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 934,
+                    "id": 1378,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "242:7:5",
+                    "src": "242:7:6",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -219,21 +219,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "241:17:5"
+              "src": "241:17:6"
             },
             "returnParameters": {
-              "id": 939,
+              "id": 1383,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 938,
+                  "id": 1382,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 940,
-                  "src": "282:4:5",
+                  "scope": 1384,
+                  "src": "282:4:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -241,10 +241,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 937,
+                    "id": 1381,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "282:4:5",
+                    "src": "282:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -254,10 +254,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "281:6:5"
+              "src": "281:6:6"
             },
-            "scope": 990,
-            "src": "217:71:5",
+            "scope": 1434,
+            "src": "217:71:6",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -265,13 +265,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 941,
+              "id": 1385,
               "nodeType": "StructuredDocumentation",
-              "src": "296:205:5",
+              "src": "296:205:6",
               "text": " @notice Adds fees to user\n @notice Function gets called by Pool whenever users withdraw for a profit\n @param user Address of the user\n @param feeAmount USD value of fee"
             },
             "functionSelector": "1dfb9aae",
-            "id": 948,
+            "id": 1392,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -279,18 +279,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 946,
+              "id": 1390,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 943,
+                  "id": 1387,
                   "mutability": "mutable",
                   "name": "user",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 948,
-                  "src": "524:12:5",
+                  "scope": 1392,
+                  "src": "524:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -298,10 +298,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 942,
+                    "id": 1386,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "524:7:5",
+                    "src": "524:7:6",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -313,13 +313,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 945,
+                  "id": 1389,
                   "mutability": "mutable",
                   "name": "feeAmount",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 948,
-                  "src": "538:14:5",
+                  "scope": 1392,
+                  "src": "538:14:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -327,10 +327,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 944,
+                    "id": 1388,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "538:4:5",
+                    "src": "538:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -340,16 +340,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "523:30:5"
+              "src": "523:30:6"
             },
             "returnParameters": {
-              "id": 947,
+              "id": 1391,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "562:0:5"
+              "src": "562:0:6"
             },
-            "scope": 990,
-            "src": "507:56:5",
+            "scope": 1434,
+            "src": "507:56:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -357,13 +357,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 949,
+              "id": 1393,
               "nodeType": "StructuredDocumentation",
-              "src": "571:226:5",
+              "src": "571:226:6",
               "text": " @notice Allow a user to claim available fees in the specified currency\n @param currencyKey Address of the currency to claim \n @param numberOfTokens Number of tokens to claim in the given currency"
             },
             "functionSelector": "a210c95b",
-            "id": 956,
+            "id": 1400,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -371,18 +371,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 954,
+              "id": 1398,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 951,
+                  "id": 1395,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 956,
-                  "src": "831:19:5",
+                  "scope": 1400,
+                  "src": "831:19:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -390,10 +390,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 950,
+                    "id": 1394,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "831:7:5",
+                    "src": "831:7:6",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -405,13 +405,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 953,
+                  "id": 1397,
                   "mutability": "mutable",
                   "name": "numberOfTokens",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 956,
-                  "src": "852:19:5",
+                  "scope": 1400,
+                  "src": "852:19:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -419,10 +419,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 952,
+                    "id": 1396,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "852:4:5",
+                    "src": "852:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -432,16 +432,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "830:42:5"
+              "src": "830:42:6"
             },
             "returnParameters": {
-              "id": 955,
+              "id": 1399,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "881:0:5"
+              "src": "881:0:6"
             },
-            "scope": 990,
-            "src": "803:79:5",
+            "scope": 1434,
+            "src": "803:79:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -449,13 +449,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 957,
+              "id": 1401,
               "nodeType": "StructuredDocumentation",
-              "src": "890:266:5",
+              "src": "890:266:6",
               "text": " @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\n @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions"
             },
             "functionSelector": "ac08c574",
-            "id": 968,
+            "id": 1412,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -463,24 +463,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 958,
+              "id": 1402,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1191:2:5"
+              "src": "1191:2:6"
             },
             "returnParameters": {
-              "id": 967,
+              "id": 1411,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 961,
+                  "id": 1405,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 968,
-                  "src": "1217:16:5",
+                  "scope": 1412,
+                  "src": "1217:16:6",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -489,20 +489,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 959,
+                      "id": 1403,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1217:7:5",
+                      "src": "1217:7:6",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 960,
+                    "id": 1404,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1217:9:5",
+                    "src": "1217:9:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -513,13 +513,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 964,
+                  "id": 1408,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 968,
-                  "src": "1235:13:5",
+                  "scope": 1412,
+                  "src": "1235:13:6",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -528,19 +528,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 962,
+                      "id": 1406,
                       "name": "uint",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1235:4:5",
+                      "src": "1235:4:6",
                       "typeDescriptions": {
                         "typeIdentifier": "t_uint256",
                         "typeString": "uint256"
                       }
                     },
-                    "id": 963,
+                    "id": 1407,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1235:6:5",
+                    "src": "1235:6:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
                       "typeString": "uint256[]"
@@ -551,13 +551,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 966,
+                  "id": 1410,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 968,
-                  "src": "1250:4:5",
+                  "scope": 1412,
+                  "src": "1250:4:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -565,10 +565,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 965,
+                    "id": 1409,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1250:4:5",
+                    "src": "1250:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -578,10 +578,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1216:39:5"
+              "src": "1216:39:6"
             },
-            "scope": 990,
-            "src": "1162:94:5",
+            "scope": 1434,
+            "src": "1162:94:6",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -589,13 +589,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 969,
+              "id": 1413,
               "nodeType": "StructuredDocumentation",
-              "src": "1264:105:5",
+              "src": "1264:105:6",
               "text": " @dev Returns the value of the pool in USD\n @return uint Value of the pool in USD"
             },
             "functionSelector": "abd70aa2",
-            "id": 974,
+            "id": 1418,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -603,24 +603,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 970,
+              "id": 1414,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1398:2:5"
+              "src": "1398:2:6"
             },
             "returnParameters": {
-              "id": 973,
+              "id": 1417,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 972,
+                  "id": 1416,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 974,
-                  "src": "1424:4:5",
+                  "scope": 1418,
+                  "src": "1424:4:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -628,10 +628,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 971,
+                    "id": 1415,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1424:4:5",
+                    "src": "1424:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -641,10 +641,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1423:6:5"
+              "src": "1423:6:6"
             },
-            "scope": 990,
-            "src": "1375:55:5",
+            "scope": 1434,
+            "src": "1375:55:6",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -652,13 +652,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 975,
+              "id": 1419,
               "nodeType": "StructuredDocumentation",
-              "src": "1438:109:5",
+              "src": "1438:109:6",
               "text": " @dev Returns the balance of the user in USD\n @return uint Balance of the user in USD"
             },
             "functionSelector": "2322e3b9",
-            "id": 982,
+            "id": 1426,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -666,18 +666,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 978,
+              "id": 1422,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 977,
+                  "id": 1421,
                   "mutability": "mutable",
                   "name": "user",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 982,
-                  "src": "1576:12:5",
+                  "scope": 1426,
+                  "src": "1576:12:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -685,10 +685,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 976,
+                    "id": 1420,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1576:7:5",
+                    "src": "1576:7:6",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -699,21 +699,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1575:14:5"
+              "src": "1575:14:6"
             },
             "returnParameters": {
-              "id": 981,
+              "id": 1425,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 980,
+                  "id": 1424,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 982,
-                  "src": "1613:4:5",
+                  "scope": 1426,
+                  "src": "1613:4:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -721,10 +721,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 979,
+                    "id": 1423,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1613:4:5",
+                    "src": "1613:4:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -734,10 +734,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1612:6:5"
+              "src": "1612:6:6"
             },
-            "scope": 990,
-            "src": "1553:66:5",
+            "scope": 1434,
+            "src": "1553:66:6",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -745,13 +745,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 983,
+              "id": 1427,
               "nodeType": "StructuredDocumentation",
-              "src": "1627:246:5",
+              "src": "1627:246:6",
               "text": " @notice Adds currency key to positionKeys array if no position yet\n @notice Function gets called by Pool whenever users pay performance fee\n @param positions Address of each position the pool/bot had when paying fee"
             },
             "functionSelector": "0939b690",
-            "id": 989,
+            "id": 1433,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -759,18 +759,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 987,
+              "id": 1431,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 986,
+                  "id": 1430,
                   "mutability": "mutable",
                   "name": "positions",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 989,
-                  "src": "1904:26:5",
+                  "scope": 1433,
+                  "src": "1904:26:6",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -779,20 +779,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 984,
+                      "id": 1428,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1904:7:5",
+                      "src": "1904:7:6",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 985,
+                    "id": 1429,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1904:9:5",
+                    "src": "1904:9:6",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -802,33 +802,33 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1903:28:5"
+              "src": "1903:28:6"
             },
             "returnParameters": {
-              "id": 988,
+              "id": 1432,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1940:0:5"
+              "src": "1940:0:6"
             },
-            "scope": 990,
-            "src": "1879:62:5",
+            "scope": 1434,
+            "src": "1879:62:6",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 991,
-        "src": "28:1916:5"
+        "scope": 1435,
+        "src": "28:1916:6"
       }
     ],
-    "src": "0:1944:5"
+    "src": "0:1944:6"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IFeePool.sol",
       "exportedSymbols": {
         "IFeePool": [
-          990
+          1434
         ]
       },
       "license": null
@@ -843,9 +843,9 @@
             ".0"
           ]
         },
-        "id": 932,
+        "id": 1376,
         "name": "PragmaDirective",
-        "src": "0:24:5"
+        "src": "0:24:6"
       },
       {
         "attributes": {
@@ -860,10 +860,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            990
+            1434
           ],
           "name": "IFeePool",
-          "scope": 991
+          "scope": 1435
         },
         "children": [
           {
@@ -878,7 +878,7 @@
               ],
               "name": "getTokenBalance",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -888,9 +888,9 @@
                 "attributes": {
                   "text": " @notice Returns the number of fee tokens the user has\n @param account Address of the user\n @return uint Number of fee tokens"
                 },
-                "id": 933,
+                "id": 1377,
                 "name": "StructuredDocumentation",
-                "src": "56:155:5"
+                "src": "56:155:6"
               },
               {
                 "children": [
@@ -900,7 +900,7 @@
                       "mutability": "mutable",
                       "name": "account",
                       "overrides": null,
-                      "scope": 940,
+                      "scope": 1384,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -914,19 +914,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 934,
+                        "id": 1378,
                         "name": "ElementaryTypeName",
-                        "src": "242:7:5"
+                        "src": "242:7:6"
                       }
                     ],
-                    "id": 935,
+                    "id": 1379,
                     "name": "VariableDeclaration",
-                    "src": "242:15:5"
+                    "src": "242:15:6"
                   }
                 ],
-                "id": 936,
+                "id": 1380,
                 "name": "ParameterList",
-                "src": "241:17:5"
+                "src": "241:17:6"
               },
               {
                 "children": [
@@ -936,7 +936,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 940,
+                      "scope": 1384,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -949,24 +949,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 937,
+                        "id": 1381,
                         "name": "ElementaryTypeName",
-                        "src": "282:4:5"
+                        "src": "282:4:6"
                       }
                     ],
-                    "id": 938,
+                    "id": 1382,
                     "name": "VariableDeclaration",
-                    "src": "282:4:5"
+                    "src": "282:4:6"
                   }
                 ],
-                "id": 939,
+                "id": 1383,
                 "name": "ParameterList",
-                "src": "281:6:5"
+                "src": "281:6:6"
               }
             ],
-            "id": 940,
+            "id": 1384,
             "name": "FunctionDefinition",
-            "src": "217:71:5"
+            "src": "217:71:6"
           },
           {
             "attributes": {
@@ -980,7 +980,7 @@
               ],
               "name": "addFees",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -990,9 +990,9 @@
                 "attributes": {
                   "text": " @notice Adds fees to user\n @notice Function gets called by Pool whenever users withdraw for a profit\n @param user Address of the user\n @param feeAmount USD value of fee"
                 },
-                "id": 941,
+                "id": 1385,
                 "name": "StructuredDocumentation",
-                "src": "296:205:5"
+                "src": "296:205:6"
               },
               {
                 "children": [
@@ -1002,7 +1002,7 @@
                       "mutability": "mutable",
                       "name": "user",
                       "overrides": null,
-                      "scope": 948,
+                      "scope": 1392,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1016,14 +1016,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 942,
+                        "id": 1386,
                         "name": "ElementaryTypeName",
-                        "src": "524:7:5"
+                        "src": "524:7:6"
                       }
                     ],
-                    "id": 943,
+                    "id": 1387,
                     "name": "VariableDeclaration",
-                    "src": "524:12:5"
+                    "src": "524:12:6"
                   },
                   {
                     "attributes": {
@@ -1031,7 +1031,7 @@
                       "mutability": "mutable",
                       "name": "feeAmount",
                       "overrides": null,
-                      "scope": 948,
+                      "scope": 1392,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1044,19 +1044,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 944,
+                        "id": 1388,
                         "name": "ElementaryTypeName",
-                        "src": "538:4:5"
+                        "src": "538:4:6"
                       }
                     ],
-                    "id": 945,
+                    "id": 1389,
                     "name": "VariableDeclaration",
-                    "src": "538:14:5"
+                    "src": "538:14:6"
                   }
                 ],
-                "id": 946,
+                "id": 1390,
                 "name": "ParameterList",
-                "src": "523:30:5"
+                "src": "523:30:6"
               },
               {
                 "attributes": {
@@ -1065,14 +1065,14 @@
                   ]
                 },
                 "children": [],
-                "id": 947,
+                "id": 1391,
                 "name": "ParameterList",
-                "src": "562:0:5"
+                "src": "562:0:6"
               }
             ],
-            "id": 948,
+            "id": 1392,
             "name": "FunctionDefinition",
-            "src": "507:56:5"
+            "src": "507:56:6"
           },
           {
             "attributes": {
@@ -1086,7 +1086,7 @@
               ],
               "name": "claimAvailableFees",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1096,9 +1096,9 @@
                 "attributes": {
                   "text": " @notice Allow a user to claim available fees in the specified currency\n @param currencyKey Address of the currency to claim \n @param numberOfTokens Number of tokens to claim in the given currency"
                 },
-                "id": 949,
+                "id": 1393,
                 "name": "StructuredDocumentation",
-                "src": "571:226:5"
+                "src": "571:226:6"
               },
               {
                 "children": [
@@ -1108,7 +1108,7 @@
                       "mutability": "mutable",
                       "name": "currencyKey",
                       "overrides": null,
-                      "scope": 956,
+                      "scope": 1400,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1122,14 +1122,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 950,
+                        "id": 1394,
                         "name": "ElementaryTypeName",
-                        "src": "831:7:5"
+                        "src": "831:7:6"
                       }
                     ],
-                    "id": 951,
+                    "id": 1395,
                     "name": "VariableDeclaration",
-                    "src": "831:19:5"
+                    "src": "831:19:6"
                   },
                   {
                     "attributes": {
@@ -1137,7 +1137,7 @@
                       "mutability": "mutable",
                       "name": "numberOfTokens",
                       "overrides": null,
-                      "scope": 956,
+                      "scope": 1400,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1150,19 +1150,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 952,
+                        "id": 1396,
                         "name": "ElementaryTypeName",
-                        "src": "852:4:5"
+                        "src": "852:4:6"
                       }
                     ],
-                    "id": 953,
+                    "id": 1397,
                     "name": "VariableDeclaration",
-                    "src": "852:19:5"
+                    "src": "852:19:6"
                   }
                 ],
-                "id": 954,
+                "id": 1398,
                 "name": "ParameterList",
-                "src": "830:42:5"
+                "src": "830:42:6"
               },
               {
                 "attributes": {
@@ -1171,14 +1171,14 @@
                   ]
                 },
                 "children": [],
-                "id": 955,
+                "id": 1399,
                 "name": "ParameterList",
-                "src": "881:0:5"
+                "src": "881:0:6"
               }
             ],
-            "id": 956,
+            "id": 1400,
             "name": "FunctionDefinition",
-            "src": "803:79:5"
+            "src": "803:79:6"
           },
           {
             "attributes": {
@@ -1192,7 +1192,7 @@
               ],
               "name": "getPositionsAndTotal",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1202,9 +1202,9 @@
                 "attributes": {
                   "text": " @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value\n @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions"
                 },
-                "id": 957,
+                "id": 1401,
                 "name": "StructuredDocumentation",
-                "src": "890:266:5"
+                "src": "890:266:6"
               },
               {
                 "attributes": {
@@ -1213,9 +1213,9 @@
                   ]
                 },
                 "children": [],
-                "id": 958,
+                "id": 1402,
                 "name": "ParameterList",
-                "src": "1191:2:5"
+                "src": "1191:2:6"
               },
               {
                 "children": [
@@ -1225,7 +1225,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 968,
+                      "scope": 1412,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -1245,19 +1245,19 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 959,
+                            "id": 1403,
                             "name": "ElementaryTypeName",
-                            "src": "1217:7:5"
+                            "src": "1217:7:6"
                           }
                         ],
-                        "id": 960,
+                        "id": 1404,
                         "name": "ArrayTypeName",
-                        "src": "1217:9:5"
+                        "src": "1217:9:6"
                       }
                     ],
-                    "id": 961,
+                    "id": 1405,
                     "name": "VariableDeclaration",
-                    "src": "1217:16:5"
+                    "src": "1217:16:6"
                   },
                   {
                     "attributes": {
@@ -1265,7 +1265,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 968,
+                      "scope": 1412,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "uint256[]",
@@ -1284,19 +1284,19 @@
                               "name": "uint",
                               "type": "uint256"
                             },
-                            "id": 962,
+                            "id": 1406,
                             "name": "ElementaryTypeName",
-                            "src": "1235:4:5"
+                            "src": "1235:4:6"
                           }
                         ],
-                        "id": 963,
+                        "id": 1407,
                         "name": "ArrayTypeName",
-                        "src": "1235:6:5"
+                        "src": "1235:6:6"
                       }
                     ],
-                    "id": 964,
+                    "id": 1408,
                     "name": "VariableDeclaration",
-                    "src": "1235:13:5"
+                    "src": "1235:13:6"
                   },
                   {
                     "attributes": {
@@ -1304,7 +1304,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 968,
+                      "scope": 1412,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1317,24 +1317,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 965,
+                        "id": 1409,
                         "name": "ElementaryTypeName",
-                        "src": "1250:4:5"
+                        "src": "1250:4:6"
                       }
                     ],
-                    "id": 966,
+                    "id": 1410,
                     "name": "VariableDeclaration",
-                    "src": "1250:4:5"
+                    "src": "1250:4:6"
                   }
                 ],
-                "id": 967,
+                "id": 1411,
                 "name": "ParameterList",
-                "src": "1216:39:5"
+                "src": "1216:39:6"
               }
             ],
-            "id": 968,
+            "id": 1412,
             "name": "FunctionDefinition",
-            "src": "1162:94:5"
+            "src": "1162:94:6"
           },
           {
             "attributes": {
@@ -1348,7 +1348,7 @@
               ],
               "name": "getPoolBalance",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1358,9 +1358,9 @@
                 "attributes": {
                   "text": " @dev Returns the value of the pool in USD\n @return uint Value of the pool in USD"
                 },
-                "id": 969,
+                "id": 1413,
                 "name": "StructuredDocumentation",
-                "src": "1264:105:5"
+                "src": "1264:105:6"
               },
               {
                 "attributes": {
@@ -1369,9 +1369,9 @@
                   ]
                 },
                 "children": [],
-                "id": 970,
+                "id": 1414,
                 "name": "ParameterList",
-                "src": "1398:2:5"
+                "src": "1398:2:6"
               },
               {
                 "children": [
@@ -1381,7 +1381,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 974,
+                      "scope": 1418,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1394,24 +1394,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 971,
+                        "id": 1415,
                         "name": "ElementaryTypeName",
-                        "src": "1424:4:5"
+                        "src": "1424:4:6"
                       }
                     ],
-                    "id": 972,
+                    "id": 1416,
                     "name": "VariableDeclaration",
-                    "src": "1424:4:5"
+                    "src": "1424:4:6"
                   }
                 ],
-                "id": 973,
+                "id": 1417,
                 "name": "ParameterList",
-                "src": "1423:6:5"
+                "src": "1423:6:6"
               }
             ],
-            "id": 974,
+            "id": 1418,
             "name": "FunctionDefinition",
-            "src": "1375:55:5"
+            "src": "1375:55:6"
           },
           {
             "attributes": {
@@ -1425,7 +1425,7 @@
               ],
               "name": "getUSDBalance",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1435,9 +1435,9 @@
                 "attributes": {
                   "text": " @dev Returns the balance of the user in USD\n @return uint Balance of the user in USD"
                 },
-                "id": 975,
+                "id": 1419,
                 "name": "StructuredDocumentation",
-                "src": "1438:109:5"
+                "src": "1438:109:6"
               },
               {
                 "children": [
@@ -1447,7 +1447,7 @@
                       "mutability": "mutable",
                       "name": "user",
                       "overrides": null,
-                      "scope": 982,
+                      "scope": 1426,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1461,19 +1461,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 976,
+                        "id": 1420,
                         "name": "ElementaryTypeName",
-                        "src": "1576:7:5"
+                        "src": "1576:7:6"
                       }
                     ],
-                    "id": 977,
+                    "id": 1421,
                     "name": "VariableDeclaration",
-                    "src": "1576:12:5"
+                    "src": "1576:12:6"
                   }
                 ],
-                "id": 978,
+                "id": 1422,
                 "name": "ParameterList",
-                "src": "1575:14:5"
+                "src": "1575:14:6"
               },
               {
                 "children": [
@@ -1483,7 +1483,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 982,
+                      "scope": 1426,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1496,24 +1496,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 979,
+                        "id": 1423,
                         "name": "ElementaryTypeName",
-                        "src": "1613:4:5"
+                        "src": "1613:4:6"
                       }
                     ],
-                    "id": 980,
+                    "id": 1424,
                     "name": "VariableDeclaration",
-                    "src": "1613:4:5"
+                    "src": "1613:4:6"
                   }
                 ],
-                "id": 981,
+                "id": 1425,
                 "name": "ParameterList",
-                "src": "1612:6:5"
+                "src": "1612:6:6"
               }
             ],
-            "id": 982,
+            "id": 1426,
             "name": "FunctionDefinition",
-            "src": "1553:66:5"
+            "src": "1553:66:6"
           },
           {
             "attributes": {
@@ -1527,7 +1527,7 @@
               ],
               "name": "addPositionKeys",
               "overrides": null,
-              "scope": 990,
+              "scope": 1434,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1537,9 +1537,9 @@
                 "attributes": {
                   "text": " @notice Adds currency key to positionKeys array if no position yet\n @notice Function gets called by Pool whenever users pay performance fee\n @param positions Address of each position the pool/bot had when paying fee"
                 },
-                "id": 983,
+                "id": 1427,
                 "name": "StructuredDocumentation",
-                "src": "1627:246:5"
+                "src": "1627:246:6"
               },
               {
                 "children": [
@@ -1549,7 +1549,7 @@
                       "mutability": "mutable",
                       "name": "positions",
                       "overrides": null,
-                      "scope": 989,
+                      "scope": 1433,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -1569,24 +1569,24 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 984,
+                            "id": 1428,
                             "name": "ElementaryTypeName",
-                            "src": "1904:7:5"
+                            "src": "1904:7:6"
                           }
                         ],
-                        "id": 985,
+                        "id": 1429,
                         "name": "ArrayTypeName",
-                        "src": "1904:9:5"
+                        "src": "1904:9:6"
                       }
                     ],
-                    "id": 986,
+                    "id": 1430,
                     "name": "VariableDeclaration",
-                    "src": "1904:26:5"
+                    "src": "1904:26:6"
                   }
                 ],
-                "id": 987,
+                "id": 1431,
                 "name": "ParameterList",
-                "src": "1903:28:5"
+                "src": "1903:28:6"
               },
               {
                 "attributes": {
@@ -1595,24 +1595,24 @@
                   ]
                 },
                 "children": [],
-                "id": 988,
+                "id": 1432,
                 "name": "ParameterList",
-                "src": "1940:0:5"
+                "src": "1940:0:6"
               }
             ],
-            "id": 989,
+            "id": 1433,
             "name": "FunctionDefinition",
-            "src": "1879:62:5"
+            "src": "1879:62:6"
           }
         ],
-        "id": 990,
+        "id": 1434,
         "name": "ContractDefinition",
-        "src": "28:1916:5"
+        "src": "28:1916:6"
       }
     ],
-    "id": 991,
+    "id": 1435,
     "name": "SourceUnit",
-    "src": "0:1944:5"
+    "src": "0:1944:6"
   },
   "compiler": {
     "name": "solc",
@@ -1620,7 +1620,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-26T18:49:08.371Z",
+  "updatedAt": "2021-08-08T18:14:37.839Z",
   "devdoc": {
     "kind": "dev",
     "methods": {

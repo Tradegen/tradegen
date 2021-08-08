@@ -27,6 +27,9 @@ var testUbeswapAdapterAddress = "0x65F87cD1071312FACd9845Af69fc85C9df4c3faa";
 
 var cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 var CELO = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
+var UBE = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
+var POOF = "0x00400FcbF0816bebB94654259de7273f4A05c762";
+var TGEN = "0xb79d64d9Acc251b04A3Ca9f811EFf49Bde52BbbC";
 
 function initContract()
 { 
@@ -101,8 +104,25 @@ function initContract()
         let receipt6 = await tx6.waitReceipt();
 
         let data6 = await settingsInstance.methods.getAvailableCurrencies().call();
-        console.log(data6);
+        console.log(data6);*/
 
+        //Add UBE as available currency
+        //let txObject6 = await settingsInstance.methods.addCurrencyKey("UBE", UBE);
+        //let tx6 = await kit.sendTransactionObject(txObject6, { from: account.address }); 
+        //let receipt6 = await tx6.waitReceipt();
+        /*
+        let txObject61 = await settingsInstance.methods.addCurrencyKey("POOF", POOF);
+        let tx61 = await kit.sendTransactionObject(txObject61, { from: account.address }); 
+        let receipt61 = await tx61.waitReceipt();
+
+        let txObject62 = await settingsInstance.methods.addCurrencyKey("TGEN", TGEN);
+        let tx62 = await kit.sendTransactionObject(txObject62, { from: account.address }); 
+        let receipt62 = await tx62.waitReceipt();
+
+        let data6 = await settingsInstance.methods.getAvailableCurrencies().call();
+        console.log(data6);*/
+
+        /*
         //Set MaximumPerformanceFee parameter in Settings
         let txObject7 = await settingsInstance.methods.setParameterValue("MaximumPerformanceFee", 30);
         let tx7 = await kit.sendTransactionObject(txObject7, { from: account.address }); 
@@ -1197,7 +1217,7 @@ function initContract()
         let data11 = await feePoolInstance.methods.getPositionsAndTotal().call();
         console.log(data11);
     });*/
-
+    /*
     it('Attempt to claim fees when no fees available', async () => {
         let account = await getAccount();
         kit.connection.addAccount(account.privateKey);
@@ -1248,6 +1268,7 @@ function initContract()
         let data11 = await feePoolInstance.methods.getPositionsAndTotal().call();
         console.log(data11);
     });
+    */
 }
 
 initContract();
