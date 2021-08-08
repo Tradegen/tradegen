@@ -1,0 +1,3105 @@
+{
+  "contractName": "IStableCoinStakingRewards",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "numVestingEntries",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVestingScheduleEntry",
+      "outputs": [
+        {
+          "internalType": "uint256[2]",
+          "name": "",
+          "type": "uint256[2]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVestingTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVestingQuantity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getNextVestingIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getNextVestingEntry",
+      "outputs": [
+        {
+          "internalType": "uint256[2]",
+          "name": "",
+          "type": "uint256[2]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getNextVestingTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getNextVestingQuantity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "vest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "stake",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getReward",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rewardPerToken",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "earned",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"earned\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getNextVestingEntry\",\"outputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"\",\"type\":\"uint256[2]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getNextVestingIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getNextVestingQuantity\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getNextVestingTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getReward\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getVestingQuantity\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getVestingScheduleEntry\",\"outputs\":[{\"internalType\":\"uint256[2]\",\"name\":\"\",\"type\":\"uint256[2]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getVestingTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"numVestingEntries\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardPerToken\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"vest\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getNextVestingEntry(address)\":{\"returns\":{\"_0\":\"A pair of uints: (timestamp, cUSD quantity). \"}},\"getVestingScheduleEntry(address,uint256)\":{\"returns\":{\"_0\":\"A pair of uints: (timestamp, cUSD quantity).\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"balanceOf(address)\":{\"notice\":\"A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.\"},\"earned(address)\":{\"notice\":\"Calculates the amount of TGEN rewards earned.\"},\"getNextVestingEntry(address)\":{\"notice\":\"Obtain the next schedule entry that will vest for a given user.\"},\"getNextVestingIndex(address)\":{\"notice\":\"Obtain the index of the next schedule entry that will vest for a given user.\"},\"getNextVestingQuantity(address)\":{\"notice\":\"Obtain the quantity which the next schedule entry will vest for a given user.\"},\"getNextVestingTime(address)\":{\"notice\":\"Obtain the time at which the next schedule entry will vest for a given user.\"},\"getReward()\":{\"notice\":\"Allow a user to claim any available staking rewards.\"},\"getVestingQuantity(address,uint256)\":{\"notice\":\"Get the quantity of cUSD associated with a given schedule entry.\"},\"getVestingScheduleEntry(address,uint256)\":{\"notice\":\"Get a particular schedule entry for an account.\"},\"getVestingTime(address,uint256)\":{\"notice\":\"Get the time at which a given schedule entry will vest.\"},\"numVestingEntries(address)\":{\"notice\":\"The number of vesting dates in an account's schedule.\"},\"rewardPerToken()\":{\"notice\":\"Calculates the amount of TGEN reward per token staked.\"},\"stake(uint256)\":{\"notice\":\"Stakes the given cUSD amount.\"},\"vest()\":{\"notice\":\"Allow a user to withdraw any cUSD in their schedule that have vested.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IStableCoinStakingRewards.sol\":\"IStableCoinStakingRewards\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IStableCoinStakingRewards.sol\":{\"keccak256\":\"0x56abc586e252a274794a285d58ee5afcee82c87a0aab7b2440353f778ae63939\",\"urls\":[\"bzz-raw://8c251c6354443785d108a83b5e417ec1cb3dd7e3b63965550c84d12976e196b7\",\"dweb:/ipfs/QmWh4SPd6k1F9BSFaeQsZfB3d9UJApmwykh4YPdKPqfaH3\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface IStableCoinStakingRewards {\r\n\r\n    /**\r\n     * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.\r\n     */\r\n    function balanceOf(address account) external view returns (uint);\r\n\r\n    /**\r\n     * @notice The number of vesting dates in an account's schedule.\r\n     */\r\n    function numVestingEntries(address account) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Get a particular schedule entry for an account.\r\n     * @return A pair of uints: (timestamp, cUSD quantity).\r\n     */\r\n    function getVestingScheduleEntry(address account, uint index) external view returns (uint[2] memory);\r\n\r\n    /**\r\n     * @notice Get the time at which a given schedule entry will vest.\r\n     */\r\n    function getVestingTime(address account, uint index) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Get the quantity of cUSD associated with a given schedule entry.\r\n     */\r\n    function getVestingQuantity(address account, uint index) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Obtain the index of the next schedule entry that will vest for a given user.\r\n     */\r\n    function getNextVestingIndex(address account) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Obtain the next schedule entry that will vest for a given user.\r\n     * @return A pair of uints: (timestamp, cUSD quantity). */\r\n    function getNextVestingEntry(address account) external view returns (uint[2] memory);\r\n\r\n    /**\r\n     * @notice Obtain the time at which the next schedule entry will vest for a given user.\r\n     */\r\n    function getNextVestingTime(address account) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Obtain the quantity which the next schedule entry will vest for a given user.\r\n     */\r\n    function getNextVestingQuantity(address account) external view returns (uint);\r\n\r\n    /**\r\n     * @notice Allow a user to withdraw any cUSD in their schedule that have vested.\r\n     */\r\n    function vest() external;\r\n\r\n    /**\r\n     * @notice Stakes the given cUSD amount.\r\n     */\r\n    function stake(uint amount) external;\r\n\r\n    /**\r\n     * @notice Allow a user to claim any available staking rewards.\r\n     */\r\n    function getReward() external;\r\n\r\n    /**\r\n     * @notice Calculates the amount of TGEN reward per token staked.\r\n     */\r\n    function rewardPerToken() external view returns (uint256);\r\n\r\n    /**\r\n     * @notice Calculates the amount of TGEN rewards earned.\r\n     */\r\n    function earned(address account) external view returns (uint256);\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen\\contracts\\interfaces\\IStableCoinStakingRewards.sol",
+  "ast": {
+    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IStableCoinStakingRewards.sol",
+    "exportedSymbols": {
+      "IStableCoinStakingRewards": [
+        1901
+      ]
+    },
+    "id": 1902,
+    "license": null,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1790,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:6"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 1901,
+        "linearizedBaseContracts": [
+          1901
+        ],
+        "name": "IStableCoinStakingRewards",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": {
+              "id": 1791,
+              "nodeType": "StructuredDocumentation",
+              "src": "73:109:6",
+              "text": " @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration."
+            },
+            "functionSelector": "70a08231",
+            "id": 1798,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "balanceOf",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1794,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1793,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1798,
+                  "src": "207:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1792,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "207:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "206:17:6"
+            },
+            "returnParameters": {
+              "id": 1797,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1796,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1798,
+                  "src": "247:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1795,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "247:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "246:6:6"
+            },
+            "scope": 1901,
+            "src": "188:65:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1799,
+              "nodeType": "StructuredDocumentation",
+              "src": "261:82:6",
+              "text": " @notice The number of vesting dates in an account's schedule."
+            },
+            "functionSelector": "204b676a",
+            "id": 1806,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "numVestingEntries",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1802,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1801,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1806,
+                  "src": "376:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1800,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "376:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "375:17:6"
+            },
+            "returnParameters": {
+              "id": 1805,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1804,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1806,
+                  "src": "416:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1803,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "416:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "415:6:6"
+            },
+            "scope": 1901,
+            "src": "349:73:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1807,
+              "nodeType": "StructuredDocumentation",
+              "src": "430:137:6",
+              "text": " @notice Get a particular schedule entry for an account.\n @return A pair of uints: (timestamp, cUSD quantity)."
+            },
+            "functionSelector": "da7bd3e9",
+            "id": 1818,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getVestingScheduleEntry",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1812,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1809,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1818,
+                  "src": "606:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1808,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "606:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1811,
+                  "mutability": "mutable",
+                  "name": "index",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1818,
+                  "src": "623:10:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1810,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "623:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "605:29:6"
+            },
+            "returnParameters": {
+              "id": 1817,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1816,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1818,
+                  "src": "658:14:6",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$2_memory_ptr",
+                    "typeString": "uint256[2]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 1813,
+                      "name": "uint",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "658:4:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 1815,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "32",
+                      "id": 1814,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "663:1:6",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_2_by_1",
+                        "typeString": "int_const 2"
+                      },
+                      "value": "2"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "658:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$2_storage_ptr",
+                      "typeString": "uint256[2]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "657:16:6"
+            },
+            "scope": 1901,
+            "src": "573:101:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1819,
+              "nodeType": "StructuredDocumentation",
+              "src": "682:84:6",
+              "text": " @notice Get the time at which a given schedule entry will vest."
+            },
+            "functionSelector": "9b217f90",
+            "id": 1828,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getVestingTime",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1824,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1821,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1828,
+                  "src": "796:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1820,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "796:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1823,
+                  "mutability": "mutable",
+                  "name": "index",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1828,
+                  "src": "813:10:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1822,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "813:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "795:29:6"
+            },
+            "returnParameters": {
+              "id": 1827,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1826,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1828,
+                  "src": "848:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1825,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "848:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "847:6:6"
+            },
+            "scope": 1901,
+            "src": "772:82:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1829,
+              "nodeType": "StructuredDocumentation",
+              "src": "862:93:6",
+              "text": " @notice Get the quantity of cUSD associated with a given schedule entry."
+            },
+            "functionSelector": "ee1d036c",
+            "id": 1838,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getVestingQuantity",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1834,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1831,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1838,
+                  "src": "989:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1830,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "989:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 1833,
+                  "mutability": "mutable",
+                  "name": "index",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1838,
+                  "src": "1006:10:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1832,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1006:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "988:29:6"
+            },
+            "returnParameters": {
+              "id": 1837,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1836,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1838,
+                  "src": "1041:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1835,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1041:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1040:6:6"
+            },
+            "scope": 1901,
+            "src": "961:86:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1839,
+              "nodeType": "StructuredDocumentation",
+              "src": "1055:105:6",
+              "text": " @notice Obtain the index of the next schedule entry that will vest for a given user."
+            },
+            "functionSelector": "19e740c0",
+            "id": 1846,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getNextVestingIndex",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1842,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1841,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1846,
+                  "src": "1195:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1840,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1195:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1194:17:6"
+            },
+            "returnParameters": {
+              "id": 1845,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1844,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1846,
+                  "src": "1235:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1843,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1235:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1234:6:6"
+            },
+            "scope": 1901,
+            "src": "1166:75:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1847,
+              "nodeType": "StructuredDocumentation",
+              "src": "1249:147:6",
+              "text": " @notice Obtain the next schedule entry that will vest for a given user.\n @return A pair of uints: (timestamp, cUSD quantity). "
+            },
+            "functionSelector": "2f5bb661",
+            "id": 1856,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getNextVestingEntry",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1850,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1849,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1856,
+                  "src": "1431:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1848,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1431:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1430:17:6"
+            },
+            "returnParameters": {
+              "id": 1855,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1854,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1856,
+                  "src": "1471:14:6",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$2_memory_ptr",
+                    "typeString": "uint256[2]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 1851,
+                      "name": "uint",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1471:4:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 1853,
+                    "length": {
+                      "argumentTypes": null,
+                      "hexValue": "32",
+                      "id": 1852,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "1476:1:6",
+                      "subdenomination": null,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_2_by_1",
+                        "typeString": "int_const 2"
+                      },
+                      "value": "2"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "1471:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$2_storage_ptr",
+                      "typeString": "uint256[2]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1470:16:6"
+            },
+            "scope": 1901,
+            "src": "1402:85:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1857,
+              "nodeType": "StructuredDocumentation",
+              "src": "1495:105:6",
+              "text": " @notice Obtain the time at which the next schedule entry will vest for a given user."
+            },
+            "functionSelector": "6b3905c4",
+            "id": 1864,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getNextVestingTime",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1860,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1859,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1864,
+                  "src": "1634:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1858,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1634:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1633:17:6"
+            },
+            "returnParameters": {
+              "id": 1863,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1862,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1864,
+                  "src": "1674:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1861,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1674:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1673:6:6"
+            },
+            "scope": 1901,
+            "src": "1606:74:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1865,
+              "nodeType": "StructuredDocumentation",
+              "src": "1688:106:6",
+              "text": " @notice Obtain the quantity which the next schedule entry will vest for a given user."
+            },
+            "functionSelector": "97f46527",
+            "id": 1872,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getNextVestingQuantity",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1868,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1867,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1872,
+                  "src": "1832:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1866,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1832:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1831:17:6"
+            },
+            "returnParameters": {
+              "id": 1871,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1870,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1872,
+                  "src": "1872:4:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1869,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1872:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1871:6:6"
+            },
+            "scope": 1901,
+            "src": "1800:78:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1873,
+              "nodeType": "StructuredDocumentation",
+              "src": "1886:98:6",
+              "text": " @notice Allow a user to withdraw any cUSD in their schedule that have vested."
+            },
+            "functionSelector": "458efde3",
+            "id": 1876,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "vest",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1874,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2003:2:6"
+            },
+            "returnParameters": {
+              "id": 1875,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2014:0:6"
+            },
+            "scope": 1901,
+            "src": "1990:25:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1877,
+              "nodeType": "StructuredDocumentation",
+              "src": "2023:58:6",
+              "text": " @notice Stakes the given cUSD amount."
+            },
+            "functionSelector": "a694fc3a",
+            "id": 1882,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "stake",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1880,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1879,
+                  "mutability": "mutable",
+                  "name": "amount",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1882,
+                  "src": "2102:11:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1878,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2102:4:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2101:13:6"
+            },
+            "returnParameters": {
+              "id": 1881,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2123:0:6"
+            },
+            "scope": 1901,
+            "src": "2087:37:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1883,
+              "nodeType": "StructuredDocumentation",
+              "src": "2132:81:6",
+              "text": " @notice Allow a user to claim any available staking rewards."
+            },
+            "functionSelector": "3d18b912",
+            "id": 1886,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getReward",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1884,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2237:2:6"
+            },
+            "returnParameters": {
+              "id": 1885,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2248:0:6"
+            },
+            "scope": 1901,
+            "src": "2219:30:6",
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1887,
+              "nodeType": "StructuredDocumentation",
+              "src": "2257:83:6",
+              "text": " @notice Calculates the amount of TGEN reward per token staked."
+            },
+            "functionSelector": "cd3daf9d",
+            "id": 1892,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "rewardPerToken",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1888,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2369:2:6"
+            },
+            "returnParameters": {
+              "id": 1891,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1890,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1892,
+                  "src": "2395:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1889,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2395:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2394:9:6"
+            },
+            "scope": 1901,
+            "src": "2346:58:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 1893,
+              "nodeType": "StructuredDocumentation",
+              "src": "2412:74:6",
+              "text": " @notice Calculates the amount of TGEN rewards earned."
+            },
+            "functionSelector": "008cc262",
+            "id": 1900,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "earned",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 1896,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1895,
+                  "mutability": "mutable",
+                  "name": "account",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1900,
+                  "src": "2508:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 1894,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2508:7:6",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2507:17:6"
+            },
+            "returnParameters": {
+              "id": 1899,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 1898,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 1900,
+                  "src": "2548:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 1897,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2548:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2547:9:6"
+            },
+            "scope": 1901,
+            "src": "2492:65:6",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 1902,
+        "src": "28:2532:6"
+      }
+    ],
+    "src": "0:2560:6"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/IStableCoinStakingRewards.sol",
+      "exportedSymbols": {
+        "IStableCoinStakingRewards": [
+          1901
+        ]
+      },
+      "license": null
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            ">=",
+            "0.5",
+            ".0"
+          ]
+        },
+        "id": 1790,
+        "name": "PragmaDirective",
+        "src": "0:24:6"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "documentation": null,
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            1901
+          ],
+          "name": "IStableCoinStakingRewards",
+          "scope": 1902
+        },
+        "children": [
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "70a08231",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "balanceOf",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration."
+                },
+                "id": 1791,
+                "name": "StructuredDocumentation",
+                "src": "73:109:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1798,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1792,
+                        "name": "ElementaryTypeName",
+                        "src": "207:7:6"
+                      }
+                    ],
+                    "id": 1793,
+                    "name": "VariableDeclaration",
+                    "src": "207:15:6"
+                  }
+                ],
+                "id": 1794,
+                "name": "ParameterList",
+                "src": "206:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1798,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1795,
+                        "name": "ElementaryTypeName",
+                        "src": "247:4:6"
+                      }
+                    ],
+                    "id": 1796,
+                    "name": "VariableDeclaration",
+                    "src": "247:4:6"
+                  }
+                ],
+                "id": 1797,
+                "name": "ParameterList",
+                "src": "246:6:6"
+              }
+            ],
+            "id": 1798,
+            "name": "FunctionDefinition",
+            "src": "188:65:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "204b676a",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "numVestingEntries",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice The number of vesting dates in an account's schedule."
+                },
+                "id": 1799,
+                "name": "StructuredDocumentation",
+                "src": "261:82:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1806,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1800,
+                        "name": "ElementaryTypeName",
+                        "src": "376:7:6"
+                      }
+                    ],
+                    "id": 1801,
+                    "name": "VariableDeclaration",
+                    "src": "376:15:6"
+                  }
+                ],
+                "id": 1802,
+                "name": "ParameterList",
+                "src": "375:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1806,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1803,
+                        "name": "ElementaryTypeName",
+                        "src": "416:4:6"
+                      }
+                    ],
+                    "id": 1804,
+                    "name": "VariableDeclaration",
+                    "src": "416:4:6"
+                  }
+                ],
+                "id": 1805,
+                "name": "ParameterList",
+                "src": "415:6:6"
+              }
+            ],
+            "id": 1806,
+            "name": "FunctionDefinition",
+            "src": "349:73:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "da7bd3e9",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getVestingScheduleEntry",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Get a particular schedule entry for an account.\n @return A pair of uints: (timestamp, cUSD quantity)."
+                },
+                "id": 1807,
+                "name": "StructuredDocumentation",
+                "src": "430:137:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1818,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1808,
+                        "name": "ElementaryTypeName",
+                        "src": "606:7:6"
+                      }
+                    ],
+                    "id": 1809,
+                    "name": "VariableDeclaration",
+                    "src": "606:15:6"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "index",
+                      "overrides": null,
+                      "scope": 1818,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1810,
+                        "name": "ElementaryTypeName",
+                        "src": "623:4:6"
+                      }
+                    ],
+                    "id": 1811,
+                    "name": "VariableDeclaration",
+                    "src": "623:10:6"
+                  }
+                ],
+                "id": 1812,
+                "name": "ParameterList",
+                "src": "605:29:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1818,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "uint256[2]",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "type": "uint256[2]"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "name": "uint",
+                              "type": "uint256"
+                            },
+                            "id": 1813,
+                            "name": "ElementaryTypeName",
+                            "src": "658:4:6"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "32",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 2",
+                              "value": "2"
+                            },
+                            "id": 1814,
+                            "name": "Literal",
+                            "src": "663:1:6"
+                          }
+                        ],
+                        "id": 1815,
+                        "name": "ArrayTypeName",
+                        "src": "658:7:6"
+                      }
+                    ],
+                    "id": 1816,
+                    "name": "VariableDeclaration",
+                    "src": "658:14:6"
+                  }
+                ],
+                "id": 1817,
+                "name": "ParameterList",
+                "src": "657:16:6"
+              }
+            ],
+            "id": 1818,
+            "name": "FunctionDefinition",
+            "src": "573:101:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "9b217f90",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getVestingTime",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Get the time at which a given schedule entry will vest."
+                },
+                "id": 1819,
+                "name": "StructuredDocumentation",
+                "src": "682:84:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1828,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1820,
+                        "name": "ElementaryTypeName",
+                        "src": "796:7:6"
+                      }
+                    ],
+                    "id": 1821,
+                    "name": "VariableDeclaration",
+                    "src": "796:15:6"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "index",
+                      "overrides": null,
+                      "scope": 1828,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1822,
+                        "name": "ElementaryTypeName",
+                        "src": "813:4:6"
+                      }
+                    ],
+                    "id": 1823,
+                    "name": "VariableDeclaration",
+                    "src": "813:10:6"
+                  }
+                ],
+                "id": 1824,
+                "name": "ParameterList",
+                "src": "795:29:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1828,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1825,
+                        "name": "ElementaryTypeName",
+                        "src": "848:4:6"
+                      }
+                    ],
+                    "id": 1826,
+                    "name": "VariableDeclaration",
+                    "src": "848:4:6"
+                  }
+                ],
+                "id": 1827,
+                "name": "ParameterList",
+                "src": "847:6:6"
+              }
+            ],
+            "id": 1828,
+            "name": "FunctionDefinition",
+            "src": "772:82:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "ee1d036c",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getVestingQuantity",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Get the quantity of cUSD associated with a given schedule entry."
+                },
+                "id": 1829,
+                "name": "StructuredDocumentation",
+                "src": "862:93:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1838,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1830,
+                        "name": "ElementaryTypeName",
+                        "src": "989:7:6"
+                      }
+                    ],
+                    "id": 1831,
+                    "name": "VariableDeclaration",
+                    "src": "989:15:6"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "index",
+                      "overrides": null,
+                      "scope": 1838,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1832,
+                        "name": "ElementaryTypeName",
+                        "src": "1006:4:6"
+                      }
+                    ],
+                    "id": 1833,
+                    "name": "VariableDeclaration",
+                    "src": "1006:10:6"
+                  }
+                ],
+                "id": 1834,
+                "name": "ParameterList",
+                "src": "988:29:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1838,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1835,
+                        "name": "ElementaryTypeName",
+                        "src": "1041:4:6"
+                      }
+                    ],
+                    "id": 1836,
+                    "name": "VariableDeclaration",
+                    "src": "1041:4:6"
+                  }
+                ],
+                "id": 1837,
+                "name": "ParameterList",
+                "src": "1040:6:6"
+              }
+            ],
+            "id": 1838,
+            "name": "FunctionDefinition",
+            "src": "961:86:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "19e740c0",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getNextVestingIndex",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Obtain the index of the next schedule entry that will vest for a given user."
+                },
+                "id": 1839,
+                "name": "StructuredDocumentation",
+                "src": "1055:105:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1846,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1840,
+                        "name": "ElementaryTypeName",
+                        "src": "1195:7:6"
+                      }
+                    ],
+                    "id": 1841,
+                    "name": "VariableDeclaration",
+                    "src": "1195:15:6"
+                  }
+                ],
+                "id": 1842,
+                "name": "ParameterList",
+                "src": "1194:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1846,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1843,
+                        "name": "ElementaryTypeName",
+                        "src": "1235:4:6"
+                      }
+                    ],
+                    "id": 1844,
+                    "name": "VariableDeclaration",
+                    "src": "1235:4:6"
+                  }
+                ],
+                "id": 1845,
+                "name": "ParameterList",
+                "src": "1234:6:6"
+              }
+            ],
+            "id": 1846,
+            "name": "FunctionDefinition",
+            "src": "1166:75:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "2f5bb661",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getNextVestingEntry",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Obtain the next schedule entry that will vest for a given user.\n @return A pair of uints: (timestamp, cUSD quantity). "
+                },
+                "id": 1847,
+                "name": "StructuredDocumentation",
+                "src": "1249:147:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1856,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1848,
+                        "name": "ElementaryTypeName",
+                        "src": "1431:7:6"
+                      }
+                    ],
+                    "id": 1849,
+                    "name": "VariableDeclaration",
+                    "src": "1431:15:6"
+                  }
+                ],
+                "id": 1850,
+                "name": "ParameterList",
+                "src": "1430:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1856,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "uint256[2]",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "type": "uint256[2]"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "name": "uint",
+                              "type": "uint256"
+                            },
+                            "id": 1851,
+                            "name": "ElementaryTypeName",
+                            "src": "1471:4:6"
+                          },
+                          {
+                            "attributes": {
+                              "argumentTypes": null,
+                              "hexvalue": "32",
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "subdenomination": null,
+                              "token": "number",
+                              "type": "int_const 2",
+                              "value": "2"
+                            },
+                            "id": 1852,
+                            "name": "Literal",
+                            "src": "1476:1:6"
+                          }
+                        ],
+                        "id": 1853,
+                        "name": "ArrayTypeName",
+                        "src": "1471:7:6"
+                      }
+                    ],
+                    "id": 1854,
+                    "name": "VariableDeclaration",
+                    "src": "1471:14:6"
+                  }
+                ],
+                "id": 1855,
+                "name": "ParameterList",
+                "src": "1470:16:6"
+              }
+            ],
+            "id": 1856,
+            "name": "FunctionDefinition",
+            "src": "1402:85:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "6b3905c4",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getNextVestingTime",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Obtain the time at which the next schedule entry will vest for a given user."
+                },
+                "id": 1857,
+                "name": "StructuredDocumentation",
+                "src": "1495:105:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1864,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1858,
+                        "name": "ElementaryTypeName",
+                        "src": "1634:7:6"
+                      }
+                    ],
+                    "id": 1859,
+                    "name": "VariableDeclaration",
+                    "src": "1634:15:6"
+                  }
+                ],
+                "id": 1860,
+                "name": "ParameterList",
+                "src": "1633:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1864,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1861,
+                        "name": "ElementaryTypeName",
+                        "src": "1674:4:6"
+                      }
+                    ],
+                    "id": 1862,
+                    "name": "VariableDeclaration",
+                    "src": "1674:4:6"
+                  }
+                ],
+                "id": 1863,
+                "name": "ParameterList",
+                "src": "1673:6:6"
+              }
+            ],
+            "id": 1864,
+            "name": "FunctionDefinition",
+            "src": "1606:74:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "97f46527",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getNextVestingQuantity",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Obtain the quantity which the next schedule entry will vest for a given user."
+                },
+                "id": 1865,
+                "name": "StructuredDocumentation",
+                "src": "1688:106:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1872,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1866,
+                        "name": "ElementaryTypeName",
+                        "src": "1832:7:6"
+                      }
+                    ],
+                    "id": 1867,
+                    "name": "VariableDeclaration",
+                    "src": "1832:15:6"
+                  }
+                ],
+                "id": 1868,
+                "name": "ParameterList",
+                "src": "1831:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1872,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1869,
+                        "name": "ElementaryTypeName",
+                        "src": "1872:4:6"
+                      }
+                    ],
+                    "id": 1870,
+                    "name": "VariableDeclaration",
+                    "src": "1872:4:6"
+                  }
+                ],
+                "id": 1871,
+                "name": "ParameterList",
+                "src": "1871:6:6"
+              }
+            ],
+            "id": 1872,
+            "name": "FunctionDefinition",
+            "src": "1800:78:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "458efde3",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "vest",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Allow a user to withdraw any cUSD in their schedule that have vested."
+                },
+                "id": 1873,
+                "name": "StructuredDocumentation",
+                "src": "1886:98:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1874,
+                "name": "ParameterList",
+                "src": "2003:2:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1875,
+                "name": "ParameterList",
+                "src": "2014:0:6"
+              }
+            ],
+            "id": 1876,
+            "name": "FunctionDefinition",
+            "src": "1990:25:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "a694fc3a",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "stake",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Stakes the given cUSD amount."
+                },
+                "id": 1877,
+                "name": "StructuredDocumentation",
+                "src": "2023:58:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "amount",
+                      "overrides": null,
+                      "scope": 1882,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 1878,
+                        "name": "ElementaryTypeName",
+                        "src": "2102:4:6"
+                      }
+                    ],
+                    "id": 1879,
+                    "name": "VariableDeclaration",
+                    "src": "2102:11:6"
+                  }
+                ],
+                "id": 1880,
+                "name": "ParameterList",
+                "src": "2101:13:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1881,
+                "name": "ParameterList",
+                "src": "2123:0:6"
+              }
+            ],
+            "id": 1882,
+            "name": "FunctionDefinition",
+            "src": "2087:37:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "3d18b912",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getReward",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "nonpayable",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Allow a user to claim any available staking rewards."
+                },
+                "id": 1883,
+                "name": "StructuredDocumentation",
+                "src": "2132:81:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1884,
+                "name": "ParameterList",
+                "src": "2237:2:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1885,
+                "name": "ParameterList",
+                "src": "2248:0:6"
+              }
+            ],
+            "id": 1886,
+            "name": "FunctionDefinition",
+            "src": "2219:30:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "cd3daf9d",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "rewardPerToken",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Calculates the amount of TGEN reward per token staked."
+                },
+                "id": 1887,
+                "name": "StructuredDocumentation",
+                "src": "2257:83:6"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 1888,
+                "name": "ParameterList",
+                "src": "2369:2:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1892,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 1889,
+                        "name": "ElementaryTypeName",
+                        "src": "2395:7:6"
+                      }
+                    ],
+                    "id": 1890,
+                    "name": "VariableDeclaration",
+                    "src": "2395:7:6"
+                  }
+                ],
+                "id": 1891,
+                "name": "ParameterList",
+                "src": "2394:9:6"
+              }
+            ],
+            "id": 1892,
+            "name": "FunctionDefinition",
+            "src": "2346:58:6"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "008cc262",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "earned",
+              "overrides": null,
+              "scope": 1901,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @notice Calculates the amount of TGEN rewards earned."
+                },
+                "id": 1893,
+                "name": "StructuredDocumentation",
+                "src": "2412:74:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "account",
+                      "overrides": null,
+                      "scope": 1900,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 1894,
+                        "name": "ElementaryTypeName",
+                        "src": "2508:7:6"
+                      }
+                    ],
+                    "id": 1895,
+                    "name": "VariableDeclaration",
+                    "src": "2508:15:6"
+                  }
+                ],
+                "id": 1896,
+                "name": "ParameterList",
+                "src": "2507:17:6"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 1900,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 1897,
+                        "name": "ElementaryTypeName",
+                        "src": "2548:7:6"
+                      }
+                    ],
+                    "id": 1898,
+                    "name": "VariableDeclaration",
+                    "src": "2548:7:6"
+                  }
+                ],
+                "id": 1899,
+                "name": "ParameterList",
+                "src": "2547:9:6"
+              }
+            ],
+            "id": 1900,
+            "name": "FunctionDefinition",
+            "src": "2492:65:6"
+          }
+        ],
+        "id": 1901,
+        "name": "ContractDefinition",
+        "src": "28:2532:6"
+      }
+    ],
+    "id": 1902,
+    "name": "SourceUnit",
+    "src": "0:2560:6"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.6.12+commit.27d51765.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.1",
+  "updatedAt": "2021-08-08T21:55:38.708Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getNextVestingEntry(address)": {
+        "returns": {
+          "_0": "A pair of uints: (timestamp, cUSD quantity). "
+        }
+      },
+      "getVestingScheduleEntry(address,uint256)": {
+        "returns": {
+          "_0": "A pair of uints: (timestamp, cUSD quantity)."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "balanceOf(address)": {
+        "notice": "A simple alias to totalVestedAccountBalance: provides ERC20 balance integration."
+      },
+      "earned(address)": {
+        "notice": "Calculates the amount of TGEN rewards earned."
+      },
+      "getNextVestingEntry(address)": {
+        "notice": "Obtain the next schedule entry that will vest for a given user."
+      },
+      "getNextVestingIndex(address)": {
+        "notice": "Obtain the index of the next schedule entry that will vest for a given user."
+      },
+      "getNextVestingQuantity(address)": {
+        "notice": "Obtain the quantity which the next schedule entry will vest for a given user."
+      },
+      "getNextVestingTime(address)": {
+        "notice": "Obtain the time at which the next schedule entry will vest for a given user."
+      },
+      "getReward()": {
+        "notice": "Allow a user to claim any available staking rewards."
+      },
+      "getVestingQuantity(address,uint256)": {
+        "notice": "Get the quantity of cUSD associated with a given schedule entry."
+      },
+      "getVestingScheduleEntry(address,uint256)": {
+        "notice": "Get a particular schedule entry for an account."
+      },
+      "getVestingTime(address,uint256)": {
+        "notice": "Get the time at which a given schedule entry will vest."
+      },
+      "numVestingEntries(address)": {
+        "notice": "The number of vesting dates in an account's schedule."
+      },
+      "rewardPerToken()": {
+        "notice": "Calculates the amount of TGEN reward per token staked."
+      },
+      "stake(uint256)": {
+        "notice": "Stakes the given cUSD amount."
+      },
+      "vest()": {
+        "notice": "Allow a user to withdraw any cUSD in their schedule that have vested."
+      }
+    },
+    "version": 1
+  }
+}
