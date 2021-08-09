@@ -20,6 +20,7 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
+    bool private initialized = false;
 
     mapping (address => uint) public lastUpdateTime;
     mapping (address => uint) public rewardPerTokenStored;
@@ -46,14 +47,6 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
 
     constructor(IAddressResolver _addressResolver) public Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
-
-        //Initialize lastUpdateTime of each available Ubeswap farm
-        address baseUbeswapAdapterAddress = _addressResolver.getContractAddress("BaseUbeswapAdapter");
-        address[] memory farms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms();
-        for (uint i = 0; i < farms.length; i++)
-        {
-            lastUpdateTime[farms[i]] = block.timestamp;
-        }
     }
 
     /* ========== VIEW FUNCTIONS ========== */
@@ -135,10 +128,8 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
     function rewardPerToken(address farmAddress) public view override returns (uint256) {
         require(farmAddress != address(0), "StakingFarmRewards: invalid farm address");
 
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        uint rewardRate = ISettings(settingsAddress).getParameterValue("WeeklyStableCoinStakingRewards");
-        uint numberOfAvailableFarms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms().length;
+        uint rewardRate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyStakingFarmRewards");
+        uint numberOfAvailableFarms = IBaseUbeswapAdapter(ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter")).getAvailableUbeswapFarms().length;
 
         if (totalVestedBalance[farmAddress] == 0) {
             return rewardPerTokenStored[farmAddress];
@@ -400,6 +391,24 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
             IERC20(baseTradegenAddress).transfer(msg.sender, reward);
             emit RewardPaid(msg.sender, reward, farmAddress, block.timestamp);
         }
+    }
+
+    /* ========== RESTRICTED FUNCTIOND ========== */
+
+    /**
+     * @notice Initialize the lastUpdateTime of each Ubeswap farm; meant to be called once
+     */
+    function initializeFarms() external onlyOwner {
+        require(!initialized, "Already initialized farms");
+        //Initialize lastUpdateTime of each available Ubeswap farm
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address[] memory farms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms();
+        for (uint i = 0; i < farms.length; i++)
+        {
+            lastUpdateTime[farms[i]] = block.timestamp;
+        }
+
+        initialized = true;
     }
 
     /* ========== MODIFIERS ========== */
