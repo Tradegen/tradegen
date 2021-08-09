@@ -53,6 +53,15 @@ contract Settings is ISettings, Ownable {
     }
 
     /**
+    * @dev Given the symbol of a currency, returns the address of the currency
+    * @param symbol The symbol of the currency
+    * @return address Currency key for given symbol
+    */
+    function getCurrencyKeyFromSymbol(string memory symbol) public view override returns (address) {
+        return currencySymbolToAddress[symbol];
+    }
+
+    /**
     * @dev Given the name of a parameter, returns the value of the parameter
     * @param parameter The name of the parameter to get value for
     * @return uint The value of the given parameter

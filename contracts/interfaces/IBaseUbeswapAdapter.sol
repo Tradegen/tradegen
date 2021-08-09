@@ -88,4 +88,13 @@ interface IBaseUbeswapAdapter {
     * @return uint Amount of UBE available
     */
     function getAvailableRewards(address poolAddress, address farmAddress) external view returns (uint);
+
+    /**
+    * @dev Calculates the amount of tokens in a pair
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param numberOfLPTokens Number of LP tokens for the given pair
+    * @return (uint, uint) The number of tokens for tokenA and tokenB
+    */
+    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) external view returns (uint, uint);
 }

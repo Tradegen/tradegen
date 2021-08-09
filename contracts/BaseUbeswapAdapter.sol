@@ -153,6 +153,27 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         return IStakingRewards(farmAddress).earned(poolAddress);
     }
 
+    /**
+    * @dev Calculates the amount of tokens in a pair
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param numberOfLPTokens Number of LP tokens for the given pair
+    * @return (uint, uint) The number of tokens for tokenA and tokenB
+    */
+    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) public view override returns (uint, uint) {
+        address pair = getPair(tokenA, tokenB);
+        require(pair != address(0), "BaseUbeswapAdapter: invalid address for pair");
+
+        uint pairBalanceTokenA = IERC20(tokenA).balanceOf(pair);
+        uint pairBalanceTokenB = IERC20(tokenB).balanceOf(pair);
+        uint totalSupply = IERC20(pair).totalSupply();
+
+        uint amountA = pairBalanceTokenA.mul(numberOfLPTokens).div(totalSupply);
+        uint amountB = pairBalanceTokenB.mul(numberOfLPTokens).div(totalSupply);
+
+        return (amountA, amountB);
+    }
+
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**

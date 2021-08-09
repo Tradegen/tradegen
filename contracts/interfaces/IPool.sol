@@ -103,4 +103,18 @@ interface IPool {
     * @param farmAddress The token pair's farm address
     */
     function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) external;
+
+    /**
+    * @dev Removes liquidity for the two given tokens
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param farmAddress The token pair's farm address
+    */
+    function removeLiquidity(address tokenA, address tokenB, address farmAddress) external;
+
+    /**
+    * @dev Collects available UBE rewards for the given Ubeswap farm
+    * @param farmAddress The token pair's farm address
+    */
+    function claimUbeswapRewards(address farmAddress) external;
 }
