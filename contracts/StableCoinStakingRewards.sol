@@ -160,19 +160,9 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
      * @param quantity The quantity of cUSD that will vest.
      */
     function appendVestingEntry(address account, uint time, uint quantity) internal {
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
-
         /* No empty or already-passed vesting entries allowed. */
         require(block.timestamp < time, "Time must be in the future");
         require(quantity != 0, "Quantity cannot be zero");
-
-        /* There must be enough balance in the contract to provide for the vesting entry. */
-        totalVestedBalance = totalVestedBalance.add(quantity);
-        require(
-            totalVestedBalance <= IERC20(stableCoinAddress).balanceOf(address(this)),
-            "Must be enough balance in the contract to provide for the vesting entry"
-        );
 
         /* Disallow arbitrarily long vesting schedules in light of the gas limit. */
         uint scheduleLength = vestingSchedules[account].length;
@@ -205,8 +195,13 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     function stake(uint amount) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "StableCoinStakingRewards: Staked amount must be greater than 0");
 
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
         uint vestingTimestamp = block.timestamp.add(30 days);
         appendVestingEntry(msg.sender, vestingTimestamp, amount);
+
+        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
     }

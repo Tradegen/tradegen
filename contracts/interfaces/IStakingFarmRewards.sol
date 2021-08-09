@@ -72,4 +72,26 @@ interface IStakingFarmRewards {
      * @notice Calculates the amount of TGEN rewards earned for the given farm.
      */
     function earned(address account, address farmAddress) external view returns (uint256);
+
+    /**
+     * @notice Returns the user's staked farms, balance in each staked farm, and the number of staked farms
+     * @param account Address of the user
+     * @return (address[], uint[], uint) The address of each staked farm, user's balance in the associated farm, and the number of staked farms
+     */
+    function getStakedFarms(address account) external view returns (address[] memory, uint[] memory, uint);
+
+    /**
+     * @notice Returns the USD value of the user's staked position in the given farm
+     * @param account Address of the user
+     * @param farmAddress Address of the farm
+     * @return uint USD value of the staked position
+     */
+    function getUSDValueOfStakedPosition(address account, address farmAddress) external view returns (uint);
+
+    /**
+     * @notice Returns the USD value of the given farm
+     * @param farmAddress Address of the farm
+     * @return uint USD value staked in the farm
+     */
+    function getUSDValueOfFarm(address farmAddress) external view returns (uint);
 }
