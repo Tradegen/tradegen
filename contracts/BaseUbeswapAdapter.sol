@@ -95,23 +95,20 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
 
     /**
     * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
-    * @return (address[] memory, address[] memory) The liquidity pool address and farm address for each available farm
+    * @return address[] memory The farm address for each available farm
     */
-    function getAvailableUbeswapFarms() public view override returns (address[] memory, address[] memory) {
+    function getAvailableUbeswapFarms() public view override returns (address[] memory) {
         address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
 
         uint numberOfAvailableFarms = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsCount();
         address[] memory farmAddresses = new address[](numberOfAvailableFarms);
-        address[] memory liquidityPoolAddresses = new address[](numberOfAvailableFarms);
 
         for (uint i = 0; i < numberOfAvailableFarms; i++)
         {
-            address farmAddress = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsByIndex(i);
-            farmAddresses[0] = farmAddress;
-            liquidityPoolAddresses[0] = IUbeswapPoolManager(ubeswapPoolManagerAddress).pools(farmAddress).stakingToken;
+            farmAddresses[i] = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsByIndex(i);
         }
 
-        return (farmAddresses, liquidityPoolAddresses);
+        return farmAddresses;
     }
 
     /**

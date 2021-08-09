@@ -10,8 +10,6 @@ interface IUbeswapPoolManager {
         uint256 nextPeriod;
     }
 
-    function pools(address) external view returns(PoolInfo memory);
-
     function poolsCount() external view returns(uint256);
 
     function poolsByIndex(uint256) external view returns(address);

@@ -24,6 +24,25 @@
       "inputs": [
         {
           "internalType": "string",
+          "name": "symbol",
+          "type": "string"
+        }
+      ],
+      "name": "getCurrencyKeyFromSymbol",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
           "name": "parameter",
           "type": "string"
         }
@@ -239,27 +258,27 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"currencySymbol\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"addCurrencyKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"}],\"name\":\"addOracleAPIAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"checkIfCurrencyIsAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableCurrencies\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getCurrencyKeyFromIndex\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"getCurrencySymbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"}],\"name\":\"getOracleAPIName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOracleAPIs\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"parameter\",\"type\":\"string\"}],\"name\":\"getParameterValue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStableCoinAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"parameter\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"newValue\",\"type\":\"uint256\"}],\"name\":\"setParameterValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stableCoinAddress\",\"type\":\"address\"}],\"name\":\"setStableCoinAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"currencySymbol\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"newCurrencyKey\",\"type\":\"address\"}],\"name\":\"updateCurrencyKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oldOracleAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"newOracleAddress\",\"type\":\"address\"}],\"name\":\"updateOracleAPIAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addCurrencyKey(string,address)\":{\"details\":\"Adds a new tradable currency to the platform\",\"params\":{\"currencyKey\":\"The address of the currency to add\",\"currencySymbol\":\"The symbol of the currency to add\"}},\"addOracleAPIAddress(string,address)\":{\"details\":\"Adds a new oracle API to the platform\",\"params\":{\"name\":\"The name of the oracle API\",\"oracleAddress\":\"The address of the oracle API\"}},\"checkIfCurrencyIsAvailable(address)\":{\"details\":\"Given the address of a currency, returns whether the currency is supported on the platform\",\"params\":{\"currencyKey\":\"The address of the currency\"},\"returns\":{\"_0\":\"bool Whether the currency is supported on the platform\"}},\"getAvailableCurrencies()\":{\"details\":\"Returns the addresses of supported currencies for trading\",\"returns\":{\"_0\":\"address[] An array of addresses of supported currencies\"}},\"getCurrencyKeyFromIndex(uint256)\":{\"details\":\"Given the index in the array of available currencies, returns the currency key at that index\",\"params\":{\"index\":\"Index in the array of available currencies\"},\"returns\":{\"_0\":\"address Currency key at given index\"}},\"getCurrencySymbol(address)\":{\"details\":\"Given the address of a currency, returns the currency's symbol\",\"params\":{\"currencyKey\":\"The address of the currency\"},\"returns\":{\"_0\":\"string The currency symbol\"}},\"getOracleAPIName(address)\":{\"details\":\"Given the address of an oracle API, returns the name of the oracle API\",\"params\":{\"oracleAddress\":\"The address of the oracle API\"},\"returns\":{\"_0\":\"string The oracle API name\"}},\"getOracleAPIs()\":{\"details\":\"Returns the addresses and names of supported oracle APIs\",\"returns\":{\"_0\":\"OracleData[] An array of oracle API addresses and names\"}},\"getParameterValue(string)\":{\"details\":\"Given the name of a parameter, returns the value of the parameter\",\"params\":{\"parameter\":\"The name of the parameter to get value for\"},\"returns\":{\"_0\":\"uint The value of the given parameter\"}},\"getStableCoinAddress()\":{\"details\":\"Returns the address of the stable coin\",\"returns\":{\"_0\":\"address The stable coin address\"}},\"setParameterValue(string,uint256)\":{\"details\":\"Updates the address for the given contract; meant to be called by Settings contract owner\",\"params\":{\"newValue\":\"The new value of the given parameter\",\"parameter\":\"The name of the parameter to change\"}},\"setStableCoinAddress(address)\":{\"details\":\"Sets the address of the stable coin\",\"params\":{\"stableCoinAddress\":\"The address of the stable coin\"}},\"updateCurrencyKey(string,address)\":{\"details\":\"Updates the address of the given currency\",\"params\":{\"currencySymbol\":\"The currency symbol\",\"newCurrencyKey\":\"The new address for the given currency\"}},\"updateOracleAPIAddress(address,address)\":{\"details\":\"Updates the address of a given oracle API\",\"params\":{\"newOracleAddress\":\"The new address of the given oracle API\",\"oldOracleAddress\":\"The address of the oracle API to update\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol\":\"ISettings\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol\":{\"keccak256\":\"0x7af58f12f1004764ebf0a5f2dc15d3cf499d501d76000e052f865b44912fe619\",\"urls\":[\"bzz-raw://03a65d4f6b6a72e6447efc5cbc9966ba17b12fcb7c43e1b0c02e95a6d323ef73\",\"dweb:/ipfs/QmWDnorMhTSP14fcBJ7ZXyGHEaWWwtpE7ENZ7YKTqCgoKo\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"currencySymbol\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"addCurrencyKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"}],\"name\":\"addOracleAPIAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"checkIfCurrencyIsAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableCurrencies\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getCurrencyKeyFromIndex\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"name\":\"getCurrencyKeyFromSymbol\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"getCurrencySymbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"}],\"name\":\"getOracleAPIName\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getOracleAPIs\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"parameter\",\"type\":\"string\"}],\"name\":\"getParameterValue\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStableCoinAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"parameter\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"newValue\",\"type\":\"uint256\"}],\"name\":\"setParameterValue\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"stableCoinAddress\",\"type\":\"address\"}],\"name\":\"setStableCoinAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"currencySymbol\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"newCurrencyKey\",\"type\":\"address\"}],\"name\":\"updateCurrencyKey\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oldOracleAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"newOracleAddress\",\"type\":\"address\"}],\"name\":\"updateOracleAPIAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addCurrencyKey(string,address)\":{\"details\":\"Adds a new tradable currency to the platform\",\"params\":{\"currencyKey\":\"The address of the currency to add\",\"currencySymbol\":\"The symbol of the currency to add\"}},\"addOracleAPIAddress(string,address)\":{\"details\":\"Adds a new oracle API to the platform\",\"params\":{\"name\":\"The name of the oracle API\",\"oracleAddress\":\"The address of the oracle API\"}},\"checkIfCurrencyIsAvailable(address)\":{\"details\":\"Given the address of a currency, returns whether the currency is supported on the platform\",\"params\":{\"currencyKey\":\"The address of the currency\"},\"returns\":{\"_0\":\"bool Whether the currency is supported on the platform\"}},\"getAvailableCurrencies()\":{\"details\":\"Returns the addresses of supported currencies for trading\",\"returns\":{\"_0\":\"address[] An array of addresses of supported currencies\"}},\"getCurrencyKeyFromIndex(uint256)\":{\"details\":\"Given the index in the array of available currencies, returns the currency key at that index\",\"params\":{\"index\":\"Index in the array of available currencies\"},\"returns\":{\"_0\":\"address Currency key at given index\"}},\"getCurrencyKeyFromSymbol(string)\":{\"details\":\"Given the symbol of a currency, returns the address of the currency\",\"params\":{\"symbol\":\"The symbol of the currency\"},\"returns\":{\"_0\":\"address Currency key for given symbol\"}},\"getCurrencySymbol(address)\":{\"details\":\"Given the address of a currency, returns the currency's symbol\",\"params\":{\"currencyKey\":\"The address of the currency\"},\"returns\":{\"_0\":\"string The currency symbol\"}},\"getOracleAPIName(address)\":{\"details\":\"Given the address of an oracle API, returns the name of the oracle API\",\"params\":{\"oracleAddress\":\"The address of the oracle API\"},\"returns\":{\"_0\":\"string The oracle API name\"}},\"getOracleAPIs()\":{\"details\":\"Returns the addresses and names of supported oracle APIs\",\"returns\":{\"_0\":\"OracleData[] An array of oracle API addresses and names\"}},\"getParameterValue(string)\":{\"details\":\"Given the name of a parameter, returns the value of the parameter\",\"params\":{\"parameter\":\"The name of the parameter to get value for\"},\"returns\":{\"_0\":\"uint The value of the given parameter\"}},\"getStableCoinAddress()\":{\"details\":\"Returns the address of the stable coin\",\"returns\":{\"_0\":\"address The stable coin address\"}},\"setParameterValue(string,uint256)\":{\"details\":\"Updates the address for the given contract; meant to be called by Settings contract owner\",\"params\":{\"newValue\":\"The new value of the given parameter\",\"parameter\":\"The name of the parameter to change\"}},\"setStableCoinAddress(address)\":{\"details\":\"Sets the address of the stable coin\",\"params\":{\"stableCoinAddress\":\"The address of the stable coin\"}},\"updateCurrencyKey(string,address)\":{\"details\":\"Updates the address of the given currency\",\"params\":{\"currencySymbol\":\"The currency symbol\",\"newCurrencyKey\":\"The new address for the given currency\"}},\"updateOracleAPIAddress(address,address)\":{\"details\":\"Updates the address of a given oracle API\",\"params\":{\"newOracleAddress\":\"The new address of the given oracle API\",\"oldOracleAddress\":\"The address of the oracle API to update\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol\":\"ISettings\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol\":{\"keccak256\":\"0x15b4b1b1ff021ccc5c5f88b3f73cf441b7a3aba6ff978cc8fe32d093ccf0ba47\",\"urls\":[\"bzz-raw://9c5055a1c757bd7943e83eba99352d499ec342aab6774c2afaad452b37e82c6d\",\"dweb:/ipfs/QmcERFzbYRDNtXf6ygXS5RikiAPoYmWNpGFwDSH2ormXsS\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface ISettings {\r\n    /**\r\n    * @dev Given the index in the array of available currencies, returns the currency key at that index\r\n    * @param index Index in the array of available currencies\r\n    * @return address Currency key at given index\r\n    */\r\n    function getCurrencyKeyFromIndex(uint index) external view returns (address);\r\n\r\n    /**\r\n    * @dev Given the name of a parameter, returns the value of the parameter\r\n    * @param parameter The name of the parameter to get value for\r\n    * @return uint The value of the given parameter\r\n    */\r\n    function getParameterValue(string memory parameter) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the addresses of supported currencies for trading\r\n    * @return address[] An array of addresses of supported currencies\r\n    */\r\n    function getAvailableCurrencies() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Given the address of a currency, returns the currency's symbol\r\n    * @param currencyKey The address of the currency\r\n    * @return string The currency symbol\r\n    */\r\n    function getCurrencySymbol(address currencyKey) external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the address of the stable coin\r\n    * @return address The stable coin address\r\n    */\r\n    function getStableCoinAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the addresses and names of supported oracle APIs\r\n    * @return OracleData[] An array of oracle API addresses and names\r\n    */\r\n    function getOracleAPIs() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Given the address of an oracle API, returns the name of the oracle API\r\n    * @param oracleAddress The address of the oracle API\r\n    * @return string The oracle API name\r\n    */\r\n    function getOracleAPIName(address oracleAddress) external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Given the address of a currency, returns whether the currency is supported on the platform\r\n    * @param currencyKey The address of the currency\r\n    * @return bool Whether the currency is supported on the platform\r\n    */\r\n    function checkIfCurrencyIsAvailable(address currencyKey) external view returns (bool);\r\n\r\n    /**\r\n    * @dev Updates the address for the given contract; meant to be called by Settings contract owner\r\n    * @param parameter The name of the parameter to change\r\n    * @param newValue The new value of the given parameter\r\n    */\r\n    function setParameterValue(string memory parameter, uint newValue) external;\r\n\r\n    /**\r\n    * @dev Sets the address of the stable coin\r\n    * @param stableCoinAddress The address of the stable coin\r\n    */\r\n    function setStableCoinAddress(address stableCoinAddress) external;\r\n\r\n    /**\r\n    * @dev Updates the address of the given currency\r\n    * @param currencySymbol The currency symbol\r\n    * @param newCurrencyKey The new address for the given currency\r\n    */\r\n    function updateCurrencyKey(string memory currencySymbol, address newCurrencyKey) external;\r\n\r\n    /**\r\n    * @dev Adds a new tradable currency to the platform\r\n    * @param currencySymbol The symbol of the currency to add\r\n    * @param currencyKey The address of the currency to add\r\n    */\r\n    function addCurrencyKey(string memory currencySymbol, address currencyKey) external;\r\n\r\n    /**\r\n    * @dev Updates the address of a given oracle API\r\n    * @param oldOracleAddress The address of the oracle API to update\r\n    * @param newOracleAddress The new address of the given oracle API\r\n    */\r\n    function updateOracleAPIAddress(address oldOracleAddress, address newOracleAddress) external;\r\n\r\n    /**\r\n    * @dev Adds a new oracle API to the platform\r\n    * @param name The name of the oracle API\r\n    * @param oracleAddress The address of the oracle API\r\n    */\r\n    function addOracleAPIAddress(string memory name, address oracleAddress) external;\r\n}",
-  "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol",
+  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface ISettings {\r\n    /**\r\n    * @dev Given the index in the array of available currencies, returns the currency key at that index\r\n    * @param index Index in the array of available currencies\r\n    * @return address Currency key at given index\r\n    */\r\n    function getCurrencyKeyFromIndex(uint index) external view returns (address);\r\n\r\n    /**\r\n    * @dev Given the symbol of a currency, returns the address of the currency\r\n    * @param symbol The symbol of the currency\r\n    * @return address Currency key for given symbol\r\n    */\r\n    function getCurrencyKeyFromSymbol(string memory symbol) external view returns (address);\r\n\r\n    /**\r\n    * @dev Given the name of a parameter, returns the value of the parameter\r\n    * @param parameter The name of the parameter to get value for\r\n    * @return uint The value of the given parameter\r\n    */\r\n    function getParameterValue(string memory parameter) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the addresses of supported currencies for trading\r\n    * @return address[] An array of addresses of supported currencies\r\n    */\r\n    function getAvailableCurrencies() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Given the address of a currency, returns the currency's symbol\r\n    * @param currencyKey The address of the currency\r\n    * @return string The currency symbol\r\n    */\r\n    function getCurrencySymbol(address currencyKey) external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Returns the address of the stable coin\r\n    * @return address The stable coin address\r\n    */\r\n    function getStableCoinAddress() external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the addresses and names of supported oracle APIs\r\n    * @return OracleData[] An array of oracle API addresses and names\r\n    */\r\n    function getOracleAPIs() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Given the address of an oracle API, returns the name of the oracle API\r\n    * @param oracleAddress The address of the oracle API\r\n    * @return string The oracle API name\r\n    */\r\n    function getOracleAPIName(address oracleAddress) external view returns (string memory);\r\n\r\n    /**\r\n    * @dev Given the address of a currency, returns whether the currency is supported on the platform\r\n    * @param currencyKey The address of the currency\r\n    * @return bool Whether the currency is supported on the platform\r\n    */\r\n    function checkIfCurrencyIsAvailable(address currencyKey) external view returns (bool);\r\n\r\n    /**\r\n    * @dev Updates the address for the given contract; meant to be called by Settings contract owner\r\n    * @param parameter The name of the parameter to change\r\n    * @param newValue The new value of the given parameter\r\n    */\r\n    function setParameterValue(string memory parameter, uint newValue) external;\r\n\r\n    /**\r\n    * @dev Sets the address of the stable coin\r\n    * @param stableCoinAddress The address of the stable coin\r\n    */\r\n    function setStableCoinAddress(address stableCoinAddress) external;\r\n\r\n    /**\r\n    * @dev Updates the address of the given currency\r\n    * @param currencySymbol The currency symbol\r\n    * @param newCurrencyKey The new address for the given currency\r\n    */\r\n    function updateCurrencyKey(string memory currencySymbol, address newCurrencyKey) external;\r\n\r\n    /**\r\n    * @dev Adds a new tradable currency to the platform\r\n    * @param currencySymbol The symbol of the currency to add\r\n    * @param currencyKey The address of the currency to add\r\n    */\r\n    function addCurrencyKey(string memory currencySymbol, address currencyKey) external;\r\n\r\n    /**\r\n    * @dev Updates the address of a given oracle API\r\n    * @param oldOracleAddress The address of the oracle API to update\r\n    * @param newOracleAddress The new address of the given oracle API\r\n    */\r\n    function updateOracleAPIAddress(address oldOracleAddress, address newOracleAddress) external;\r\n\r\n    /**\r\n    * @dev Adds a new oracle API to the platform\r\n    * @param name The name of the oracle API\r\n    * @param oracleAddress The address of the oracle API\r\n    */\r\n    function addOracleAPIAddress(string memory name, address oracleAddress) external;\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen\\contracts\\interfaces\\ISettings.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol",
     "exportedSymbols": {
       "ISettings": [
-        652
+        6282
       ]
     },
-    "id": 653,
+    "id": 6283,
     "license": null,
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 545,
+        "id": 6167,
         "literals": [
           "solidity",
           ">=",
@@ -267,7 +286,7 @@
           ".0"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:3"
+        "src": "0:24:11"
       },
       {
         "abstract": false,
@@ -276,9 +295,9 @@
         "contractKind": "interface",
         "documentation": null,
         "fullyImplemented": false,
-        "id": 652,
+        "id": 6282,
         "linearizedBaseContracts": [
-          652
+          6282
         ],
         "name": "ISettings",
         "nodeType": "ContractDefinition",
@@ -286,13 +305,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 546,
+              "id": 6168,
               "nodeType": "StructuredDocumentation",
-              "src": "55:230:3",
+              "src": "55:230:11",
               "text": " @dev Given the index in the array of available currencies, returns the currency key at that index\n @param index Index in the array of available currencies\n @return address Currency key at given index"
             },
             "functionSelector": "2b0e0ab3",
-            "id": 553,
+            "id": 6175,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -300,18 +319,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 549,
+              "id": 6171,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 548,
+                  "id": 6170,
                   "mutability": "mutable",
                   "name": "index",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 553,
-                  "src": "324:10:3",
+                  "scope": 6175,
+                  "src": "324:10:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -319,10 +338,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 547,
+                    "id": 6169,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "324:4:3",
+                    "src": "324:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -332,21 +351,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "323:12:3"
+              "src": "323:12:11"
             },
             "returnParameters": {
-              "id": 552,
+              "id": 6174,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 551,
+                  "id": 6173,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 553,
-                  "src": "359:7:3",
+                  "scope": 6175,
+                  "src": "359:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -354,10 +373,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 550,
+                    "id": 6172,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "359:7:3",
+                    "src": "359:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -368,10 +387,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "358:9:3"
+              "src": "358:9:11"
             },
-            "scope": 652,
-            "src": "291:77:3",
+            "scope": 6282,
+            "src": "291:77:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -379,13 +398,106 @@
           {
             "body": null,
             "documentation": {
-              "id": 554,
+              "id": 6176,
               "nodeType": "StructuredDocumentation",
-              "src": "376:209:3",
+              "src": "376:192:11",
+              "text": " @dev Given the symbol of a currency, returns the address of the currency\n @param symbol The symbol of the currency\n @return address Currency key for given symbol"
+            },
+            "functionSelector": "72be869d",
+            "id": 6183,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getCurrencyKeyFromSymbol",
+            "nodeType": "FunctionDefinition",
+            "overrides": null,
+            "parameters": {
+              "id": 6179,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6178,
+                  "mutability": "mutable",
+                  "name": "symbol",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 6183,
+                  "src": "608:20:11",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 6177,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "608:6:11",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "607:22:11"
+            },
+            "returnParameters": {
+              "id": 6182,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6181,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "overrides": null,
+                  "scope": 6183,
+                  "src": "653:7:11",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6180,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "653:7:11",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "652:9:11"
+            },
+            "scope": 6282,
+            "src": "574:88:11",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": {
+              "id": 6184,
+              "nodeType": "StructuredDocumentation",
+              "src": "670:209:11",
               "text": " @dev Given the name of a parameter, returns the value of the parameter\n @param parameter The name of the parameter to get value for\n @return uint The value of the given parameter"
             },
             "functionSelector": "28a2176f",
-            "id": 561,
+            "id": 6191,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -393,18 +505,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 557,
+              "id": 6187,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 556,
+                  "id": 6186,
                   "mutability": "mutable",
                   "name": "parameter",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 561,
-                  "src": "618:23:3",
+                  "scope": 6191,
+                  "src": "912:23:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -412,10 +524,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 555,
+                    "id": 6185,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "618:6:3",
+                    "src": "912:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -425,21 +537,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "617:25:3"
+              "src": "911:25:11"
             },
             "returnParameters": {
-              "id": 560,
+              "id": 6190,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 559,
+                  "id": 6189,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 561,
-                  "src": "666:4:3",
+                  "scope": 6191,
+                  "src": "960:4:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -447,10 +559,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 558,
+                    "id": 6188,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "666:4:3",
+                    "src": "960:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -460,10 +572,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "665:6:3"
+              "src": "959:6:11"
             },
-            "scope": 652,
-            "src": "591:81:3",
+            "scope": 6282,
+            "src": "885:81:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -471,13 +583,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 562,
+              "id": 6192,
               "nodeType": "StructuredDocumentation",
-              "src": "680:152:3",
+              "src": "974:152:11",
               "text": " @dev Returns the addresses of supported currencies for trading\n @return address[] An array of addresses of supported currencies"
             },
             "functionSelector": "f559814b",
-            "id": 568,
+            "id": 6198,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -485,24 +597,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 563,
+              "id": 6193,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "869:2:3"
+              "src": "1163:2:11"
             },
             "returnParameters": {
-              "id": 567,
+              "id": 6197,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 566,
+                  "id": 6196,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 568,
-                  "src": "895:16:3",
+                  "scope": 6198,
+                  "src": "1189:16:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -511,20 +623,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 564,
+                      "id": 6194,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "895:7:3",
+                      "src": "1189:7:11",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 565,
+                    "id": 6195,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "895:9:3",
+                    "src": "1189:9:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -534,10 +646,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "894:18:3"
+              "src": "1188:18:11"
             },
-            "scope": 652,
-            "src": "838:75:3",
+            "scope": 6282,
+            "src": "1132:75:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -545,13 +657,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 569,
+              "id": 6199,
               "nodeType": "StructuredDocumentation",
-              "src": "921:182:3",
+              "src": "1215:182:11",
               "text": " @dev Given the address of a currency, returns the currency's symbol\n @param currencyKey The address of the currency\n @return string The currency symbol"
             },
             "functionSelector": "554c9b6a",
-            "id": 576,
+            "id": 6206,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -559,18 +671,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 572,
+              "id": 6202,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 571,
+                  "id": 6201,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 576,
-                  "src": "1136:19:3",
+                  "scope": 6206,
+                  "src": "1430:19:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -578,10 +690,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 570,
+                    "id": 6200,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1136:7:3",
+                    "src": "1430:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -592,21 +704,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1135:21:3"
+              "src": "1429:21:11"
             },
             "returnParameters": {
-              "id": 575,
+              "id": 6205,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 574,
+                  "id": 6204,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 576,
-                  "src": "1180:13:3",
+                  "scope": 6206,
+                  "src": "1474:13:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -614,10 +726,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 573,
+                    "id": 6203,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1180:6:3",
+                    "src": "1474:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -627,10 +739,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1179:15:3"
+              "src": "1473:15:11"
             },
-            "scope": 652,
-            "src": "1109:86:3",
+            "scope": 6282,
+            "src": "1403:86:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -638,13 +750,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 577,
+              "id": 6207,
               "nodeType": "StructuredDocumentation",
-              "src": "1203:109:3",
+              "src": "1497:109:11",
               "text": " @dev Returns the address of the stable coin\n @return address The stable coin address"
             },
             "functionSelector": "be781b1c",
-            "id": 582,
+            "id": 6212,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -652,24 +764,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 578,
+              "id": 6208,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1347:2:3"
+              "src": "1641:2:11"
             },
             "returnParameters": {
-              "id": 581,
+              "id": 6211,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 580,
+                  "id": 6210,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 582,
-                  "src": "1373:7:3",
+                  "scope": 6212,
+                  "src": "1667:7:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -677,10 +789,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 579,
+                    "id": 6209,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1373:7:3",
+                    "src": "1667:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -691,10 +803,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1372:9:3"
+              "src": "1666:9:11"
             },
-            "scope": 652,
-            "src": "1318:64:3",
+            "scope": 6282,
+            "src": "1612:64:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -702,13 +814,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 583,
+              "id": 6213,
               "nodeType": "StructuredDocumentation",
-              "src": "1390:151:3",
+              "src": "1684:151:11",
               "text": " @dev Returns the addresses and names of supported oracle APIs\n @return OracleData[] An array of oracle API addresses and names"
             },
             "functionSelector": "4dfe56d9",
-            "id": 589,
+            "id": 6219,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -716,24 +828,24 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 584,
+              "id": 6214,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1569:2:3"
+              "src": "1863:2:11"
             },
             "returnParameters": {
-              "id": 588,
+              "id": 6218,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 587,
+                  "id": 6217,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 589,
-                  "src": "1595:16:3",
+                  "scope": 6219,
+                  "src": "1889:16:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -742,20 +854,20 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 585,
+                      "id": 6215,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1595:7:3",
+                      "src": "1889:7:11",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 586,
+                    "id": 6216,
                     "length": null,
                     "nodeType": "ArrayTypeName",
-                    "src": "1595:9:3",
+                    "src": "1889:9:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -765,10 +877,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1594:18:3"
+              "src": "1888:18:11"
             },
-            "scope": 652,
-            "src": "1547:66:3",
+            "scope": 6282,
+            "src": "1841:66:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -776,13 +888,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 590,
+              "id": 6220,
               "nodeType": "StructuredDocumentation",
-              "src": "1621:194:3",
+              "src": "1915:194:11",
               "text": " @dev Given the address of an oracle API, returns the name of the oracle API\n @param oracleAddress The address of the oracle API\n @return string The oracle API name"
             },
             "functionSelector": "a673e944",
-            "id": 597,
+            "id": 6227,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -790,18 +902,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 593,
+              "id": 6223,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 592,
+                  "id": 6222,
                   "mutability": "mutable",
                   "name": "oracleAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 597,
-                  "src": "1847:21:3",
+                  "scope": 6227,
+                  "src": "2141:21:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -809,10 +921,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 591,
+                    "id": 6221,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1847:7:3",
+                    "src": "2141:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -823,21 +935,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1846:23:3"
+              "src": "2140:23:11"
             },
             "returnParameters": {
-              "id": 596,
+              "id": 6226,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 595,
+                  "id": 6225,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 597,
-                  "src": "1893:13:3",
+                  "scope": 6227,
+                  "src": "2187:13:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -845,10 +957,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 594,
+                    "id": 6224,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1893:6:3",
+                    "src": "2187:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -858,10 +970,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1892:15:3"
+              "src": "2186:15:11"
             },
-            "scope": 652,
-            "src": "1821:87:3",
+            "scope": 6282,
+            "src": "2115:87:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -869,13 +981,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 598,
+              "id": 6228,
               "nodeType": "StructuredDocumentation",
-              "src": "1916:238:3",
+              "src": "2210:238:11",
               "text": " @dev Given the address of a currency, returns whether the currency is supported on the platform\n @param currencyKey The address of the currency\n @return bool Whether the currency is supported on the platform"
             },
             "functionSelector": "571a0885",
-            "id": 605,
+            "id": 6235,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -883,18 +995,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 601,
+              "id": 6231,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 600,
+                  "id": 6230,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 605,
-                  "src": "2196:19:3",
+                  "scope": 6235,
+                  "src": "2490:19:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -902,10 +1014,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 599,
+                    "id": 6229,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2196:7:3",
+                    "src": "2490:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -916,21 +1028,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2195:21:3"
+              "src": "2489:21:11"
             },
             "returnParameters": {
-              "id": 604,
+              "id": 6234,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 603,
+                  "id": 6233,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 605,
-                  "src": "2240:4:3",
+                  "scope": 6235,
+                  "src": "2534:4:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -938,10 +1050,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 602,
+                    "id": 6232,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2240:4:3",
+                    "src": "2534:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -951,10 +1063,10 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2239:6:3"
+              "src": "2533:6:11"
             },
-            "scope": 652,
-            "src": "2160:86:3",
+            "scope": 6282,
+            "src": "2454:86:11",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -962,13 +1074,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 606,
+              "id": 6236,
               "nodeType": "StructuredDocumentation",
-              "src": "2254:233:3",
+              "src": "2548:233:11",
               "text": " @dev Updates the address for the given contract; meant to be called by Settings contract owner\n @param parameter The name of the parameter to change\n @param newValue The new value of the given parameter"
             },
             "functionSelector": "f74987cb",
-            "id": 613,
+            "id": 6243,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -976,18 +1088,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 611,
+              "id": 6241,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 608,
+                  "id": 6238,
                   "mutability": "mutable",
                   "name": "parameter",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 613,
-                  "src": "2520:23:3",
+                  "scope": 6243,
+                  "src": "2814:23:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -995,10 +1107,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 607,
+                    "id": 6237,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2520:6:3",
+                    "src": "2814:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1009,13 +1121,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 610,
+                  "id": 6240,
                   "mutability": "mutable",
                   "name": "newValue",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 613,
-                  "src": "2545:13:3",
+                  "scope": 6243,
+                  "src": "2839:13:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1023,10 +1135,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 609,
+                    "id": 6239,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2545:4:3",
+                    "src": "2839:4:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1036,16 +1148,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2519:40:3"
+              "src": "2813:40:11"
             },
             "returnParameters": {
-              "id": 612,
+              "id": 6242,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2568:0:3"
+              "src": "2862:0:11"
             },
-            "scope": 652,
-            "src": "2493:76:3",
+            "scope": 6282,
+            "src": "2787:76:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1053,13 +1165,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 614,
+              "id": 6244,
               "nodeType": "StructuredDocumentation",
-              "src": "2577:122:3",
+              "src": "2871:122:11",
               "text": " @dev Sets the address of the stable coin\n @param stableCoinAddress The address of the stable coin"
             },
             "functionSelector": "44879b3b",
-            "id": 619,
+            "id": 6249,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1067,18 +1179,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 617,
+              "id": 6247,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 616,
+                  "id": 6246,
                   "mutability": "mutable",
                   "name": "stableCoinAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 619,
-                  "src": "2735:25:3",
+                  "scope": 6249,
+                  "src": "3029:25:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1086,10 +1198,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 615,
+                    "id": 6245,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2735:7:3",
+                    "src": "3029:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1100,16 +1212,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2734:27:3"
+              "src": "3028:27:11"
             },
             "returnParameters": {
-              "id": 618,
+              "id": 6248,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "2770:0:3"
+              "src": "3064:0:11"
             },
-            "scope": 652,
-            "src": "2705:66:3",
+            "scope": 6282,
+            "src": "2999:66:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1117,13 +1229,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 620,
+              "id": 6250,
               "nodeType": "StructuredDocumentation",
-              "src": "2779:182:3",
+              "src": "3073:182:11",
               "text": " @dev Updates the address of the given currency\n @param currencySymbol The currency symbol\n @param newCurrencyKey The new address for the given currency"
             },
             "functionSelector": "50dfe2f0",
-            "id": 627,
+            "id": 6257,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1131,18 +1243,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 625,
+              "id": 6255,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 622,
+                  "id": 6252,
                   "mutability": "mutable",
                   "name": "currencySymbol",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 627,
-                  "src": "2994:28:3",
+                  "scope": 6257,
+                  "src": "3288:28:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1150,10 +1262,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 621,
+                    "id": 6251,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2994:6:3",
+                    "src": "3288:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1164,13 +1276,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 624,
+                  "id": 6254,
                   "mutability": "mutable",
                   "name": "newCurrencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 627,
-                  "src": "3024:22:3",
+                  "scope": 6257,
+                  "src": "3318:22:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1178,10 +1290,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 623,
+                    "id": 6253,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3024:7:3",
+                    "src": "3318:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1192,16 +1304,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2993:54:3"
+              "src": "3287:54:11"
             },
             "returnParameters": {
-              "id": 626,
+              "id": 6256,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3056:0:3"
+              "src": "3350:0:11"
             },
-            "scope": 652,
-            "src": "2967:90:3",
+            "scope": 6282,
+            "src": "3261:90:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1209,13 +1321,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 628,
+              "id": 6258,
               "nodeType": "StructuredDocumentation",
-              "src": "3065:192:3",
+              "src": "3359:192:11",
               "text": " @dev Adds a new tradable currency to the platform\n @param currencySymbol The symbol of the currency to add\n @param currencyKey The address of the currency to add"
             },
             "functionSelector": "1f695007",
-            "id": 635,
+            "id": 6265,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1223,18 +1335,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 633,
+              "id": 6263,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 630,
+                  "id": 6260,
                   "mutability": "mutable",
                   "name": "currencySymbol",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 635,
-                  "src": "3287:28:3",
+                  "scope": 6265,
+                  "src": "3581:28:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1242,10 +1354,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 629,
+                    "id": 6259,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3287:6:3",
+                    "src": "3581:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1256,13 +1368,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 632,
+                  "id": 6262,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 635,
-                  "src": "3317:19:3",
+                  "scope": 6265,
+                  "src": "3611:19:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1270,10 +1382,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 631,
+                    "id": 6261,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3317:7:3",
+                    "src": "3611:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1284,16 +1396,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3286:51:3"
+              "src": "3580:51:11"
             },
             "returnParameters": {
-              "id": 634,
+              "id": 6264,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3346:0:3"
+              "src": "3640:0:11"
             },
-            "scope": 652,
-            "src": "3263:84:3",
+            "scope": 6282,
+            "src": "3557:84:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1301,13 +1413,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 636,
+              "id": 6266,
               "nodeType": "StructuredDocumentation",
-              "src": "3355:207:3",
+              "src": "3649:207:11",
               "text": " @dev Updates the address of a given oracle API\n @param oldOracleAddress The address of the oracle API to update\n @param newOracleAddress The new address of the given oracle API"
             },
             "functionSelector": "7ba15ce9",
-            "id": 643,
+            "id": 6273,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1315,18 +1427,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 641,
+              "id": 6271,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 638,
+                  "id": 6268,
                   "mutability": "mutable",
                   "name": "oldOracleAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 643,
-                  "src": "3600:24:3",
+                  "scope": 6273,
+                  "src": "3894:24:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1334,10 +1446,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 637,
+                    "id": 6267,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3600:7:3",
+                    "src": "3894:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1349,13 +1461,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 640,
+                  "id": 6270,
                   "mutability": "mutable",
                   "name": "newOracleAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 643,
-                  "src": "3626:24:3",
+                  "scope": 6273,
+                  "src": "3920:24:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1363,10 +1475,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 639,
+                    "id": 6269,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3626:7:3",
+                    "src": "3920:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1377,16 +1489,16 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3599:52:3"
+              "src": "3893:52:11"
             },
             "returnParameters": {
-              "id": 642,
+              "id": 6272,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3660:0:3"
+              "src": "3954:0:11"
             },
-            "scope": 652,
-            "src": "3568:93:3",
+            "scope": 6282,
+            "src": "3862:93:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -1394,13 +1506,13 @@
           {
             "body": null,
             "documentation": {
-              "id": 644,
+              "id": 6274,
               "nodeType": "StructuredDocumentation",
-              "src": "3669:165:3",
+              "src": "3963:165:11",
               "text": " @dev Adds a new oracle API to the platform\n @param name The name of the oracle API\n @param oracleAddress The address of the oracle API"
             },
             "functionSelector": "1705cae8",
-            "id": 651,
+            "id": 6281,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
@@ -1408,18 +1520,18 @@
             "nodeType": "FunctionDefinition",
             "overrides": null,
             "parameters": {
-              "id": 649,
+              "id": 6279,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 646,
+                  "id": 6276,
                   "mutability": "mutable",
                   "name": "name",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 651,
-                  "src": "3869:18:3",
+                  "scope": 6281,
+                  "src": "4163:18:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -1427,10 +1539,10 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 645,
+                    "id": 6275,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3869:6:3",
+                    "src": "4163:6:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_string_storage_ptr",
                       "typeString": "string"
@@ -1441,13 +1553,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 648,
+                  "id": 6278,
                   "mutability": "mutable",
                   "name": "oracleAddress",
                   "nodeType": "VariableDeclaration",
                   "overrides": null,
-                  "scope": 651,
-                  "src": "3889:21:3",
+                  "scope": 6281,
+                  "src": "4183:21:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1455,10 +1567,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 647,
+                    "id": 6277,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3889:7:3",
+                    "src": "4183:7:11",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1469,33 +1581,33 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3868:43:3"
+              "src": "4162:43:11"
             },
             "returnParameters": {
-              "id": 650,
+              "id": 6280,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "3920:0:3"
+              "src": "4214:0:11"
             },
-            "scope": 652,
-            "src": "3840:81:3",
+            "scope": 6282,
+            "src": "4134:81:11",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 653,
-        "src": "28:3896:3"
+        "scope": 6283,
+        "src": "28:4190:11"
       }
     ],
-    "src": "0:3924:3"
+    "src": "0:4218:11"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ISettings.sol",
       "exportedSymbols": {
         "ISettings": [
-          652
+          6282
         ]
       },
       "license": null
@@ -1510,9 +1622,9 @@
             ".0"
           ]
         },
-        "id": 545,
+        "id": 6167,
         "name": "PragmaDirective",
-        "src": "0:24:3"
+        "src": "0:24:11"
       },
       {
         "attributes": {
@@ -1527,10 +1639,10 @@
           "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            652
+            6282
           ],
           "name": "ISettings",
-          "scope": 653
+          "scope": 6283
         },
         "children": [
           {
@@ -1545,7 +1657,7 @@
               ],
               "name": "getCurrencyKeyFromIndex",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1555,9 +1667,9 @@
                 "attributes": {
                   "text": " @dev Given the index in the array of available currencies, returns the currency key at that index\n @param index Index in the array of available currencies\n @return address Currency key at given index"
                 },
-                "id": 546,
+                "id": 6168,
                 "name": "StructuredDocumentation",
-                "src": "55:230:3"
+                "src": "55:230:11"
               },
               {
                 "children": [
@@ -1567,7 +1679,7 @@
                       "mutability": "mutable",
                       "name": "index",
                       "overrides": null,
-                      "scope": 553,
+                      "scope": 6175,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1580,19 +1692,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 547,
+                        "id": 6169,
                         "name": "ElementaryTypeName",
-                        "src": "324:4:3"
+                        "src": "324:4:11"
                       }
                     ],
-                    "id": 548,
+                    "id": 6170,
                     "name": "VariableDeclaration",
-                    "src": "324:10:3"
+                    "src": "324:10:11"
                   }
                 ],
-                "id": 549,
+                "id": 6171,
                 "name": "ParameterList",
-                "src": "323:12:3"
+                "src": "323:12:11"
               },
               {
                 "children": [
@@ -1602,7 +1714,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 553,
+                      "scope": 6175,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1616,24 +1728,126 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 550,
+                        "id": 6172,
                         "name": "ElementaryTypeName",
-                        "src": "359:7:3"
+                        "src": "359:7:11"
                       }
                     ],
-                    "id": 551,
+                    "id": 6173,
                     "name": "VariableDeclaration",
-                    "src": "359:7:3"
+                    "src": "359:7:11"
                   }
                 ],
-                "id": 552,
+                "id": 6174,
                 "name": "ParameterList",
-                "src": "358:9:3"
+                "src": "358:9:11"
               }
             ],
-            "id": 553,
+            "id": 6175,
             "name": "FunctionDefinition",
-            "src": "291:77:3"
+            "src": "291:77:11"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "functionSelector": "72be869d",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getCurrencyKeyFromSymbol",
+              "overrides": null,
+              "scope": 6282,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the symbol of a currency, returns the address of the currency\n @param symbol The symbol of the currency\n @return address Currency key for given symbol"
+                },
+                "id": 6176,
+                "name": "StructuredDocumentation",
+                "src": "376:192:11"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "symbol",
+                      "overrides": null,
+                      "scope": 6183,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "string",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "string",
+                          "type": "string"
+                        },
+                        "id": 6177,
+                        "name": "ElementaryTypeName",
+                        "src": "608:6:11"
+                      }
+                    ],
+                    "id": 6178,
+                    "name": "VariableDeclaration",
+                    "src": "608:20:11"
+                  }
+                ],
+                "id": 6179,
+                "name": "ParameterList",
+                "src": "607:22:11"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "overrides": null,
+                      "scope": 6183,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 6180,
+                        "name": "ElementaryTypeName",
+                        "src": "653:7:11"
+                      }
+                    ],
+                    "id": 6181,
+                    "name": "VariableDeclaration",
+                    "src": "653:7:11"
+                  }
+                ],
+                "id": 6182,
+                "name": "ParameterList",
+                "src": "652:9:11"
+              }
+            ],
+            "id": 6183,
+            "name": "FunctionDefinition",
+            "src": "574:88:11"
           },
           {
             "attributes": {
@@ -1647,7 +1861,7 @@
               ],
               "name": "getParameterValue",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1657,9 +1871,9 @@
                 "attributes": {
                   "text": " @dev Given the name of a parameter, returns the value of the parameter\n @param parameter The name of the parameter to get value for\n @return uint The value of the given parameter"
                 },
-                "id": 554,
+                "id": 6184,
                 "name": "StructuredDocumentation",
-                "src": "376:209:3"
+                "src": "670:209:11"
               },
               {
                 "children": [
@@ -1669,7 +1883,7 @@
                       "mutability": "mutable",
                       "name": "parameter",
                       "overrides": null,
-                      "scope": 561,
+                      "scope": 6191,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -1682,19 +1896,19 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 555,
+                        "id": 6185,
                         "name": "ElementaryTypeName",
-                        "src": "618:6:3"
+                        "src": "912:6:11"
                       }
                     ],
-                    "id": 556,
+                    "id": 6186,
                     "name": "VariableDeclaration",
-                    "src": "618:23:3"
+                    "src": "912:23:11"
                   }
                 ],
-                "id": 557,
+                "id": 6187,
                 "name": "ParameterList",
-                "src": "617:25:3"
+                "src": "911:25:11"
               },
               {
                 "children": [
@@ -1704,7 +1918,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 561,
+                      "scope": 6191,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1717,24 +1931,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 558,
+                        "id": 6188,
                         "name": "ElementaryTypeName",
-                        "src": "666:4:3"
+                        "src": "960:4:11"
                       }
                     ],
-                    "id": 559,
+                    "id": 6189,
                     "name": "VariableDeclaration",
-                    "src": "666:4:3"
+                    "src": "960:4:11"
                   }
                 ],
-                "id": 560,
+                "id": 6190,
                 "name": "ParameterList",
-                "src": "665:6:3"
+                "src": "959:6:11"
               }
             ],
-            "id": 561,
+            "id": 6191,
             "name": "FunctionDefinition",
-            "src": "591:81:3"
+            "src": "885:81:11"
           },
           {
             "attributes": {
@@ -1748,7 +1962,7 @@
               ],
               "name": "getAvailableCurrencies",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1758,9 +1972,9 @@
                 "attributes": {
                   "text": " @dev Returns the addresses of supported currencies for trading\n @return address[] An array of addresses of supported currencies"
                 },
-                "id": 562,
+                "id": 6192,
                 "name": "StructuredDocumentation",
-                "src": "680:152:3"
+                "src": "974:152:11"
               },
               {
                 "attributes": {
@@ -1769,9 +1983,9 @@
                   ]
                 },
                 "children": [],
-                "id": 563,
+                "id": 6193,
                 "name": "ParameterList",
-                "src": "869:2:3"
+                "src": "1163:2:11"
               },
               {
                 "children": [
@@ -1781,7 +1995,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 568,
+                      "scope": 6198,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -1801,29 +2015,29 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 564,
+                            "id": 6194,
                             "name": "ElementaryTypeName",
-                            "src": "895:7:3"
+                            "src": "1189:7:11"
                           }
                         ],
-                        "id": 565,
+                        "id": 6195,
                         "name": "ArrayTypeName",
-                        "src": "895:9:3"
+                        "src": "1189:9:11"
                       }
                     ],
-                    "id": 566,
+                    "id": 6196,
                     "name": "VariableDeclaration",
-                    "src": "895:16:3"
+                    "src": "1189:16:11"
                   }
                 ],
-                "id": 567,
+                "id": 6197,
                 "name": "ParameterList",
-                "src": "894:18:3"
+                "src": "1188:18:11"
               }
             ],
-            "id": 568,
+            "id": 6198,
             "name": "FunctionDefinition",
-            "src": "838:75:3"
+            "src": "1132:75:11"
           },
           {
             "attributes": {
@@ -1837,7 +2051,7 @@
               ],
               "name": "getCurrencySymbol",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1847,9 +2061,9 @@
                 "attributes": {
                   "text": " @dev Given the address of a currency, returns the currency's symbol\n @param currencyKey The address of the currency\n @return string The currency symbol"
                 },
-                "id": 569,
+                "id": 6199,
                 "name": "StructuredDocumentation",
-                "src": "921:182:3"
+                "src": "1215:182:11"
               },
               {
                 "children": [
@@ -1859,7 +2073,7 @@
                       "mutability": "mutable",
                       "name": "currencyKey",
                       "overrides": null,
-                      "scope": 576,
+                      "scope": 6206,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1873,19 +2087,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 570,
+                        "id": 6200,
                         "name": "ElementaryTypeName",
-                        "src": "1136:7:3"
+                        "src": "1430:7:11"
                       }
                     ],
-                    "id": 571,
+                    "id": 6201,
                     "name": "VariableDeclaration",
-                    "src": "1136:19:3"
+                    "src": "1430:19:11"
                   }
                 ],
-                "id": 572,
+                "id": 6202,
                 "name": "ParameterList",
-                "src": "1135:21:3"
+                "src": "1429:21:11"
               },
               {
                 "children": [
@@ -1895,7 +2109,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 576,
+                      "scope": 6206,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -1908,24 +2122,24 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 573,
+                        "id": 6203,
                         "name": "ElementaryTypeName",
-                        "src": "1180:6:3"
+                        "src": "1474:6:11"
                       }
                     ],
-                    "id": 574,
+                    "id": 6204,
                     "name": "VariableDeclaration",
-                    "src": "1180:13:3"
+                    "src": "1474:13:11"
                   }
                 ],
-                "id": 575,
+                "id": 6205,
                 "name": "ParameterList",
-                "src": "1179:15:3"
+                "src": "1473:15:11"
               }
             ],
-            "id": 576,
+            "id": 6206,
             "name": "FunctionDefinition",
-            "src": "1109:86:3"
+            "src": "1403:86:11"
           },
           {
             "attributes": {
@@ -1939,7 +2153,7 @@
               ],
               "name": "getStableCoinAddress",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1949,9 +2163,9 @@
                 "attributes": {
                   "text": " @dev Returns the address of the stable coin\n @return address The stable coin address"
                 },
-                "id": 577,
+                "id": 6207,
                 "name": "StructuredDocumentation",
-                "src": "1203:109:3"
+                "src": "1497:109:11"
               },
               {
                 "attributes": {
@@ -1960,9 +2174,9 @@
                   ]
                 },
                 "children": [],
-                "id": 578,
+                "id": 6208,
                 "name": "ParameterList",
-                "src": "1347:2:3"
+                "src": "1641:2:11"
               },
               {
                 "children": [
@@ -1972,7 +2186,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 582,
+                      "scope": 6212,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1986,24 +2200,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 579,
+                        "id": 6209,
                         "name": "ElementaryTypeName",
-                        "src": "1373:7:3"
+                        "src": "1667:7:11"
                       }
                     ],
-                    "id": 580,
+                    "id": 6210,
                     "name": "VariableDeclaration",
-                    "src": "1373:7:3"
+                    "src": "1667:7:11"
                   }
                 ],
-                "id": 581,
+                "id": 6211,
                 "name": "ParameterList",
-                "src": "1372:9:3"
+                "src": "1666:9:11"
               }
             ],
-            "id": 582,
+            "id": 6212,
             "name": "FunctionDefinition",
-            "src": "1318:64:3"
+            "src": "1612:64:11"
           },
           {
             "attributes": {
@@ -2017,7 +2231,7 @@
               ],
               "name": "getOracleAPIs",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2027,9 +2241,9 @@
                 "attributes": {
                   "text": " @dev Returns the addresses and names of supported oracle APIs\n @return OracleData[] An array of oracle API addresses and names"
                 },
-                "id": 583,
+                "id": 6213,
                 "name": "StructuredDocumentation",
-                "src": "1390:151:3"
+                "src": "1684:151:11"
               },
               {
                 "attributes": {
@@ -2038,9 +2252,9 @@
                   ]
                 },
                 "children": [],
-                "id": 584,
+                "id": 6214,
                 "name": "ParameterList",
-                "src": "1569:2:3"
+                "src": "1863:2:11"
               },
               {
                 "children": [
@@ -2050,7 +2264,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 589,
+                      "scope": 6219,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -2070,29 +2284,29 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 585,
+                            "id": 6215,
                             "name": "ElementaryTypeName",
-                            "src": "1595:7:3"
+                            "src": "1889:7:11"
                           }
                         ],
-                        "id": 586,
+                        "id": 6216,
                         "name": "ArrayTypeName",
-                        "src": "1595:9:3"
+                        "src": "1889:9:11"
                       }
                     ],
-                    "id": 587,
+                    "id": 6217,
                     "name": "VariableDeclaration",
-                    "src": "1595:16:3"
+                    "src": "1889:16:11"
                   }
                 ],
-                "id": 588,
+                "id": 6218,
                 "name": "ParameterList",
-                "src": "1594:18:3"
+                "src": "1888:18:11"
               }
             ],
-            "id": 589,
+            "id": 6219,
             "name": "FunctionDefinition",
-            "src": "1547:66:3"
+            "src": "1841:66:11"
           },
           {
             "attributes": {
@@ -2106,7 +2320,7 @@
               ],
               "name": "getOracleAPIName",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2116,9 +2330,9 @@
                 "attributes": {
                   "text": " @dev Given the address of an oracle API, returns the name of the oracle API\n @param oracleAddress The address of the oracle API\n @return string The oracle API name"
                 },
-                "id": 590,
+                "id": 6220,
                 "name": "StructuredDocumentation",
-                "src": "1621:194:3"
+                "src": "1915:194:11"
               },
               {
                 "children": [
@@ -2128,7 +2342,7 @@
                       "mutability": "mutable",
                       "name": "oracleAddress",
                       "overrides": null,
-                      "scope": 597,
+                      "scope": 6227,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2142,19 +2356,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 591,
+                        "id": 6221,
                         "name": "ElementaryTypeName",
-                        "src": "1847:7:3"
+                        "src": "2141:7:11"
                       }
                     ],
-                    "id": 592,
+                    "id": 6222,
                     "name": "VariableDeclaration",
-                    "src": "1847:21:3"
+                    "src": "2141:21:11"
                   }
                 ],
-                "id": 593,
+                "id": 6223,
                 "name": "ParameterList",
-                "src": "1846:23:3"
+                "src": "2140:23:11"
               },
               {
                 "children": [
@@ -2164,7 +2378,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 597,
+                      "scope": 6227,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -2177,24 +2391,24 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 594,
+                        "id": 6224,
                         "name": "ElementaryTypeName",
-                        "src": "1893:6:3"
+                        "src": "2187:6:11"
                       }
                     ],
-                    "id": 595,
+                    "id": 6225,
                     "name": "VariableDeclaration",
-                    "src": "1893:13:3"
+                    "src": "2187:13:11"
                   }
                 ],
-                "id": 596,
+                "id": 6226,
                 "name": "ParameterList",
-                "src": "1892:15:3"
+                "src": "2186:15:11"
               }
             ],
-            "id": 597,
+            "id": 6227,
             "name": "FunctionDefinition",
-            "src": "1821:87:3"
+            "src": "2115:87:11"
           },
           {
             "attributes": {
@@ -2208,7 +2422,7 @@
               ],
               "name": "checkIfCurrencyIsAvailable",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2218,9 +2432,9 @@
                 "attributes": {
                   "text": " @dev Given the address of a currency, returns whether the currency is supported on the platform\n @param currencyKey The address of the currency\n @return bool Whether the currency is supported on the platform"
                 },
-                "id": 598,
+                "id": 6228,
                 "name": "StructuredDocumentation",
-                "src": "1916:238:3"
+                "src": "2210:238:11"
               },
               {
                 "children": [
@@ -2230,7 +2444,7 @@
                       "mutability": "mutable",
                       "name": "currencyKey",
                       "overrides": null,
-                      "scope": 605,
+                      "scope": 6235,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2244,19 +2458,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 599,
+                        "id": 6229,
                         "name": "ElementaryTypeName",
-                        "src": "2196:7:3"
+                        "src": "2490:7:11"
                       }
                     ],
-                    "id": 600,
+                    "id": 6230,
                     "name": "VariableDeclaration",
-                    "src": "2196:19:3"
+                    "src": "2490:19:11"
                   }
                 ],
-                "id": 601,
+                "id": 6231,
                 "name": "ParameterList",
-                "src": "2195:21:3"
+                "src": "2489:21:11"
               },
               {
                 "children": [
@@ -2266,7 +2480,7 @@
                       "mutability": "mutable",
                       "name": "",
                       "overrides": null,
-                      "scope": 605,
+                      "scope": 6235,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -2279,24 +2493,24 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 602,
+                        "id": 6232,
                         "name": "ElementaryTypeName",
-                        "src": "2240:4:3"
+                        "src": "2534:4:11"
                       }
                     ],
-                    "id": 603,
+                    "id": 6233,
                     "name": "VariableDeclaration",
-                    "src": "2240:4:3"
+                    "src": "2534:4:11"
                   }
                 ],
-                "id": 604,
+                "id": 6234,
                 "name": "ParameterList",
-                "src": "2239:6:3"
+                "src": "2533:6:11"
               }
             ],
-            "id": 605,
+            "id": 6235,
             "name": "FunctionDefinition",
-            "src": "2160:86:3"
+            "src": "2454:86:11"
           },
           {
             "attributes": {
@@ -2310,7 +2524,7 @@
               ],
               "name": "setParameterValue",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2320,9 +2534,9 @@
                 "attributes": {
                   "text": " @dev Updates the address for the given contract; meant to be called by Settings contract owner\n @param parameter The name of the parameter to change\n @param newValue The new value of the given parameter"
                 },
-                "id": 606,
+                "id": 6236,
                 "name": "StructuredDocumentation",
-                "src": "2254:233:3"
+                "src": "2548:233:11"
               },
               {
                 "children": [
@@ -2332,7 +2546,7 @@
                       "mutability": "mutable",
                       "name": "parameter",
                       "overrides": null,
-                      "scope": 613,
+                      "scope": 6243,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -2345,14 +2559,14 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 607,
+                        "id": 6237,
                         "name": "ElementaryTypeName",
-                        "src": "2520:6:3"
+                        "src": "2814:6:11"
                       }
                     ],
-                    "id": 608,
+                    "id": 6238,
                     "name": "VariableDeclaration",
-                    "src": "2520:23:3"
+                    "src": "2814:23:11"
                   },
                   {
                     "attributes": {
@@ -2360,7 +2574,7 @@
                       "mutability": "mutable",
                       "name": "newValue",
                       "overrides": null,
-                      "scope": 613,
+                      "scope": 6243,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2373,19 +2587,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 609,
+                        "id": 6239,
                         "name": "ElementaryTypeName",
-                        "src": "2545:4:3"
+                        "src": "2839:4:11"
                       }
                     ],
-                    "id": 610,
+                    "id": 6240,
                     "name": "VariableDeclaration",
-                    "src": "2545:13:3"
+                    "src": "2839:13:11"
                   }
                 ],
-                "id": 611,
+                "id": 6241,
                 "name": "ParameterList",
-                "src": "2519:40:3"
+                "src": "2813:40:11"
               },
               {
                 "attributes": {
@@ -2394,14 +2608,14 @@
                   ]
                 },
                 "children": [],
-                "id": 612,
+                "id": 6242,
                 "name": "ParameterList",
-                "src": "2568:0:3"
+                "src": "2862:0:11"
               }
             ],
-            "id": 613,
+            "id": 6243,
             "name": "FunctionDefinition",
-            "src": "2493:76:3"
+            "src": "2787:76:11"
           },
           {
             "attributes": {
@@ -2415,7 +2629,7 @@
               ],
               "name": "setStableCoinAddress",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2425,9 +2639,9 @@
                 "attributes": {
                   "text": " @dev Sets the address of the stable coin\n @param stableCoinAddress The address of the stable coin"
                 },
-                "id": 614,
+                "id": 6244,
                 "name": "StructuredDocumentation",
-                "src": "2577:122:3"
+                "src": "2871:122:11"
               },
               {
                 "children": [
@@ -2437,7 +2651,7 @@
                       "mutability": "mutable",
                       "name": "stableCoinAddress",
                       "overrides": null,
-                      "scope": 619,
+                      "scope": 6249,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2451,19 +2665,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 615,
+                        "id": 6245,
                         "name": "ElementaryTypeName",
-                        "src": "2735:7:3"
+                        "src": "3029:7:11"
                       }
                     ],
-                    "id": 616,
+                    "id": 6246,
                     "name": "VariableDeclaration",
-                    "src": "2735:25:3"
+                    "src": "3029:25:11"
                   }
                 ],
-                "id": 617,
+                "id": 6247,
                 "name": "ParameterList",
-                "src": "2734:27:3"
+                "src": "3028:27:11"
               },
               {
                 "attributes": {
@@ -2472,14 +2686,14 @@
                   ]
                 },
                 "children": [],
-                "id": 618,
+                "id": 6248,
                 "name": "ParameterList",
-                "src": "2770:0:3"
+                "src": "3064:0:11"
               }
             ],
-            "id": 619,
+            "id": 6249,
             "name": "FunctionDefinition",
-            "src": "2705:66:3"
+            "src": "2999:66:11"
           },
           {
             "attributes": {
@@ -2493,7 +2707,7 @@
               ],
               "name": "updateCurrencyKey",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2503,9 +2717,9 @@
                 "attributes": {
                   "text": " @dev Updates the address of the given currency\n @param currencySymbol The currency symbol\n @param newCurrencyKey The new address for the given currency"
                 },
-                "id": 620,
+                "id": 6250,
                 "name": "StructuredDocumentation",
-                "src": "2779:182:3"
+                "src": "3073:182:11"
               },
               {
                 "children": [
@@ -2515,7 +2729,7 @@
                       "mutability": "mutable",
                       "name": "currencySymbol",
                       "overrides": null,
-                      "scope": 627,
+                      "scope": 6257,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -2528,14 +2742,14 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 621,
+                        "id": 6251,
                         "name": "ElementaryTypeName",
-                        "src": "2994:6:3"
+                        "src": "3288:6:11"
                       }
                     ],
-                    "id": 622,
+                    "id": 6252,
                     "name": "VariableDeclaration",
-                    "src": "2994:28:3"
+                    "src": "3288:28:11"
                   },
                   {
                     "attributes": {
@@ -2543,7 +2757,7 @@
                       "mutability": "mutable",
                       "name": "newCurrencyKey",
                       "overrides": null,
-                      "scope": 627,
+                      "scope": 6257,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2557,19 +2771,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 623,
+                        "id": 6253,
                         "name": "ElementaryTypeName",
-                        "src": "3024:7:3"
+                        "src": "3318:7:11"
                       }
                     ],
-                    "id": 624,
+                    "id": 6254,
                     "name": "VariableDeclaration",
-                    "src": "3024:22:3"
+                    "src": "3318:22:11"
                   }
                 ],
-                "id": 625,
+                "id": 6255,
                 "name": "ParameterList",
-                "src": "2993:54:3"
+                "src": "3287:54:11"
               },
               {
                 "attributes": {
@@ -2578,14 +2792,14 @@
                   ]
                 },
                 "children": [],
-                "id": 626,
+                "id": 6256,
                 "name": "ParameterList",
-                "src": "3056:0:3"
+                "src": "3350:0:11"
               }
             ],
-            "id": 627,
+            "id": 6257,
             "name": "FunctionDefinition",
-            "src": "2967:90:3"
+            "src": "3261:90:11"
           },
           {
             "attributes": {
@@ -2599,7 +2813,7 @@
               ],
               "name": "addCurrencyKey",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2609,9 +2823,9 @@
                 "attributes": {
                   "text": " @dev Adds a new tradable currency to the platform\n @param currencySymbol The symbol of the currency to add\n @param currencyKey The address of the currency to add"
                 },
-                "id": 628,
+                "id": 6258,
                 "name": "StructuredDocumentation",
-                "src": "3065:192:3"
+                "src": "3359:192:11"
               },
               {
                 "children": [
@@ -2621,7 +2835,7 @@
                       "mutability": "mutable",
                       "name": "currencySymbol",
                       "overrides": null,
-                      "scope": 635,
+                      "scope": 6265,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -2634,14 +2848,14 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 629,
+                        "id": 6259,
                         "name": "ElementaryTypeName",
-                        "src": "3287:6:3"
+                        "src": "3581:6:11"
                       }
                     ],
-                    "id": 630,
+                    "id": 6260,
                     "name": "VariableDeclaration",
-                    "src": "3287:28:3"
+                    "src": "3581:28:11"
                   },
                   {
                     "attributes": {
@@ -2649,7 +2863,7 @@
                       "mutability": "mutable",
                       "name": "currencyKey",
                       "overrides": null,
-                      "scope": 635,
+                      "scope": 6265,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2663,19 +2877,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 631,
+                        "id": 6261,
                         "name": "ElementaryTypeName",
-                        "src": "3317:7:3"
+                        "src": "3611:7:11"
                       }
                     ],
-                    "id": 632,
+                    "id": 6262,
                     "name": "VariableDeclaration",
-                    "src": "3317:19:3"
+                    "src": "3611:19:11"
                   }
                 ],
-                "id": 633,
+                "id": 6263,
                 "name": "ParameterList",
-                "src": "3286:51:3"
+                "src": "3580:51:11"
               },
               {
                 "attributes": {
@@ -2684,14 +2898,14 @@
                   ]
                 },
                 "children": [],
-                "id": 634,
+                "id": 6264,
                 "name": "ParameterList",
-                "src": "3346:0:3"
+                "src": "3640:0:11"
               }
             ],
-            "id": 635,
+            "id": 6265,
             "name": "FunctionDefinition",
-            "src": "3263:84:3"
+            "src": "3557:84:11"
           },
           {
             "attributes": {
@@ -2705,7 +2919,7 @@
               ],
               "name": "updateOracleAPIAddress",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2715,9 +2929,9 @@
                 "attributes": {
                   "text": " @dev Updates the address of a given oracle API\n @param oldOracleAddress The address of the oracle API to update\n @param newOracleAddress The new address of the given oracle API"
                 },
-                "id": 636,
+                "id": 6266,
                 "name": "StructuredDocumentation",
-                "src": "3355:207:3"
+                "src": "3649:207:11"
               },
               {
                 "children": [
@@ -2727,7 +2941,7 @@
                       "mutability": "mutable",
                       "name": "oldOracleAddress",
                       "overrides": null,
-                      "scope": 643,
+                      "scope": 6273,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2741,14 +2955,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 637,
+                        "id": 6267,
                         "name": "ElementaryTypeName",
-                        "src": "3600:7:3"
+                        "src": "3894:7:11"
                       }
                     ],
-                    "id": 638,
+                    "id": 6268,
                     "name": "VariableDeclaration",
-                    "src": "3600:24:3"
+                    "src": "3894:24:11"
                   },
                   {
                     "attributes": {
@@ -2756,7 +2970,7 @@
                       "mutability": "mutable",
                       "name": "newOracleAddress",
                       "overrides": null,
-                      "scope": 643,
+                      "scope": 6273,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2770,19 +2984,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 639,
+                        "id": 6269,
                         "name": "ElementaryTypeName",
-                        "src": "3626:7:3"
+                        "src": "3920:7:11"
                       }
                     ],
-                    "id": 640,
+                    "id": 6270,
                     "name": "VariableDeclaration",
-                    "src": "3626:24:3"
+                    "src": "3920:24:11"
                   }
                 ],
-                "id": 641,
+                "id": 6271,
                 "name": "ParameterList",
-                "src": "3599:52:3"
+                "src": "3893:52:11"
               },
               {
                 "attributes": {
@@ -2791,14 +3005,14 @@
                   ]
                 },
                 "children": [],
-                "id": 642,
+                "id": 6272,
                 "name": "ParameterList",
-                "src": "3660:0:3"
+                "src": "3954:0:11"
               }
             ],
-            "id": 643,
+            "id": 6273,
             "name": "FunctionDefinition",
-            "src": "3568:93:3"
+            "src": "3862:93:11"
           },
           {
             "attributes": {
@@ -2812,7 +3026,7 @@
               ],
               "name": "addOracleAPIAddress",
               "overrides": null,
-              "scope": 652,
+              "scope": 6282,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -2822,9 +3036,9 @@
                 "attributes": {
                   "text": " @dev Adds a new oracle API to the platform\n @param name The name of the oracle API\n @param oracleAddress The address of the oracle API"
                 },
-                "id": 644,
+                "id": 6274,
                 "name": "StructuredDocumentation",
-                "src": "3669:165:3"
+                "src": "3963:165:11"
               },
               {
                 "children": [
@@ -2834,7 +3048,7 @@
                       "mutability": "mutable",
                       "name": "name",
                       "overrides": null,
-                      "scope": 651,
+                      "scope": 6281,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -2847,14 +3061,14 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 645,
+                        "id": 6275,
                         "name": "ElementaryTypeName",
-                        "src": "3869:6:3"
+                        "src": "4163:6:11"
                       }
                     ],
-                    "id": 646,
+                    "id": 6276,
                     "name": "VariableDeclaration",
-                    "src": "3869:18:3"
+                    "src": "4163:18:11"
                   },
                   {
                     "attributes": {
@@ -2862,7 +3076,7 @@
                       "mutability": "mutable",
                       "name": "oracleAddress",
                       "overrides": null,
-                      "scope": 651,
+                      "scope": 6281,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2876,19 +3090,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 647,
+                        "id": 6277,
                         "name": "ElementaryTypeName",
-                        "src": "3889:7:3"
+                        "src": "4183:7:11"
                       }
                     ],
-                    "id": 648,
+                    "id": 6278,
                     "name": "VariableDeclaration",
-                    "src": "3889:21:3"
+                    "src": "4183:21:11"
                   }
                 ],
-                "id": 649,
+                "id": 6279,
                 "name": "ParameterList",
-                "src": "3868:43:3"
+                "src": "4162:43:11"
               },
               {
                 "attributes": {
@@ -2897,24 +3111,24 @@
                   ]
                 },
                 "children": [],
-                "id": 650,
+                "id": 6280,
                 "name": "ParameterList",
-                "src": "3920:0:3"
+                "src": "4214:0:11"
               }
             ],
-            "id": 651,
+            "id": 6281,
             "name": "FunctionDefinition",
-            "src": "3840:81:3"
+            "src": "4134:81:11"
           }
         ],
-        "id": 652,
+        "id": 6282,
         "name": "ContractDefinition",
-        "src": "28:3896:3"
+        "src": "28:4190:11"
       }
     ],
-    "id": 653,
+    "id": 6283,
     "name": "SourceUnit",
-    "src": "0:3924:3"
+    "src": "0:4218:11"
   },
   "compiler": {
     "name": "solc",
@@ -2922,7 +3136,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-07-07T01:09:06.245Z",
+  "updatedAt": "2021-08-09T16:04:44.479Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -2962,6 +3176,15 @@
         },
         "returns": {
           "_0": "address Currency key at given index"
+        }
+      },
+      "getCurrencyKeyFromSymbol(string)": {
+        "details": "Given the symbol of a currency, returns the address of the currency",
+        "params": {
+          "symbol": "The symbol of the currency"
+        },
+        "returns": {
+          "_0": "address Currency key for given symbol"
         }
       },
       "getCurrencySymbol(address)": {

@@ -62,9 +62,9 @@ interface IBaseUbeswapAdapter {
 
     /**
     * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
-    * @return (address[] memory, address[] memory) The liquidity pool address and farm address for each available farm
+    * @return address[] memory The farm address for each available farm
     */
-    function getAvailableUbeswapFarms() external view returns (address[] memory, address[] memory);
+    function getAvailableUbeswapFarms() external view returns (address[] memory);
 
     /**
     * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address
