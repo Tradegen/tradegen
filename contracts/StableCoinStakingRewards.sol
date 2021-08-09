@@ -30,7 +30,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     /* An account's total vested cUSD balance to save recomputing this */
     mapping(address => uint) public totalVestedAccountBalance;
 
-    /* The total remaining vested balance, for verifying the actual Tradegen balance of this contract against. */
+    /* The total remaining vested balance, for verifying the actual cUSD balance of this contract against. */
     uint public totalVestedBalance;
 
     uint public constant TIME_INDEX = 0;
