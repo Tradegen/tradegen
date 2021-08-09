@@ -93,4 +93,14 @@ interface IPool {
     * @return uint The pool's performance fee
     */
     function getPerformanceFee() external view returns (uint);
+
+    /**
+    * @dev Adds liquidity for the two given tokens
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @param farmAddress The token pair's farm address
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) external;
 }

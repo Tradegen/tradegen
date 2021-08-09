@@ -5,6 +5,11 @@ import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
+import './interfaces/IUbeswapPoolManager.sol';
+import './interfaces/IStakingRewards.sol';
+import './interfaces/IUniswapV2Factory.sol';
+
+//Inheritance
 import './interfaces/IBaseUbeswapAdapter.sol';
 
 //Libraries
@@ -12,6 +17,15 @@ import './libraries/SafeMath.sol';
 
 contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     using SafeMath for uint;
+
+    struct PoolInfo {
+        uint256 index;
+        address stakingToken;
+        address poolAddress;
+        uint256 weight;
+        // The next period in which the pool needs to be filled
+        uint256 nextPeriod;
+    }
 
     // Max slippage percent allowed
     uint public constant override MAX_SLIPPAGE_PERCENT = 10; //10% slippage
@@ -77,6 +91,66 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsOut(numberOfTokens, path);
 
         return amounts[1];
+    }
+
+    /**
+    * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
+    * @return (address[] memory, address[] memory) The liquidity pool address and farm address for each available farm
+    */
+    function getAvailableUbeswapFarms() public view override returns (address[] memory, address[] memory) {
+        address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
+
+        uint numberOfAvailableFarms = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsCount();
+        address[] memory farmAddresses = new address[](numberOfAvailableFarms);
+        address[] memory liquidityPoolAddresses = new address[](numberOfAvailableFarms);
+
+        for (uint i = 0; i < numberOfAvailableFarms; i++)
+        {
+            address farmAddress = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsByIndex(i);
+            farmAddresses[0] = farmAddress;
+            liquidityPoolAddresses[0] = IUbeswapPoolManager(ubeswapPoolManagerAddress).pools(farmAddress).stakingToken;
+        }
+
+        return (farmAddresses, liquidityPoolAddresses);
+    }
+
+    /**
+    * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address
+    * @param farmAddress Address of the farm to check
+    * @return address The farm's staking token address
+    */
+    function checkIfFarmExists(address farmAddress) public view override returns (address) {
+        require(farmAddress != address(0), "Invalid farm address");
+
+        return IStakingRewards(farmAddress).stakingToken();
+    }
+
+    /**
+    * @dev Returns the address of a token pair
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @return address The pair's address
+    */
+    function getPair(address tokenA, address tokenB) public view override returns (address) {
+        require(tokenA != address(0), "BaseUbeswapAdapter: invalid address for tokenA");
+        require(tokenB != address(0), "BaseUbeswapAdapter: invalid address for tokenB");
+
+        address uniswapV2FactoryAddress = ADDRESS_RESOLVER.getContractAddress("UniswapV2Factory");
+
+        return IUniswapV2Factory(uniswapV2FactoryAddress).getPair(tokenA, tokenB);
+    }
+
+    /**
+    * @dev Returns the amount of UBE rewards available for the pool in the given farm
+    * @param poolAddress Address of the pool
+    * @param farmAddress Address of the farm on Ubeswap
+    * @return uint Amount of UBE available
+    */
+    function getAvailableRewards(address poolAddress, address farmAddress) public view override returns (uint) {
+        require(poolAddress != address(0), "BaseUbeswapAdapter: invalid pool address");
+        require(checkIfFarmExists(farmAddress) != address(0), "BaseUbeswapAdapter: invalid farm address");
+
+        return IStakingRewards(farmAddress).earned(poolAddress);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

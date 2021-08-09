@@ -9,6 +9,7 @@ import './interfaces/IPool.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IFeePool.sol';
+import './interfaces/IStakingRewards.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';
@@ -27,9 +28,11 @@ contract Pool is IPool, IERC20 {
 
     mapping (address => uint) public _balanceOf;
     mapping (address => uint) public _deposits;
-    mapping(address => mapping(address => uint)) public override allowance;
+    mapping (address => mapping(address => uint)) public override allowance;
 
-    address[] public _positionKeys;
+    mapping (uint => address) public _positionKeys;
+    uint public numberOfPositions;
+    mapping (address => mapping(address => uint)) public liquidityPositions;
 
     constructor(string memory name, uint performanceFee, address manager, IAddressResolver addressResolver) public {
         _name = name;
@@ -78,11 +81,11 @@ contract Pool is IPool, IERC20 {
     */
     function getPositionsAndTotal() public view override returns (address[] memory, uint[] memory, uint) {
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address[] memory addresses = new address[](_positionKeys.length);
-        uint[] memory balances = new uint[](_positionKeys.length);
+        address[] memory addresses = new address[](numberOfPositions);
+        uint[] memory balances = new uint[](numberOfPositions);
         uint sum;
 
-        for (uint i = 0; i < _positionKeys.length; i++)
+        for (uint i = 0; i < numberOfPositions; i++)
         {
             balances[i] = IERC20(_positionKeys[i]).balanceOf(address(this));
             addresses[i] = _positionKeys[i];
@@ -200,7 +203,7 @@ contract Pool is IPool, IERC20 {
 
         //Check for cUSD in position keys 
         uint positionIndex;
-        for (positionIndex = 0; positionIndex < _positionKeys.length; positionIndex++)
+        for (positionIndex = 0; positionIndex < numberOfPositions; positionIndex++)
         {
             if (_positionKeys[positionIndex] == stableCoinAddress)
             {
@@ -209,9 +212,10 @@ contract Pool is IPool, IERC20 {
         }
 
         //Add cUSD to position keys if it's not there already
-        if (positionIndex == _positionKeys.length)
+        if (positionIndex == numberOfPositions)
         {
-            _positionKeys.push(stableCoinAddress);
+            _positionKeys[numberOfPositions] = stableCoinAddress;
+            numberOfPositions = numberOfPositions.add(1);
         }
 
         emit Deposit(address(this), msg.sender, amount, block.timestamp);
@@ -248,19 +252,24 @@ contract Pool is IPool, IERC20 {
         _totalDeposits = _totalDeposits.sub(depositAmount);
 
         //Withdraw user's portion of pool's assets
-        for (uint i = 0; i < _positionKeys.length; i++)
+        for (uint i = 0; i < numberOfPositions; i++)
         {
             uint positionBalance = IERC20(_positionKeys[i]).balanceOf(address(this)); //Number of asset's tokens
             uint amountToTransfer = positionBalance.mul(amount.sub(fee)).div(poolBalance); //Multiply by ratio of withdrawal amount after fee to pool's USD balance
 
             IERC20(_positionKeys[i]).transfer(msg.sender, amountToTransfer);
+
+            //Remove position keys if pool is liquidated
+            if (_totalSupply == 0)
+            {
+                delete _positionKeys[i];
+            }
         }
 
-        //Remove position keys if pool is liquidated
+        //Set numberOfPositions to 0 if pool is liquidated
         if (_totalSupply == 0)
         {
-            delete _positionKeys;
-            _positionKeys = new address[](0);
+            numberOfPositions = 0;
         }
 
         emit Withdraw(address(this), msg.sender, amount, block.timestamp);
@@ -294,7 +303,8 @@ contract Pool is IPool, IERC20 {
             //Add to position keys if no position yet
             if (IERC20(currencyKey).balanceOf(address(this)) == 0)
             {
-                _positionKeys.push(currencyKey);
+                _positionKeys[numberOfPositions] = currencyKey;
+                numberOfPositions = numberOfPositions.add(1);
             }
 
             IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, amountInUSD);
@@ -304,7 +314,7 @@ contract Pool is IPool, IERC20 {
         else
         {
             uint positionIndex;
-            for (positionIndex = 0; positionIndex < _positionKeys.length; positionIndex++)
+            for (positionIndex = 0; positionIndex < numberOfPositions; positionIndex++)
             {
                 if (currencyKey == _positionKeys[positionIndex])
                 {
@@ -312,7 +322,7 @@ contract Pool is IPool, IERC20 {
                 }
             }
 
-            require(positionIndex < _positionKeys.length, "Pool: Don't have a position in this currency");
+            require(positionIndex < numberOfPositions, "Pool: Don't have a position in this currency");
             require(IERC20(currencyKey).balanceOf(address(this)) >= numberOfTokens, "Pool: Not enough tokens in this currency");
 
             IERC20(currencyKey).transfer(baseUbeswapAdapterAddress, numberOfTokens);
@@ -321,12 +331,46 @@ contract Pool is IPool, IERC20 {
             //remove position key if no funds left in currency
             if (IERC20(currencyKey).balanceOf(address(this)) == 0)
             {
-                _positionKeys[positionIndex] = _positionKeys[_positionKeys.length - 1];
-                _positionKeys.pop();
+                _positionKeys[positionIndex] = _positionKeys[numberOfPositions - 1];
+                delete _positionKeys[numberOfPositions - 1];
+                numberOfPositions = numberOfPositions.sub(1);
             }
         }
 
         emit PlacedOrder(address(this), currencyKey, buyOrSell, numberOfTokens, block.timestamp);
+    }
+
+    /**
+    * @dev Adds liquidity for the two given tokens
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @param farmAddress The token pair's farm address
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) public override onlyPoolManager {
+        require(tokenA != address(0), "Pool: invalid address for tokenA");
+        require(tokenB != address(0), "Pool: invalid address for tokenB");
+        require(amountA > 0, "Pool: amountA must be greater than 0");
+        require(amountB > 0, "Pool: amountB must be greater than 0");
+        require(IERC20(tokenA).balanceOf(address(this)) >= amountA, "Pool: not enough tokens invested in tokenA");
+        require(IERC20(tokenB).balanceOf(address(this)) >= amountB, "Pool: not enough tokens invested in tokenB");
+
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
+        address pairAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
+
+        require(stakingTokenAddress == pairAddress, "Pool: stakingTokenAddress does not match pairAddress");
+
+        uint numberOfLPTokens = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).addLiquidity(tokenA, tokenB, amountA, amountB);
+        IStakingRewards(stakingTokenAddress).stake(numberOfLPTokens);
+
+        //Update state variables
+        (address token0, address token1) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
+        liquidityPositions[token0][token1] = liquidityPositions[token0][token1].add(numberOfLPTokens);
+
+        //TODO: update position keys
     }
 
     /**
@@ -350,15 +394,22 @@ contract Pool is IPool, IERC20 {
         uint poolBalance = getPoolBalance();
         address feePoolAddress = ADDRESS_RESOLVER.getContractAddress("FeePool");
 
-        IFeePool(feePoolAddress).addPositionKeys(_positionKeys);
+        //Convert _positionKeys mapping to array
+        address[] memory positions = new address[](numberOfPositions);
+        for (uint i = 0; i < numberOfPositions; i++)
+        {
+            positions[i] = _positionKeys[i];
+        }
+
+        IFeePool(feePoolAddress).addPositionKeys(positions);
 
         //Withdraw performance fee proportional to pool's assets
-        for (uint i = 0; i < _positionKeys.length; i++)
+        for (uint i = 0; i < numberOfPositions; i++)
         {
-            uint positionBalance = IERC20(_positionKeys[i]).balanceOf(address(this));
+            uint positionBalance = IERC20(positions[i]).balanceOf(address(this));
             uint amountToTransfer = positionBalance.mul(fee).div(poolBalance);
 
-            IERC20(_positionKeys[i]).transfer(feePoolAddress, amountToTransfer);
+            IERC20(positions[i]).transfer(feePoolAddress, amountToTransfer);
         }
 
         IFeePool(feePoolAddress).addFees(_manager, fee);

@@ -16,6 +16,8 @@ interface IStakingRewards {
 
     function balanceOf(address account) external view returns (uint256);
 
+    function stakingToken() external view returns (address);
+
     // Mutative
 
     function stake(uint256 amount) external;

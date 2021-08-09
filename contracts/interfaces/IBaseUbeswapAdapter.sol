@@ -59,4 +59,33 @@ interface IBaseUbeswapAdapter {
     * @return (uint, uint) Amount of tokenA and tokenB withdrawn
     */
     function removeLiquidity(address tokenA, address tokenB, uint numberOfLPTokens) external returns (uint, uint);
+
+    /**
+    * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
+    * @return (address[] memory, address[] memory) The liquidity pool address and farm address for each available farm
+    */
+    function getAvailableUbeswapFarms() external view returns (address[] memory, address[] memory);
+
+    /**
+    * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address
+    * @param farmAddress Address of the farm to check
+    * @return address The farm's staking token address
+    */
+    function checkIfFarmExists(address farmAddress) external view returns (address);
+
+    /**
+    * @dev Returns the address of a token pair
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @return address The pair's address
+    */
+    function getPair(address tokenA, address tokenB) external view returns (address);
+
+    /**
+    * @dev Returns the amount of UBE rewards available for the pool in the given farm
+    * @param poolAddress Address of the pool
+    * @param farmAddress Address of the farm on Ubeswap
+    * @return uint Amount of UBE available
+    */
+    function getAvailableRewards(address poolAddress, address farmAddress) external view returns (uint);
 }
