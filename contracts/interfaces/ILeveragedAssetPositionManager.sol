@@ -58,9 +58,10 @@ interface ILeveragedAssetPositionManager {
 
     /**
     * @dev Transfers leveraged position to another contract
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
     * @param newOwner Address of contract to transfer ownership to
     */
-    function transferOwnership(address newOwner) external;
+    function transferOwnership(uint positionIndex, address newOwner) external;
 
     /**
     * @dev Liquidates part of the leveraged position

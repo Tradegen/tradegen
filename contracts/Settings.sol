@@ -39,6 +39,7 @@ contract Settings is ISettings, Ownable {
     *         MaximumNumberOfExitRules - 7;
     *         MaximumNumberOfPoolsPerUser - 2;
     *         MaximumPerformanceFee - 30%;
+    *         MaximumNumberOfLeveragedPositions - 20;
     */
     constructor() public Ownable() {}
 
