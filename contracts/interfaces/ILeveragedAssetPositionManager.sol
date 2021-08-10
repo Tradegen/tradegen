@@ -8,6 +8,7 @@ interface ILeveragedAssetPositionManager {
         uint collateral;
         uint numberOfTokensBorrowed;
         uint initialLiquidationValue; //value in USD
+        uint indexInOwnerPositionArray;
     }
 
     /**
