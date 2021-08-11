@@ -40,7 +40,8 @@ contract Settings is ISettings, Ownable {
     *         MaximumNumberOfPoolsPerUser - 2;
     *         MaximumPerformanceFee - 30%;
     *         MaximumNumberOfLeveragedPositions - 20;
-    *         InterestRateOnLeveragedAssets - 10%;
+    *         InterestRateOnLeveragedAssets - 4%;
+    *         LiquidationFee - 5%;
     */
     constructor() public Ownable() {}
 

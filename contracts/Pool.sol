@@ -333,7 +333,7 @@ contract Pool is IPool, IERC20 {
             require(IERC20(currencyKey).balanceOf(address(this)) >= numberOfTokens, "Pool: Not enough tokens in this currency");
 
             IERC20(currencyKey).transfer(baseUbeswapAdapterAddress, numberOfTokens);
-            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, numberOfTokens);
+            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, amountInUSD);
 
             //remove position key if no funds left in currency
             if (IERC20(currencyKey).balanceOf(address(this)) == 0)

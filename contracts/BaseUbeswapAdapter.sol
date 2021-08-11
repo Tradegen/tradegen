@@ -204,6 +204,20 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     }
 
     /**
+    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from stable coin staking pool
+    * @param assetToSwapFrom Origin asset
+    * @param assetToSwapTo Destination asset
+    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
+    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
+    * @return uint The number of tokens received
+    */
+    function swapFromStableCoinPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) public override returns (uint) {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager"), "BaseUbeswapAdapter: Only LeveragedAssetPositionManager contract can call this function");
+
+        return _swapExactTokensForTokens(msg.sender, assetToSwapFrom, assetToSwapTo, amountToSwap, minAmountOut);
+    }
+
+    /**
     * @dev Adds liquidity for the two given tokens; meant to be called from a pool
     * @param tokenA First token in pair
     * @param tokenB Second token in pair

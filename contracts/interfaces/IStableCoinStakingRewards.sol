@@ -72,4 +72,45 @@ interface IStableCoinStakingRewards {
      * @notice Calculates the amount of TGEN rewards earned.
      */
     function earned(address account) external view returns (uint256);
+
+    /**
+     * @notice Swaps cUSD for specified asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap to
+     * @param collateral Amount of cUSD to transfer from user
+     * @param borrowedAmount Amount of cUSD borrowed
+     * @param user Address of the user
+     * @return uint Number of asset tokens received
+     */
+    function swapToAsset(address asset, uint collateral, uint borrowedAmount, address user) external returns (uint);
+
+    /**
+     * @notice Swaps specified asset for cUSD; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param userShare Amount of cUSD for the user
+     * @param poolShare Amount of cUSD for the pool
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     * @param user Address of the user
+     * @return uint Amount of cUSD user received
+     */
+    function swapFromAsset(address asset, uint userShare, uint poolShare, uint numberOfAssetTokens, address user) external returns (uint);
+
+    /**
+     * @notice Liquidates a leveraged asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param userShare Amount of cUSD for the user
+     * @param liquidatorShare Amount of cUSD for the liquidator
+     * @param poolShare Amount of cUSD for the pool
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     * @param user Address of the user
+     * @param liquidator Address of the liquidator
+     * @return uint Amount of cUSD user received
+     */
+    function liquidateLeveragedAsset(address asset, uint userShare, uint liquidatorShare, uint poolShare, uint numberOfAssetTokens, address user, address liquidator) external returns (uint);
+
+    /**
+     * @notice Pays interest in the given asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     */
+    function payInterest(address asset, uint numberOfAssetTokens) external;
 }

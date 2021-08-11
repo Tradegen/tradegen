@@ -1,5 +1,8 @@
 pragma solidity >=0.5.0;
 
+//Adapters
+import './interfaces/IBaseUbeswapAdapter.sol';
+
 // Inheritance
 import "./Ownable.sol";
 import "./interfaces/IStableCoinStakingRewards.sol";
@@ -260,6 +263,139 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         }
     }
 
+    /* ========== RESTRICTED FUNCTIONS ========== */
+
+    /**
+     * @notice Swaps cUSD for specified asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap to
+     * @param collateral Amount of cUSD to transfer from user
+     * @param borrowedAmount Amount of cUSD borrowed
+     * @param user Address of the user
+     * @return uint Number of asset tokens received
+     */
+    function swapToAsset(address asset, uint collateral, uint borrowedAmount, address user) public override onlyLeveragedAssetPositionManager returns (uint) {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(asset), "StableCoinStakingRewards: currency not available");
+        require(IERC20(asset).balanceOf(address(this)) >= collateral.add(borrowedAmount), "StableCoinStakingRewards: not enough cUSD available to swap");
+
+        uint numberOfDecimals = IERC20(asset).decimals();
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(asset);
+        uint numberOfTokens = (collateral.add(borrowedAmount)).div(tokenToUSD).div(10 ** numberOfDecimals);
+
+        //Remove collateral from user
+        IERC20(stableCoinAddress).transferFrom(user, address(this), collateral);
+
+        //Swap cUSD for asset
+        IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, collateral.add(borrowedAmount));
+        uint numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(stableCoinAddress, asset, collateral.add(borrowedAmount), numberOfTokens);
+
+        return numberOfTokensReceived;
+    }
+
+    /**
+     * @notice Swaps specified asset for cUSD; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param userShare Number of asset tokens for the user
+     * @param poolShare Number of asset tokens for the pool
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     * @return uint Amount of cUSD user received
+     */
+    function swapFromAsset(address asset, uint userShare, uint poolShare, uint numberOfAssetTokens, address user) public override onlyLeveragedAssetPositionManager returns (uint) {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(asset), "StableCoinStakingRewards: currency not available");
+
+        //Get price of asset
+        uint numberOfDecimals = IERC20(asset).decimals();
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(asset);
+        uint amountInUSD = (numberOfAssetTokens).mul(tokenToUSD).div(10 ** numberOfDecimals);
+
+        //Swap asset for cUSD
+        IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare));
+        uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
+
+        //Transfer cUSD to user
+        uint userUSDAmount = cUSDReceived.mul(userShare).div(userShare.add(poolShare));
+        IERC20(stableCoinAddress).transfer(user, userUSDAmount);
+
+        return userUSDAmount;
+    }
+
+    /**
+     * @notice Liquidates a leveraged asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param userShare Amount of cUSD for the user
+     * @param liquidatorShare Amount of cUSD for the liquidator
+     * @param poolShare Amount of cUSD for the pool
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     * @param user Address of the user
+     * @param liquidator Address of the liquidator
+     * @return uint Amount of cUSD user received
+     */
+    function liquidateLeveragedAsset(address asset, uint userShare, uint liquidatorShare, uint poolShare, uint numberOfAssetTokens, address user, address liquidator) public override onlyLeveragedAssetPositionManager returns (uint) {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(asset), "StableCoinStakingRewards: currency not available");
+
+        //Get price of asset
+        uint numberOfDecimals = IERC20(asset).decimals();
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(asset);
+        uint amountInUSD = (numberOfAssetTokens).mul(tokenToUSD).div(10 ** numberOfDecimals);
+
+        //Swap asset for cUSD
+        IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare).add(liquidatorShare));
+        uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
+
+        //Transfer cUSD to user
+        uint userUSDAmount = cUSDReceived.mul(userShare).div(userShare.add(poolShare).add(liquidatorShare));
+        IERC20(stableCoinAddress).transfer(user, userUSDAmount);
+
+        //Transfer cUSD to liquidator
+        uint liquidatorUSDAmount = cUSDReceived.mul(liquidatorShare).div(userShare.add(poolShare).add(liquidatorShare));
+        IERC20(stableCoinAddress).transfer(liquidator, liquidatorUSDAmount);
+
+        return userUSDAmount;
+    }
+
+    /**
+     * @notice Pays interest in the given asset; meant to be called from LeveragedAssetPositionManager contract
+     * @param asset Asset to swap from
+     * @param numberOfAssetTokens Number of asset tokens to swap
+     */
+    function payInterest(address asset, uint numberOfAssetTokens) public override onlyLeveragedAssetPositionManager {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address insuranceFundAddress = ADDRESS_RESOLVER.getContractAddress("InsuranceFund");
+        address interestRewardsPoolAddress = ADDRESS_RESOLVER.getContractAddress("InterestRewardsPool");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(asset), "StableCoinStakingRewards: currency not available");
+
+        //Get price of asset
+        uint numberOfDecimals = IERC20(asset).decimals();
+        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(asset);
+        uint amountInUSD = (numberOfAssetTokens).mul(tokenToUSD).div(10 ** numberOfDecimals);
+
+        //Swap asset for cUSD
+        IERC20(asset).transfer(baseUbeswapAdapterAddress, numberOfAssetTokens);
+        uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
+
+        //TODO: adjust distribution ratio based on size of insurance fund
+
+        //Transfer 1/2 of received cUSD to insurance fund
+        IERC20(stableCoinAddress).transfer(insuranceFundAddress, cUSDReceived.div(2));
+
+        //Transfer 1/2 of received cUSD to interest rewards pool
+        IERC20(stableCoinAddress).transfer(interestRewardsPoolAddress, cUSDReceived.div(2));
+    }
+
     /* ========== MODIFIERS ========== */
 
     modifier updateReward(address account) {
@@ -269,6 +405,11 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
             rewards[account] = earned(account);
             userRewardPerTokenPaid[account] = rewardPerTokenStored;
         }
+        _;
+    }
+
+    modifier onlyLeveragedAssetPositionManager() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager"), "StableCoinStakingRewards: Only LeveragedAssetPositionManager contract can call this function");
         _;
     }
 
