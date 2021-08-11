@@ -94,6 +94,32 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     }
 
     /**
+    * @dev Given the target output asset amount, returns the amount of input asset needed
+    * @param numberOfTokens Target amount of output asset
+    * @param currencyKeyIn Address of the asset to be swap from
+    * @param currencyKeyOut Address of the asset to be swap to
+    * @return uint Amount out input asset needed
+    */
+    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) public view override returns (uint) {
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        require(currencyKeyIn != address(0), "Invalid currency key in");
+        require(currencyKeyOut != address(0), "Invalid currency key out");
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(currencyKeyIn) || currencyKeyIn == stableCoinAddress, "Currency is not available");
+        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(currencyKeyOut) || currencyKeyOut == stableCoinAddress, "Currency is not available");
+        require(numberOfTokens > 0, "Number of tokens must be greater than 0");
+
+        address[] memory path = new address[](2);
+        path[0] = currencyKeyIn;
+        path[1] = currencyKeyOut;
+        uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsIn(numberOfTokens, path);
+
+        return amounts[1];
+    }
+
+    /**
     * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
     * @return address[] memory The farm address for each available farm
     */

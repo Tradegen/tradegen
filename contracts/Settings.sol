@@ -42,6 +42,7 @@ contract Settings is ISettings, Ownable {
     *         MaximumNumberOfLeveragedPositions - 20;
     *         InterestRateOnLeveragedAssets - 4%;
     *         LiquidationFee - 5%;
+    *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
     */
     constructor() public Ownable() {}
 

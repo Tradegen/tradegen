@@ -15,8 +15,8 @@ interface IInsuranceFund {
 
     /**
     * @dev Withdraws either cUSD or TGEN from insurance fund; meant to be called by StableCoinStakingRewards contract
-    * @param amountToWithdraw Amount of cUSD to withdraw
-    * @return bool Whether TGEN was swapped to obtain cUSD
+    * @param amountToWithdrawInUSD Amount of cUSD to withdraw
+    * @param user Address of user to send withdrawal to
     */
-    function withdrawFromFund(uint amountToWithdraw) external returns (bool);
+    function withdrawFromFund(uint amountToWithdrawInUSD, address user) external;
 }

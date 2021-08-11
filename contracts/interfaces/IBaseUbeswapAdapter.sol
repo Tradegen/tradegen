@@ -22,6 +22,15 @@ interface IBaseUbeswapAdapter {
     function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);
 
     /**
+    * @dev Given the target output asset amount, returns the amount of input asset needed
+    * @param numberOfTokens Target amount of output asset
+    * @param currencyKeyIn Address of the asset to be swap from
+    * @param currencyKeyOut Address of the asset to be swap to
+    * @return uint Amount out input asset needed
+    */
+    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);
+
+    /**
     * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from a user pool
     * @param assetToSwapFrom Origin asset
     * @param assetToSwapTo Destination asset
