@@ -15,6 +15,7 @@ import "./libraries/SafeMath.sol";
 import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 import "./interfaces/ISettings.sol";
+import "./interfaces/IInsuranceFund.sol";
 
 contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, ReentrancyGuard {
     using SafeMath for uint;
@@ -387,13 +388,31 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         IERC20(asset).transfer(baseUbeswapAdapterAddress, numberOfAssetTokens);
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
 
-        //TODO: adjust distribution ratio based on size of insurance fund
+        //Adjust distribution ratio based on status of insurance fund
+        uint insuranceFundAllocation;
+        uint insuranceFundStatus = IInsuranceFund(insuranceFundAddress).getFundStatus();
+        if (insuranceFundStatus == 0)
+        {
+            insuranceFundAllocation = 100;
+        }
+        else if (insuranceFundStatus == 1)
+        {
+            insuranceFundAllocation = 60;
+        }
+        else if (insuranceFundStatus == 2)
+        {
+            insuranceFundAllocation = 25;
+        }
+        else
+        {
+            insuranceFundAllocation = 0;
+        }
 
-        //Transfer 1/2 of received cUSD to insurance fund
-        IERC20(stableCoinAddress).transfer(insuranceFundAddress, cUSDReceived.div(2));
+        //Transfer received cUSD to insurance fund
+        IERC20(stableCoinAddress).transfer(insuranceFundAddress, cUSDReceived.mul(insuranceFundAllocation).div(100));
 
-        //Transfer 1/2 of received cUSD to interest rewards pool
-        IERC20(stableCoinAddress).transfer(interestRewardsPoolAddress, cUSDReceived.div(2));
+        //Transfer received cUSD to interest rewards pool
+        IERC20(stableCoinAddress).transfer(interestRewardsPoolAddress, cUSDReceived.mul(100 - insuranceFundAllocation).div(100));
     }
 
     /* ========== MODIFIERS ========== */
