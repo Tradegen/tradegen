@@ -58,12 +58,30 @@ contract InsuranceFund is IInsuranceFund {
     * @param user Address of user to send withdrawal to
     */
     function withdrawFromFund(uint amountToWithdrawInUSD, address user) public override onlyStableCoinStakingRewards {
-        require(status > 0, "InsuranceFund: Withdrawals are halted because reserves are too low");
+        (uint availableUSD,) = getReserves();
 
-        //Withdraw 100% of amount from cUSD reserve if insurance fund has shortage
-        if (status == 1)
+        //Withdraw 100% of amount from cUSD reserve if insurance fund is halted
+        //Throw an error if not enough in cUSD reserve to cover withdrawal amount
+        if (status == 0)
         {
+            require(availableUSD >= amountToWithdrawInUSD, "InsuranceFund: not enough cUSD reserve to cover withdrawal");
+
             _withdraw(amountToWithdrawInUSD, 0, user);
+        }
+        //Try to withdraw 100% of amount from cUSD reserve if insurance fund has shortage
+        //Withdraw remainder from TGEN reserves
+        else if (status == 1)
+        {
+            uint deficit = (availableUSD < amountToWithdrawInUSD) ? amountToWithdrawInUSD.sub(availableUSD) : 0;
+
+            //First withdraw min(cUSD reserve size, amountToWithdrawInUSD) from cUSD reserve
+            _withdraw(amountToWithdrawInUSD.sub(deficit), 0, user);
+
+            //Withdraw remainder from TGEN reserve
+            if (deficit > 0)
+            {
+                _withdraw(0, deficit, user);
+            }
         }
         //Withdraw 50% of amount from cUSD reserve if insurance fund is stable
         else if (status == 2)

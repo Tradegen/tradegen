@@ -205,6 +205,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         uint vestingTimestamp = block.timestamp.add(30 days);
         appendVestingEntry(msg.sender, vestingTimestamp, amount);
 
+        totalVestedBalance = totalVestedBalance.add(amount);
         IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
@@ -238,10 +239,25 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         if (total != 0)
         {
             address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+            address insuranceFundAddress = ADDRESS_RESOLVER.getContractAddress("InsuranceFund");
             address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
             totalVestedBalance = totalVestedBalance.sub(total);
             totalVestedAccountBalance[msg.sender] = totalVestedAccountBalance[msg.sender].sub(total);
-            IERC20(stableCoinAddress).transfer(msg.sender, total);
+
+            uint contractStableCoinBalance = IERC20(stableCoinAddress).balanceOf(address(this));
+            uint deficit = (contractStableCoinBalance < total) ? total.sub(contractStableCoinBalance) : 0;
+
+            //First withdraw min(contract cUSD balance, total) from this contract
+            if (deficit < total)
+            {
+                IERC20(stableCoinAddress).transfer(msg.sender, total.sub(deficit));
+            }
+            
+            //Withdraw from insurance fund if not enough cUSD in this contract to cover withdrawal
+            if (deficit > 0)
+            {
+                IInsuranceFund(insuranceFundAddress).withdrawFromFund(deficit, msg.sender);
+            }
 
             emit Vested(msg.sender, block.timestamp, total);
         }
@@ -306,6 +322,8 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
      */
     function swapFromAsset(address asset, uint userShare, uint poolShare, uint numberOfAssetTokens, address user) public override onlyLeveragedAssetPositionManager returns (uint) {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address insuranceFundAddress = ADDRESS_RESOLVER.getContractAddress("InsuranceFund");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
 
@@ -319,6 +337,18 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         //Swap asset for cUSD
         IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare));
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
+
+        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance
+        //Swap cUSD for TGEN if insurance fund's TGEN reserves are low
+        uint poolUSDAmount = cUSDReceived.mul(poolShare).div(userShare.add(poolShare));
+        uint surplus = (IERC20(stableCoinAddress).balanceOf(address(this)) > totalVestedBalance) ? poolUSDAmount.sub(IERC20(stableCoinAddress).balanceOf(address(this))) : 0;
+        if (IInsuranceFund(insuranceFundAddress).getFundStatus() < 2)
+        {
+            //Swap cUSD for TGEN and transfer to insurance fund
+            IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, surplus);
+            uint numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(stableCoinAddress, asset, surplus, 0);
+            IERC20(baseTradegenAddress).transfer(insuranceFundAddress, numberOfTokensReceived);
+        }
 
         //Transfer cUSD to user
         uint userUSDAmount = cUSDReceived.mul(userShare).div(userShare.add(poolShare));
@@ -340,6 +370,8 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
      */
     function liquidateLeveragedAsset(address asset, uint userShare, uint liquidatorShare, uint poolShare, uint numberOfAssetTokens, address user, address liquidator) public override onlyLeveragedAssetPositionManager returns (uint) {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address insuranceFundAddress = ADDRESS_RESOLVER.getContractAddress("InsuranceFund");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
 
@@ -353,6 +385,18 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         //Swap asset for cUSD
         IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare).add(liquidatorShare));
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
+
+        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance
+        //Swap cUSD for TGEN if insurance fund's TGEN reserves are low
+        uint poolUSDAmount = cUSDReceived.mul(poolShare).div(userShare.add(poolShare).add(liquidatorShare));
+        uint surplus = (IERC20(stableCoinAddress).balanceOf(address(this)) > totalVestedBalance) ? poolUSDAmount.sub(IERC20(stableCoinAddress).balanceOf(address(this))) : 0;
+        if (IInsuranceFund(insuranceFundAddress).getFundStatus() < 2)
+        {
+            //Swap cUSD for TGEN and transfer to insurance fund
+            IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, surplus);
+            uint numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(stableCoinAddress, asset, surplus, 0);
+            IERC20(baseTradegenAddress).transfer(insuranceFundAddress, numberOfTokensReceived);
+        }
 
         //Transfer cUSD to user
         uint userUSDAmount = cUSDReceived.mul(userShare).div(userShare.add(poolShare).add(liquidatorShare));
