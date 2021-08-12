@@ -115,10 +115,19 @@ interface IStableCoinStakingRewards {
     function payInterest(address asset, uint numberOfAssetTokens) external;
 
     /**
-     * @notice Claims UBE from the farm and transfers to LeveragedLiquidityRewards contract
-     * @param farmAddress Address of the farm on Ubeswap
+     * @notice Claims farm's UBE rewards for leveraged yield farming
+     * @notice Sends a small percentage of claimed UBE to user as a reward
+     * @param user Address of the user
+     * @param farmAddress Address of the farm
      */
-    function claimUBE(address farmAddress) external;
+    function claimFarmUBE(address user, address farmAddress) external;
+
+    /**
+     * @notice Claims user's UBE rewards for leveraged yield farming
+     * @param user Address of the user
+     * @param amountOfUBE Amount of UBE to transfer to user
+     */
+    function claimUserUBE(address user, uint amountOfUBE) external;
 
     /**
     * @dev Adds liquidity for the two given tokens

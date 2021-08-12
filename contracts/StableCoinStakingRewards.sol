@@ -126,7 +126,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
             return (stakingRewardPerTokenStored, interestRewardPerTokenStored);
         }
         uint stakingRewardPerToken = stakingRewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(stakingRewardRate).mul(1e18).div(totalVestedBalance));
-        uint interestRewardPerToken = interestRewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(stakingRewardRate).mul(1e18).div(totalVestedBalance));
+        uint interestRewardPerToken = interestRewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(interestRewardRate).mul(1e18).div(totalVestedBalance));
 
         return (stakingRewardPerToken, interestRewardPerToken);
     }
@@ -484,23 +484,40 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     }
 
     /**
-     * @notice Claims UBE from the farm and transfers to LeveragedLiquidityRewards contract
-     * @param farmAddress Address of the farm on Ubeswap
+     * @notice Claims user's UBE rewards for leveraged yield farming
+     * @param user Address of the user
+     * @param amountOfUBE Amount of UBE to transfer to user
      */
-    function claimUBE(address farmAddress) public override onlyLeveragedLiquidityPositionManager {
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "StableCoinStakingRewards: invalid farm address");
-
+    function claimUserUBE(address user, uint amountOfUBE) public override onlyLeveragedLiquidityPositionManager {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
+
+        require(IERC20(UBE).balanceOf(address(this)) >= amountOfUBE, "StableCoinStakingRewards: not enough UBE in contract");
+
+        IERC20(UBE).transfer(user, amountOfUBE);
+    }
+
+    /**
+     * @notice Claims farm's UBE rewards for leveraged yield farming
+     * @notice Sends a small percentage of claimed UBE to user as a reward
+     * @param user Address of the user
+     * @param farmAddress Address of the farm
+     */
+    function claimFarmUBE(address user, address farmAddress) public override onlyLeveragedLiquidityPositionManager {
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
+        uint keeperReward = ISettings(settingsAddress).getParameterValue("UBEKeeperReward");
         uint initialBalance = IERC20(UBE).balanceOf(address(this));
 
+        require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "StableCoinStakingRewards: invalid farm address");
+
+        //Claim farm's available UBE
         IStakingRewards(farmAddress).getReward();
 
-        uint newBalance = IERC20(UBE).balanceOf(address(this));
-        uint claimedUBE = newBalance.sub(initialBalance);
-
-        //TODO: transfer claimed UBE to LeveragedLiquidityRewards contract
+        //Transfer keeper reward to user
+        uint claimedUBE = IERC20(UBE).balanceOf(address(this)).sub(initialBalance);
+        IERC20(UBE).transfer(user, claimedUBE.mul(keeperReward).div(1000));
     }
 
     /**
@@ -531,8 +548,6 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         uint numberOfLPTokens = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).addLiquidity(tokenA, tokenB, amountA, amountB);
         IStakingRewards(stakingTokenAddress).stake(numberOfLPTokens);
 
-        //TODO: integrate LeveragedLiquidityRewards contract
-
         return numberOfLPTokens;
     }
 
@@ -550,17 +565,8 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
 
         require(stakingTokenAddress == pair, "StableCoinStakingRewards: stakingTokenAddress does not match pair address");
 
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
-        uint initialBalance = IERC20(UBE).balanceOf(address(this));
-
+        //Withdraw LP tokens from farm
         IStakingRewards(farmAddress).withdraw(numberOfLPTokens);
-        IStakingRewards(farmAddress).getReward();
-
-        uint newBalance = IERC20(UBE).balanceOf(address(this));
-        uint claimedUBE = newBalance.sub(initialBalance);
-
-        //TODO: transfer claimedUBE to LeveragedLiquidityRewards contract
 
         //Remove liquidity from Ubeswap liquidity pool
         return IBaseUbeswapAdapter(baseUbeswapAdapterAddress).removeLiquidity(IUniswapV2Pair(pair).token0(), IUniswapV2Pair(pair).token1(), numberOfLPTokens);

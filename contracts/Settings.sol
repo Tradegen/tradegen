@@ -44,6 +44,7 @@ contract Settings is ISettings, Ownable {
     *         InterestRateOnLeveragedLiquidityPositions - 3%;
     *         LiquidationFee - 5%;
     *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
+    *         UBEKeeperReward - 0.1%;
     */
     constructor() public Ownable() {}
 
