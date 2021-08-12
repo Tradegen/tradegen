@@ -39,7 +39,7 @@ contract Settings is ISettings, Ownable {
     *         MaximumNumberOfExitRules - 7;
     *         MaximumNumberOfPoolsPerUser - 2;
     *         MaximumPerformanceFee - 30%;
-    *         MaximumNumberOfLeveragedPositions - 20;
+    *         MaximumNumberOfLeveragedPositions - 10;
     *         InterestRateOnLeveragedAssets - 4%;
     *         InterestRateOnLeveragedLiquidityPositions - 3%;
     *         LiquidationFee - 5%;

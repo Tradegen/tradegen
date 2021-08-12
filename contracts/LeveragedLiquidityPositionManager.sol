@@ -23,6 +23,7 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     uint public numberOfLeveragedPositions;
     mapping (address => uint[]) public userPositions;
     mapping (uint => LeveragedLiquidityPosition) public leveragedPositions;
+    mapping (address => mapping (address => uint)) public positionIndexes; //maps to (index + 1), with index 0 representing position not found
 
     constructor(IAddressResolver addressResolver) public {
         ADDRESS_RESOLVER = addressResolver;
@@ -126,7 +127,6 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     function openPosition(address tokenA, address tokenB, uint collateral, uint amountToBorrow, address farmAddress) public override {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
 
         require(tokenA != address(0), "LeveragedLiquidityPositionManager: invalid address for tokenA");
         require(tokenB != address(0), "LeveragedLiquidityPositionManager: invalid address for tokenB");
@@ -137,32 +137,19 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(tokenB), "LeveragedLiquidityPositionManager: tokenB not available");
         require(userPositions[msg.sender].length < ISettings(settingsAddress).getParameterValue("MaximumNumberOfLeveragedPositions"), "LeveragedLiquidityPositionManager: cannot exceed maximum number of leveraged positions");
         
-        //Check if farm exists for the token pair
-        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
-        address pairAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-        require(stakingTokenAddress == pairAddress, "Pool: stakingTokenAddress does not match pairAddress");
-
-        //Swap cUSD for tokenA
-        uint amountA = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(tokenA, collateral.div(2), amountToBorrow.div(2), msg.sender);
-
-        //Swap cUSD for tokenB
-        uint amountB = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(tokenB, collateral.div(2), amountToBorrow.div(2), msg.sender);
-
-        //Add liquidity
-        uint numberOfLPTokens = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).addLiquidity(tokenA, tokenB, amountA, amountB, farmAddress);
-        
-        //Adjust collateral and amountToBorrow to asset tokens
-        uint adjustedCollateral = numberOfLPTokens.mul(collateral).div(collateral.add(amountToBorrow));
-        uint adjustedAmountToBorrow = numberOfLPTokens.mul(amountToBorrow).div(collateral.add(amountToBorrow));
-
-        //Get entry price; used for calculating liquidation price
-        uint USDperToken = (collateral.add(amountToBorrow)).div(numberOfLPTokens);
-
-        leveragedPositions[numberOfLeveragedPositions] = LeveragedLiquidityPosition(msg.sender, pairAddress, farmAddress, block.timestamp, adjustedCollateral, adjustedAmountToBorrow, USDperToken, userPositions[msg.sender].length);
-        userPositions[msg.sender].push(numberOfLeveragedPositions);
-        numberOfLeveragedPositions = numberOfLeveragedPositions.add(1);
-
-        emit OpenedPosition(msg.sender, pairAddress, adjustedCollateral, adjustedAmountToBorrow, USDperToken, numberOfLeveragedPositions.sub(1), block.timestamp);
+        //Check if user has existing leveraged position with this pair
+        address pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
+        //Add to position
+        if (positionIndexes[msg.sender][pair] > 0)
+        {
+            _combinePositions(positionIndexes[msg.sender][pair], collateral, amountToBorrow);
+        }
+        //Open a new position
+        else
+        {
+            _openPosition(tokenA, tokenB, collateral, amountToBorrow, farmAddress);
+            positionIndexes[msg.sender][pair] = numberOfLeveragedPositions.sub(1);
+        } 
     }
 
     /**
@@ -402,6 +389,8 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         address lastUser = leveragedPositions[numberOfLeveragedPositions - 1].owner;
         uint indexInLastUserPositionArray = leveragedPositions[numberOfLeveragedPositions - 1].indexInOwnerPositionArray;
 
+        delete positionIndexes[msg.sender][leveragedPositions[positionIndex].pair];
+
         //Swap with last element in user position array and remove last element
         userPositions[msg.sender][indexInUserPositionArray] = userPositions[msg.sender][userPositions[msg.sender].length];
         userPositions[msg.sender].pop();
@@ -455,7 +444,6 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         require(numberOfTokens > 0, "LeveragedLiquidityPositionManager: number of tokens must be greater than 0");
         require(numberOfTokens <= leveragedPositions[positionIndex].collateral.add(leveragedPositions[positionIndex].numberOfTokensBorrowed), "LeveragedLiquidityPositionManager: number of tokens must be less than position size");
 
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
 
         uint collateralInUSD = position.entryPrice.mul(position.collateral);
@@ -474,10 +462,85 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     * @return uint Price of LP token
     */
-    function _getPriceOfLPToken(uint positionIndex) internal view positionIndexInRange(positionIndex) returns (uint) {
+    function _getPriceOfLPToken(uint positionIndex) internal view positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) returns (uint) {
         uint positionValue = getPositionValue(positionIndex);
         uint positionSize = leveragedPositions[positionIndex].collateral.add(leveragedPositions[positionIndex].numberOfTokensBorrowed);
         return positionValue.div(positionSize);
+    }
+
+    /**
+    * @dev Adds collateral and loan to existing position, and recalculates entry price
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    */
+    function _combinePositions(uint positionIndex, uint collateral, uint amountToBorrow) internal positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address pair = position.pair;
+
+        _payInterest(positionIndex);
+
+        //Swap cUSD for token0
+        uint numberOfTokensReceived0 = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(IUniswapV2Pair(pair).token0(), (collateral.add(amountToBorrow)).div(2), 0, msg.sender);
+
+        //Swap cUSD for token1
+        uint numberOfTokensReceived1 = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(IUniswapV2Pair(pair).token1(), (collateral.add(amountToBorrow)).div(2), 0, msg.sender);
+
+        //Add liquidity
+        uint numberOfLPTokens = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).addLiquidity(IUniswapV2Pair(pair).token0(), IUniswapV2Pair(pair).token1(), numberOfTokensReceived0, numberOfTokensReceived1, position.farm);
+
+        //Calculate new entry price
+        uint initialPositionValue = position.entryPrice.mul(position.collateral.add(position.numberOfTokensBorrowed));
+        uint addedAmount = collateral.add(amountToBorrow);
+        uint newEntryPrice = (initialPositionValue.add(addedAmount)).div(numberOfLPTokens.add(position.collateral).add(position.numberOfTokensBorrowed));
+        
+        //Update state variables
+        leveragedPositions[positionIndex].collateral = position.collateral.add(numberOfLPTokens);
+        leveragedPositions[positionIndex].entryPrice = newEntryPrice;
+
+        emit CombinedPosition(msg.sender, positionIndex, collateral, amountToBorrow, block.timestamp);
+    }
+
+    /**
+    * @dev Opens a new leveraged position; swaps cUSD for specified asset
+    * @param tokenA Address of first token in pair
+    * @param tokenB Address of second token in pair
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    * @param farmAddress Address of token pair's Ubeswap farm
+    */
+    function _openPosition(address tokenA, address tokenB, uint collateral, uint amountToBorrow, address farmAddress) internal {
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        
+        //Check if farm exists for the token pair
+        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
+        address pairAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
+        require(stakingTokenAddress == pairAddress, "Pool: stakingTokenAddress does not match pairAddress");
+
+        //Swap cUSD for tokenA
+        uint amountA = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(tokenA, collateral.div(2), amountToBorrow.div(2), msg.sender);
+
+        //Swap cUSD for tokenB
+        uint amountB = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(tokenB, collateral.div(2), amountToBorrow.div(2), msg.sender);
+
+        //Add liquidity
+        uint numberOfLPTokens = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).addLiquidity(tokenA, tokenB, amountA, amountB, farmAddress);
+        
+        //Adjust collateral and amountToBorrow to asset tokens
+        uint adjustedCollateral = numberOfLPTokens.mul(collateral).div(collateral.add(amountToBorrow));
+        uint adjustedAmountToBorrow = numberOfLPTokens.mul(amountToBorrow).div(collateral.add(amountToBorrow));
+
+        //Get entry price; used for calculating liquidation price
+        uint USDperToken = (collateral.add(amountToBorrow)).div(numberOfLPTokens);
+
+        leveragedPositions[numberOfLeveragedPositions] = LeveragedLiquidityPosition(msg.sender, pairAddress, farmAddress, block.timestamp, adjustedCollateral, adjustedAmountToBorrow, USDperToken, userPositions[msg.sender].length);
+        userPositions[msg.sender].push(numberOfLeveragedPositions);
+        numberOfLeveragedPositions = numberOfLeveragedPositions.add(1);
+
+        emit OpenedPosition(msg.sender, pairAddress, adjustedCollateral, adjustedAmountToBorrow, USDperToken, numberOfLeveragedPositions.sub(1), block.timestamp);
     }
 
     /* ========== MODIFIERS ========== */
@@ -507,6 +570,7 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     event OpenedPosition(address indexed owner, address indexed underlyingAsset, uint collateral, uint numberOfTokensBorrowed, uint entryPrice, uint positionIndex, uint timestamp);
     event ReducedPosition(address indexed owner, uint indexed positionIndex, uint cUSDReceived, uint interestPaid, uint timestamp);
     event ClosedPosition(address indexed owner, uint indexed positionIndex, uint interestAccrued, uint cUSDReceived, uint timestamp);
+    event CombinedPosition(address indexed owner, uint indexed positionIndex, uint collateral, uint numberOfTokensBorrowed, uint timestamp);
     event AddedCollateral(address indexed owner, uint indexed positionIndex, uint collateralAdded, uint timestamp);
     event RemovedCollateral(address indexed owner, uint indexed positionIndex, uint collateralRemoved, uint cUSDReceived, uint timestamp);
     event TransferredOwnership(address indexed oldOwner, address newOwner, uint indexed positionIndex, uint timestamp);
