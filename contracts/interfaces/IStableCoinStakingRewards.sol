@@ -59,19 +59,19 @@ interface IStableCoinStakingRewards {
     function stake(uint amount) external;
 
     /**
-     * @notice Allow a user to claim any available staking rewards.
+     * @notice Allow a user to claim any available staking rewards and interest rewards.
      */
     function getReward() external;
 
     /**
-     * @notice Calculates the amount of TGEN reward per token staked.
+     * @notice Calculates the amount of TGEN reward and the amount of cUSD interest reward per token staked
      */
-    function rewardPerToken() external view returns (uint256);
+    function rewardPerToken() external view returns (uint, uint);
 
     /**
-     * @notice Calculates the amount of TGEN rewards earned.
+     * @notice Calculates the amount of TGEN rewards and cUSD interest rewards earned.
      */
-    function earned(address account) external view returns (uint256);
+    function earned(address account) external view returns (uint, uint);
 
     /**
      * @notice Swaps cUSD for specified asset; meant to be called from LeveragedAssetPositionManager contract
@@ -86,8 +86,8 @@ interface IStableCoinStakingRewards {
     /**
      * @notice Swaps specified asset for cUSD; meant to be called from LeveragedAssetPositionManager contract
      * @param asset Asset to swap from
-     * @param userShare Amount of cUSD for the user
-     * @param poolShare Amount of cUSD for the pool
+     * @param userShare User's ratio of received tokens
+     * @param poolShare Pool's ratio of received tokens
      * @param numberOfAssetTokens Number of asset tokens to swap
      * @param user Address of the user
      * @return uint Amount of cUSD user received
@@ -97,9 +97,9 @@ interface IStableCoinStakingRewards {
     /**
      * @notice Liquidates a leveraged asset; meant to be called from LeveragedAssetPositionManager contract
      * @param asset Asset to swap from
-     * @param userShare Amount of cUSD for the user
-     * @param liquidatorShare Amount of cUSD for the liquidator
-     * @param poolShare Amount of cUSD for the pool
+     * @param userShare User's ratio of received tokens
+     * @param liquidatorShare Liquidator's ratio of received tokens
+     * @param poolShare Pool's ration of received tokens
      * @param numberOfAssetTokens Number of asset tokens to swap
      * @param user Address of the user
      * @param liquidator Address of the liquidator
@@ -113,4 +113,30 @@ interface IStableCoinStakingRewards {
      * @param numberOfAssetTokens Number of asset tokens to swap
      */
     function payInterest(address asset, uint numberOfAssetTokens) external;
+
+    /**
+     * @notice Claims UBE from the farm and transfers to LeveragedLiquidityRewards contract
+     * @param farmAddress Address of the farm on Ubeswap
+     */
+    function claimUBE(address farmAddress) external;
+
+    /**
+    * @dev Adds liquidity for the two given tokens
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @param farmAddress The token pair's farm address on Ubeswap
+    * @return uint Number of LP tokens received
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) external returns (uint);
+
+    /**
+    * @dev Removes liquidity for the two given tokens
+    * @param pair Address of liquidity pair
+    * @param farmAddress The token pair's farm address on Ubeswap
+    * @param numberOfLPTokens Number of LP tokens to remove
+    * @return (uint, uint) Amount of pair's token0 and token1 received
+    */
+    function removeLiquidity(address pair, address farmAddress, uint numberOfLPTokens) external returns (uint, uint);
 }

@@ -5,12 +5,13 @@ import './libraries/SafeMath.sol';
 
 // Inheritance
 import "./Ownable.sol";
+import './interfaces/ITradegenStakingEscrow.sol';
 
 // Internal references
 import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 
-contract TradegenStakingEscrow is Ownable {
+contract TradegenStakingEscrow is Ownable, ITradegenStakingEscrow {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
@@ -21,7 +22,7 @@ contract TradegenStakingEscrow is Ownable {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function claimStakingRewards(address user, uint amount) public onlyStakingRewards {
+    function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
         address tradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
         
         require(amount > 0, "No staking rewards to claim");

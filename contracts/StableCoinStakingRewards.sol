@@ -8,7 +8,7 @@ import "./Ownable.sol";
 import "./interfaces/IStableCoinStakingRewards.sol";
 import "./openzeppelin-solidity/ReentrancyGuard.sol";
 
-// Libraires
+// Libraries
 import "./libraries/SafeMath.sol";
 
 // Internal references
@@ -16,6 +16,9 @@ import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 import "./interfaces/ISettings.sol";
 import "./interfaces/IInsuranceFund.sol";
+import "./interfaces/IInterestRewardsPoolEscrow.sol";
+import "./interfaces/IStakingRewards.sol";
+import "./interfaces/IUniswapV2Pair.sol";
 
 contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, ReentrancyGuard {
     using SafeMath for uint;
@@ -23,9 +26,12 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
     uint public lastUpdateTime;
-    uint public rewardPerTokenStored;
-    mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards;
+    uint public stakingRewardPerTokenStored;
+    uint public interestRewardPerTokenStored;
+    mapping(address => uint) public userStakingRewardPerTokenPaid;
+    mapping(address => uint) public userInterestRewardPerTokenPaid;
+    mapping(address => uint) public stakingRewards;
+    mapping(address => uint) public interestRewards;
 
     /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
      * These are the times at which each given quantity of cUSD vests. */
@@ -106,26 +112,34 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     }
 
     /**
-     * @notice Calculates the amount of TGEN reward per token staked.
+     * @notice Calculates the amount of TGEN reward and the amount of cUSD interest reward per token staked
      */
-    function rewardPerToken() public view override returns (uint256) {
+    function rewardPerToken() public view override returns (uint, uint) {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        uint rewardRate = ISettings(settingsAddress).getParameterValue("WeeklyStableCoinStakingRewards");
+        address interestRewardsPoolEscrowAddress = ADDRESS_RESOLVER.getContractAddress("InterestRewardsPoolEscrow");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+        uint stakingRewardRate = ISettings(settingsAddress).getParameterValue("WeeklyStableCoinStakingRewards");
+        uint interestRewardRate = IERC20(stableCoinAddress).balanceOf(interestRewardsPoolEscrowAddress);
 
-        if (totalVestedBalance == 0) {
-            return rewardPerTokenStored;
+        if (totalVestedBalance == 0)
+        {
+            return (stakingRewardPerTokenStored, interestRewardPerTokenStored);
         }
-        return
-            rewardPerTokenStored.add(
-                block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(totalVestedBalance)
-            );
+        uint stakingRewardPerToken = stakingRewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(stakingRewardRate).mul(1e18).div(totalVestedBalance));
+        uint interestRewardPerToken = interestRewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(stakingRewardRate).mul(1e18).div(totalVestedBalance));
+
+        return (stakingRewardPerToken, interestRewardPerToken);
     }
 
     /**
-     * @notice Calculates the amount of TGEN rewards earned.
+     * @notice Calculates the amount of TGEN rewards and cUSD interest rewards earned.
      */
-    function earned(address account) public view override returns (uint256) {
-        return totalVestedAccountBalance[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
+    function earned(address account) public view override returns (uint, uint) {
+        (uint stakingRewardPerToken, uint interestRewardPerToken) = rewardPerToken();
+        uint stakingRewardEarned = totalVestedAccountBalance[account].mul(stakingRewardPerToken.sub(userStakingRewardPerTokenPaid[account])).div(1e18).add(stakingRewards[account]);
+        uint interestRewardEarned = totalVestedAccountBalance[account].mul(interestRewardPerToken.sub(userInterestRewardPerTokenPaid[account])).div(1e18).add(interestRewards[account]);
+
+        return (stakingRewardEarned, interestRewardEarned);
     }
 
     /**
@@ -266,17 +280,26 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     }
 
     /**
-     * @notice Allow a user to claim any available staking rewards.
+     * @notice Allow a user to claim any available staking rewards and interest rewards.
      */
     function getReward() public override nonReentrant updateReward(msg.sender) {
         address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
-        uint reward = rewards[msg.sender];
+        address interestRewardsPoolEscrowAddress = ADDRESS_RESOLVER.getContractAddress("InterestRewardsPoolEscrow");
+        uint stakingReward = stakingRewards[msg.sender];
+        uint interestReward = interestRewards[msg.sender];
 
-        if (reward > 0)
+        if (stakingReward > 0)
         {
-            rewards[msg.sender] = 0;
-            IERC20(baseTradegenAddress).transfer(msg.sender, reward);
-            emit RewardPaid(msg.sender, reward, block.timestamp);
+            stakingRewards[msg.sender] = 0;
+            IERC20(baseTradegenAddress).transfer(msg.sender, stakingReward);
+            emit StakingRewardPaid(msg.sender, stakingReward, block.timestamp);
+        }
+
+        if (interestReward > 0)
+        {
+            interestRewards[msg.sender] = 0;
+            IInterestRewardsPoolEscrow(interestRewardsPoolEscrowAddress).claimRewards(msg.sender, interestReward);
+            emit InterestRewardPaid(msg.sender, interestReward, block.timestamp);
         }
     }
 
@@ -315,9 +338,10 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     /**
      * @notice Swaps specified asset for cUSD; meant to be called from LeveragedAssetPositionManager contract
      * @param asset Asset to swap from
-     * @param userShare Number of asset tokens for the user
-     * @param poolShare Number of asset tokens for the pool
+     * @param userShare User's ratio of received tokens
+     * @param poolShare Pool's ratio of received tokens
      * @param numberOfAssetTokens Number of asset tokens to swap
+     * @param user Address of the user
      * @return uint Amount of cUSD user received
      */
     function swapFromAsset(address asset, uint userShare, uint poolShare, uint numberOfAssetTokens, address user) public override onlyLeveragedAssetPositionManager returns (uint) {
@@ -335,7 +359,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         uint amountInUSD = (numberOfAssetTokens).mul(tokenToUSD).div(10 ** numberOfDecimals);
 
         //Swap asset for cUSD
-        IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare));
+        IERC20(asset).transfer(baseUbeswapAdapterAddress, numberOfAssetTokens);
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
 
         //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance
@@ -360,9 +384,9 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     /**
      * @notice Liquidates a leveraged asset; meant to be called from LeveragedAssetPositionManager contract
      * @param asset Asset to swap from
-     * @param userShare Amount of cUSD for the user
-     * @param liquidatorShare Amount of cUSD for the liquidator
-     * @param poolShare Amount of cUSD for the pool
+     * @param userShare User's ratio of received tokens
+     * @param liquidatorShare Liquidator's ratio of received tokens
+     * @param poolShare Pool's ration of received tokens
      * @param numberOfAssetTokens Number of asset tokens to swap
      * @param user Address of the user
      * @param liquidator Address of the liquidator
@@ -417,7 +441,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
     function payInterest(address asset, uint numberOfAssetTokens) public override onlyLeveragedAssetPositionManager {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address insuranceFundAddress = ADDRESS_RESOLVER.getContractAddress("InsuranceFund");
-        address interestRewardsPoolAddress = ADDRESS_RESOLVER.getContractAddress("InterestRewardsPool");
+        address interestRewardsPoolEscrowAddress = ADDRESS_RESOLVER.getContractAddress("InterestRewardsPoolEscrow");
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
 
@@ -456,17 +480,106 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         IERC20(stableCoinAddress).transfer(insuranceFundAddress, cUSDReceived.mul(insuranceFundAllocation).div(100));
 
         //Transfer received cUSD to interest rewards pool
-        IERC20(stableCoinAddress).transfer(interestRewardsPoolAddress, cUSDReceived.mul(100 - insuranceFundAllocation).div(100));
+        IERC20(stableCoinAddress).transfer(interestRewardsPoolEscrowAddress, cUSDReceived.mul(100 - insuranceFundAllocation).div(100));
+    }
+
+    /**
+     * @notice Claims UBE from the farm and transfers to LeveragedLiquidityRewards contract
+     * @param farmAddress Address of the farm on Ubeswap
+     */
+    function claimUBE(address farmAddress) public override onlyLeveragedLiquidityPositionManager {
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "StableCoinStakingRewards: invalid farm address");
+
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
+        uint initialBalance = IERC20(UBE).balanceOf(address(this));
+
+        IStakingRewards(farmAddress).getReward();
+
+        uint newBalance = IERC20(UBE).balanceOf(address(this));
+        uint claimedUBE = newBalance.sub(initialBalance);
+
+        //TODO: transfer claimed UBE to LeveragedLiquidityRewards contract
+    }
+
+    /**
+    * @dev Adds liquidity for the two given tokens
+    * @param tokenA First token in pair
+    * @param tokenB Second token in pair
+    * @param amountA Amount of first token
+    * @param amountB Amount of second token
+    * @param farmAddress The token pair's farm address on Ubeswap
+    * @return Number of LP tokens received
+    */
+    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) public override onlyLeveragedLiquidityPositionManager returns (uint) {
+        require(tokenA != address(0), "StableCoinStakingRewards: invalid address for tokenA");
+        require(tokenB != address(0), "StableCoinStakingRewards: invalid address for tokenB");
+        require(amountA > 0, "StableCoinStakingRewards: amountA must be greater than 0");
+        require(amountB > 0, "StableCoinStakingRewards: amountB must be greater than 0");
+        require(IERC20(tokenA).balanceOf(address(this)) >= amountA, "StableCoinStakingRewards: not enough tokens invested in tokenA");
+        require(IERC20(tokenB).balanceOf(address(this)) >= amountB, "StableCoinStakingRewards: not enough tokens invested in tokenB");
+
+        //Check if farm exists for the token pair
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
+        address pairAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
+
+        require(stakingTokenAddress == pairAddress, "StableCoinStakingRewards: stakingTokenAddress does not match pairAddress");
+
+        //Add liquidity to Ubeswap pool and stake LP tokens into associated farm
+        uint numberOfLPTokens = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).addLiquidity(tokenA, tokenB, amountA, amountB);
+        IStakingRewards(stakingTokenAddress).stake(numberOfLPTokens);
+
+        //TODO: integrate LeveragedLiquidityRewards contract
+
+        return numberOfLPTokens;
+    }
+
+    /**
+    * @dev Removes liquidity for the two given tokens
+    * @param pair Address of liquidity pair
+    * @param farmAddress The token pair's farm address on Ubeswap
+    * @param numberOfLPTokens Number of LP tokens to remove
+    * @return (uint, uint) Amount of pair's token0 and token1 received
+    */
+    function removeLiquidity(address pair, address farmAddress, uint numberOfLPTokens) public override onlyLeveragedLiquidityPositionManager returns (uint, uint) {
+        //Check if farm exists for the token pair
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
+
+        require(stakingTokenAddress == pair, "StableCoinStakingRewards: stakingTokenAddress does not match pair address");
+
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
+        uint initialBalance = IERC20(UBE).balanceOf(address(this));
+
+        IStakingRewards(farmAddress).withdraw(numberOfLPTokens);
+        IStakingRewards(farmAddress).getReward();
+
+        uint newBalance = IERC20(UBE).balanceOf(address(this));
+        uint claimedUBE = newBalance.sub(initialBalance);
+
+        //TODO: transfer claimedUBE to LeveragedLiquidityRewards contract
+
+        //Remove liquidity from Ubeswap liquidity pool
+        return IBaseUbeswapAdapter(baseUbeswapAdapterAddress).removeLiquidity(IUniswapV2Pair(pair).token0(), IUniswapV2Pair(pair).token1(), numberOfLPTokens);
     }
 
     /* ========== MODIFIERS ========== */
 
     modifier updateReward(address account) {
-        rewardPerTokenStored = rewardPerToken();
+        (uint stakingRewardPerToken, uint interestRewardPerToken) = rewardPerToken();
+        stakingRewardPerTokenStored = stakingRewardPerToken;
+        interestRewardPerTokenStored = interestRewardPerToken;
         lastUpdateTime = block.timestamp;
-        if (account != address(0)) {
-            rewards[account] = earned(account);
-            userRewardPerTokenPaid[account] = rewardPerTokenStored;
+        if (account != address(0))
+        {
+            (uint stakingReward, uint interestReward) = earned(account);
+            stakingRewards[account] = stakingReward;
+            interestRewards[account] = interestReward;
+            userStakingRewardPerTokenPaid[account] = stakingRewardPerTokenStored;
+            userInterestRewardPerTokenPaid[account] = interestRewardPerTokenStored;
         }
         _;
     }
@@ -476,9 +589,15 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         _;
     }
 
+    modifier onlyLeveragedLiquidityPositionManager() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager"), "StableCoinStakingRewards: Only LeveragedLiquidityPositionManager contract can call this function");
+        _;
+    }
+
     /* ========== EVENTS ========== */
 
     event Vested(address indexed beneficiary, uint time, uint value);
     event Staked(address indexed beneficiary, uint total, uint vestingTimestamp, uint timestamp);
-    event RewardPaid(address indexed user, uint amount, uint timestamp);
+    event StakingRewardPaid(address indexed user, uint amount, uint timestamp);
+    event InterestRewardPaid(address indexed user, uint amount, uint timestamp);
 }

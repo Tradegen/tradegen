@@ -41,6 +41,7 @@ contract Settings is ISettings, Ownable {
     *         MaximumPerformanceFee - 30%;
     *         MaximumNumberOfLeveragedPositions - 20;
     *         InterestRateOnLeveragedAssets - 4%;
+    *         InterestRateOnLeveragedLiquidityPositions - 3%;
     *         LiquidationFee - 5%;
     *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
     */
