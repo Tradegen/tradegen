@@ -10,129 +10,173 @@ import './interfaces/ISettings.sol';
 import './interfaces/ITradegenStakingEscrow.sol';
 
 //Inheritance
-import './interfaces/ITradegenStakingRewards.sol';
+import './interfaces/IStakingRewards.sol';
+import "./openzeppelin-solidity/ReentrancyGuard.sol";
+import "./Ownable.sol";
 
-contract TradegenStakingRewards is ITradegenStakingRewards {
-    using SafeMath for uint;
+contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
+    using SafeMath for uint256;
+
+    /* ========== STATE VARIABLES ========== */
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    uint private _totalSupply;
-    mapping(address => uint) private _balances;
-    mapping(address => State) private _userToState;
+    uint256 public periodFinish = 0;
+    uint256 public rewardRate = 0;
+    uint256 public rewardsDuration = 7 days;
+    uint256 public lastUpdateTime;
+    uint256 public rewardPerTokenStored;
 
-    constructor(IAddressResolver addressResolver) public {
-        ADDRESS_RESOLVER = addressResolver;
+    mapping(address => uint256) public userRewardPerTokenPaid;
+    mapping(address => uint256) public rewards;
+
+    uint256 private _totalSupply;
+    mapping(address => uint256) private _balances;
+
+    /* ========== CONSTRUCTOR ========== */
+
+    constructor(IAddressResolver _addressResolver) public Ownable() {
+        ADDRESS_RESOLVER = _addressResolver;
     }
 
     /* ========== VIEWS ========== */
 
-    /**
-    * @dev Returns the total amount of TGEN staked
-    * @return uint The amount of TGEN staked in the protocol
-    */
-    function totalSupply() external view override returns (uint) {
+    function stakingToken() external view override returns (address) {
+        return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+    }
+
+    function totalSupply() external view override returns (uint256) {
         return _totalSupply;
     }
 
-    /**
-    * @dev Returns the amount of TGEN the user has staked
-    * @param account Address of the user
-    * @return uint The amount of TGEN the user has staked
-    */
-    function balanceOf(address account) public view override returns (uint) {
+    function balanceOf(address account) external view override returns (uint256) {
         return _balances[account];
     }
 
-    /**
-    * @dev Wrapper for internal calculateAvailableYield() function 
-    * @return uint The user's available yield
-    */
-    function getAvailableYield() external view override returns (uint) {
-        return _calculateAvailableYield(msg.sender);
+    function lastTimeRewardApplicable() public view override returns (uint256) {
+        return (block.timestamp < periodFinish) ? block.timestamp : periodFinish;
+    }
+
+    function rewardPerToken() public view override returns (uint256) {
+        if (_totalSupply == 0)
+        {
+            return rewardPerTokenStored;
+        }
+
+        return rewardPerTokenStored.add(lastTimeRewardApplicable().sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(_totalSupply));
+    }
+
+    function earned(address account) public view override returns (uint256) {
+        return _balances[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
+    }
+
+    function getRewardForDuration() external view override returns (uint256) {
+        return rewardRate.mul(rewardsDuration);
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    /**
-    * @dev Stakes TGEN in the protocol
-    * @param amount Amount of TGEN to stake
-    */
-    function stake(uint amount) external override {
+    function stake(uint256 amount) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Cannot stake 0");
 
-        _userToState[msg.sender].timestamp = uint32(block.timestamp);
-        _userToState[msg.sender].leftoverYield = uint224(_calculateAvailableYield(msg.sender));
-        
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
+        IERC20(TGEN).transferFrom(msg.sender, address(this), amount);
 
-        //Transfer TGEN from user to StakingRewards contract; call TradegenERC20.approve() on frontend before sending transaction
-        IERC20(ADDRESS_RESOLVER.getContractAddress("TradegenERC20")).transferFrom(msg.sender, address(this), amount);
-
-        emit Staked(msg.sender, amount, block.timestamp);
+        emit Staked(msg.sender, amount);
     }
 
-    /**
-    * @dev Unstakes TGEN from the protocol
-    * @param amount Amount of TGEN to unstake
-    */
-    function unstake(uint amount) external override {
+    function withdraw(uint256 amount) public override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Cannot withdraw 0");
+
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
 
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
+        IERC20(TGEN).transfer(msg.sender, amount);
 
-        //Transfer TGEN from StakingRewards contract to user
-        IERC20(ADDRESS_RESOLVER.getContractAddress("TradegenERC20")).transferFrom(address(this), msg.sender, amount);
-
-        //Claim available yield on behalf of the user
-        claimStakingRewards();
-
-        emit Unstaked(msg.sender, amount, block.timestamp);
+        emit Withdrawn(msg.sender, amount);
     }
 
-    /**
-    * @dev Claims available staking rewards for the user
-    */
-    function claimStakingRewards() public override {
-        address stakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenStakingEscrow");
-        uint availableRewards = _calculateAvailableYield(msg.sender);
+    function getReward() public override nonReentrant updateReward(msg.sender) {
+        uint256 reward = rewards[msg.sender];
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
 
-        if (availableRewards > 0)
+        if (reward > 0)
         {
-            _userToState[msg.sender].leftoverYield = 0;
-            _userToState[msg.sender].timestamp = uint32(block.timestamp);
-
-            ITradegenStakingEscrow(stakingEscrowAddress).claimStakingRewards(msg.sender, availableRewards);
-
-            emit ClaimedStakingRewards(msg.sender, availableRewards, block.timestamp);
+            rewards[msg.sender] = 0;
+            IERC20(TGEN).transfer(msg.sender, reward);
+            emit RewardPaid(msg.sender, reward);
         }
     }
 
-    /* ========== INTERNAL FUNCTIONS ========== */
+    function exit() external override {
+        withdraw(_balances[msg.sender]);
+        getReward();
+    }
 
-    /**
-    * @dev Calculates available yield (in TGEN) for the user
-    * @param user Address of the user
-    * @return uint The user's available yield
-    */
-    function _calculateAvailableYield(address user) internal view returns (uint) {
-        if (_userToState[user].timestamp == 0)
+    /* ========== RESTRICTED FUNCTIONS ========== */
+
+    function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0)) {
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+
+        if (block.timestamp >= periodFinish)
         {
-            return 0;
+            rewardRate = reward.div(rewardsDuration);
+        } 
+        else
+        {
+            uint256 remaining = periodFinish.sub(block.timestamp);
+            uint256 leftover = remaining.mul(rewardRate);
+            rewardRate = reward.add(leftover).div(rewardsDuration);
         }
 
-        uint weeklyStakingRewards = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyStakingRewards");
-        uint elapsedTime = block.timestamp.sub(_userToState[user].timestamp);
-        uint newYield = elapsedTime.mul(weeklyStakingRewards).mul(_balances[user]).div(7 days).div(_totalSupply);
+        // Ensure the provided reward amount is not more than the balance in the contract.
+        // This keeps the reward rate in the right range, preventing overflows due to
+        // very high values of rewardRate in the earned and rewardsPerToken functions;
+        // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
+        uint balance = IERC20(TGEN).balanceOf(address(this));
+        require(rewardRate <= balance.div(rewardsDuration), "Provided reward too high");
 
-        return uint256(_userToState[user].leftoverYield).add(newYield);
+        lastUpdateTime = block.timestamp;
+        periodFinish = block.timestamp.add(rewardsDuration);
+        emit RewardAdded(reward);
+    }
+
+    // End rewards emission earlier
+    function updatePeriodFinish(uint timestamp) external onlyOwner updateReward(address(0)) {
+        periodFinish = timestamp;
+    }
+
+    function setRewardsDuration(uint256 _rewardsDuration) external onlyOwner {
+        require(
+            block.timestamp > periodFinish,
+            "Previous rewards period must be complete before changing the duration for the new period"
+        );
+        rewardsDuration = _rewardsDuration;
+        emit RewardsDurationUpdated(rewardsDuration);
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier updateReward(address account) {
+        rewardPerTokenStored = rewardPerToken();
+        lastUpdateTime = lastTimeRewardApplicable();
+        if (account != address(0)) {
+            rewards[account] = earned(account);
+            userRewardPerTokenPaid[account] = rewardPerTokenStored;
+        }
+        _;
     }
 
     /* ========== EVENTS ========== */
 
-    event Staked(address indexed user, uint amount, uint timestamp);
-    event Unstaked(address indexed user, uint amount, uint timestamp);
-    event ClaimedStakingRewards(address indexed user, uint amount, uint timestamp);
+    event RewardAdded(uint256 reward);
+    event Staked(address indexed user, uint256 amount);
+    event Withdrawn(address indexed user, uint256 amount);
+    event RewardPaid(address indexed user, uint256 reward);
+    event RewardsDurationUpdated(uint256 newDuration);
+    event Recovered(address token, uint256 amount);
 }
