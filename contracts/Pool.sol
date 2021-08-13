@@ -552,6 +552,114 @@ contract Pool is IPool, IERC20 {
     }
 
     /**
+    * @dev Opens a new leveraged liquidity position; swaps cUSD for specified asset
+    * @notice LeveragedLiquidityPositionManager checks if tokens are supported
+    * @notice LeveragedLiquidityPositionManager checks if farmAddress is supported
+    * @param tokenA Address of first token in pair
+    * @param tokenB Address of second token in pair
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    * @param farmAddress Address of token pair's Ubeswap farm
+    */
+    function openLeveragedLiquidityPosition(address tokenA, address tokenB, uint collateral, uint amountToBorrow, address farmAddress) public override onlyPoolManager {
+        require(getAvailableFunds() >= collateral, "Pool: not enough funds");
+        require(tokenA != address(0), "Pool: invalid tokenA address");
+        require(tokenB != address(0), "Pool: invalid tokenB address");
+        require(farmAddress != address(0), "Pool: invalid farm address");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, collateral);
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).openPosition(tokenA, tokenB, collateral, amountToBorrow, farmAddress);
+
+        emit OpenedLeveragedLiquidityPosition(address(this), tokenA, tokenB, collateral, amountToBorrow, farmAddress, block.timestamp);
+    }
+
+    /**
+    * @dev Reduces the size of a leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of tokens to sell
+    */
+    function reduceLeveragedLiquidityPosition(uint positionIndex, uint numberOfTokens) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+        require(numberOfTokens > 0, "Pool: numberOfTokens must be greater than 0");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).reducePosition(positionIndex, numberOfTokens);
+
+        emit ReducedLeveragedLiquidityPosition(address(this), positionIndex, numberOfTokens, block.timestamp);
+    }
+
+    /**
+    * @dev Closes a leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function closeLeveragedLiquidityPosition(uint positionIndex) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).closePosition(positionIndex);
+
+        emit ClosedLeveragedLiquidityPosition(address(this), positionIndex, block.timestamp);
+    }
+
+    /**
+    * @dev Adds collateral to the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param amountOfUSD Amount of cUSD to add as collateral
+    */
+    function addCollateralToLeveragedLiquidityPosition(uint positionIndex, uint amountOfUSD) public override onlyPoolManager {
+        require(getAvailableFunds() >= amountOfUSD, "Pool: not enough funds");
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, amountOfUSD);
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).addCollateral(positionIndex, amountOfUSD);
+
+        emit AddedCollateralToLeveragedLiquidityPosition(address(this), positionIndex, amountOfUSD, block.timestamp);
+    }
+
+    /**
+    * @dev Removes collateral from the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of asset tokens to remove as collateral
+    */
+    function removeCollateralFromLeveragedLiquidityPosition(uint positionIndex, uint numberOfTokens) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+        require(numberOfTokens > 0, "Pool: numberOfTokens must be greater than 0");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).removeCollateral(positionIndex, numberOfTokens);
+
+        emit RemovedCollateralFromLeveragedLiquidityPosition(address(this), positionIndex, numberOfTokens, block.timestamp);
+    }
+
+    /**
+    * @dev Claims available UBE rewards for the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function getReward(uint positionIndex) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).getReward(positionIndex);
+
+        //Check for UBE balance and update position keys if UBE not currently in postion keys
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
+        _addPositionKey(UBE);
+
+        emit RewardPaid(address(this), positionIndex, block.timestamp);
+    }
+
+    /**
     * @dev Updates the pool's farm address
     * @param farmAddress Address of the pool's farm
     */
@@ -689,9 +797,17 @@ contract Pool is IPool, IERC20 {
     event AddedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint amountA, uint amountB, uint numberOfLPTokensReceived, uint timestamp);
     event RemovedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint numberOfLPTokens, uint amountAReceived, uint amountBReceived, uint timestamp);
     event ClaimedUbeswapRewards(address indexed poolAddress, address farmAddress, uint timestamp);
+    //Leveraged asset positions
     event OpenedLeveragedAssetPosition(address indexed poolAddress, address indexed underlyingAsset, uint collateral, uint numberOfTokensBorrowed, uint timestamp);
     event ReducedLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint numberOfTokens, uint timestamp);
     event ClosedLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint timestamp);
     event AddedCollateralToLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralAdded, uint timestamp);
     event RemovedCollateralFromLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralRemoved, uint timestamp);
+    //Leveraged liquidity positions
+    event OpenedLeveragedLiquidityPosition(address indexed poolAddress, address tokenA, address tokenB, uint collateral, uint numberOfTokensBorrowed, address farmAddress, uint timestamp);
+    event ReducedLeveragedLiquidityPosition(address indexed poolAddress, uint indexed positionIndex, uint numberOfTokens, uint timestamp);
+    event ClosedLeveragedLiquidityPosition(address indexed poolAddress, uint indexed positionIndex, uint timestamp);
+    event AddedCollateralToLeveragedLiquidityPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralAdded, uint timestamp);
+    event RemovedCollateralFromLeveragedLiquidityPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralRemoved, uint timestamp);
+    event RewardPaid(address indexed poolAddress, uint positionIndex, uint timestamp);
 }

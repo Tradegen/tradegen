@@ -157,4 +157,49 @@ interface IPool {
     * @param numberOfTokens Number of asset tokens to remove as collateral
     */
     function removeCollateralFromLeveragedAssetPosition(uint positionIndex, uint numberOfTokens) external;
+
+    /**
+    * @dev Opens a new leveraged liquidity position; swaps cUSD for specified asset
+    * @notice LeveragedLiquidityPositionManager checks if tokens are supported
+    * @notice LeveragedLiquidityPositionManager checks if farmAddress is supported
+    * @param tokenA Address of first token in pair
+    * @param tokenB Address of second token in pair
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    * @param farmAddress Address of token pair's Ubeswap farm
+    */
+    function openLeveragedLiquidityPosition(address tokenA, address tokenB, uint collateral, uint amountToBorrow, address farmAddress) external;
+
+    /**
+    * @dev Reduces the size of a leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of tokens to sell
+    */
+    function reduceLeveragedLiquidityPosition(uint positionIndex, uint numberOfTokens) external;
+
+    /**
+    * @dev Closes a leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function closeLeveragedLiquidityPosition(uint positionIndex) external;
+
+    /**
+    * @dev Adds collateral to the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param amountOfUSD Amount of cUSD to add as collateral
+    */
+    function addCollateralToLeveragedLiquidityPosition(uint positionIndex, uint amountOfUSD) external;
+
+    /**
+    * @dev Removes collateral from the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of asset tokens to remove as collateral
+    */
+    function removeCollateralFromLeveragedLiquidityPosition(uint positionIndex, uint numberOfTokens) external;
+
+    /**
+    * @dev Claims available UBE rewards for the leveraged liquidity position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function getReward(uint positionIndex) external;
 }
