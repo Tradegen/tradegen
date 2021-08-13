@@ -24,6 +24,7 @@ contract Pool is IPool, IERC20 {
     struct LiquidityPair {
         address tokenA;
         address tokenB;
+        address farmAddress;
         uint numberOfLPTokens;
     }
    
@@ -219,7 +220,7 @@ contract Pool is IPool, IERC20 {
         return true;
     }
 
-    /* ========== RESTRICTED FUNCTIONS ========== */
+    /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
     * @dev Deposits the given USD amount into the pool
@@ -260,16 +261,26 @@ contract Pool is IPool, IERC20 {
 
         require(USDBalance >= amount, "Pool: Not enough funds to withdraw");
 
-        uint fee = (USDBalance > _deposits[msg.sender]) ? USDBalance.sub(_deposits[msg.sender]) : 0;
-        fee = fee.mul(amount).div(USDBalance); //Multiply by ratio of withdrawal amount to USD balance
-        fee = fee.mul(_performanceFee).div(100);
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
 
-        //Pay performance fee if user has profit
-        if (fee > 0) 
+        //Transfer leveraged positions
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).bulkTransferTokens(msg.sender, amount, poolBalance);
+        ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).bulkTransferTokens(msg.sender, amount, poolBalance);
+
+        //Reduce liquidity positions
+        for (uint i = 0; i < numberOfLiquidityPositions; i++)
         {
-            _payPerformanceFee(fee);
+            LiquidityPair memory liquidityPosition = liquidityPositions[i];
+
+            removeLiquidity(liquidityPosition.tokenA, liquidityPosition.tokenB, liquidityPosition.farmAddress, liquidityPosition.numberOfLPTokens.mul(amount).div(poolBalance));
         }
 
+        uint profit = (USDBalance > _deposits[msg.sender]) ? USDBalance.sub(_deposits[msg.sender]) : 0;
+        uint fee = profit.mul(amount).div(USDBalance); //Multiply by ratio of withdrawal amount to user's USD balance
+        fee = fee.mul(_performanceFee).div(100);
+
+        //Update state variables
         uint depositAmount = _deposits[msg.sender].mul(amount).div(USDBalance);
         uint numberOfLPTokens = _balanceOf[msg.sender].mul(amount).div(USDBalance);
         _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(numberOfLPTokens);
@@ -281,9 +292,11 @@ contract Pool is IPool, IERC20 {
         for (uint i = 0; i < numberOfPositions; i++)
         {
             uint positionBalance = IERC20(_positionKeys[i]).balanceOf(address(this)); //Number of asset's tokens
-            uint amountToTransfer = positionBalance.mul(amount.sub(fee)).div(poolBalance); //Multiply by ratio of withdrawal amount after fee to pool's USD balance
+            uint amountToTransferToUser = positionBalance.mul(amount.sub(fee)).div(poolBalance); //Multiply by ratio of withdrawal amount after fee to pool's USD balance
+            uint amountToTransferToManager = positionBalance.mul(fee).div(poolBalance);
 
-            IERC20(_positionKeys[i]).transfer(msg.sender, amountToTransfer);
+            IERC20(_positionKeys[i]).transfer(msg.sender, amountToTransferToUser);
+            IERC20(_positionKeys[i]).transfer(_manager, amountToTransferToManager);
 
             //Remove position keys if pool is liquidated
             if (_totalSupply == 0)
@@ -300,6 +313,8 @@ contract Pool is IPool, IERC20 {
 
         emit Withdraw(address(this), msg.sender, amount, block.timestamp);
     }
+
+    /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
     * @dev Places an order to buy/sell the given currency
@@ -383,7 +398,7 @@ contract Pool is IPool, IERC20 {
         (address token0, address token1) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
         if (liquidityPairToIndex[token0][token1] == 0)
         {
-            liquidityPositions[numberOfLiquidityPositions] = LiquidityPair(token0, token1, numberOfLPTokens);
+            liquidityPositions[numberOfLiquidityPositions] = LiquidityPair(token0, token1, farmAddress, numberOfLPTokens);
             liquidityPairToIndex[token0][token1] = numberOfLiquidityPositions;
             numberOfLiquidityPositions = numberOfLiquidityPositions.add(1);
         }
@@ -405,22 +420,23 @@ contract Pool is IPool, IERC20 {
     * @param tokenA First token in pair
     * @param tokenB Second token in pair
     * @param farmAddress The token pair's farm address
+    * @param numberOfLPTokens Number of LP tokens to remove from the farm
     */
-    function removeLiquidity(address tokenA, address tokenB, address farmAddress) public override onlyPoolManager {
+    function removeLiquidity(address tokenA, address tokenB, address farmAddress, uint numberOfLPTokens) public override onlyPoolManager {
         require(tokenA != address(0), "Pool: invalid address for tokenA");
         require(tokenB != address(0), "Pool: invalid address for tokenB");
 
-        //Check if pool has LP tokens in the farm
+        //Check if pool has enough LP tokens in the farm
         (address token0, address token1) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
         uint index = liquidityPairToIndex[token0][token1];
-        uint numberOfLPTokens = liquidityPositions[index].numberOfLPTokens;
-        require(numberOfLPTokens > 0, "Pool: no LP tokens to unstake");
+        require(liquidityPositions[index].numberOfLPTokens >= numberOfLPTokens, "Pool: not enough LP tokens to unstake");
 
         //Check if farmAddress is valid
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "Invalid farm address");
 
-        //Withdraw LP tokens from the farm and claim available UBE rewards
+        //Withdraw all LP tokens from the farm and claim available UBE rewards
+        //Need to restake remaining LP tokens later
         IStakingRewards(farmAddress).exit();
 
         //Check for UBE balance and update position keys if UBE not currently in postion keys
@@ -429,7 +445,7 @@ contract Pool is IPool, IERC20 {
         _addPositionKey(UBE);
 
         //Remove liquidity from Ubeswap liquidity pool
-        (uint amountA, uint amountB) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).removeLiquidity(tokenA, tokenB, liquidityPositions[index].numberOfLPTokens);
+        (uint amountA, uint amountB) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).removeLiquidity(tokenA, tokenB, numberOfLPTokens);
 
         //Update position keys
         _addPositionKey(tokenA);
@@ -438,9 +454,10 @@ contract Pool is IPool, IERC20 {
         require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
 
         //Update liquidity positions
-        liquidityPositions[index] = liquidityPositions[numberOfLiquidityPositions - 1];
-        delete liquidityPairToIndex[token0][token1];
-        numberOfLiquidityPositions = numberOfLiquidityPositions.sub(1);
+        liquidityPositions[index].numberOfLPTokens = liquidityPositions[index].numberOfLPTokens.sub(numberOfLPTokens);
+
+        //Restake remaining LP tokens
+        IStakingRewards(farmAddress).stake(liquidityPositions[index].numberOfLPTokens);
 
         emit RemovedLiquidity(address(this), tokenA, tokenB, numberOfLPTokens, amountA, amountB, block.timestamp);
     }
@@ -698,36 +715,6 @@ contract Pool is IPool, IERC20 {
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
-
-    /**
-    * @dev Pay performance fee on the user's profit when the user withdraws from the pool
-    * @notice Performance fee is paid in pool's assets at time of withdrawal
-    * @param fee Amount of cUSD to pay as a fee
-    */
-    function _payPerformanceFee(uint fee) internal {
-        uint poolBalance = getPoolBalance();
-        address feePoolAddress = ADDRESS_RESOLVER.getContractAddress("FeePool");
-
-        //Convert _positionKeys mapping to array
-        address[] memory positions = new address[](numberOfPositions);
-        for (uint i = 0; i < numberOfPositions; i++)
-        {
-            positions[i] = _positionKeys[i];
-        }
-
-        IFeePool(feePoolAddress).addPositionKeys(positions);
-
-        //Withdraw performance fee proportional to pool's assets
-        for (uint i = 0; i < numberOfPositions; i++)
-        {
-            uint positionBalance = IERC20(positions[i]).balanceOf(address(this));
-            uint amountToTransfer = positionBalance.mul(fee).div(poolBalance);
-
-            IERC20(positions[i]).transfer(feePoolAddress, amountToTransfer);
-        }
-
-        IFeePool(feePoolAddress).addFees(_manager, fee);
-    }
 
     /**
     * @dev Calculates the USD value of a token pair

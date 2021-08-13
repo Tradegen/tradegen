@@ -162,13 +162,13 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         //Add to position
         if (positionIndexes[msg.sender][pair] > 0)
         {
-            _combinePositions(positionIndexes[msg.sender][pair], collateral, amountToBorrow);
+            _combinePositions(positionIndexes[msg.sender][pair].sub(1), collateral, amountToBorrow);
         }
         //Open a new position
         else
         {
             _openPosition(tokenA, tokenB, collateral, amountToBorrow, farmAddress);
-            positionIndexes[msg.sender][pair] = numberOfLeveragedPositions.sub(1);
+            positionIndexes[msg.sender][pair] = numberOfLeveragedPositions;
         } 
     }
 
@@ -454,6 +454,23 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         emit RewardPaid(msg.sender, reward, leveragedPositions[positionIndex].farm, block.timestamp);
     }
 
+    /**
+    * @dev Transfers part of each position the caller has to the recipient; meant to be called from a Pool
+    * @param recipient Address of user receiving the tokens
+    * @param numerator Numerator used for calculating ratio of tokens
+    * @param denominator Denominator used for calculating ratio of tokens
+    */
+    function bulkTransferTokens(address recipient, uint numerator, uint denominator) public override onlyPool {
+        require(recipient != address(0), "LeveragedLiquidityPositionManager: invalid recipient address");
+        require(numerator > 0, "LeveragedLiquidityPositionManager: numerator must be greater than 0");
+        require(denominator > 0, "LeveragedLiquidityPositionManager: denominator must be greater than 0");
+
+        for (uint i = 0; i < userPositions[msg.sender].length; i++)
+        {
+            _transferTokens(userPositions[msg.sender][i], recipient, numerator, denominator);
+        }
+    }
+
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
@@ -574,7 +591,8 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         uint newEntryPrice = (initialPositionValue.add(addedAmount)).div(numberOfLPTokens.add(position.collateral).add(position.numberOfTokensBorrowed));
         
         //Update state variables
-        leveragedPositions[positionIndex].collateral = position.collateral.add(numberOfLPTokens);
+        leveragedPositions[positionIndex].collateral = position.collateral.add(numberOfLPTokens.mul(collateral).div(addedAmount));
+        leveragedPositions[positionIndex].numberOfTokensBorrowed = position.numberOfTokensBorrowed.add(numberOfLPTokens.mul(amountToBorrow).div(addedAmount));
         leveragedPositions[positionIndex].entryPrice = newEntryPrice;
 
         //Update state variables in rewards contract
@@ -651,7 +669,60 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         }
     }
 
+    /**
+    * @dev Transfers part of a position to another user; meant to be called from a Pool
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param recipient Address of user receiving the tokens
+    * @param numerator Numerator used for calculating ratio of tokens
+    * @param denominator Denominator used for calculating ratio of tokens
+    */
+    function _transferTokens(uint positionIndex, address recipient, uint numerator, uint denominator) internal positionIndexInRange(positionIndex) {
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        uint numberOfTokens = (position.collateral.add(position.numberOfTokensBorrowed)).mul(numerator).div(denominator);
+        
+        if (numberOfTokens == position.collateral.add(position.numberOfTokensBorrowed))
+        {
+            transferOwnership(positionIndex, recipient);
+        }
+        else
+        {
+            //Check if recipient can add a new leveraged position
+            address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+            require(userPositions[recipient].length < ISettings(settingsAddress).getParameterValue("MaximumNumberOfLeveragedPositions"), "LeveragedLiquidityPositionManager: recipient has too many leveraged positions");
+        
+            _unstake(msg.sender, position.farm, numberOfTokens);
+            _stake(recipient, position.farm, numberOfTokens);
+
+            //Combine positions if recipient already has a position in this farm
+            uint recipientPositionIndex = positionIndexes[recipient][position.pair];
+            //Combine positions
+            if (recipientPositionIndex > 0)
+            {
+                LeveragedLiquidityPosition memory recipientPosition = leveragedPositions[recipientPositionIndex.sub(1)];
+                
+                //Update state variables
+                leveragedPositions[recipientPositionIndex.sub(1)].collateral = recipientPosition.collateral.add(numberOfTokens.mul(recipientPosition.collateral).div(recipientPosition.collateral.add(recipientPosition.numberOfTokensBorrowed)));
+                leveragedPositions[recipientPositionIndex.sub(1)].numberOfTokensBorrowed = recipientPosition.numberOfTokensBorrowed.add(numberOfTokens.mul(recipientPosition.collateral).div(recipientPosition.collateral.add(recipientPosition.numberOfTokensBorrowed)));
+            }
+            //Open a new position
+            else
+            {
+                uint collateral = numberOfTokens.div(calculateLeverageFactor(positionIndex));
+                leveragedPositions[numberOfLeveragedPositions] = LeveragedLiquidityPosition(msg.sender, position.pair, position.farm, block.timestamp, collateral, numberOfTokens.sub(collateral), position.entryPrice, userPositions[msg.sender].length);
+                userPositions[recipient].push(numberOfLeveragedPositions);
+                numberOfLeveragedPositions = numberOfLeveragedPositions.add(1);
+                positionIndexes[recipient][position.pair] = numberOfLeveragedPositions;
+            }
+        }
+    }
+
     /* ========== MODIFIERS ========== */
+
+    modifier onlyPool() {
+        require(ADDRESS_RESOLVER.checkIfPoolAddressIsValid(msg.sender), "LeveragedLiquidityPositionManager: only a Pool can call this function");
+        _;
+    }
 
     modifier onlyPositionOwner(uint positionIndex) {
         require(leveragedPositions[positionIndex].owner == msg.sender, "LeveragedLiquidityPositionManager: only position owner can call this function");

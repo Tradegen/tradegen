@@ -109,8 +109,9 @@ interface IPool {
     * @param tokenA First token in pair
     * @param tokenB Second token in pair
     * @param farmAddress The token pair's farm address
+    * @param numberOfLPTokens Number of LP tokens to remove from the farm
     */
-    function removeLiquidity(address tokenA, address tokenB, address farmAddress) external;
+    function removeLiquidity(address tokenA, address tokenB, address farmAddress, uint numberOfLPTokens) external;
 
     /**
     * @dev Collects available UBE rewards for the given Ubeswap farm

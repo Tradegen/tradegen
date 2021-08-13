@@ -125,4 +125,12 @@ interface ILeveragedLiquidityPositionManager {
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     */
     function getReward(uint positionIndex) external;
+
+    /**
+    * @dev Transfers part of each position the caller has to the recipient; meant to be called from a Pool
+    * @param recipient Address of user receiving the tokens
+    * @param numerator Numerator used for calculating ratio of tokens
+    * @param denominator Denominator used for calculating ratio of tokens
+    */
+    function bulkTransferTokens(address recipient, uint numerator, uint denominator) external;
 }
