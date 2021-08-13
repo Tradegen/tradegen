@@ -119,8 +119,9 @@ interface IStableCoinStakingRewards {
      * @notice Sends a small percentage of claimed UBE to user as a reward
      * @param user Address of the user
      * @param farmAddress Address of the farm
+     * @return (uint, uint) Amount of UBE claimed and keeper's share
      */
-    function claimFarmUBE(address user, address farmAddress) external;
+    function claimFarmUBE(address user, address farmAddress) external returns (uint, uint);
 
     /**
      * @notice Claims user's UBE rewards for leveraged yield farming

@@ -502,8 +502,9 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
      * @notice Sends a small percentage of claimed UBE to user as a reward
      * @param user Address of the user
      * @param farmAddress Address of the farm
+     * @return (uint, uint) Amount of UBE claimed and keeper's share
      */
-    function claimFarmUBE(address user, address farmAddress) public override onlyLeveragedLiquidityPositionManager {
+    function claimFarmUBE(address user, address farmAddress) public override onlyLeveragedLiquidityPositionManager returns (uint, uint) {
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
@@ -518,6 +519,8 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         //Transfer keeper reward to user
         uint claimedUBE = IERC20(UBE).balanceOf(address(this)).sub(initialBalance);
         IERC20(UBE).transfer(user, claimedUBE.mul(keeperReward).div(1000));
+
+        return (claimedUBE, claimedUBE.mul(keeperReward).div(1000));
     }
 
     /**

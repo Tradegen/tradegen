@@ -12,6 +12,13 @@ interface ILeveragedAssetPositionManager {
     }
 
     /**
+    * @dev Returns the index of each leveraged position the user has
+    * @param user Address of the user
+    * @return uint[] Index of each position
+    */
+    function getUserPositions(address user) external view returns (uint[] memory);
+
+    /**
     * @dev Given the index of a leveraged position, return the position info
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     * @return (address, address, uint, uint, uint, uint) Leveraged position's owner, underlying asset, entry timestamp, number of tokens collateral, number of tokens borrowed, and entry price

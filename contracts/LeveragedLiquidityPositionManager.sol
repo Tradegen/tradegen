@@ -11,25 +11,34 @@ import './interfaces/IStakingRewards.sol';
 
 //Inheritance
 import './interfaces/ILeveragedLiquidityPositionManager.sol';
+import './LeveragedFarmingRewards.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';
 
-contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager {
+contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager, LeveragedFarmingRewards {
     using SafeMath for uint;
-
-    IAddressResolver public immutable ADDRESS_RESOLVER;
 
     uint public numberOfLeveragedPositions;
     mapping (address => uint[]) public userPositions;
     mapping (uint => LeveragedLiquidityPosition) public leveragedPositions;
     mapping (address => mapping (address => uint)) public positionIndexes; //maps to (index + 1), with index 0 representing position not found
 
-    constructor(IAddressResolver addressResolver) public {
-        ADDRESS_RESOLVER = addressResolver;
+    constructor(IAddressResolver addressResolver) public LeveragedFarmingRewards(addressResolver) {
     }
 
     /* ========== VIEWS ========== */
+
+    /**
+    * @dev Returns the index of each leveraged position the user has
+    * @param user Address of the user
+    * @return uint[] Index of each position
+    */
+    function getUserPositions(address user) public view override returns (uint[] memory) {
+        require(user != address(0), "LeveragedLiquidityPositionManager: invalid user address");
+
+        return userPositions[user];
+    }
 
     /**
     * @dev Given the index of a leveraged position, return the position info
@@ -165,6 +174,10 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         //Pay interest
         uint interestPaid = _payInterest(positionIndex);
 
+        //Update state variables in rewards contract and claim available UBE
+        getReward(positionIndex);
+        _unstake(msg.sender, position.farm, numberOfTokens);
+
         require(numberOfTokens < position.collateral.add(position.numberOfTokensBorrowed), "LeveragedLiquidityPositionManager: number of tokens must be less than position size");
 
         //Calculate user and pool cUSD share
@@ -197,10 +210,14 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     */
     function closePosition(uint positionIndex) public override positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
-        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
-
         //Pay interest
         uint interestAccrued = _payInterest(positionIndex);
+
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        //Update state variables in rewards contract and claim available UBE
+        _unstake(msg.sender, position.farm, position.collateral.add(position.numberOfTokensBorrowed).add(interestAccrued));
+        getReward(positionIndex);
 
         //Get updated position size
         uint positionSize = position.collateral.add(position.numberOfTokensBorrowed);
@@ -234,10 +251,11 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     function addCollateral(uint positionIndex, uint amountOfUSD) public override positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
         require(amountOfUSD > 0, "LeveragedAssetPositionManager: amount of USD must be greater than 0");
 
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
 
-        address pair = leveragedPositions[positionIndex].pair;
+        address pair = position.pair;
 
         //Swap cUSD for token0
         uint numberOfTokensReceived0 = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).swapToAsset(IUniswapV2Pair(pair).token0(), amountOfUSD.div(2), 0, msg.sender);
@@ -252,15 +270,19 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         uint USDperToken1 = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(IUniswapV2Pair(pair).token1());
 
         //Add liquidity
-        uint numberOfLPTokens = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).addLiquidity(IUniswapV2Pair(pair).token0(), IUniswapV2Pair(pair).token1(), numberOfTokensReceived0, numberOfTokensReceived1, leveragedPositions[positionIndex].farm);
+        uint numberOfLPTokens = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).addLiquidity(IUniswapV2Pair(pair).token0(), IUniswapV2Pair(pair).token1(), numberOfTokensReceived0, numberOfTokensReceived1, position.farm);
+
+        //Claim available UBE and update state variables in rewards contract
+        getReward(positionIndex);
+        _stake(msg.sender, position.farm, numberOfLPTokens);
 
         //Calculate new entry price
-        uint initialPositionValue = leveragedPositions[positionIndex].entryPrice.mul(leveragedPositions[positionIndex].collateral.add(leveragedPositions[positionIndex].numberOfTokensBorrowed));
+        uint initialPositionValue = position.entryPrice.mul(position.collateral.add(position.numberOfTokensBorrowed));
         uint addedAmount = (USDperToken0.mul(numberOfTokensReceived0)).add(USDperToken1.mul(numberOfTokensReceived1));
-        uint newEntryPrice = (initialPositionValue.add(addedAmount)).div(numberOfLPTokens.add(leveragedPositions[positionIndex].collateral).add(leveragedPositions[positionIndex].numberOfTokensBorrowed));
+        uint newEntryPrice = (initialPositionValue.add(addedAmount)).div(numberOfLPTokens.add(position.collateral).add(position.numberOfTokensBorrowed));
         
         //Update state variables
-        leveragedPositions[positionIndex].collateral = leveragedPositions[positionIndex].collateral.add(numberOfLPTokens);
+        leveragedPositions[positionIndex].collateral = position.collateral.add(numberOfLPTokens);
         leveragedPositions[positionIndex].entryPrice = newEntryPrice;
 
         emit AddedCollateral(msg.sender, positionIndex, numberOfLPTokens, block.timestamp);
@@ -275,11 +297,15 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         require(numberOfTokens > 0, "LeveragedLiquidityPositionManager: number of tokens must be greater than 0");
         require(numberOfTokens < leveragedPositions[positionIndex].collateral, "LeveragedLiquidityPositionManager: number of tokens must be less than collateral");
 
-        leveragedPositions[positionIndex].collateral = leveragedPositions[positionIndex].collateral.sub(numberOfTokens);
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        //Claim available UBE and update state variables in rewards contract
+        getReward(positionIndex);
+        _unstake(msg.sender, position.farm, numberOfTokens);
+
+        leveragedPositions[positionIndex].collateral = position.collateral.sub(numberOfTokens);
 
         require(calculateLeverageFactor(positionIndex) <= 10, "LeveragedLiquidityPositionManager: cannot exceed 10x leverage");
-
-        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
 
         //Remove liquidity
         address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
@@ -302,6 +328,9 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     function transferOwnership(uint positionIndex, address newOwner) public override positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
         require(newOwner != address(0), "LeveragedLiquidityPositionManager: invalid address for new owner");
         require(newOwner != msg.sender, "LeveragedLiquidityPositionManager: new owner is same as current owner");
+
+        //Update state variable in rewards contract and send available UBE to user
+        _transferOwnership(newOwner, positionIndex);
 
         //Check if new owner can add a new leveraged position
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
@@ -330,12 +359,21 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     }
 
     /**
-    * @dev Claims available UBE rewards in the position's associated Ubeswap farm
-    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @dev Claims available UBE rewards for the farm
+    * @notice Sends a small percentage of claimed UBE to the function's caller as a reward for maintaining the protocol
+    * @param farmAddress Address of the farm
     */
-    function claimUbeswapRewards(uint positionIndex) public override positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
+    function claimFarmUBE(address farmAddress) public override {
+        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
-        IStableCoinStakingRewards(stableCoinStakingRewardsAddress).claimUBE(leveragedPositions[positionIndex].farm);
+        
+        require (IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "LeveragedLiquidityPositionManager: invalid farm address");
+
+        (uint claimedUBE, uint keeperShare) = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).claimFarmUBE(msg.sender, farmAddress);
+
+        _updateAvailableUBE(farmAddress, claimedUBE);
+
+        emit ClaimedFarmUBE(msg.sender, farmAddress, claimedUBE, keeperShare, block.timestamp);
     }
 
     /**
@@ -345,11 +383,11 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     function liquidate(uint positionIndex) public override {
         require(checkIfPositionCanBeLiquidated(positionIndex), "LeveragedLiquidityPositionManager: current price is above liquidation price");
 
-        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
-        address owner = leveragedPositions[positionIndex].owner;
-
         //Pay interest
         _payInterest(positionIndex);
+
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+        address owner = leveragedPositions[positionIndex].owner;
 
         //Get updated position size
         uint positionSize = position.collateral.add(position.numberOfTokensBorrowed);
@@ -373,9 +411,34 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         //Swap from token1 to cUSD
         uint cUSDReceived1 = IStableCoinStakingRewards(stableCoinStakingRewardsAddress).liquidateLeveragedAsset(IUniswapV2Pair(position.pair).token1(), userShare, liquidatorShare, poolShare, amount1, owner, msg.sender);
 
+        //Update state variables in rewards contract
+        _unstake(position.owner, position.farm, positionSize);
+
+        //Claim available UBE
+        getReward(positionIndex);
+        
         _removePosition(positionIndex);
 
         emit Liquidated(owner, msg.sender, positionIndex, cUSDReceived0.add(cUSDReceived1), liquidatorShare, block.timestamp);
+    }
+
+    /**
+    * @dev Claims available UBE rewards for the position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function getReward(uint positionIndex) public override positionIndexInRange(positionIndex) onlyPositionOwner(positionIndex) {
+        //Claim available UBE for farm
+        claimFarmUBE(leveragedPositions[positionIndex].farm);
+
+        uint reward = _getReward(leveragedPositions[positionIndex].farm);
+
+        _updateAvailableUBE(leveragedPositions[positionIndex].farm, reward);
+
+        //Claim user's share of available UBE
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        IStableCoinStakingRewards(stableCoinStakingRewardsAddress).claimUserUBE(msg.sender, reward);
+
+        emit RewardPaid(msg.sender, reward, leveragedPositions[positionIndex].farm, block.timestamp);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -414,13 +477,18 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         uint interestAccrued = calculateInterestAccrued(positionIndex);
         uint leverageFactor = calculateLeverageFactor(positionIndex);
 
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        //Remove interest accrued from LP token balance in rewards contract
+        _unstake(position.owner, position.farm, interestAccrued);
+
         //Remove collateral and borrowed tokens to maintain leverage factor
-        leveragedPositions[positionIndex].collateral = leveragedPositions[positionIndex].collateral.sub(interestAccrued);
-        leveragedPositions[positionIndex].numberOfTokensBorrowed = leveragedPositions[positionIndex].numberOfTokensBorrowed.sub(interestAccrued.mul(leverageFactor));
+        leveragedPositions[positionIndex].collateral = position.collateral.sub(interestAccrued);
+        leveragedPositions[positionIndex].numberOfTokensBorrowed = position.numberOfTokensBorrowed.sub(interestAccrued.mul(leverageFactor));
         leveragedPositions[positionIndex].entryTimestamp = block.timestamp;
 
-        address token0 = IUniswapV2Pair(leveragedPositions[positionIndex].pair).token0();
-        address token1 = IUniswapV2Pair(leveragedPositions[positionIndex].pair).token1();
+        address token0 = IUniswapV2Pair(position.pair).token0();
+        address token1 = IUniswapV2Pair(position.pair).token1();
 
         //Pay interest
         //Split payment evenly between the two tokens
@@ -500,6 +568,9 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         leveragedPositions[positionIndex].collateral = position.collateral.add(numberOfLPTokens);
         leveragedPositions[positionIndex].entryPrice = newEntryPrice;
 
+        //Update state variables in rewards contract
+        _stake(msg.sender, position.farm, numberOfLPTokens);
+
         emit CombinedPosition(msg.sender, positionIndex, collateral, amountToBorrow, block.timestamp);
     }
 
@@ -540,7 +611,25 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         userPositions[msg.sender].push(numberOfLeveragedPositions);
         numberOfLeveragedPositions = numberOfLeveragedPositions.add(1);
 
+        //Update state variables in rewards contract
+        _stake(msg.sender, farmAddress, numberOfLPTokens);
+
         emit OpenedPosition(msg.sender, pairAddress, adjustedCollateral, adjustedAmountToBorrow, USDperToken, numberOfLeveragedPositions.sub(1), block.timestamp);
+    }
+
+    /**
+    * @dev Updates state variables in rewards contract and sends old owner their share of UBE rewards
+    * @param newOwner New owner of the position
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function _transferOwnership(address newOwner, uint positionIndex) internal {
+        LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
+
+        _unstake(msg.sender, position.farm, position.collateral.add(position.numberOfTokensBorrowed));
+
+        getReward(positionIndex);
+
+        _stake(newOwner, position.farm, position.collateral.add(position.numberOfTokensBorrowed));
     }
 
     /* ========== MODIFIERS ========== */
@@ -575,4 +664,6 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     event RemovedCollateral(address indexed owner, uint indexed positionIndex, uint collateralRemoved, uint cUSDReceived, uint timestamp);
     event TransferredOwnership(address indexed oldOwner, address newOwner, uint indexed positionIndex, uint timestamp);
     event Liquidated(address indexed owner, address indexed liquidator, uint indexed positionIndex, uint collateralReturned, uint liquidatorShare, uint timestamp);
+    event ClaimedFarmUBE(address indexed user, address indexed farm, uint claimedUBE, uint keeperShare, uint timestamp);
+    event RewardPaid(address indexed user, uint amount, address farmAddress, uint timestamp);
 }

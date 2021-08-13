@@ -13,6 +13,13 @@ interface ILeveragedLiquidityPositionManager {
     }
 
     /**
+    * @dev Returns the index of each leveraged position the user has
+    * @param user Address of the user
+    * @return uint[] Index of each position
+    */
+    function getUserPositions(address user) external view returns (uint[] memory);
+
+    /**
     * @dev Given the index of a leveraged position, return the position info
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     * @return (address, address, address, uint, uint, uint, uint) Leveraged position's owner, address of liquidity pair, address of liquidity pair's Ubeswap farm, entry timestamp, number of tokens collateral, number of tokens borrowed, and entry price
@@ -107,8 +114,15 @@ interface ILeveragedLiquidityPositionManager {
     function liquidate(uint positionIndex) external;
 
     /**
-    * @dev Claims available UBE rewards in the position's associated Ubeswap farm
+    * @dev Claims available UBE rewards for the farm
+    * @notice Sends a small percentage of claimed UBE to the function's caller as a reward for maintaining the protocol
+    * @param farmAddress Address of the farm
+    */
+    function claimFarmUBE(address farmAddress) external;
+
+    /**
+    * @dev Claims available UBE rewards for the position
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     */
-    function claimUbeswapRewards(uint positionIndex) external;
+    function getReward(uint positionIndex) external;
 }

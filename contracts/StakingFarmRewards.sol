@@ -393,7 +393,7 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
         }
     }
 
-    /* ========== RESTRICTED FUNCTIOND ========== */
+    /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
      * @notice Initialize the lastUpdateTime of each Ubeswap farm; meant to be called once

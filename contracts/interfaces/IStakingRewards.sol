@@ -18,6 +18,10 @@ interface IStakingRewards {
 
     function stakingToken() external view returns (address);
 
+    function periodFinish() external view returns (uint256);
+
+    function rewardRate() external view returns (uint256);
+
     // Mutative
 
     function stake(uint256 amount) external;
