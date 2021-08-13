@@ -480,6 +480,8 @@ contract Pool is IPool, IERC20 {
 
         IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, collateral);
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).openPosition(underlyingAsset, collateral, amountToBorrow);
+
+        emit OpenedLeveragedAssetPosition(address(this), underlyingAsset, collateral, amountToBorrow, block.timestamp);
     }
 
     /**
@@ -494,6 +496,8 @@ contract Pool is IPool, IERC20 {
 
         address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).reducePosition(positionIndex, numberOfTokens);
+
+        emit ReducedLeveragedAssetPosition(address(this), positionIndex, numberOfTokens, block.timestamp);
     }
 
     /**
@@ -506,6 +510,8 @@ contract Pool is IPool, IERC20 {
 
         address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).closePosition(positionIndex);
+
+        emit ClosedLeveragedAssetPosition(address(this), positionIndex, block.timestamp);
     }
 
     /**
@@ -525,6 +531,8 @@ contract Pool is IPool, IERC20 {
 
         IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, amountOfUSD);
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).addCollateral(positionIndex, amountOfUSD);
+
+        emit AddedCollateralToLeveragedAssetPosition(address(this), positionIndex, amountOfUSD, block.timestamp);
     }
 
     /**
@@ -539,6 +547,8 @@ contract Pool is IPool, IERC20 {
 
         address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).removeCollateral(positionIndex, numberOfTokens);
+
+        emit RemovedCollateralFromLeveragedAssetPosition(address(this), positionIndex, numberOfTokens, block.timestamp);
     }
 
     /**
@@ -679,4 +689,9 @@ contract Pool is IPool, IERC20 {
     event AddedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint amountA, uint amountB, uint numberOfLPTokensReceived, uint timestamp);
     event RemovedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint numberOfLPTokens, uint amountAReceived, uint amountBReceived, uint timestamp);
     event ClaimedUbeswapRewards(address indexed poolAddress, address farmAddress, uint timestamp);
+    event OpenedLeveragedAssetPosition(address indexed poolAddress, address indexed underlyingAsset, uint collateral, uint numberOfTokensBorrowed, uint timestamp);
+    event ReducedLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint numberOfTokens, uint timestamp);
+    event ClosedLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint timestamp);
+    event AddedCollateralToLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralAdded, uint timestamp);
+    event RemovedCollateralFromLeveragedAssetPosition(address indexed poolAddress, uint indexed positionIndex, uint collateralRemoved, uint timestamp);
 }
