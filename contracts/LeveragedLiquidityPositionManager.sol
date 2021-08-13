@@ -60,19 +60,29 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
 
+        uint interestAccrued = calculateInterestAccrued(positionIndex);
+
         address token0 = IUniswapV2Pair(position.pair).token0();
         address token1 = IUniswapV2Pair(position.pair).token1();
         (uint amount0, uint amount1) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getTokenAmountsFromPair(token0, token1, position.collateral.add(position.numberOfTokensBorrowed));
 
+        //Get price of token0
         uint numberOfDecimals0 = IERC20(token0).decimals();
         uint USDperToken0 = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(token0);
         uint USDBalance0 = amount0.mul(USDperToken0).div(10 ** numberOfDecimals0);
 
+        //Get price of token1
         uint numberOfDecimals1 = IERC20(token1).decimals();
         uint USDperToken1 = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(token1);
         uint USDBalance1 = amount1.mul(USDperToken1).div(10 ** numberOfDecimals1);
 
-        return USDBalance0.add(USDBalance1);
+        //Calculate current price of LP token
+        uint priceOfLPToken = (USDBalance0.add(USDBalance1)).div(position.collateral.add(position.numberOfTokensBorrowed));
+
+        uint collateralValue = (position.collateral.add(position.numberOfTokensBorrowed)).mul(priceOfLPToken).div(10 ** 18);
+        uint loanValue = (priceOfLPToken > position.entryPrice) ? (priceOfLPToken.sub(position.entryPrice)).mul(position.numberOfTokensBorrowed).div(10 ** 18) : (position.entryPrice.sub(priceOfLPToken)).mul(position.numberOfTokensBorrowed).div(10 ** 18);
+
+        return (priceOfLPToken > position.entryPrice) ? collateralValue.add(loanValue).sub(interestAccrued) : collateralValue.sub(loanValue).sub(interestAccrued);
     }
 
     /**

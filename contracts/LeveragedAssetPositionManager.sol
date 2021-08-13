@@ -58,11 +58,18 @@ contract LeveragedAssetPositionManager is ILeveragedAssetPositionManager {
     function getPositionValue(uint positionIndex) public view override positionIndexInRange(positionIndex) returns (uint) {
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         LeveragedAssetPosition memory position = leveragedPositions[positionIndex];
+
+        //Calculate interest accrued
+        uint interestAccrued = calculateInterestAccrued(positionIndex);
         
+        //Get current price
         uint numberOfDecimals = IERC20(position.underlyingAsset).decimals();
         uint USDperToken = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(position.underlyingAsset);
 
-        return (position.collateral.add(position.numberOfTokensBorrowed)).mul(USDperToken).div(10 ** numberOfDecimals);
+        uint collateralValue = (position.collateral.add(position.numberOfTokensBorrowed)).mul(USDperToken).div(10 ** numberOfDecimals);
+        uint loanValue = (USDperToken > position.entryPrice) ? (USDperToken.sub(position.entryPrice)).mul(position.numberOfTokensBorrowed).div(10 ** numberOfDecimals) : (position.entryPrice.sub(USDperToken)).mul(position.numberOfTokensBorrowed).div(10 ** numberOfDecimals);
+
+        return (USDperToken > position.entryPrice) ? collateralValue.add(loanValue).sub(interestAccrued) : collateralValue.sub(loanValue).sub(interestAccrued);
     }
 
     /**
