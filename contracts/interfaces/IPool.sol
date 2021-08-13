@@ -117,4 +117,44 @@ interface IPool {
     * @param farmAddress The token pair's farm address
     */
     function claimUbeswapRewards(address farmAddress) external;
+
+    /**
+    * @dev Opens a new leveraged asset position; swaps cUSD for specified asset
+    * @notice LeveragedAssetPositionManager checks if currency is supported
+    * @param underlyingAsset Address of the leveraged asset
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    */
+    function openLeveragedAssetPosition(address underlyingAsset, uint collateral, uint amountToBorrow) external;
+
+    /**
+    * @dev Reduces the size of a leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of tokens to sell
+    */
+    function reduceLeveragedAssetPosition(uint positionIndex, uint numberOfTokens) external;
+
+    /**
+    * @dev Closes a leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function closeLeveragedAssetPosition(uint positionIndex) external;
+
+    /**
+    * @dev Adds collateral to the leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param amountOfUSD Amount of cUSD to add as collateral
+    */
+    function addCollateralToLeveragedAssetPosition(uint positionIndex, uint amountOfUSD) external;
+
+    /**
+    * @dev Removes collateral from the leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of asset tokens to remove as collateral
+    */
+    function removeCollateralFromLeveragedAssetPosition(uint positionIndex, uint numberOfTokens) external;
 }

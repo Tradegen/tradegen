@@ -463,6 +463,85 @@ contract Pool is IPool, IERC20 {
     }
 
     /**
+    * @dev Opens a new leveraged asset position; swaps cUSD for specified asset
+    * @notice LeveragedAssetPositionManager checks if currency is supported
+    * @param underlyingAsset Address of the leveraged asset
+    * @param collateral Amount of cUSD to use as collateral
+    * @param amountToBorrow Amount of cUSD to borrow
+    */
+    function openLeveragedAssetPosition(address underlyingAsset, uint collateral, uint amountToBorrow) public override onlyPoolManager {
+        require(getAvailableFunds() >= collateral, "Pool: not enough funds");
+        require(underlyingAsset != address(0), "Pool: invalid asset address");
+
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, collateral);
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).openPosition(underlyingAsset, collateral, amountToBorrow);
+    }
+
+    /**
+    * @dev Reduces the size of a leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of tokens to sell
+    */
+    function reduceLeveragedAssetPosition(uint positionIndex, uint numberOfTokens) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+        require(numberOfTokens > 0, "Pool: numberOfTokens must be greater than 0");
+
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).reducePosition(positionIndex, numberOfTokens);
+    }
+
+    /**
+    * @dev Closes a leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    */
+    function closeLeveragedAssetPosition(uint positionIndex) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).closePosition(positionIndex);
+    }
+
+    /**
+    * @dev Adds collateral to the leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param amountOfUSD Amount of cUSD to add as collateral
+    */
+    function addCollateralToLeveragedAssetPosition(uint positionIndex, uint amountOfUSD) public override onlyPoolManager {
+        require(getAvailableFunds() >= amountOfUSD, "Pool: not enough funds");
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+
+        IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, amountOfUSD);
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).addCollateral(positionIndex, amountOfUSD);
+    }
+
+    /**
+    * @dev Removes collateral from the leveraged asset position
+    * @notice LeveragedAssetPositionManager checks if pool is owner of position at given index
+    * @param positionIndex Index of the leveraged position in array of leveraged positions
+    * @param numberOfTokens Number of asset tokens to remove as collateral
+    */
+    function removeCollateralFromLeveragedAssetPosition(uint positionIndex, uint numberOfTokens) public override onlyPoolManager {
+        require(positionIndex > 0, "Pool: positionIndex must be greater than 0");
+        require(numberOfTokens > 0, "Pool: numberOfTokens must be greater than 0");
+
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).removeCollateral(positionIndex, numberOfTokens);
+    }
+
+    /**
     * @dev Updates the pool's farm address
     * @param farmAddress Address of the pool's farm
     */
