@@ -8,6 +8,7 @@ import './interfaces/IBaseUbeswapAdapter.sol';
 import "./interfaces/IStableCoinStakingRewards.sol";
 import './interfaces/IUniswapV2Pair.sol';
 import './interfaces/IStakingRewards.sol';
+import './interfaces/IPool.sol';
 
 //Inheritance
 import './interfaces/ILeveragedLiquidityPositionManager.sol';
@@ -429,6 +430,8 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         
         _removePosition(positionIndex);
 
+        _decrementPositionCountIfAddressIsPool(owner);
+
         emit Liquidated(owner, msg.sender, positionIndex, cUSDReceived0.add(cUSDReceived1), liquidatorShare, block.timestamp);
     }
 
@@ -485,7 +488,6 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
     */
     function _payInterest(uint positionIndex) internal positionIndexInRange(positionIndex) returns (uint) {
         uint interestAccrued = calculateInterestAccrued(positionIndex);
-        uint leverageFactor = calculateLeverageFactor(positionIndex);
 
         LeveragedLiquidityPosition memory position = leveragedPositions[positionIndex];
 
@@ -494,19 +496,16 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
 
         //Remove collateral and borrowed tokens to maintain leverage factor
         leveragedPositions[positionIndex].collateral = position.collateral.sub(interestAccrued);
-        leveragedPositions[positionIndex].numberOfTokensBorrowed = position.numberOfTokensBorrowed.sub(interestAccrued.mul(leverageFactor));
+        leveragedPositions[positionIndex].numberOfTokensBorrowed = position.numberOfTokensBorrowed.sub(interestAccrued.mul(calculateLeverageFactor(positionIndex)));
         leveragedPositions[positionIndex].entryTimestamp = block.timestamp;
-
-        address token0 = IUniswapV2Pair(position.pair).token0();
-        address token1 = IUniswapV2Pair(position.pair).token1();
 
         //Pay interest
         //Split payment evenly between the two tokens
         address stableCoinStakingRewardsAddress = ADDRESS_RESOLVER.getContractAddress("StableCoinStakingRewards");
         if (interestAccrued > 0)
         {
-            IStableCoinStakingRewards(stableCoinStakingRewardsAddress).payInterest(token0, interestAccrued.div(2));
-            IStableCoinStakingRewards(stableCoinStakingRewardsAddress).payInterest(token1, interestAccrued.div(2));
+            IStableCoinStakingRewards(stableCoinStakingRewardsAddress).payInterest(IUniswapV2Pair(position.pair).token0(), interestAccrued.div(2));
+            IStableCoinStakingRewards(stableCoinStakingRewardsAddress).payInterest(IUniswapV2Pair(position.pair).token1(), interestAccrued.div(2));
         } 
 
         return interestAccrued;
@@ -640,6 +639,16 @@ contract LeveragedLiquidityPositionManager is ILeveragedLiquidityPositionManager
         getReward(positionIndex);
 
         _stake(newOwner, position.farm, position.collateral.add(position.numberOfTokensBorrowed));
+    }
+
+    /**
+    * @dev Decrements the pool's total position count if the supplied address is a valid pool address
+    */
+    function _decrementPositionCountIfAddressIsPool(address addressToCheck) internal {
+        if (ADDRESS_RESOLVER.checkIfPoolAddressIsValid(addressToCheck))
+        {
+            IPool(addressToCheck).decrementTotalPositionCount();
+        }
     }
 
     /* ========== MODIFIERS ========== */

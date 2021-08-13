@@ -6,6 +6,7 @@ import './interfaces/ISettings.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IBaseUbeswapAdapter.sol';
 import "./interfaces/IStableCoinStakingRewards.sol";
+import './interfaces/IPool.sol';
 
 //Inheritance
 import './interfaces/ILeveragedAssetPositionManager.sol';
@@ -338,6 +339,8 @@ contract LeveragedAssetPositionManager is ILeveragedAssetPositionManager {
 
         _removePosition(positionIndex);
 
+        _decrementPositionCountIfAddressIsPool(owner);
+
         emit Liquidated(owner, msg.sender, positionIndex, cUSDReceived, liquidatorShare, block.timestamp);
     }
 
@@ -412,6 +415,16 @@ contract LeveragedAssetPositionManager is ILeveragedAssetPositionManager {
         return (USDperToken > position.entryPrice) ?
                (collateralInUSD.add(delta)).mul(numberOfTokens).div(position.collateral.add(position.numberOfTokensBorrowed)) :
                (collateralInUSD.sub(delta)).mul(numberOfTokens).div(position.collateral.add(position.numberOfTokensBorrowed));
+    }
+
+    /**
+    * @dev Decrements the pool's total position count if the supplied address is a valid pool address
+    */
+    function _decrementPositionCountIfAddressIsPool(address addressToCheck) internal {
+        if (ADDRESS_RESOLVER.checkIfPoolAddressIsValid(addressToCheck))
+        {
+            IPool(addressToCheck).decrementTotalPositionCount();
+        }
     }
 
     /* ========== MODIFIERS ========== */

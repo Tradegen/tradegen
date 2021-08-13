@@ -202,4 +202,10 @@ interface IPool {
     * @param positionIndex Index of the leveraged position in array of leveraged positions
     */
     function getReward(uint positionIndex) external;
+
+    /**
+    * @dev Decrement's the totalNumberOfPositions
+    * @notice Called from liquidate() in LeveragedAssetPositionManager or LeveragedLiquidityPositionManager
+    */
+    function decrementTotalPositionCount() external;
 }

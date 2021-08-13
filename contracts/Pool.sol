@@ -48,6 +48,8 @@ contract Pool is IPool, IERC20 {
     uint public numberOfLiquidityPositions;
     mapping (address => mapping(address => uint)) public liquidityPairToIndex; //maps to (index + 1), with index 0 representing position not found
 
+    uint public totalNumberOfPositions;
+
     constructor(string memory name, uint performanceFee, address manager, IAddressResolver addressResolver) public {
         _name = name;
         _manager = manager;
@@ -327,6 +329,8 @@ contract Pool is IPool, IERC20 {
             //Add to position keys if no position yet
             _addPositionKey(currencyKey);
 
+            require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
+
             IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, amountInUSD);
             numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, numberOfTokens);
         }
@@ -431,6 +435,8 @@ contract Pool is IPool, IERC20 {
         _addPositionKey(tokenA);
         _addPositionKey(tokenB);
 
+        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
+
         //Update liquidity positions
         liquidityPositions[index] = liquidityPositions[numberOfLiquidityPositions - 1];
         delete liquidityPairToIndex[token0][token1];
@@ -459,6 +465,8 @@ contract Pool is IPool, IERC20 {
         address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
         _addPositionKey(UBE);
 
+        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
+
         emit ClaimedUbeswapRewards(address(this), farmAddress, block.timestamp);
     }
 
@@ -480,6 +488,9 @@ contract Pool is IPool, IERC20 {
 
         IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, collateral);
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).openPosition(underlyingAsset, collateral, amountToBorrow);
+
+        totalNumberOfPositions = totalNumberOfPositions.add(1);
+        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
 
         emit OpenedLeveragedAssetPosition(address(this), underlyingAsset, collateral, amountToBorrow, block.timestamp);
     }
@@ -510,6 +521,8 @@ contract Pool is IPool, IERC20 {
 
         address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
         ILeveragedAssetPositionManager(leveragedAssetPositionManagerAddress).closePosition(positionIndex);
+
+        totalNumberOfPositions = totalNumberOfPositions.sub(1);
 
         emit ClosedLeveragedAssetPosition(address(this), positionIndex, block.timestamp);
     }
@@ -575,6 +588,9 @@ contract Pool is IPool, IERC20 {
         IERC20(stableCoinAddress).approve(stableCoinStakingRewardsAddress, collateral);
         ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).openPosition(tokenA, tokenB, collateral, amountToBorrow, farmAddress);
 
+        totalNumberOfPositions = totalNumberOfPositions.add(1);
+        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
+
         emit OpenedLeveragedLiquidityPosition(address(this), tokenA, tokenB, collateral, amountToBorrow, farmAddress, block.timestamp);
     }
 
@@ -602,6 +618,8 @@ contract Pool is IPool, IERC20 {
 
         address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
         ILeveragedLiquidityPositionManager(leveragedLiquidityPositionManagerAddress).closePosition(positionIndex);
+
+        totalNumberOfPositions = totalNumberOfPositions.sub(1);
 
         emit ClosedLeveragedLiquidityPosition(address(this), positionIndex, block.timestamp);
     }
@@ -656,6 +674,8 @@ contract Pool is IPool, IERC20 {
         address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
         _addPositionKey(UBE);
 
+        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
+
         emit RewardPaid(address(this), positionIndex, block.timestamp);
     }
 
@@ -667,6 +687,14 @@ contract Pool is IPool, IERC20 {
         require(farmAddress != address(0), "Invalid farm address");
 
         _farmAddress = farmAddress;
+    }
+
+    /**
+    * @dev Decrement's the totalNumberOfPositions
+    * @notice Called from liquidate() in LeveragedAssetPositionManager or LeveragedLiquidityPositionManager
+    */
+    function decrementTotalPositionCount() public override onlyLeveragedPositionManager {
+        totalNumberOfPositions = totalNumberOfPositions.sub(1);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -743,6 +771,7 @@ contract Pool is IPool, IERC20 {
             positionToIndex[currency] = numberOfPositions;
             _positionKeys[numberOfPositions] = currency;
             numberOfPositions = numberOfPositions.add(1);
+            totalNumberOfPositions = totalNumberOfPositions.add(1);
         }
     }
 
@@ -761,6 +790,7 @@ contract Pool is IPool, IERC20 {
             delete _positionKeys[numberOfPositions - 1];
             delete positionToIndex[currency];
             numberOfPositions = numberOfPositions.sub(1);
+            totalNumberOfPositions = totalNumberOfPositions.sub(1);
         }
     }
 
@@ -786,6 +816,14 @@ contract Pool is IPool, IERC20 {
 
     modifier onlyPoolManager() {
         require(msg.sender == _manager, "Pool: Only pool's manager can call this function");
+        _;
+    }
+
+    modifier onlyLeveragedPositionManager() {
+        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
+        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+
+        require(msg.sender == leveragedLiquidityPositionManagerAddress || msg.sender == leveragedAssetPositionManagerAddress, "Pool: Only a leverage position manager contract can call this function");
         _;
     }
 
