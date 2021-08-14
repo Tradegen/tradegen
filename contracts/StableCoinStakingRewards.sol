@@ -362,7 +362,7 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         IERC20(asset).transfer(baseUbeswapAdapterAddress, numberOfAssetTokens);
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
 
-        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance
+        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance (surplus if a withdrawal was made from insurance fund)
         //Swap cUSD for TGEN if insurance fund's TGEN reserves are low
         uint poolUSDAmount = cUSDReceived.mul(poolShare).div(userShare.add(poolShare));
         uint surplus = (IERC20(stableCoinAddress).balanceOf(address(this)) > totalVestedBalance) ? poolUSDAmount.sub(IERC20(stableCoinAddress).balanceOf(address(this))) : 0;
@@ -407,10 +407,10 @@ contract StableCoinStakingRewards is Ownable, IStableCoinStakingRewards, Reentra
         uint amountInUSD = (numberOfAssetTokens).mul(tokenToUSD).div(10 ** numberOfDecimals);
 
         //Swap asset for cUSD
-        IERC20(asset).transfer(baseUbeswapAdapterAddress, userShare.add(poolShare).add(liquidatorShare));
+        IERC20(asset).transfer(baseUbeswapAdapterAddress, numberOfAssetTokens);
         uint cUSDReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromStableCoinPool(asset, stableCoinAddress, numberOfAssetTokens, amountInUSD);
 
-        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance
+        //Transfer pool share to insurance fund if this contract's cUSD balance > totalVestedBalance (surplus if a withdrawal was made from insurance fund)
         //Swap cUSD for TGEN if insurance fund's TGEN reserves are low
         uint poolUSDAmount = cUSDReceived.mul(poolShare).div(userShare.add(poolShare).add(liquidatorShare));
         uint surplus = (IERC20(stableCoinAddress).balanceOf(address(this)) > totalVestedBalance) ? poolUSDAmount.sub(IERC20(stableCoinAddress).balanceOf(address(this))) : 0;
