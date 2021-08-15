@@ -23,16 +23,31 @@ contract AssetHandler is IAssetHandler, Ownable {
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @dev Given the address of an asset, returns the asset's price in USD
+    * @param asset Address of the asset
+    * @return uint Price of the asset in USD
+    */
     function getUSDPrice(address asset) public view override isValidAddress(asset) returns (uint) {
         require(assetTypes[asset] > 0, "AssetHandler: asset not supported");
         
         return IPriceAggregator(assetTypeToPriceAggregator[assetTypes[asset]]).getUSDPrice(asset);
     }
 
+    /**
+    * @dev Given the address of an asset, returns whether the asset is supported on Tradegen
+    * @param asset Address of the asset
+    * @return bool Whether the asset is supported
+    */
     function isValidAsset(address asset) public view override isValidAddress(asset) returns (bool) {
         return (assetTypes[asset] > 0);
     }
 
+    /**
+    * @dev Given an asset type, returns the address of each supported asset for the type
+    * @param assetType Type of asset
+    * @return address[] Address of each supported asset for the type
+    */
     function getAvailableAssetsForType(uint assetType) public view override returns (address[] memory) {
         require(assetType > 0, "AssetHandler: assetType must be greater than 0");
 
@@ -53,6 +68,15 @@ contract AssetHandler is IAssetHandler, Ownable {
     */
     function getStableCoinAddress() public view override returns(address) {
         return cUSDAddress;
+    }
+
+    /**
+    * @dev Given the address of an asset, returns the asset's type
+    * @param addressToCheck Address of the asset
+    * @return uint Type of the asset
+    */
+    function getAssetType(address addressToCheck) public view override isValidAddress(addressToCheck) returns (uint) {
+        return assetTypes[addressToCheck];
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

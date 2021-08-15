@@ -12,8 +12,8 @@ contract AddressResolver is IAddressResolver, Ownable {
     mapping (address => address) public _strategyAddresses;
     mapping (address => address) public _poolAddresses;
 
-    mapping (address => address) public contractVerifiers;
-    mapping (uint => address) public assetVerifiers;
+    mapping (address => address) public override contractVerifiers;
+    mapping (uint => address) public override assetVerifiers;
 
     mapping (string => address) public contractAddresses;
 

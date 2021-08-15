@@ -11,13 +11,23 @@ import "../../interfaces/IVerifier.sol";
 
 //Internal references
 import "../../interfaces/IAddressResolver.sol";
+import "../../interfaces/IAssetHandler.sol";
+import "../../interfaces/IERC20.sol";
 
 contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     using SafeMath for uint;
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function verify(address addressResolver, address to, bytes calldata data) public override returns (bool) {
+    /**
+    * @dev Parses the transaction data to make sure the transaction is valid
+    * @param addressResolver Address of AddressResolver contract
+    * @param pool Address of the pool
+    * @param to Recipient's address
+    * @param data Transaction call data
+    * @return uint Type of the asset
+    */
+    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool) {
         bytes4 method = getMethod(data);
 
         if (method == bytes4(keccak256("approve(address,uint256)")))
@@ -25,19 +35,21 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
             address spender = convert32toAddress(getInput(data, 0));
             uint amount = uint(getInput(data, 1));
 
-            IPoolManagerLogic poolManagerLogic = IPoolManagerLogic(_poolManagerLogic);
+            address verifier = IAddressResolver(addressResolver).contractVerifiers(spender);
+            if (verifier == address(0))
+            {
+                address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");
+                if (IAssetHandler(assetHandlerAddress).isValidAsset(spender))
+                {
+                    uint assetType = IAssetHandler(assetHandlerAddress).getAssetType(spender);
+                    verifier = IAddressResolver(addressResolver).assetVerifiers(assetType);
+                }
+            }
 
-            address factory = poolManagerLogic.factory();
-            address spenderGuard = IHasGuardInfo(factory).getGuard(spender);
-            require(spenderGuard != address(0) && spenderGuard != address(this), "unsupported spender approval"); // checks that the spender is an approved address
+            //Checks if the spender is an approved address
+            require(verifier != address(0) && verifier != address(this), "ERC20Verifier: unsupported spender approval"); 
 
-            emit Approve(
-                poolManagerLogic.poolLogic(),
-                IManaged(_poolManagerLogic).manager(),
-                spender,
-                amount,
-                block.timestamp
-            );
+            emit Approve(pool, spender, amount, block.timestamp);
 
             return true;
         }
@@ -47,19 +59,40 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @dev Creates transaction data for withdrawing tokens
+    * @param pool Address of the pool
+    * @param asset Address of the asset
+    * @param portion Portion of the pool's balance in the asset
+    * @param to Recipient's address
+    * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
+    */
     function prepareWithdrawal(address pool, address asset, uint portion, address to) public view override returns (address, uint, MultiTransaction[] memory transactions) {
-
+        uint totalAssetBalance = getBalance(pool, asset);
+        uint withdrawBalance = totalAssetBalance.mul(portion).div(10**18);
+        return (asset, withdrawBalance, transactions);
     }
 
-    function getBalance(address pool, address asset) public view override returns (uint balance) {
-
+    /**
+    * @dev Returns the pool's balance in the asset
+    * @param pool Address of the pool
+    * @param asset Address of the asset
+    * @return uint Pool's balance in the asset
+    */
+    function getBalance(address pool, address asset) public view override returns (uint) {
+        return IERC20(asset).balanceOf(pool);
     }
 
-    function getDecimals(address asset) public view override returns (uint decimals) {
-
+    /**
+    * @dev Returns the decimals of the asset
+    * @param asset Address of the asset
+    * @return uint Asset's number of decimals
+    */
+    function getDecimals(address asset) public view override returns (uint) {
+        return IERC20(asset).decimals();
     }
 
     /* ========== EVENTS ========== */
 
-    event Approve(address pool, address manager, address spender, uint amount, uint timestamp);
+    event Approve(address pool, address spender, uint amount, uint timestamp);
 }

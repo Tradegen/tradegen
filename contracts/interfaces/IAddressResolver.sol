@@ -53,4 +53,8 @@ interface IAddressResolver {
     * @param poolAddress The address of the user pool
     */
     function addPoolAddress(address poolAddress) external;
+
+    function contractVerifiers(address) external view returns (address);
+
+    function assetVerifiers(uint) external view returns (address);
 }
