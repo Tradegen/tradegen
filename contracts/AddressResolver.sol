@@ -8,8 +8,6 @@ import './Ownable.sol';
 
 contract AddressResolver is IAddressResolver, Ownable {
 
-    mapping (address => address) public _tradingBotAddresses;
-    mapping (address => address) public _strategyAddresses;
     mapping (address => address) public _poolAddresses;
 
     mapping (address => address) public override contractVerifiers;
@@ -30,24 +28,6 @@ contract AddressResolver is IAddressResolver, Ownable {
         require (contractAddresses[contractName] != address(0), "AddressResolver: contract not found");
         
         return contractAddresses[contractName];
-    }
-
-    /**
-    * @dev Given an address, returns whether the address belongs to a trading bot
-    * @param tradingBotAddress The address to validate
-    * @return bool Whether the given address is a valid trading bot address
-    */
-    function checkIfTradingBotAddressIsValid(address tradingBotAddress) public view override returns(bool) {
-        return (tradingBotAddress != address(0)) ? (_tradingBotAddresses[tradingBotAddress] == tradingBotAddress) : false;
-    }
-
-    /**
-    * @dev Given an address, returns whether the address belongs to a strategy
-    * @param strategyAddress The address to validate
-    * @return bool Whether the given address is a valid strategy address
-    */
-    function checkIfStrategyAddressIsValid(address strategyAddress) public view override returns(bool) {
-        return (strategyAddress != address(0)) ? (_strategyAddresses[strategyAddress] == strategyAddress) : false;
     }
 
     /**
@@ -74,26 +54,6 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Adds a new trading bot address; meant to be called by the Strategy contract that owns the trading bot
-    * @param tradingBotAddress The address of the trading bot
-    */
-    function addTradingBotAddress(address tradingBotAddress) external override onlyStrategy isValidAddress(tradingBotAddress) {
-        require(_tradingBotAddresses[tradingBotAddress] != tradingBotAddress, "Trading bot already exists");
-
-        _tradingBotAddresses[tradingBotAddress] = tradingBotAddress;
-    }
-
-    /**
-    * @dev Adds a new strategy address; meant to be called by the StrategyManager contract
-    * @param strategyAddress The address of the strategy
-    */
-    function addStrategyAddress(address strategyAddress) external override onlyStrategyManager isValidAddress(strategyAddress) {
-        require(_strategyAddresses[strategyAddress] != strategyAddress, "Strategy already exists");
-
-        _strategyAddresses[strategyAddress] = strategyAddress;
-    }
-
-    /**
     * @dev Adds a new user pool address; meant to be called by the PoolManager contract
     * @param poolAddress The address of the user pool
     */
@@ -110,21 +70,6 @@ contract AddressResolver is IAddressResolver, Ownable {
         _;
     }
 
-    modifier validAddressForTransfer(address addressToCheck) {
-        require(addressToCheck == contractAddresses["StakingRewards"] || addressToCheck == contractAddresses["StrategyProxy"] || addressToCheck == contractAddresses["StrategyApproval"] || addressToCheck == contractAddresses["Components"], "Address is not valid");
-        _;
-    }
-
-    modifier onlyStrategy() {
-        require(msg.sender == _strategyAddresses[msg.sender], "AddressResolver: Only the Strategy contract can call this function");
-        _;
-    }
-
-    modifier onlyStrategyManager() {
-        require(msg.sender == contractAddresses["StrategyManager"], "AddressResolver: Only the StrategyManager contract can call this function");
-        _;
-    }
-
     modifier onlyPoolFactory() {
         require(msg.sender == contractAddresses["PoolFactory"], "AddressResolver: Only the PoolFactory contract can call this function");
         _;
@@ -133,7 +78,5 @@ contract AddressResolver is IAddressResolver, Ownable {
     /* ========== EVENTS ========== */
 
     event UpdatedContractAddress(string contractName, address oldAddress, address newAddress, uint timestamp);
-    event AddedTradingBotAddress(address tradingBotAddress, uint timestamp);
-    event AddedStrategyAddress(address strategyAddress, uint timestamp);
     event AddedPoolAddress(address poolAddress, uint timestamp);
 }
