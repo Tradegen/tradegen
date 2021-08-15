@@ -31,55 +31,6 @@ interface IBaseUbeswapAdapter {
     function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);
 
     /**
-    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from a user pool
-    * @param assetToSwapFrom Origin asset
-    * @param assetToSwapTo Destination asset
-    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
-    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
-    * @return uint The number of tokens received
-    */
-    function swapFromPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
-
-    /**
-    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from a trading bot
-    * @param assetToSwapFrom Origin asset
-    * @param assetToSwapTo Destination asset
-    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
-    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
-    * @return uint The number of tokens received
-    */
-    function swapFromBot(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
-
-    /**
-    * @dev Swaps an exact `amountToSwap` of an asset to another; meant to be called from stable coin staking pool
-    * @param assetToSwapFrom Origin asset
-    * @param assetToSwapTo Destination asset
-    * @param amountToSwap Exact amount of `assetToSwapFrom` to be swapped
-    * @param minAmountOut the min amount of `assetToSwapTo` to be received from the swap
-    * @return uint The number of tokens received
-    */
-    function swapFromStableCoinPool(address assetToSwapFrom, address assetToSwapTo, uint amountToSwap, uint minAmountOut) external returns (uint);
-
-    /**
-    * @dev Adds liquidity for the two given tokens; meant to be called from a pool
-    * @param tokenA First token in pair
-    * @param tokenB Second token in pair
-    * @param amountA Amount of first token
-    * @param amountB Amount of second token
-    * @return uint The number of tokens LP tokens minted
-    */
-    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB) external returns (uint);
-
-    /**
-    * @dev Removes liquidity for the two given tokens; meant to be called from a pool
-    * @param tokenA First token in pair
-    * @param tokenB Second token in pair
-    * @param numberOfLPTokens Number of LP tokens for the given pair
-    * @return (uint, uint) Amount of tokenA and tokenB withdrawn
-    */
-    function removeLiquidity(address tokenA, address tokenB, uint numberOfLPTokens) external returns (uint, uint);
-
-    /**
     * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
     * @return address[] memory The farm address for each available farm
     */
