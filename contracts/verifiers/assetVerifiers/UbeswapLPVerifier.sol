@@ -53,7 +53,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
             uint stakedWithdrawBalance = stakedBalance.mul(portion).div(10**18);
             transactions = new MultiTransaction[](1);
             transactions[0].to = ubeswapFarms[asset];
-            transactions[0].txData = abi.encodeWithSelector(bytes4(keccak256("withdraw(uint256)")), withdrawAmount);
+            transactions[0].txData = abi.encodeWithSelector(bytes4(keccak256("withdraw(uint256)")), stakedWithdrawBalance);
         }
 
         return (asset, withdrawBalance, transactions);
@@ -92,7 +92,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
             ubeswapFarms[pair] = availableFarms[i];
         }
 
-        emit initializeFarms(availableFarms.length, block.timestamp);
+        emit InitializedFarms(availableFarms.length, block.timestamp);
     }
 
     /**
@@ -106,7 +106,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
         require(farmAddress != address(0), "UbeswapLPVerifier: invalid farm address");
         
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        require(pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress), "UbeswapLPVerifier: invalid farm for pair");
+        require(pair == IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress), "UbeswapLPVerifier: invalid farm for pair");
 
         ubeswapFarms[pair] = farmAddress;
 

@@ -8,7 +8,7 @@ import './interfaces/IERC20.sol';
 import './interfaces/IPool.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
-import './interfaces/IStakingRewards.sol';
+import './interfaces/Ubeswap/IStakingRewards.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';

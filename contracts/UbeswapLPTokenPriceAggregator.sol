@@ -13,8 +13,10 @@ import './interfaces/Ubeswap/IUniswapV2Pair.sol';
 
 //Libraries
 import "./libraries/TradegenMath.sol";
+import "./libraries/SafeMath.sol";
 
 contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
+    using SafeMath for uint;
 
     IAddressResolver public ADDRESS_RESOLVER;
 
@@ -29,11 +31,11 @@ contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
 
         address token0 = IUniswapV2Pair(pair).token0();
         address token1 = IUniswapV2Pair(pair).token1();
-        address totalSupply = IUniswapV2Pair(pair).totalSupply();
-        (uint reserve0, uint reserve1) = IUniswapV2Pair(pair).getReserves();
+        uint totalSupply = IUniswapV2Pair(pair).totalSupply();
+        (uint reserve0, uint reserve1, ) = IUniswapV2Pair(pair).getReserves();
 
-        reserve0 = reserve0.mul(10**18).div(10**IERC20(token0).decimals()); // decimal = 18
-        reserve1 = reserve1.mul(10**18).div(10**IERC20(token1).decimals()); // decimal = 18
+        reserve0 = uint(reserve0).mul(10**18).div(10**IERC20(token0).decimals()); // decimal = 18
+        reserve1 = uint(reserve1).mul(10**18).div(10**IERC20(token1).decimals()); // decimal = 18
 
         uint r = TradegenMath.sqrt(reserve0.mul(reserve1)); // decimal = 18
 
