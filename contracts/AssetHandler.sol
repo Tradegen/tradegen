@@ -7,8 +7,13 @@ import './Ownable.sol';
 //Interfaces
 import './interfaces/IPriceAggregator.sol';
 
-contract AssetHandler is IAssetHandler, Ownable {
+//Libraries
+import './libraries/SafeMath.sol';
 
+contract AssetHandler is IAssetHandler, Ownable {
+    using SafeMath for uint;
+
+    address public cUSDAddress;
     mapping (address => uint) public assetTypes;
     mapping (uint => address) public assetTypeToPriceAggregator;
     mapping (uint => uint) public numberOfAvailableAssetsForType;
@@ -18,20 +23,92 @@ contract AssetHandler is IAssetHandler, Ownable {
 
     /* ========== VIEWS ========== */
 
-    function getUSDPrice(address asset) public view override returns (uint) {
-        require(asset != address(0), "AssetHandler: invalid asset address");
+    function getUSDPrice(address asset) public view override isValidAddress(asset) returns (uint) {
         require(assetTypes[asset] > 0, "AssetHandler: asset not supported");
         
         return IPriceAggregator(assetTypeToPriceAggregator[assetTypes[asset]]).getUSDPrice(asset);
     }
 
-    function isValidAsset(address asset) public view override returns (bool) {
-        require(asset != address(0), "AssetHandler: invalid asset address");
-
+    function isValidAsset(address asset) public view override isValidAddress(asset) returns (bool) {
         return (assetTypes[asset] > 0);
+    }
+
+    function getAvailableAssetsForType(uint assetType) public view override returns (address[] memory) {
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
+
+        uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
+        address[] memory assets = new address[](numberOfAssets);
+
+        for(uint i = 0; i < numberOfAssets; i++)
+        {
+            assets[i] = availableAssetsForType[assetType][i];
+        }
+
+        return assets;
+    }
+
+    /**
+    * @dev Returns the address of the stable coin
+    * @return address The stable coin address
+    */
+    function getStableCoinAddress() public view override returns(address) {
+        return cUSDAddress;
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-    
+     /**
+    * @dev Sets the address of the stable coin
+    * @param stableCoinAddress The address of the stable coin
+    */
+    function setStableCoinAddress(address stableCoinAddress) external onlyOwner isValidAddress(stableCoinAddress) {
+        address oldAddress = cUSDAddress;
+        cUSDAddress = stableCoinAddress;
+
+        emit UpdatedStableCoinAddress(oldAddress, stableCoinAddress, block.timestamp);
+    }
+
+    /**
+    * @dev Adds a new tradable currency to the platform
+    * @param assetType Type of the asset
+    * @param currencyKey The address of the asset to add
+    */
+    function addCurrencyKey(uint assetType, address currencyKey) external onlyOwner isValidAddress(currencyKey) {
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
+        require(currencyKey != cUSDAddress, "AssetHandler: Cannot equal stable token address");
+        require(assetTypes[currencyKey] == 0, "AssetHandler: Asset already exists");
+
+        assetTypes[currencyKey] = assetType;
+        availableAssetsForType[assetType][numberOfAvailableAssetsForType[assetType]] = currencyKey;
+        numberOfAvailableAssetsForType[assetType] = numberOfAvailableAssetsForType[assetType].add(1);
+
+        emit AddedAsset(assetType, currencyKey, block.timestamp);
+    }
+
+    /**
+    * @dev Adds a new asset type
+    * @param assetType Type of the asset
+    * @param priceAggregator Address of the asset's price aggregator
+    */
+    function addAssetType(uint assetType, address priceAggregator) external onlyOwner isValidAddress(priceAggregator) {
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
+        require(assetTypeToPriceAggregator[assetType] == address(0), "AssetHandler: asset type already exists");
+
+        assetTypeToPriceAggregator[assetType] = priceAggregator;
+
+        emit AddedAssetType(assetType, priceAggregator, block.timestamp);
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier isValidAddress(address addressToCheck) {
+        require(addressToCheck != address(0), "AssetHandler: Address is not valid");
+        _;
+    }
+
+    /* ========== EVENTS ========== */
+
+    event AddedAsset(uint assetType, address currencyKey, uint timestamp);
+    event UpdatedStableCoinAddress(address oldAddress, address stableCurrencyAddress, uint timestamp);
+    event AddedAssetType(uint assetType, address priceAggregator, uint timestamp); 
 }
