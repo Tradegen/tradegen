@@ -18,6 +18,8 @@ interface IStakingRewards {
 
     function stakingToken() external view returns (address);
 
+    function rewardsToken() external view returns (address);
+
     function periodFinish() external view returns (uint256);
 
     function rewardRate() external view returns (uint256);

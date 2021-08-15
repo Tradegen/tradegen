@@ -23,7 +23,7 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @dev Parses the transaction data to make sure the transaction is valid
     * @param addressResolver Address of AddressResolver contract
     * @param pool Address of the pool
-    * @param to Recipient's address
+    * @param to External contract address
     * @param data Transaction call data
     * @return uint Type of the asset
     */

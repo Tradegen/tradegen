@@ -19,7 +19,7 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
     * @dev Parses the transaction data to make sure the transaction is valid
     * @param addressResolver Address of AddressResolver contract
     * @param pool Address of the pool
-    * @param to Recipient's address
+    * @param to External contract address
     * @param data Transaction call data
     * @return uint Type of the asset
     */
@@ -60,8 +60,8 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
 
             //Check if assets are supported
             address pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(srcAsset), "UbeswapRouterVerifier: unsupported source asset");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(dstAsset), "UbeswapRouterVerifier: unsupported destination asset");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: unsupported tokenA");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: unsupported tokenB");
             require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: unsupported LP token");
 
             //Check if recipient is a pool
@@ -83,14 +83,14 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
 
             //Check if assets are supported
             address pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(srcAsset), "UbeswapRouterVerifier: unsupported source asset");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(dstAsset), "UbeswapRouterVerifier: unsupported destination asset");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: unsupported tokenA");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: unsupported tokenB");
             require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: unsupported LP token");
 
             //Check if recipient is a pool
             require(pool == convert32toAddress(getInput(data, 5)), "UbeswapRouterVerifier: recipient is not pool");
 
-            emit RemovedLiquidity(pool, tokenA, tokenB, pair, numberOfLPTokens, amountAMin, amountBMin, timestamp);
+            emit RemovedLiquidity(pool, tokenA, tokenB, pair, numberOfLPTokens, amountAMin, amountBMin, block.timestamp);
 
             return true;
         }
