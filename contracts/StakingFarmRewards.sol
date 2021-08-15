@@ -13,8 +13,8 @@ import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 import "./interfaces/ISettings.sol";
 import './interfaces/IBaseUbeswapAdapter.sol';
-import "./interfaces/IStakingRewards.sol";
-import "./interfaces/IUniswapV2Pair.sol";
+import "./interfaces/Ubeswap/IStakingRewards.sol";
+import "./interfaces/Ubeswap/IUniswapV2Pair.sol";
 
 contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
     using SafeMath for uint;

@@ -10,7 +10,7 @@ import './interfaces/ISettings.sol';
 import './interfaces/ITradegenStakingEscrow.sol';
 
 //Inheritance
-import './interfaces/IStakingRewards.sol';
+import './interfaces/Ubeswap/IStakingRewards.sol';
 import "./openzeppelin-solidity/ReentrancyGuard.sol";
 import "./Ownable.sol";
 
@@ -21,8 +21,8 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    uint256 public periodFinish = 0;
-    uint256 public rewardRate = 0;
+    uint256 public override periodFinish = 0;
+    uint256 public override rewardRate = 0;
     uint256 public rewardsDuration = 7 days;
     uint256 public lastUpdateTime;
     uint256 public rewardPerTokenStored;
@@ -42,6 +42,10 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
     /* ========== VIEWS ========== */
 
     function stakingToken() external view override returns (address) {
+        return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+    }
+
+    function rewardsToken() external view override returns (address) {
         return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
     }
 
