@@ -382,7 +382,7 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
     function getReward(address farmAddress) public override nonReentrant updateReward(msg.sender, farmAddress) {
         require(farmAddress != address(0), "StakingFarmRewards: invalid farm address");
 
-        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
         uint reward = rewards[farmAddress][msg.sender];
 
         if (reward > 0)

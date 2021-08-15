@@ -23,7 +23,7 @@ contract TradegenStakingEscrow is Ownable, ITradegenStakingEscrow {
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
-        address tradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        address tradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
         
         require(amount > 0, "No staking rewards to claim");
         require(IERC20(tradegenAddress).balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");

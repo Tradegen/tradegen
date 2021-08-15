@@ -129,7 +129,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
      * @param quantity The quantity of TGEN that will vest.
      */
     function appendVestingEntry(address account, uint time, uint quantity) public onlyOwner {
-        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
 
         /* No empty or already-passed vesting entries allowed. */
         require(block.timestamp < time, "Time must be in the future");
@@ -229,7 +229,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
         if (total != 0)
         {
-            address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+            address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
             totalVestedBalance = totalVestedBalance.sub(total);
             totalVestedAccountBalance[msg.sender] = totalVestedAccountBalance[msg.sender].sub(total);
             IERC20(baseTradegenAddress).transfer(msg.sender, total);

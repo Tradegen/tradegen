@@ -86,7 +86,7 @@ contract DistributeFunds is Ownable {
     * @param name Name of recipient
     */
     function addRecipient(address account, uint quantity, string memory name) public onlyOwner {
-        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("BaseTradegen");
+        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
 
         require(baseTradegenAddress != address(0), "Invalid base tradegen address");
         require(account != address(0), "Invalid address");
