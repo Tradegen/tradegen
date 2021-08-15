@@ -1,13 +1,13 @@
 pragma solidity >=0.5.0;
 
 //Interfaces
-import './interfaces/IUniswapV2Router02.sol';
+import './interfaces/Ubeswap/IUniswapV2Router02.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
-import './interfaces/IUbeswapPoolManager.sol';
+import './interfaces/Ubeswap/IUbeswapPoolManager.sol';
 import './interfaces/IStakingRewards.sol';
-import './interfaces/IUniswapV2Factory.sol';
+import './interfaces/Ubeswap/IUniswapV2Factory.sol';
 
 //Inheritance
 import './interfaces/IBaseUbeswapAdapter.sol';

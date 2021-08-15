@@ -47,6 +47,7 @@ contract Settings is ISettings, Ownable {
     *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
     *         UBEKeeperReward - 0.1%;
     */
+    
     constructor() public Ownable() {}
 
     /* ========== VIEWS ========== */
