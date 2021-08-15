@@ -6,6 +6,8 @@ import './Ownable.sol';
 
 //Interfaces
 import './interfaces/IPriceAggregator.sol';
+import './interfaces/IAddressResolver.sol';
+import './interfaces/IAssetVerifier.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';
@@ -13,13 +15,17 @@ import './libraries/SafeMath.sol';
 contract AssetHandler is IAssetHandler, Ownable {
     using SafeMath for uint;
 
+    IAddressResolver public ADDRESS_RESOLVER;
+
     address public cUSDAddress;
     mapping (address => uint) public assetTypes;
     mapping (uint => address) public assetTypeToPriceAggregator;
     mapping (uint => uint) public numberOfAvailableAssetsForType;
     mapping (uint => mapping (uint => address)) public availableAssetsForType;
 
-    constructor() public Ownable() {}
+    constructor(IAddressResolver addressResolver) public Ownable() {
+        ADDRESS_RESOLVER = addressResolver;
+    }
 
     /* ========== VIEWS ========== */
 
@@ -77,6 +83,41 @@ contract AssetHandler is IAssetHandler, Ownable {
     */
     function getAssetType(address addressToCheck) public view override isValidAddress(addressToCheck) returns (uint) {
         return assetTypes[addressToCheck];
+    }
+
+    /**
+    * @dev Returns the pool's balance of the given asset
+    * @param pool Address of the pool
+    * @param asset Address of the asset
+    * @return uint Pool's balance of the asset
+    */
+    function getBalance(address pool, address asset) public view override isValidAddress(pool) isValidAddress(asset) returns (uint) {
+        address verifier = getVerifier(asset);
+
+        return IAssetVerifier(verifier).getBalance(pool, asset);
+    }
+
+    /**
+    * @dev Returns the asset's number of decimals
+    * @param asset Address of the asset
+    * @return uint Number of decimals
+    */
+    function getDecimals(address asset) public view override isValidAddress(asset) returns (uint) {
+        uint assetType = assetTypes[asset];
+        address verifier = ADDRESS_RESOLVER.assetVerifiers(assetType);
+
+        return IAssetVerifier(verifier).getDecimals(asset);
+    }
+
+    /**
+    * @dev Given the address of an asset, returns the address of the asset's verifier
+    * @param asset Address of the asset
+    * @return address Address of the asset's verifier
+    */
+    function getVerifier(address asset) public view override isValidAddress(asset) returns (address) {
+        uint assetType = assetTypes[asset];
+
+        return ADDRESS_RESOLVER.assetVerifiers(assetType);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

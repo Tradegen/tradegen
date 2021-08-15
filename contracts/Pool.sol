@@ -8,6 +8,9 @@ import './interfaces/IERC20.sol';
 import './interfaces/IPool.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
+import './interfaces/IAssetHandler.sol';
+import './interfaces/IAssetVerifier.sol';
+import './interfaces/IVerifier.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 
 //Libraries
@@ -17,23 +20,15 @@ contract Pool is IPool, IERC20 {
     using SafeMath for uint;
 
     IAddressResolver public ADDRESS_RESOLVER;
-
-    struct LiquidityPair {
-        address tokenA;
-        address tokenB;
-        address farmAddress;
-        uint numberOfLPTokens;
-    }
    
     string public _name;
     uint public _totalSupply;
     address public _manager;
     uint public _performanceFee; //expressed as %
     address public _farmAddress;
-    uint public _totalDeposits;
+    uint256 public _tokenPriceAtLastFeeMint;
 
     mapping (address => uint) public _balanceOf;
-    mapping (address => uint) public _deposits;
     mapping (address => mapping(address => uint)) public override allowance;
 
     //Asset positions
@@ -41,18 +36,13 @@ contract Pool is IPool, IERC20 {
     uint public numberOfPositions;
     mapping (address => uint) public positionToIndex; //maps to (index + 1), with index 0 representing position not found
 
-    //Liquidity positions
-    mapping (uint => LiquidityPair) public liquidityPositions;
-    uint public numberOfLiquidityPositions;
-    mapping (address => mapping(address => uint)) public liquidityPairToIndex; //maps to (index + 1), with index 0 representing position not found
-
-    uint public totalNumberOfPositions;
-
     constructor(string memory name, uint performanceFee, address manager, IAddressResolver addressResolver) public {
         _name = name;
         _manager = manager;
         _performanceFee = performanceFee;
         ADDRESS_RESOLVER = addressResolver;
+
+        _tokenPriceAtLastFeeMint = 10**18;
     }
 
     /* ========== VIEWS ========== */
@@ -90,34 +80,41 @@ contract Pool is IPool, IERC20 {
     }
 
     /**
+    * @dev Returns the USD value of the asset
+    * @param asset Address of the asset
+    * @param assetHandlerAddress Address of AssetHandler contract
+    */
+    function getAssetValue(address asset, address assetHandlerAddress) public view override returns (uint) {
+        require(asset != address(0), "Pool: invalid asset address");
+        require(assetHandlerAddress != address(0), "Pool: invalid asset handler address");
+
+        uint USDperToken = IAssetHandler(assetHandlerAddress).getUSDPrice(asset);
+        uint numberOfDecimals = IAssetHandler(assetHandlerAddress).getDecimals(asset);
+        uint balance = IAssetHandler(assetHandlerAddress).getBalance(address(this), asset);
+
+        return balance.mul(USDperToken).div(10 ** numberOfDecimals);
+    }
+
+    /**
     * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value
     * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions
     */
     function getPositionsAndTotal() public view override returns (address[] memory, uint[] memory, uint) {
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
-        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address[] memory addresses = new address[](numberOfPositions);
         uint[] memory balances = new uint[](numberOfPositions);
         uint sum;
 
-        //Calculate USD value of each asset position
+        //Calculate USD value of each asset
         for (uint i = 0; i < numberOfPositions; i++)
         {
-            balances[i] = IERC20(_positionKeys[i]).balanceOf(address(this));
+            balances[i] = IAssetHandler(assetHandlerAddress).getBalance(address(this), _positionKeys[i]);
             addresses[i] = _positionKeys[i];
 
-            uint numberOfDecimals = IERC20(_positionKeys[i]).decimals();
-            uint USDperToken = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(_positionKeys[i]);
+            uint numberOfDecimals = IAssetHandler(assetHandlerAddress).getDecimals(_positionKeys[i]);
+            uint USDperToken = IAssetHandler(assetHandlerAddress).getUSDPrice(_positionKeys[i]);
             uint positionBalanceInUSD = balances[i].mul(USDperToken).div(10 ** numberOfDecimals);
             sum = sum.add(positionBalanceInUSD);
-        }
-
-        //Calculate USD value of each liquidity position
-        for (uint i = 0; i < numberOfLiquidityPositions; i++)
-        {
-            LiquidityPair memory pair = liquidityPositions[i];
-            sum = sum.add(_calculateValueOfLPTokens(pair.tokenA, pair.tokenB, pair.numberOfLPTokens));
         }
 
         return (addresses, balances, sum);
@@ -128,8 +125,8 @@ contract Pool is IPool, IERC20 {
     * @return uint Amount of cUSD the pool has available
     */
     function getAvailableFunds() public view override returns (uint) {
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+        address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
 
         return IERC20(stableCoinAddress).balanceOf(address(this));
     }
@@ -138,10 +135,17 @@ contract Pool is IPool, IERC20 {
     * @dev Returns the value of the pool in USD
     * @return uint Value of the pool in USD
     */
-    function getPoolBalance() public view override returns (uint) {
-        (,, uint positionBalance) = getPositionsAndTotal();
+    function getPoolValue() public view override returns (uint) {
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+        uint sum = 0;
+
+        //Get USD value of each asset
+        for (uint i = 0; i < numberOfPositions; i++)
+        {
+            sum = sum.add(getAssetValue(_positionKeys[i], assetHandlerAddress));
+        }
         
-        return positionBalance;
+        return sum;
     }
 
     /**
@@ -151,15 +155,15 @@ contract Pool is IPool, IERC20 {
     function getUSDBalance(address user) public view override returns (uint) {
         require(user != address(0), "Invalid address");
 
-        uint poolBalance = getPoolBalance();
+        uint poolValue = getPoolValue();
 
-        return poolBalance.mul(_balanceOf[user]).div(_totalSupply);
+        return poolValue.mul(_balanceOf[user]).div(_totalSupply);
     }
 
     /**
-    * @dev Returns the number of LP tokens the user has
+    * @dev Returns the number of pool tokens the user has
     * @param user Address of the user
-    * @return uint Number of LP tokens the user has
+    * @return uint Number of pool tokens the user has
     */
     function balanceOf(address user) public view override(IPool, IERC20) returns (uint) {
         require(user != address(0), "Invalid user address");
@@ -183,6 +187,38 @@ contract Pool is IPool, IERC20 {
         return _performanceFee;
     }
 
+    /**
+    * @dev Returns the price of the pool's token
+    * @return USD price of the pool's token
+    */
+    function tokenPrice() public view override returns (uint) {
+        uint poolValue = getPoolValue();
+
+        return _tokenPrice(poolValue);
+    }
+
+    /**
+    * @dev Returns the pool manager's available fees
+    * @return Pool manager's available fees
+    */
+    function availableManagerFee() public view override returns (uint) {
+        uint poolValue = getPoolValue();
+
+        if (_totalSupply == 0 || poolValue == 0)
+        {
+            return 0;
+        }
+
+        uint currentTokenPrice = _tokenPrice(poolValue);
+
+        if (currentTokenPrice <= _tokenPriceAtLastFeeMint)
+        {
+            return 0;
+        }
+
+        return (currentTokenPrice.sub(_tokenPriceAtLastFeeMint)).mul(_totalSupply).mul(_performanceFee).div(10000).div(currentTokenPrice);
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function approve(address spender, uint value) public override returns (bool) {
@@ -203,7 +239,12 @@ contract Pool is IPool, IERC20 {
         return true;
     }
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
+    /**
+    * @dev Mints the pool manager's fee
+    */
+    function mintManagerFee() external onlyPoolManager {
+        _mintManagerFee();
+    }
 
     /**
     * @dev Deposits the given USD amount into the pool
@@ -213,15 +254,14 @@ contract Pool is IPool, IERC20 {
     function deposit(uint amount) public override {
         require(amount > 0, "Pool: Deposit must be greater than 0");
 
-        uint poolBalance = getPoolBalance();
+        uint poolBalance = getPoolValue();
         uint numberOfLPTokens = (_totalSupply > 0) ? _totalSupply.mul(amount).div(poolBalance) : amount;
-        _deposits[msg.sender] = _deposits[msg.sender].add(amount);
-        _totalDeposits = _totalDeposits.add(amount);
+
         _balanceOf[msg.sender] = _balanceOf[msg.sender].add(numberOfLPTokens);
         _totalSupply = _totalSupply.add(numberOfLPTokens);
 
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+        address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
 
         IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
 
@@ -232,50 +272,38 @@ contract Pool is IPool, IERC20 {
     }
 
     /**
-    * @dev Withdraws the given USD amount on behalf of the user
-    * @notice The withdrawal is done using pool's assets at time of withdrawal. This avoids the exchange fees and slippage from exchanging pool's assets back to cUSD or TGEN.
-    * @param amount Amount of USD to withdraw from the pool
+    * @dev Withdraws the given number of pool tokens from the user
+    * @param numberOfPoolTokens Number of pool tokens to withdraw
     */
-    function withdraw(uint amount) public override {
-        require(amount > 0, "Pool: Withdrawal must be greater than 0");
+    function withdraw(uint numberOfPoolTokens) public override {
+        require(numberOfPoolTokens > 0, "Pool: number of pool tokens must be greater than 0");
+        require(_balanceOf[msg.sender] >= numberOfPoolTokens, "Pool: Not enough pool tokens to withdraw");
 
-        uint poolBalance = getPoolBalance();
-        uint USDBalance = poolBalance.mul(_balanceOf[msg.sender]).div(_totalSupply);
+        //Mint manager fee
+        uint poolValue = _mintManagerFee();
+        uint portion = numberOfPoolTokens.mul(10**18).div(_totalSupply);
 
-        require(USDBalance >= amount, "Pool: Not enough funds to withdraw");
+        //Burn user's pool tokens
+        _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(numberOfPoolTokens);
+        _totalSupply = _totalSupply.sub(numberOfPoolTokens);
 
-        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
-        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
+        uint[] memory amountsWithdrawn = new uint[](numberOfPositions);
+        address[] memory assetsWithdrawn = new address[](numberOfPositions);
 
-        //Reduce liquidity positions
-        for (uint i = 0; i < numberOfLiquidityPositions; i++)
-        {
-            LiquidityPair memory liquidityPosition = liquidityPositions[i];
-
-            removeLiquidity(liquidityPosition.tokenA, liquidityPosition.tokenB, liquidityPosition.farmAddress, liquidityPosition.numberOfLPTokens.mul(amount).div(poolBalance));
-        }
-
-        uint profit = (USDBalance > _deposits[msg.sender]) ? USDBalance.sub(_deposits[msg.sender]) : 0;
-        uint fee = profit.mul(amount).div(USDBalance); //Multiply by ratio of withdrawal amount to user's USD balance
-        fee = fee.mul(_performanceFee).div(100);
-
-        //Update state variables
-        uint depositAmount = _deposits[msg.sender].mul(amount).div(USDBalance);
-        uint numberOfLPTokens = _balanceOf[msg.sender].mul(amount).div(USDBalance);
-        _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(numberOfLPTokens);
-        _totalSupply = _totalSupply.sub(numberOfLPTokens);
-        _deposits[msg.sender] = _deposits[msg.sender].sub(depositAmount);
-        _totalDeposits = _totalDeposits.sub(depositAmount);
+        uint assetCount = numberOfPositions;
 
         //Withdraw user's portion of pool's assets
-        for (uint i = 0; i < numberOfPositions; i++)
+        for (uint i = assetCount.sub(1); i >= 0; i--)
         {
-            uint positionBalance = IERC20(_positionKeys[i]).balanceOf(address(this)); //Number of asset's tokens
-            uint amountToTransferToUser = positionBalance.mul(amount.sub(fee)).div(poolBalance); //Multiply by ratio of withdrawal amount after fee to pool's USD balance
-            uint amountToTransferToManager = positionBalance.mul(fee).div(poolBalance);
+            uint portionOfAssetBalance = _withdrawProcessing(_positionKeys[i], msg.sender, portion);
 
-            IERC20(_positionKeys[i]).transfer(msg.sender, amountToTransferToUser);
-            IERC20(_positionKeys[i]).transfer(_manager, amountToTransferToManager);
+            if (portionOfAssetBalance > 0)
+            {
+                IERC20(_positionKeys[i]).transfer(msg.sender, portionOfAssetBalance);
+
+                amountsWithdrawn[i] = portionOfAssetBalance;
+                assetsWithdrawn[i] = _positionKeys[i];
+            }
 
             //Remove position keys if pool is liquidated
             if (_totalSupply == 0)
@@ -290,180 +318,59 @@ contract Pool is IPool, IERC20 {
             numberOfPositions = 0;
         }
 
-        emit Withdraw(address(this), msg.sender, amount, block.timestamp);
+        uint valueWithdrawn = poolValue.mul(portion).div(10**18);
+
+        emit Withdraw(address(this), msg.sender, numberOfPoolTokens, valueWithdrawn, assetsWithdrawn, amountsWithdrawn, block.timestamp);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
-    * @dev Places an order to buy/sell the given currency
-    * @param currencyKey Address of currency to trade
-    * @param buyOrSell Whether the user is buying or selling
-    * @param numberOfTokens Number of tokens of the given currency
+    * @dev Executes a transaction on behalf of the pool; lets pool talk to other protocols
+    * @param to Address of external contract
+    * @param data Bytes data for the transaction
     */
-    function placeOrder(address currencyKey, bool buyOrSell, uint numberOfTokens) public override onlyPoolManager {
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address stableCoinAddress = ISettings(settingsAddress).getStableCoinAddress();
+    function executeTransaction(address to, bytes memory data) public onlyPoolManager {
+        require(to != address(0), "Pool: invalid 'to' address");
 
-        require(numberOfTokens > 0, "Pool: Number of tokens must be greater than 0");
-        require(currencyKey != address(0), "Pool: Invalid currency key");
-        require(ISettings(settingsAddress).checkIfCurrencyIsAvailable(currencyKey), "Pool: Currency key is not available");
-
-        uint numberOfDecimals = IERC20(currencyKey).decimals();
-        uint tokenToUSD = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(currencyKey);
-        uint numberOfTokensReceived;
-        uint amountInUSD = numberOfTokens.mul(tokenToUSD).div(10 ** numberOfDecimals);
-
-        //buying
-        if (buyOrSell)
+        //First try to get contract verifier
+        address verifier = ADDRESS_RESOLVER.contractVerifiers(to);
+        //Try to get asset verifier if no contract verifier found
+        if (verifier == address(0))
         {
-            require(getAvailableFunds() >= amountInUSD, "Pool: Not enough funds");
+            address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+            verifier = IAssetHandler(assetHandlerAddress).getVerifier(to);
 
-            //Add to position keys if no position yet
-            _addPositionKey(currencyKey);
+            //'to' address is an asset; need to check if asset is valid
+            if (verifier != address(0))
+            {
+                require(IAssetHandler(assetHandlerAddress).isValidAsset(to), "Pool: invalid asset");
 
-            require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
-
-            IERC20(stableCoinAddress).transfer(baseUbeswapAdapterAddress, amountInUSD);
-            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(stableCoinAddress, currencyKey, amountInUSD, numberOfTokens);
-        }
-        //selling
-        else
-        {
-            uint positionIndex = positionToIndex[currencyKey];
-
-            require(positionIndex > 0, "Pool: Don't have a position in this currency");
-            require(IERC20(currencyKey).balanceOf(address(this)) >= numberOfTokens, "Pool: Not enough tokens in this currency");
-
-            IERC20(currencyKey).transfer(baseUbeswapAdapterAddress, numberOfTokens);
-            numberOfTokensReceived = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).swapFromPool(currencyKey, stableCoinAddress, numberOfTokens, amountInUSD);
-
-            //remove position key if no funds left in currency
-            _removePositionKey(currencyKey);
+                _addPositionKey(to);
+            }
         }
 
-        emit PlacedOrder(address(this), currencyKey, buyOrSell, numberOfTokens, block.timestamp);
+        require(verifier != address(0), "Pool: invalid verifier");
+        require(IVerifier(verifier).verify(address(ADDRESS_RESOLVER), address(this), to, data), "Pool: invalid transaction");
+
+        (bool success, ) = to.call(data);
+        require(success, "Pool: transaction failed to execute");
+
+        emit ExecutedTransaction(address(this), _manager, to, block.timestamp);
     }
 
     /**
-    * @dev Adds liquidity for the two given tokens
-    * @param tokenA First token in pair
-    * @param tokenB Second token in pair
-    * @param amountA Amount of first token
-    * @param amountB Amount of second token
-    * @param farmAddress The token pair's farm address
+    * @dev Removes the pool's empty positions from position keys
     */
-    function addLiquidity(address tokenA, address tokenB, uint amountA, uint amountB, address farmAddress) public override onlyPoolManager {
-        require(tokenA != address(0), "Pool: invalid address for tokenA");
-        require(tokenB != address(0), "Pool: invalid address for tokenB");
-        require(amountA > 0, "Pool: amountA must be greater than 0");
-        require(amountB > 0, "Pool: amountB must be greater than 0");
-        require(IERC20(tokenA).balanceOf(address(this)) >= amountA, "Pool: not enough tokens invested in tokenA");
-        require(IERC20(tokenB).balanceOf(address(this)) >= amountB, "Pool: not enough tokens invested in tokenB");
+    function removeEmptyPositions() external onlyPoolManager {
+        uint assetCount = numberOfPositions;
 
-        //Check if farm exists for the token pair
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address stakingTokenAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress);
-        address pairAddress = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-
-        require(stakingTokenAddress == pairAddress, "Pool: stakingTokenAddress does not match pairAddress");
-
-        //Add liquidity to Ubeswap pool and stake LP tokens into associated farm
-        uint numberOfLPTokens = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).addLiquidity(tokenA, tokenB, amountA, amountB);
-        IStakingRewards(stakingTokenAddress).stake(numberOfLPTokens);
-
-        //Update liquidity positions
-        (address token0, address token1) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
-        if (liquidityPairToIndex[token0][token1] == 0)
+        for (uint i = assetCount.sub(1); i >= 0; i--)
         {
-            liquidityPositions[numberOfLiquidityPositions] = LiquidityPair(token0, token1, farmAddress, numberOfLPTokens);
-            liquidityPairToIndex[token0][token1] = numberOfLiquidityPositions;
-            numberOfLiquidityPositions = numberOfLiquidityPositions.add(1);
-        }
-        else
-        {
-            uint index = liquidityPairToIndex[token0][token1];
-            liquidityPositions[index].numberOfLPTokens = liquidityPositions[index].numberOfLPTokens.add(numberOfLPTokens);
+            _removePositionKey(_positionKeys[i]);
         }
 
-        //Update position keys
-        _removePositionKey(tokenA);
-        _removePositionKey(tokenB);
-
-        emit AddedLiquidity(address(this), tokenA, tokenB, amountA, amountB, numberOfLPTokens, block.timestamp);
-    }
-
-    /**
-    * @dev Removes liquidity for the two given tokens
-    * @param tokenA First token in pair
-    * @param tokenB Second token in pair
-    * @param farmAddress The token pair's farm address
-    * @param numberOfLPTokens Number of LP tokens to remove from the farm
-    */
-    function removeLiquidity(address tokenA, address tokenB, address farmAddress, uint numberOfLPTokens) public override onlyPoolManager {
-        require(tokenA != address(0), "Pool: invalid address for tokenA");
-        require(tokenB != address(0), "Pool: invalid address for tokenB");
-
-        //Check if pool has enough LP tokens in the farm
-        (address token0, address token1) = (tokenA < tokenB) ? (tokenA, tokenB) : (tokenB, tokenA);
-        uint index = liquidityPairToIndex[token0][token1];
-        require(liquidityPositions[index].numberOfLPTokens >= numberOfLPTokens, "Pool: not enough LP tokens to unstake");
-
-        //Check if farmAddress is valid
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "Invalid farm address");
-
-        //Withdraw all LP tokens from the farm and claim available UBE rewards
-        //Need to restake remaining LP tokens later
-        IStakingRewards(farmAddress).exit();
-
-        //Check for UBE balance and update position keys if UBE not currently in postion keys
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
-        _addPositionKey(UBE);
-
-        //Remove liquidity from Ubeswap liquidity pool
-        (uint amountA, uint amountB) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).removeLiquidity(tokenA, tokenB, numberOfLPTokens);
-
-        //Update position keys
-        _addPositionKey(tokenA);
-        _addPositionKey(tokenB);
-
-        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
-
-        //Update liquidity positions
-        liquidityPositions[index].numberOfLPTokens = liquidityPositions[index].numberOfLPTokens.sub(numberOfLPTokens);
-
-        //Restake remaining LP tokens
-        IStakingRewards(farmAddress).stake(liquidityPositions[index].numberOfLPTokens);
-
-        emit RemovedLiquidity(address(this), tokenA, tokenB, numberOfLPTokens, amountA, amountB, block.timestamp);
-    }
-
-    /**
-    * @dev Collects available UBE rewards for the given Ubeswap farm
-    * @param farmAddress The token pair's farm address
-    */
-    function claimUbeswapRewards(address farmAddress) public override onlyPoolManager {
-        //Check if farmAddress is valid
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        require(IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress) != address(0), "Invalid farm address");
-
-        //Check if pool has tokens staked in farm
-        require(IStakingRewards(farmAddress).balanceOf(address(this)) > 0, "Pool: no tokens staked in farm");
-
-        //Claim available UBE rewards
-        IStakingRewards(farmAddress).getReward();
-
-        //Check for UBE balance and update position keys if UBE not currently in postion keys
-        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        address UBE = ISettings(settingsAddress).getCurrencyKeyFromSymbol("UBE");
-        _addPositionKey(UBE);
-
-        require(totalNumberOfPositions <= ISettings(settingsAddress).getParameterValue("MaximumNumberOfPositionsInPool"), "Pool: cannot exceed maximum number of positions");
-
-        emit ClaimedUbeswapRewards(address(this), farmAddress, block.timestamp);
+        emit RemovedEmptyPositions(address(this), _manager, block.timestamp);
     }
 
     /**
@@ -479,48 +386,18 @@ contract Pool is IPool, IERC20 {
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
-    * @dev Calculates the USD value of a token pair
-    * @param tokenA First token in the pair
-    * @param tokenB Second token in the pair
-    * @param numberOfLPTokens Number of LP tokens in the pair
-    */
-    function _calculateValueOfLPTokens(address tokenA, address tokenB, uint numberOfLPTokens) internal view returns (uint) {
-        require(tokenA != address(0), "Pool: invalid address for tokenA");
-        require(tokenB != address(0), "Pool: invalid address for tokenB");
-        
-        if (numberOfLPTokens == 0)
-        {
-            return 0;
-        }
-
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        (uint amountA, uint amountB) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getTokenAmountsFromPair(tokenA, tokenB, numberOfLPTokens);
-
-        uint numberOfDecimalsA = IERC20(tokenA).decimals();
-        uint USDperTokenA = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(tokenA);
-        uint USDBalanceA = amountA.mul(USDperTokenA).div(10 ** numberOfDecimalsA);
-
-        uint numberOfDecimalsB = IERC20(tokenB).decimals();
-        uint USDperTokenB = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(tokenB);
-        uint USDBalanceB = amountB.mul(USDperTokenB).div(10 ** numberOfDecimalsB);
-
-        return USDBalanceA.add(USDBalanceB);
-    }
-
-    /**
     * @dev Adds the given currency to position keys
     * @param currency Address of token to add
     */
     function _addPositionKey(address currency) internal {
         require(currency != address(0), "Pool: invalid asset address");
 
-        //Add token to positionKeys if balance > 0 and not currently in positionKeys
-        if (IERC20(currency).balanceOf(address(this)) > 0 && positionToIndex[currency] == 0)
+        //Add token to positionKeys if not currently in positionKeys
+        if (positionToIndex[currency] == 0)
         {
             positionToIndex[currency] = numberOfPositions;
             _positionKeys[numberOfPositions] = currency;
             numberOfPositions = numberOfPositions.add(1);
-            totalNumberOfPositions = totalNumberOfPositions.add(1);
         }
     }
 
@@ -531,15 +408,14 @@ contract Pool is IPool, IERC20 {
     function _removePositionKey(address currency) internal {
         require(currency != address(0), "Pool: invalid asset address");
 
-        //Remove currency from positionKeys if no balance left
-        if (IERC20(currency).balanceOf(address(this)) == 0)
+        //Remove currency from positionKeys if no balance left; account for dust
+        if (IERC20(currency).balanceOf(address(this)) < 10000)
         {
             _positionKeys[positionToIndex[currency]] = _positionKeys[numberOfPositions - 1];
             positionToIndex[_positionKeys[numberOfPositions - 1]] = positionToIndex[currency];
             delete _positionKeys[numberOfPositions - 1];
             delete positionToIndex[currency];
             numberOfPositions = numberOfPositions.sub(1);
-            totalNumberOfPositions = totalNumberOfPositions.sub(1);
         }
     }
 
@@ -552,6 +428,83 @@ contract Pool is IPool, IERC20 {
         _balanceOf[from] = _balanceOf[from].sub(value);
         _balanceOf[to] = _balanceOf[to].add(value);
         emit Transfer(from, to, value);
+    }
+
+    /**
+    * @dev Calculates the price of a pool token
+    * @param _poolValue Value of the pool in USD
+    * @return Price of a pool token
+    */
+    function _tokenPrice(uint _poolValue) internal view returns (uint) {
+        if (_totalSupply == 0 || _poolValue == 0)
+        {
+            return 0;
+        }
+
+        return _poolValue.mul(10**18).div(_totalSupply);
+    }
+
+    /**
+    * @dev Mints the pool manager's available fees
+    * @return Pool's USD value
+    */
+    function _mintManagerFee() internal returns(uint) {
+        uint poolValue = getPoolValue();
+
+        uint availableFee = availableManagerFee();
+
+        // Ignore dust when minting performance fees
+        if (availableFee < 10000)
+        {
+            return 0;
+        }
+
+        _balanceOf[_manager] = _balanceOf[_manager].add(availableFee);
+        _totalSupply = _totalSupply.add(availableFee);
+
+        _tokenPriceAtLastFeeMint = _tokenPrice(poolValue);
+
+        emit MintedManagerFee(address(this), _manager, availableFee, block.timestamp);
+
+        return poolValue;
+    }
+
+    /**
+    * @dev Performs additional processing when withdrawing an asset (such as checking for staked tokens)
+    * @param asset Address of asset to withdraw
+    * @param to Address of external contract
+    * @param portion User's portion of pool's asset balance
+    * @return Amount of tokens to withdraw
+    */
+    function _withdrawProcessing(address asset, address to, uint portion) internal returns (uint) {
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+        address verifier = IAssetHandler(assetHandlerAddress).getVerifier(asset);
+
+        (address withdrawAsset, uint withdrawBalance, IAssetVerifier.MultiTransaction[] memory transactions) = IAssetVerifier(verifier).prepareWithdrawal(address(this), asset, portion, to);
+
+        if (transactions.length > 0)
+        {
+            uint initialAssetBalance;
+            if (withdrawAsset != address(0))
+            {
+                initialAssetBalance = IERC20(withdrawAsset).balanceOf(address(this));
+            }
+
+            //Execute each transaction
+            for (uint i = 0; i < transactions.length; i++)
+            {
+                (bool success,) = to.call(transactions[i].txData);
+                require(success, "Pool: failed to withdraw tokens");
+            }
+
+            //Account for additional tokens added (withdrawing staked LP tokens)
+            if (withdrawAsset != address(0))
+            {
+                withdrawBalance = withdrawBalance.add(IERC20(withdrawAsset).balanceOf(address(this))).sub(initialAssetBalance);
+            }
+        }
+
+        return withdrawBalance;
     }
 
     /* ========== MODIFIERS ========== */
@@ -568,20 +521,11 @@ contract Pool is IPool, IERC20 {
         _;
     }
 
-    modifier onlyLeveragedPositionManager() {
-        address leveragedLiquidityPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedLiquidityPositionManager");
-        address leveragedAssetPositionManagerAddress = ADDRESS_RESOLVER.getContractAddress("LeveragedAssetPositionManager");
-
-        require(msg.sender == leveragedLiquidityPositionManagerAddress || msg.sender == leveragedAssetPositionManagerAddress, "Pool: Only a leverage position manager contract can call this function");
-        _;
-    }
-
     /* ========== EVENTS ========== */
 
     event Deposit(address indexed poolAddress, address indexed userAddress, uint amount, uint timestamp);
-    event Withdraw(address indexed poolAddress, address indexed userAddress, uint amount, uint timestamp);
-    event PlacedOrder(address indexed poolAddress, address indexed currencyKey, bool buyOrSell, uint amount, uint timestamp);
-    event AddedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint amountA, uint amountB, uint numberOfLPTokensReceived, uint timestamp);
-    event RemovedLiquidity(address indexed poolAddress, address tokenA, address tokenB, uint numberOfLPTokens, uint amountAReceived, uint amountBReceived, uint timestamp);
-    event ClaimedUbeswapRewards(address indexed poolAddress, address farmAddress, uint timestamp);
+    event Withdraw(address indexed poolAddress, address indexed userAddress, uint numberOfPoolTokens, uint valueWithdrawn, address[] assets, uint[] amountsWithdrawn, uint timestamp);
+    event MintedManagerFee(address indexed poolAddress, address indexed manager, uint amount, uint timestamp);
+    event ExecutedTransaction(address indexed poolAddress, address indexed manager, address to, uint timestamp);
+    event RemovedEmptyPositions(address indexed poolAddress, address indexed manager, uint timestamp);
 }

@@ -34,4 +34,26 @@ interface IAssetHandler {
     * @return uint Type of the asset
     */
     function getAssetType(address addressToCheck) external view returns (uint);
+
+    /**
+    * @dev Returns the pool's balance of the given asset
+    * @param pool Address of the pool
+    * @param asset Address of the asset
+    * @return uint Pool's balance of the asset
+    */
+    function getBalance(address pool, address asset) external view returns (uint);
+
+    /**
+    * @dev Returns the asset's number of decimals
+    * @param asset Address of the asset
+    * @return uint Number of decimals
+    */
+    function getDecimals(address asset) external view returns (uint);
+
+    /**
+    * @dev Given the address of an asset, returns the address of the asset's verifier
+    * @param asset Address of the asset
+    * @return address Address of the asset's verifier
+    */
+    function getVerifier(address asset) external view returns (address);
 }
