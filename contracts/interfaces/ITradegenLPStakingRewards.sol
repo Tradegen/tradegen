@@ -4,21 +4,21 @@ pragma solidity >=0.5.0;
 
 interface ITradegenLPStakingRewards {
 
-    function rewardPerToken() external view returns (uint256);
+    function rewardPerToken() external view returns (uint);
 
-    function earned(address account) external view returns (uint256);
+    function earned(address account) external view returns (uint);
 
-    function getRewardForDuration() external view returns (uint256);
+    function getRewardForDuration() external view returns (uint);
 
-    function totalSupply() external view returns (uint256);
+    function totalSupply() external view returns (uint);
 
-    function balanceOf(address account) external view returns (uint256);
+    function balanceOf(address account) external view returns (uint);
 
     function stakingToken() external view returns (address);
 
     function rewardsToken() external view returns (address);
 
-    function rewardRate() external view returns (uint256);
+    function rewardRate() external view returns (uint);
 
     function numVestingEntries(address account) external view returns (uint);
 
@@ -36,7 +36,7 @@ interface ITradegenLPStakingRewards {
 
     function getNextVestingQuantity(address account) external view returns (uint);
 
-    function stake(uint256 amount) external;
+    function stake(uint amount, uint numberOfWeeks) external;
 
     function vest() external;
 

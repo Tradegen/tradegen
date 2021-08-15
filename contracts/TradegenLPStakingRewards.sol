@@ -251,16 +251,19 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     /**
      * @notice Stakes the given TGEN-cUSD LP amount.
      */
-    function stake(uint amount) external override nonReentrant updateReward(msg.sender) {
+    function stake(uint amount, uint numberOfWeeks) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "TradegenLPStakingRewards: Staked amount must be greater than 0");
+        require(numberOfWeeks > 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: number of weeks must be between 1 and 52");
 
-        uint vestingTimestamp = block.timestamp.add(30 days);
-        appendVestingEntry(msg.sender, vestingTimestamp, amount);
+        //Up to 2x multiplier depending on number of weeks staked
+        uint vestingTimestamp = block.timestamp.add((1 weeks).mul(numberOfWeeks));
+        uint adjustedAmount = amount.mul(numberOfWeeks.add(1)).div(numberOfWeeks);
+        appendVestingEntry(msg.sender, vestingTimestamp, adjustedAmount);
 
-        totalVestedBalance = totalVestedBalance.add(amount);
-        IERC20(stakingToken()).transferFrom(msg.sender, address(this), amount);
+        totalVestedBalance = totalVestedBalance.add(adjustedAmount);
+        IERC20(stakingToken()).transferFrom(msg.sender, address(this), adjustedAmount);
 
-        emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
+        emit Staked(msg.sender, adjustedAmount, vestingTimestamp, block.timestamp);
     }
 
     /**
