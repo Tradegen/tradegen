@@ -17,7 +17,7 @@ import "../../interfaces/IERC20.sol";
 contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     using SafeMath for uint;
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
+    /* ========== VIEWS ========== */
 
     /**
     * @dev Parses the transaction data to make sure the transaction is valid
@@ -56,8 +56,6 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
 
         return false;
     }
-
-    /* ========== VIEWS ========== */
 
     /**
     * @dev Creates transaction data for withdrawing tokens
