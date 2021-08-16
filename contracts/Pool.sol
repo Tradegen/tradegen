@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
+pragma experimental ABIEncoderV2;
 
 //Adapters
 import './interfaces/IBaseUbeswapAdapter.sol';
@@ -38,8 +39,8 @@ contract Pool is IPool, IERC20 {
     uint public numberOfPositions;
     mapping (address => uint) public positionToIndex; //maps to (index + 1), with index 0 representing position not found
 
-    constructor(string memory name, uint performanceFee, address manager, IAddressResolver addressResolver) public {
-        _name = name;
+    constructor(string memory poolName, uint performanceFee, address manager, IAddressResolver addressResolver) {
+        _name = poolName;
         _manager = manager;
         _performanceFee = performanceFee;
         ADDRESS_RESOLVER = addressResolver;
@@ -57,11 +58,11 @@ contract Pool is IPool, IERC20 {
         return _name;
     }
 
-    function symbol() public view override returns (string memory) {
+    function symbol() public pure override returns (string memory) {
         return "";
     }
 
-    function decimals() public view override returns (uint8) {
+    function decimals() public pure override returns (uint8) {
         return 18;
     }
 

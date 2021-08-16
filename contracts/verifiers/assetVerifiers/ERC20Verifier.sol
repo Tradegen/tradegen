@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 pragma experimental ABIEncoderV2;
 
 //Libraries
@@ -25,11 +25,10 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @dev Parses the transaction data to make sure the transaction is valid
     * @param addressResolver Address of AddressResolver contract
     * @param pool Address of the pool
-    * @param to External contract address
     * @param data Transaction call data
     * @return uint Type of the asset
     */
-    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool) {
+    function verify(address addressResolver, address pool, address, bytes calldata data) public virtual override returns (bool) {
         bytes4 method = getMethod(data);
 
         if (method == bytes4(keccak256("approve(address,uint256)")))
@@ -64,10 +63,9 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param pool Address of the pool
     * @param asset Address of the asset
     * @param portion Portion of the pool's balance in the asset
-    * @param to Recipient's address
     * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
     */
-    function prepareWithdrawal(address pool, address asset, uint portion, address to) public view override returns (address, uint, MultiTransaction[] memory transactions) {
+    function prepareWithdrawal(address pool, address asset, uint portion, address) public view virtual override returns (address, uint, MultiTransaction[] memory transactions) {
         uint totalAssetBalance = getBalance(pool, asset);
         uint withdrawBalance = totalAssetBalance.mul(portion).div(10**18);
         return (asset, withdrawBalance, transactions);
@@ -79,7 +77,7 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param asset Address of the asset
     * @return uint Pool's balance in the asset
     */
-    function getBalance(address pool, address asset) public view override returns (uint) {
+    function getBalance(address pool, address asset) public view virtual override returns (uint) {
         return IERC20(asset).balanceOf(pool);
     }
 

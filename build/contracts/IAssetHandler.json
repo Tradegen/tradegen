@@ -1,0 +1,1838 @@
+{
+  "contractName": "IAssetHandler",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getUSDPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "isValidAsset",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "assetType",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAvailableAssetsForType",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getStableCoinAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "addressToCheck",
+          "type": "address"
+        }
+      ],
+      "name": "getAssetType",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pool",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getDecimals",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getVerifier",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addressToCheck\",\"type\":\"address\"}],\"name\":\"getAssetType\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"assetType\",\"type\":\"uint256\"}],\"name\":\"getAvailableAssetsForType\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getDecimals\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getStableCoinAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getUSDPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getVerifier\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"isValidAsset\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getAssetType(address)\":{\"details\":\"Given the address of an asset, returns the asset's type\",\"params\":{\"addressToCheck\":\"Address of the asset\"},\"returns\":{\"_0\":\"uint Type of the asset\"}},\"getAvailableAssetsForType(uint256)\":{\"details\":\"Given an asset type, returns the address of each supported asset for the type\",\"params\":{\"assetType\":\"Type of asset\"},\"returns\":{\"_0\":\"address[] Address of each supported asset for the type\"}},\"getBalance(address,address)\":{\"details\":\"Returns the pool's balance of the given asset\",\"params\":{\"asset\":\"Address of the asset\",\"pool\":\"Address of the pool\"},\"returns\":{\"_0\":\"uint Pool's balance of the asset\"}},\"getDecimals(address)\":{\"details\":\"Returns the asset's number of decimals\",\"params\":{\"asset\":\"Address of the asset\"},\"returns\":{\"_0\":\"uint Number of decimals\"}},\"getStableCoinAddress()\":{\"details\":\"Returns the address of the stable coin\",\"returns\":{\"_0\":\"address The stable coin address\"}},\"getUSDPrice(address)\":{\"details\":\"Given the address of an asset, returns the asset's price in USD\",\"params\":{\"asset\":\"Address of the asset\"},\"returns\":{\"_0\":\"uint Price of the asset in USD\"}},\"getVerifier(address)\":{\"details\":\"Given the address of an asset, returns the address of the asset's verifier\",\"params\":{\"asset\":\"Address of the asset\"},\"returns\":{\"_0\":\"address Address of the asset's verifier\"}},\"isValidAsset(address)\":{\"details\":\"Given the address of an asset, returns whether the asset is supported on Tradegen\",\"params\":{\"asset\":\"Address of the asset\"},\"returns\":{\"_0\":\"bool Whether the asset is supported\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAssetHandler.sol\":\"IAssetHandler\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAssetHandler.sol\":{\"keccak256\":\"0xeacd227cd27abd12c44fad2b8b571b0eac5334630e5ad5d4380e1fc528c87416\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://108f2693856f8fa899cdf1945b5b290d072458ecaac4c7d0c7c083cff8de7145\",\"dweb:/ipfs/QmVhiT3xEt2szFct6JtQBUL9JLU9VX1w8dixbWMt3H9iWA\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IAssetHandler {\r\n    /**\r\n    * @dev Given the address of an asset, returns the asset's price in USD\r\n    * @param asset Address of the asset\r\n    * @return uint Price of the asset in USD\r\n    */\r\n    function getUSDPrice(address asset) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given the address of an asset, returns whether the asset is supported on Tradegen\r\n    * @param asset Address of the asset\r\n    * @return bool Whether the asset is supported\r\n    */\r\n    function isValidAsset(address asset) external view returns (bool);\r\n\r\n    /**\r\n    * @dev Given an asset type, returns the address of each supported asset for the type\r\n    * @param assetType Type of asset\r\n    * @return address[] Address of each supported asset for the type\r\n    */\r\n    function getAvailableAssetsForType(uint assetType) external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Returns the address of the stable coin\r\n    * @return address The stable coin address\r\n    */\r\n    function getStableCoinAddress() external view returns(address);\r\n\r\n    /**\r\n    * @dev Given the address of an asset, returns the asset's type\r\n    * @param addressToCheck Address of the asset\r\n    * @return uint Type of the asset\r\n    */\r\n    function getAssetType(address addressToCheck) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the pool's balance of the given asset\r\n    * @param pool Address of the pool\r\n    * @param asset Address of the asset\r\n    * @return uint Pool's balance of the asset\r\n    */\r\n    function getBalance(address pool, address asset) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the asset's number of decimals\r\n    * @param asset Address of the asset\r\n    * @return uint Number of decimals\r\n    */\r\n    function getDecimals(address asset) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given the address of an asset, returns the address of the asset's verifier\r\n    * @param asset Address of the asset\r\n    * @return address Address of the asset's verifier\r\n    */\r\n    function getVerifier(address asset) external view returns (address);\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\IAssetHandler.sol",
+  "ast": {
+    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAssetHandler.sol",
+    "exportedSymbols": {
+      "IAssetHandler": [
+        8835
+      ]
+    },
+    "id": 8836,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 8769,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.7",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:18"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 8835,
+        "linearizedBaseContracts": [
+          8835
+        ],
+        "name": "IAssetHandler",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 8770,
+              "nodeType": "StructuredDocumentation",
+              "src": "94:174:18",
+              "text": " @dev Given the address of an asset, returns the asset's price in USD\n @param asset Address of the asset\n @return uint Price of the asset in USD"
+            },
+            "functionSelector": "8b2f0f4f",
+            "id": 8777,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUSDPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8773,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8772,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8777,
+                  "src": "295:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8771,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "295:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "294:15:18"
+            },
+            "returnParameters": {
+              "id": 8776,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8775,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8777,
+                  "src": "333:4:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8774,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "333:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "332:6:18"
+            },
+            "scope": 8835,
+            "src": "274:65:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8778,
+              "nodeType": "StructuredDocumentation",
+              "src": "347:197:18",
+              "text": " @dev Given the address of an asset, returns whether the asset is supported on Tradegen\n @param asset Address of the asset\n @return bool Whether the asset is supported"
+            },
+            "functionSelector": "cc435bf3",
+            "id": 8785,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidAsset",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8781,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8780,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8785,
+                  "src": "572:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8779,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "572:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "571:15:18"
+            },
+            "returnParameters": {
+              "id": 8784,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8783,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8785,
+                  "src": "610:4:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 8782,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "610:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "609:6:18"
+            },
+            "scope": 8835,
+            "src": "550:66:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8786,
+              "nodeType": "StructuredDocumentation",
+              "src": "624:209:18",
+              "text": " @dev Given an asset type, returns the address of each supported asset for the type\n @param assetType Type of asset\n @return address[] Address of each supported asset for the type"
+            },
+            "functionSelector": "fcb63ff4",
+            "id": 8794,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getAvailableAssetsForType",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8789,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8788,
+                  "mutability": "mutable",
+                  "name": "assetType",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8794,
+                  "src": "874:14:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8787,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "874:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "873:16:18"
+            },
+            "returnParameters": {
+              "id": 8793,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8792,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8794,
+                  "src": "913:16:18",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+                    "typeString": "address[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 8790,
+                      "name": "address",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "913:7:18",
+                      "stateMutability": "nonpayable",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_address",
+                        "typeString": "address"
+                      }
+                    },
+                    "id": 8791,
+                    "nodeType": "ArrayTypeName",
+                    "src": "913:9:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+                      "typeString": "address[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "912:18:18"
+            },
+            "scope": 8835,
+            "src": "839:92:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8795,
+              "nodeType": "StructuredDocumentation",
+              "src": "939:109:18",
+              "text": " @dev Returns the address of the stable coin\n @return address The stable coin address"
+            },
+            "functionSelector": "be781b1c",
+            "id": 8800,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getStableCoinAddress",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8796,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1083:2:18"
+            },
+            "returnParameters": {
+              "id": 8799,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8798,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8800,
+                  "src": "1108:7:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8797,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1108:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1107:9:18"
+            },
+            "scope": 8835,
+            "src": "1054:63:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8801,
+              "nodeType": "StructuredDocumentation",
+              "src": "1125:167:18",
+              "text": " @dev Given the address of an asset, returns the asset's type\n @param addressToCheck Address of the asset\n @return uint Type of the asset"
+            },
+            "functionSelector": "032c49ed",
+            "id": 8808,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getAssetType",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8804,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8803,
+                  "mutability": "mutable",
+                  "name": "addressToCheck",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8808,
+                  "src": "1320:22:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8802,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1320:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1319:24:18"
+            },
+            "returnParameters": {
+              "id": 8807,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8806,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8808,
+                  "src": "1367:4:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8805,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1367:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1366:6:18"
+            },
+            "scope": 8835,
+            "src": "1298:75:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8809,
+              "nodeType": "StructuredDocumentation",
+              "src": "1381:197:18",
+              "text": " @dev Returns the pool's balance of the given asset\n @param pool Address of the pool\n @param asset Address of the asset\n @return uint Pool's balance of the asset"
+            },
+            "functionSelector": "d4fac45d",
+            "id": 8818,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getBalance",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8814,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8811,
+                  "mutability": "mutable",
+                  "name": "pool",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8818,
+                  "src": "1604:12:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8810,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1604:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 8813,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8818,
+                  "src": "1618:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8812,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1618:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1603:29:18"
+            },
+            "returnParameters": {
+              "id": 8817,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8816,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8818,
+                  "src": "1656:4:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8815,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1656:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1655:6:18"
+            },
+            "scope": 8835,
+            "src": "1584:78:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8819,
+              "nodeType": "StructuredDocumentation",
+              "src": "1670:142:18",
+              "text": " @dev Returns the asset's number of decimals\n @param asset Address of the asset\n @return uint Number of decimals"
+            },
+            "functionSelector": "cf54aaa0",
+            "id": 8826,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getDecimals",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8822,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8821,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8826,
+                  "src": "1839:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8820,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1839:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1838:15:18"
+            },
+            "returnParameters": {
+              "id": 8825,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8824,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8826,
+                  "src": "1877:4:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 8823,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1877:4:18",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1876:6:18"
+            },
+            "scope": 8835,
+            "src": "1818:65:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "documentation": {
+              "id": 8827,
+              "nodeType": "StructuredDocumentation",
+              "src": "1891:194:18",
+              "text": " @dev Given the address of an asset, returns the address of the asset's verifier\n @param asset Address of the asset\n @return address Address of the asset's verifier"
+            },
+            "functionSelector": "059ce95d",
+            "id": 8834,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getVerifier",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8830,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8829,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8834,
+                  "src": "2112:13:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8828,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2112:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2111:15:18"
+            },
+            "returnParameters": {
+              "id": 8833,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8832,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8834,
+                  "src": "2150:7:18",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 8831,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2150:7:18",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2149:9:18"
+            },
+            "scope": 8835,
+            "src": "2091:68:18",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 8836,
+        "src": "63:2099:18"
+      }
+    ],
+    "src": "35:2127:18"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAssetHandler.sol",
+      "exportedSymbols": {
+        "IAssetHandler": [
+          8835
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            ">=",
+            "0.7",
+            ".6"
+          ]
+        },
+        "id": 8769,
+        "name": "PragmaDirective",
+        "src": "35:24:18"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            8835
+          ],
+          "name": "IAssetHandler",
+          "scope": 8836
+        },
+        "children": [
+          {
+            "attributes": {
+              "functionSelector": "8b2f0f4f",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getUSDPrice",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the address of an asset, returns the asset's price in USD\n @param asset Address of the asset\n @return uint Price of the asset in USD"
+                },
+                "id": 8770,
+                "name": "StructuredDocumentation",
+                "src": "94:174:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 8777,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8771,
+                        "name": "ElementaryTypeName",
+                        "src": "295:7:18"
+                      }
+                    ],
+                    "id": 8772,
+                    "name": "VariableDeclaration",
+                    "src": "295:13:18"
+                  }
+                ],
+                "id": 8773,
+                "name": "ParameterList",
+                "src": "294:15:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8777,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 8774,
+                        "name": "ElementaryTypeName",
+                        "src": "333:4:18"
+                      }
+                    ],
+                    "id": 8775,
+                    "name": "VariableDeclaration",
+                    "src": "333:4:18"
+                  }
+                ],
+                "id": 8776,
+                "name": "ParameterList",
+                "src": "332:6:18"
+              }
+            ],
+            "id": 8777,
+            "name": "FunctionDefinition",
+            "src": "274:65:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "cc435bf3",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "isValidAsset",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the address of an asset, returns whether the asset is supported on Tradegen\n @param asset Address of the asset\n @return bool Whether the asset is supported"
+                },
+                "id": 8778,
+                "name": "StructuredDocumentation",
+                "src": "347:197:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 8785,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8779,
+                        "name": "ElementaryTypeName",
+                        "src": "572:7:18"
+                      }
+                    ],
+                    "id": 8780,
+                    "name": "VariableDeclaration",
+                    "src": "572:13:18"
+                  }
+                ],
+                "id": 8781,
+                "name": "ParameterList",
+                "src": "571:15:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8785,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 8782,
+                        "name": "ElementaryTypeName",
+                        "src": "610:4:18"
+                      }
+                    ],
+                    "id": 8783,
+                    "name": "VariableDeclaration",
+                    "src": "610:4:18"
+                  }
+                ],
+                "id": 8784,
+                "name": "ParameterList",
+                "src": "609:6:18"
+              }
+            ],
+            "id": 8785,
+            "name": "FunctionDefinition",
+            "src": "550:66:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "fcb63ff4",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getAvailableAssetsForType",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given an asset type, returns the address of each supported asset for the type\n @param assetType Type of asset\n @return address[] Address of each supported asset for the type"
+                },
+                "id": 8786,
+                "name": "StructuredDocumentation",
+                "src": "624:209:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "assetType",
+                      "scope": 8794,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 8787,
+                        "name": "ElementaryTypeName",
+                        "src": "874:4:18"
+                      }
+                    ],
+                    "id": 8788,
+                    "name": "VariableDeclaration",
+                    "src": "874:14:18"
+                  }
+                ],
+                "id": 8789,
+                "name": "ParameterList",
+                "src": "873:16:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8794,
+                      "stateVariable": false,
+                      "storageLocation": "memory",
+                      "type": "address[]",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "type": "address[]"
+                        },
+                        "children": [
+                          {
+                            "attributes": {
+                              "name": "address",
+                              "stateMutability": "nonpayable",
+                              "type": "address"
+                            },
+                            "id": 8790,
+                            "name": "ElementaryTypeName",
+                            "src": "913:7:18"
+                          }
+                        ],
+                        "id": 8791,
+                        "name": "ArrayTypeName",
+                        "src": "913:9:18"
+                      }
+                    ],
+                    "id": 8792,
+                    "name": "VariableDeclaration",
+                    "src": "913:16:18"
+                  }
+                ],
+                "id": 8793,
+                "name": "ParameterList",
+                "src": "912:18:18"
+              }
+            ],
+            "id": 8794,
+            "name": "FunctionDefinition",
+            "src": "839:92:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "be781b1c",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getStableCoinAddress",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Returns the address of the stable coin\n @return address The stable coin address"
+                },
+                "id": 8795,
+                "name": "StructuredDocumentation",
+                "src": "939:109:18"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 8796,
+                "name": "ParameterList",
+                "src": "1083:2:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8800,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8797,
+                        "name": "ElementaryTypeName",
+                        "src": "1108:7:18"
+                      }
+                    ],
+                    "id": 8798,
+                    "name": "VariableDeclaration",
+                    "src": "1108:7:18"
+                  }
+                ],
+                "id": 8799,
+                "name": "ParameterList",
+                "src": "1107:9:18"
+              }
+            ],
+            "id": 8800,
+            "name": "FunctionDefinition",
+            "src": "1054:63:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "032c49ed",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getAssetType",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the address of an asset, returns the asset's type\n @param addressToCheck Address of the asset\n @return uint Type of the asset"
+                },
+                "id": 8801,
+                "name": "StructuredDocumentation",
+                "src": "1125:167:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "addressToCheck",
+                      "scope": 8808,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8802,
+                        "name": "ElementaryTypeName",
+                        "src": "1320:7:18"
+                      }
+                    ],
+                    "id": 8803,
+                    "name": "VariableDeclaration",
+                    "src": "1320:22:18"
+                  }
+                ],
+                "id": 8804,
+                "name": "ParameterList",
+                "src": "1319:24:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8808,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 8805,
+                        "name": "ElementaryTypeName",
+                        "src": "1367:4:18"
+                      }
+                    ],
+                    "id": 8806,
+                    "name": "VariableDeclaration",
+                    "src": "1367:4:18"
+                  }
+                ],
+                "id": 8807,
+                "name": "ParameterList",
+                "src": "1366:6:18"
+              }
+            ],
+            "id": 8808,
+            "name": "FunctionDefinition",
+            "src": "1298:75:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "d4fac45d",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getBalance",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Returns the pool's balance of the given asset\n @param pool Address of the pool\n @param asset Address of the asset\n @return uint Pool's balance of the asset"
+                },
+                "id": 8809,
+                "name": "StructuredDocumentation",
+                "src": "1381:197:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "pool",
+                      "scope": 8818,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8810,
+                        "name": "ElementaryTypeName",
+                        "src": "1604:7:18"
+                      }
+                    ],
+                    "id": 8811,
+                    "name": "VariableDeclaration",
+                    "src": "1604:12:18"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 8818,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8812,
+                        "name": "ElementaryTypeName",
+                        "src": "1618:7:18"
+                      }
+                    ],
+                    "id": 8813,
+                    "name": "VariableDeclaration",
+                    "src": "1618:13:18"
+                  }
+                ],
+                "id": 8814,
+                "name": "ParameterList",
+                "src": "1603:29:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8818,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 8815,
+                        "name": "ElementaryTypeName",
+                        "src": "1656:4:18"
+                      }
+                    ],
+                    "id": 8816,
+                    "name": "VariableDeclaration",
+                    "src": "1656:4:18"
+                  }
+                ],
+                "id": 8817,
+                "name": "ParameterList",
+                "src": "1655:6:18"
+              }
+            ],
+            "id": 8818,
+            "name": "FunctionDefinition",
+            "src": "1584:78:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "cf54aaa0",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getDecimals",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Returns the asset's number of decimals\n @param asset Address of the asset\n @return uint Number of decimals"
+                },
+                "id": 8819,
+                "name": "StructuredDocumentation",
+                "src": "1670:142:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 8826,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8820,
+                        "name": "ElementaryTypeName",
+                        "src": "1839:7:18"
+                      }
+                    ],
+                    "id": 8821,
+                    "name": "VariableDeclaration",
+                    "src": "1839:13:18"
+                  }
+                ],
+                "id": 8822,
+                "name": "ParameterList",
+                "src": "1838:15:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8826,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 8823,
+                        "name": "ElementaryTypeName",
+                        "src": "1877:4:18"
+                      }
+                    ],
+                    "id": 8824,
+                    "name": "VariableDeclaration",
+                    "src": "1877:4:18"
+                  }
+                ],
+                "id": 8825,
+                "name": "ParameterList",
+                "src": "1876:6:18"
+              }
+            ],
+            "id": 8826,
+            "name": "FunctionDefinition",
+            "src": "1818:65:18"
+          },
+          {
+            "attributes": {
+              "functionSelector": "059ce95d",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getVerifier",
+              "scope": 8835,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the address of an asset, returns the address of the asset's verifier\n @param asset Address of the asset\n @return address Address of the asset's verifier"
+                },
+                "id": 8827,
+                "name": "StructuredDocumentation",
+                "src": "1891:194:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 8834,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8828,
+                        "name": "ElementaryTypeName",
+                        "src": "2112:7:18"
+                      }
+                    ],
+                    "id": 8829,
+                    "name": "VariableDeclaration",
+                    "src": "2112:13:18"
+                  }
+                ],
+                "id": 8830,
+                "name": "ParameterList",
+                "src": "2111:15:18"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 8834,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 8831,
+                        "name": "ElementaryTypeName",
+                        "src": "2150:7:18"
+                      }
+                    ],
+                    "id": 8832,
+                    "name": "VariableDeclaration",
+                    "src": "2150:7:18"
+                  }
+                ],
+                "id": 8833,
+                "name": "ParameterList",
+                "src": "2149:9:18"
+              }
+            ],
+            "id": 8834,
+            "name": "FunctionDefinition",
+            "src": "2091:68:18"
+          }
+        ],
+        "id": 8835,
+        "name": "ContractDefinition",
+        "src": "63:2099:18"
+      }
+    ],
+    "id": 8836,
+    "name": "SourceUnit",
+    "src": "35:2127:18"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.1",
+  "updatedAt": "2021-08-16T00:30:22.049Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getAssetType(address)": {
+        "details": "Given the address of an asset, returns the asset's type",
+        "params": {
+          "addressToCheck": "Address of the asset"
+        },
+        "returns": {
+          "_0": "uint Type of the asset"
+        }
+      },
+      "getAvailableAssetsForType(uint256)": {
+        "details": "Given an asset type, returns the address of each supported asset for the type",
+        "params": {
+          "assetType": "Type of asset"
+        },
+        "returns": {
+          "_0": "address[] Address of each supported asset for the type"
+        }
+      },
+      "getBalance(address,address)": {
+        "details": "Returns the pool's balance of the given asset",
+        "params": {
+          "asset": "Address of the asset",
+          "pool": "Address of the pool"
+        },
+        "returns": {
+          "_0": "uint Pool's balance of the asset"
+        }
+      },
+      "getDecimals(address)": {
+        "details": "Returns the asset's number of decimals",
+        "params": {
+          "asset": "Address of the asset"
+        },
+        "returns": {
+          "_0": "uint Number of decimals"
+        }
+      },
+      "getStableCoinAddress()": {
+        "details": "Returns the address of the stable coin",
+        "returns": {
+          "_0": "address The stable coin address"
+        }
+      },
+      "getUSDPrice(address)": {
+        "details": "Given the address of an asset, returns the asset's price in USD",
+        "params": {
+          "asset": "Address of the asset"
+        },
+        "returns": {
+          "_0": "uint Price of the asset in USD"
+        }
+      },
+      "getVerifier(address)": {
+        "details": "Given the address of an asset, returns the address of the asset's verifier",
+        "params": {
+          "asset": "Address of the asset"
+        },
+        "returns": {
+          "_0": "address Address of the asset's verifier"
+        }
+      },
+      "isValidAsset(address)": {
+        "details": "Given the address of an asset, returns whether the asset is supported on Tradegen",
+        "params": {
+          "asset": "Address of the asset"
+        },
+        "returns": {
+          "_0": "bool Whether the asset is supported"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

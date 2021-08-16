@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 // Inheritance
 import "./Ownable.sol";
@@ -30,7 +30,7 @@ contract DistributeFunds is Ownable {
     mapping (string => uint) public nameToIndex; //Maps to (index + 1); index 0 represents recipient not found
     mapping (address => uint) public addressToIndex; //Maps to (index + 1); index 0 represents recipient not found
 
-    constructor(IAddressResolver _addressResolver) public Ownable() {
+    constructor(IAddressResolver _addressResolver) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
     }
 

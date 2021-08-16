@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Inheritance
 import './interfaces/IPriceAggregator.sol';
@@ -22,7 +22,7 @@ contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
 
     IAddressResolver public ADDRESS_RESOLVER;
 
-    constructor(IAddressResolver addressResolver) public {
+    constructor(IAddressResolver addressResolver) {
         ADDRESS_RESOLVER = addressResolver;
     }
 
@@ -36,8 +36,8 @@ contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
         uint totalSupply = IUniswapV2Pair(pair).totalSupply();
         (uint reserve0, uint reserve1, ) = IUniswapV2Pair(pair).getReserves();
 
-        reserve0 = uint(reserve0).mul(10**18).div(10**IERC20(token0).decimals()); // decimal = 18
-        reserve1 = uint(reserve1).mul(10**18).div(10**IERC20(token1).decimals()); // decimal = 18
+        reserve0 = uint(reserve0).mul(10**18).div(10**uint(IERC20(token0).decimals())); // decimal = 18
+        reserve1 = uint(reserve1).mul(10**18).div(10**uint(IERC20(token1).decimals())); // decimal = 18
 
         uint r = TradegenMath.sqrt(reserve0.mul(reserve1)); // decimal = 18
 

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Inheritance
 import './interfaces/IPriceAggregator.sol';
@@ -13,7 +13,7 @@ contract ERC20PriceAggregator is IPriceAggregator {
 
     IAddressResolver public ADDRESS_RESOLVER;
 
-    constructor(IAddressResolver addressResolver) public {
+    constructor(IAddressResolver addressResolver) {
         ADDRESS_RESOLVER = addressResolver;
     }
 

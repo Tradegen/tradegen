@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Interfaces
 import './interfaces/Ubeswap/IUniswapV2Router02.sol';
@@ -27,7 +27,7 @@ contract TestUbeswapAdapter is IBaseUbeswapAdapter {
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    constructor(IAddressResolver addressResolver) public {
+    constructor(IAddressResolver addressResolver) {
         ADDRESS_RESOLVER = addressResolver;
     }
 

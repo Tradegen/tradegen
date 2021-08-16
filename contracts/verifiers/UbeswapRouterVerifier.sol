@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Libraries
 import "../libraries/TxDataUtils.sol";
@@ -21,11 +21,10 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
     * @dev Parses the transaction data to make sure the transaction is valid
     * @param addressResolver Address of AddressResolver contract
     * @param pool Address of the pool
-    * @param to External contract address
     * @param data Transaction call data
     * @return uint Type of the asset
     */
-    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool) {
+    function verify(address addressResolver, address pool, address, bytes calldata data) public override returns (bool) {
         bytes4 method = getMethod(data);
 
         address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");

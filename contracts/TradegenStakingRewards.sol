@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Libraries
 import './libraries/SafeMath.sol';
@@ -37,7 +37,7 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) public Ownable() {
+    constructor(IAddressResolver _addressResolver) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
     }
 

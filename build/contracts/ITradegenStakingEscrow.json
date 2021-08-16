@@ -20,74 +20,71 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.6.12+commit.27d51765\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"claimStakingRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ITradegenStakingEscrow.sol\":\"ITradegenStakingEscrow\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ITradegenStakingEscrow.sol\":{\"keccak256\":\"0x40fe9bdf5d18d4c7eb7bd355316d529a468d08d768061ad0f771039739eaa7ad\",\"urls\":[\"bzz-raw://700ad7b0a66994b1ab98817f87cccff05d4ab483634ca816752a1f250db87dae\",\"dweb:/ipfs/QmXAeyFSTivqhNJfu4As9HprZtPReHDevwAgvEgbkJY1wh\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"claimStakingRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ITradegenStakingEscrow.sol\":\"ITradegenStakingEscrow\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ITradegenStakingEscrow.sol\":{\"keccak256\":\"0x68f9b3c6fd65d893bd5b0ad189ba8fff865b0e86ab0bc461d8ad63b70ecc53bd\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f7606cb7d6d9f50dbfd95bbee2bbc6e6aab4fa8e2bec168f7d8996887c3c5c51\",\"dweb:/ipfs/QmTbpUsuLcifqWfbysNsyogR6iHoMU3xyiMfyattmT2eV9\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity >=0.5.0;\r\n\r\ninterface ITradegenStakingEscrow {\r\n\r\n    function claimStakingRewards(address user, uint amount) external;\r\n}",
-  "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ITradegenStakingEscrow.sol",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface ITradegenStakingEscrow {\r\n\r\n    function claimStakingRewards(address user, uint amount) external;\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\ITradegenStakingEscrow.sol",
   "ast": {
-    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ITradegenStakingEscrow.sol",
+    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ITradegenStakingEscrow.sol",
     "exportedSymbols": {
       "ITradegenStakingEscrow": [
-        367
+        9592
       ]
     },
-    "id": 368,
-    "license": null,
+    "id": 9593,
+    "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 359,
+        "id": 9584,
         "literals": [
           "solidity",
           ">=",
-          "0.5",
-          ".0"
+          "0.7",
+          ".6"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:4"
+        "src": "35:24:28"
       },
       {
         "abstract": false,
         "baseContracts": [],
         "contractDependencies": [],
         "contractKind": "interface",
-        "documentation": null,
         "fullyImplemented": false,
-        "id": 367,
+        "id": 9592,
         "linearizedBaseContracts": [
-          367
+          9592
         ],
         "name": "ITradegenStakingEscrow",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
-            "body": null,
-            "documentation": null,
             "functionSelector": "7523a5ab",
-            "id": 366,
+            "id": 9591,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "claimStakingRewards",
             "nodeType": "FunctionDefinition",
-            "overrides": null,
             "parameters": {
-              "id": 364,
+              "id": 9589,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 361,
+                  "id": 9586,
                   "mutability": "mutable",
                   "name": "user",
                   "nodeType": "VariableDeclaration",
-                  "overrides": null,
-                  "scope": 366,
-                  "src": "99:12:4",
+                  "scope": 9591,
+                  "src": "134:12:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -95,28 +92,26 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 360,
+                    "id": 9585,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "99:7:4",
+                    "src": "134:7:28",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 363,
+                  "id": 9588,
                   "mutability": "mutable",
                   "name": "amount",
                   "nodeType": "VariableDeclaration",
-                  "overrides": null,
-                  "scope": 366,
-                  "src": "113:11:4",
+                  "scope": 9591,
+                  "src": "148:11:28",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -124,49 +119,48 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 362,
+                    "id": 9587,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "113:4:4",
+                    "src": "148:4:28",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "98:27:4"
+              "src": "133:27:28"
             },
             "returnParameters": {
-              "id": 365,
+              "id": 9590,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "134:0:4"
+              "src": "169:0:28"
             },
-            "scope": 367,
-            "src": "70:65:4",
+            "scope": 9592,
+            "src": "105:65:28",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 368,
-        "src": "28:110:4"
+        "scope": 9593,
+        "src": "63:110:28"
       }
     ],
-    "src": "0:138:4"
+    "src": "35:138:28"
   },
   "legacyAST": {
     "attributes": {
-      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen/contracts/interfaces/ITradegenStakingEscrow.sol",
+      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ITradegenStakingEscrow.sol",
       "exportedSymbols": {
         "ITradegenStakingEscrow": [
-          367
+          9592
         ]
       },
-      "license": null
+      "license": "MIT"
     },
     "children": [
       {
@@ -174,13 +168,13 @@
           "literals": [
             "solidity",
             ">=",
-            "0.5",
-            ".0"
+            "0.7",
+            ".6"
           ]
         },
-        "id": 359,
+        "id": 9584,
         "name": "PragmaDirective",
-        "src": "0:24:4"
+        "src": "35:24:28"
       },
       {
         "attributes": {
@@ -192,19 +186,16 @@
             null
           ],
           "contractKind": "interface",
-          "documentation": null,
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            367
+            9592
           ],
           "name": "ITradegenStakingEscrow",
-          "scope": 368
+          "scope": 9593
         },
         "children": [
           {
             "attributes": {
-              "body": null,
-              "documentation": null,
               "functionSelector": "7523a5ab",
               "implemented": false,
               "isConstructor": false,
@@ -213,8 +204,7 @@
                 null
               ],
               "name": "claimStakingRewards",
-              "overrides": null,
-              "scope": 367,
+              "scope": 9592,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -227,12 +217,10 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "user",
-                      "overrides": null,
-                      "scope": 366,
+                      "scope": 9591,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
-                      "value": null,
                       "visibility": "internal"
                     },
                     "children": [
@@ -242,26 +230,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 360,
+                        "id": 9585,
                         "name": "ElementaryTypeName",
-                        "src": "99:7:4"
+                        "src": "134:7:28"
                       }
                     ],
-                    "id": 361,
+                    "id": 9586,
                     "name": "VariableDeclaration",
-                    "src": "99:12:4"
+                    "src": "134:12:28"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "amount",
-                      "overrides": null,
-                      "scope": 366,
+                      "scope": 9591,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
-                      "value": null,
                       "visibility": "internal"
                     },
                     "children": [
@@ -270,19 +256,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 362,
+                        "id": 9587,
                         "name": "ElementaryTypeName",
-                        "src": "113:4:4"
+                        "src": "148:4:28"
                       }
                     ],
-                    "id": 363,
+                    "id": 9588,
                     "name": "VariableDeclaration",
-                    "src": "113:11:4"
+                    "src": "148:11:28"
                   }
                 ],
-                "id": 364,
+                "id": 9589,
                 "name": "ParameterList",
-                "src": "98:27:4"
+                "src": "133:27:28"
               },
               {
                 "attributes": {
@@ -291,32 +277,32 @@
                   ]
                 },
                 "children": [],
-                "id": 365,
+                "id": 9590,
                 "name": "ParameterList",
-                "src": "134:0:4"
+                "src": "169:0:28"
               }
             ],
-            "id": 366,
+            "id": 9591,
             "name": "FunctionDefinition",
-            "src": "70:65:4"
+            "src": "105:65:28"
           }
         ],
-        "id": 367,
+        "id": 9592,
         "name": "ContractDefinition",
-        "src": "28:110:4"
+        "src": "63:110:28"
       }
     ],
-    "id": 368,
+    "id": 9593,
     "name": "SourceUnit",
-    "src": "0:138:4"
+    "src": "35:138:28"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.6.12+commit.27d51765.Emscripten.clang"
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-08-08T18:20:44.592Z",
+  "updatedAt": "2021-08-16T00:30:22.069Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

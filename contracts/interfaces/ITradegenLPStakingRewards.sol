@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 interface ITradegenLPStakingRewards {
 
     function rewardPerToken() external view returns (uint);
 
     function earned(address account) external view returns (uint);
-
-    function getRewardForDuration() external view returns (uint);
 
     function totalSupply() external view returns (uint);
 
@@ -46,5 +44,5 @@ interface ITradegenLPStakingRewards {
      * @notice Returns the USD value of all LP tokens staked in this contract
      * @return uint USD value of this contract
      */
-    function getUSDValueOfContract() external view returns (uint)
+    function getUSDValueOfContract() external view returns (uint);
 }

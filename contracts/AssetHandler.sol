@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Inheritance
 import "./interfaces/IAssetHandler.sol";
@@ -25,7 +25,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     mapping (uint => uint) public numberOfAvailableAssetsForType;
     mapping (uint => mapping (uint => address)) public availableAssetsForType;
 
-    constructor(IAddressResolver addressResolver) public Ownable() {
+    constructor(IAddressResolver addressResolver) Ownable() {
         ADDRESS_RESOLVER = addressResolver;
     }
 

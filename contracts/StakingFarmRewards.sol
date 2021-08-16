@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 // Inheritance
 import "./Ownable.sol";
@@ -47,7 +47,7 @@ contract StakingFarmRewards is Ownable, IStakingFarmRewards, ReentrancyGuard {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) public Ownable() {
+    constructor(IAddressResolver _addressResolver) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
     }
 

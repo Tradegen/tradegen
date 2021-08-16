@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Interfaces
 import './interfaces/IAddressResolver.sol';
@@ -17,7 +17,7 @@ contract AddressResolver is IAddressResolver, Ownable {
 
     mapping (string => address) public contractAddresses;
 
-    constructor() public Ownable() {}
+    constructor() Ownable() {}
 
     /* ========== VIEWS ========== */
 

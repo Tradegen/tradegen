@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Interfaces
 import './interfaces/IPool.sol';
@@ -25,7 +25,7 @@ contract PoolFactory is Ownable {
     mapping (address => uint[]) public userToManagedPools;
     mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
 
-    constructor(IAddressResolver addressResolver) public Ownable() {
+    constructor(IAddressResolver addressResolver) Ownable() {
         ADDRESS_RESOLVER = addressResolver;
     }
 

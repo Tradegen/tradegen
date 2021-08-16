@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 
 //Adapters
 import './interfaces/IBaseUbeswapAdapter.sol';
@@ -49,7 +49,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) public Ownable() {
+    constructor(IAddressResolver _addressResolver) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
         lastUpdateTime = block.timestamp;
     }
@@ -134,14 +134,14 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @notice Calculates the amount of TGEN reward per token stored
      */
     function rewardPerToken() public view override returns (uint) {
-        uint rewardRate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingFarmRewards");
+        uint rate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingFarmRewards");
 
         if (totalVestedBalance == 0)
         {
             return rewardPerTokenStored;
         }
 
-        return rewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(rewardRate).mul(1e18).div(totalVestedBalance));
+        return rewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(rate).mul(1e18).div(totalVestedBalance));
     }
 
     /**
@@ -258,7 +258,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         require(numberOfWeeks > 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: number of weeks must be between 1 and 52");
 
         //Up to 2x multiplier depending on number of weeks staked
-        uint vestingTimestamp = block.timestamp.add((1 weeks).mul(numberOfWeeks));
+        uint vestingTimestamp = block.timestamp.add(uint(1 weeks).mul(numberOfWeeks));
         uint adjustedAmount = amount.mul(numberOfWeeks.add(1)).div(numberOfWeeks);
         appendVestingEntry(msg.sender, vestingTimestamp, adjustedAmount);
 

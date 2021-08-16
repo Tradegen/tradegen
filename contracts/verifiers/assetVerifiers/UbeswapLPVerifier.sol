@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.5.0;
+pragma solidity >=0.7.6;
 pragma experimental ABIEncoderV2;
 
 //Libraries
@@ -25,7 +25,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
 
     mapping (address => address) public ubeswapFarms;
 
-    constructor(IAddressResolver addressResolver) public Ownable() {
+    constructor(IAddressResolver addressResolver) Ownable() {
         ADDRESS_RESOLVER = addressResolver;
     }
 
