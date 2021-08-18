@@ -147,36 +147,6 @@ function initContract()
         }
         
     });
-    
-    it('Swap from pool', async () => {
-        let account = await getAccount();
-        kit.connection.addAccount(account.privateKey);
-
-        let balance = await kit.getTotalBalance(account.address);
-        console.log(balance);
-        
-        let goldToken = kit.contracts.wrapperCache.GoldToken.contract;
-
-        //Send CELO from pool to BaseUbeswapAdapter before calling swapFromPool()
-        let txObject = await goldToken.methods.transfer(contractAddress, 100000);
-        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
-        let receipt = await tx.waitReceipt();
-
-        let contractBalance = await kit.getTotalBalance(contractAddress);
-        console.log(contractBalance);
-
-        let txObject2 = await instance.methods.swapFromPool(CELO, cUSD, 100000, 500000);
-        let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address }); 
-        let receipt2 = await tx2.waitReceipt();
-        let result = receipt2.events.Swapped.returnValues;
-        console.log(result);
-
-        let newBalance = await kit.getTotalBalance(account.address);
-        console.log(newBalance);
-
-        let newContractBalance = await kit.getTotalBalance(contractAddress);
-        console.log(newContractBalance);
-    });
 }
 
 initContract();

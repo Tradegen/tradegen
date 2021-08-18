@@ -18,13 +18,6 @@ interface IAddressResolver {
     function checkIfPoolAddressIsValid(address poolAddress) external view returns (bool);
 
     /**
-    * @dev Updates the address for the given contract; meant to be called by AddressResolver owner
-    * @param contractName The name of the contract
-    * @param newAddress The new address for the given contract
-    */
-    function setContractAddress(string memory contractName, address newAddress) external;
-
-    /**
     * @dev Adds a new user pool address; meant to be called by the PoolManager contract
     * @param poolAddress The address of the user pool
     */

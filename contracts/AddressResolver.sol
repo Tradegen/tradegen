@@ -48,11 +48,35 @@ contract AddressResolver is IAddressResolver, Ownable {
     * @param contractName The name of the contract
     * @param newAddress The new address for the given contract
     */
-    function setContractAddress(string memory contractName, address newAddress) external override onlyOwner isValidAddress(newAddress) {
+    function setContractAddress(string memory contractName, address newAddress) external onlyOwner isValidAddress(newAddress) {
         address oldAddress = contractAddresses[contractName];
         contractAddresses[contractName] = newAddress;
 
         emit UpdatedContractAddress(contractName, oldAddress, newAddress, block.timestamp);
+    }
+
+    /**
+    * @dev Updates the verifier for the given contract
+    * @param externalContract Address of the external contract
+    * @param verifier Address of the contract's verifier
+    */
+    function setContractVerifier(address externalContract, address verifier) external onlyOwner isValidAddress(externalContract) isValidAddress(verifier) {
+        contractVerifiers[externalContract] = verifier;
+
+        emit UpdatedContractVerifier(externalContract, verifier, block.timestamp);
+    }
+
+    /**
+    * @dev Updates the verifier for the given asset
+    * @param assetType Type of the asset
+    * @param verifier Address of the contract's verifier
+    */
+    function setAssetVerifier(uint assetType, address verifier) external onlyOwner isValidAddress(verifier) {
+        require(assetType > 0, "AddressResolver: asset type must be greater than 0");
+
+        assetVerifiers[assetType] = verifier;
+
+        emit UpdatedAssetVerifier(assetType, verifier, block.timestamp);
     }
 
     /**
@@ -81,4 +105,6 @@ contract AddressResolver is IAddressResolver, Ownable {
 
     event UpdatedContractAddress(string contractName, address oldAddress, address newAddress, uint timestamp);
     event AddedPoolAddress(address poolAddress, uint timestamp);
+    event UpdatedContractVerifier(address externalContract, address verifier, uint timestamp);
+    event UpdatedAssetVerifier(uint assetType, address verifier, uint timestamp);
 }

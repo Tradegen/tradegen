@@ -42,24 +42,6 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "contractName",
-          "type": "string"
-        },
-        {
-          "internalType": "address",
-          "name": "newAddress",
-          "type": "address"
-        }
-      ],
-      "name": "setContractAddress",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "address",
           "name": "poolAddress",
           "type": "address"
@@ -109,7 +91,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"addPoolAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"assetVerifiers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"checkIfPoolAddressIsValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"contractVerifiers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"contractName\",\"type\":\"string\"}],\"name\":\"getContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"contractName\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"newAddress\",\"type\":\"address\"}],\"name\":\"setContractAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addPoolAddress(address)\":{\"details\":\"Adds a new user pool address; meant to be called by the PoolManager contract\",\"params\":{\"poolAddress\":\"The address of the user pool\"}},\"checkIfPoolAddressIsValid(address)\":{\"details\":\"Given an address, returns whether the address belongs to a user pool\",\"params\":{\"poolAddress\":\"The address to validate\"},\"returns\":{\"_0\":\"bool Whether the given address is a valid user pool address\"}},\"getContractAddress(string)\":{\"details\":\"Given a contract name, returns the address of the contract\",\"params\":{\"contractName\":\"The name of the contract\"},\"returns\":{\"_0\":\"address The address associated with the given contract name\"}},\"setContractAddress(string,address)\":{\"details\":\"Updates the address for the given contract; meant to be called by AddressResolver owner\",\"params\":{\"contractName\":\"The name of the contract\",\"newAddress\":\"The new address for the given contract\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol\":\"IAddressResolver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol\":{\"keccak256\":\"0x233eec053bf11a884dc800e9f96664d9fd858087f2e53767b9fef71c40060a5f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://370b290332a6229974ff46297139140cecd68630a5dd23fe7923517cd9bbf5e7\",\"dweb:/ipfs/QmP4KE5x45gKwi9d7z5rntcMf4MFR87gQmyfmWxMrQgoYt\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"addPoolAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"assetVerifiers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"checkIfPoolAddressIsValid\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"contractVerifiers\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"contractName\",\"type\":\"string\"}],\"name\":\"getContractAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addPoolAddress(address)\":{\"details\":\"Adds a new user pool address; meant to be called by the PoolManager contract\",\"params\":{\"poolAddress\":\"The address of the user pool\"}},\"checkIfPoolAddressIsValid(address)\":{\"details\":\"Given an address, returns whether the address belongs to a user pool\",\"params\":{\"poolAddress\":\"The address to validate\"},\"returns\":{\"_0\":\"bool Whether the given address is a valid user pool address\"}},\"getContractAddress(string)\":{\"details\":\"Given a contract name, returns the address of the contract\",\"params\":{\"contractName\":\"The name of the contract\"},\"returns\":{\"_0\":\"address The address associated with the given contract name\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol\":\"IAddressResolver\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol\":{\"keccak256\":\"0x3fd997340aba1458d44de6ad42e86e3b32be089edf157d7d862de42465055da6\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0a0314311a037f18777e4557cdddf7ef0fa7c17c49b55753e90d44fd9e42008c\",\"dweb:/ipfs/QmZab5bNCf3VofE8i91wq1YisSkH2D3pgWHdzycRZvuZr1\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -117,21 +99,21 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IAddressResolver {\r\n    /**\r\n    * @dev Given a contract name, returns the address of the contract\r\n    * @param contractName The name of the contract\r\n    * @return address The address associated with the given contract name\r\n    */\r\n    function getContractAddress(string memory contractName) external view returns (address);\r\n\r\n    /**\r\n    * @dev Given an address, returns whether the address belongs to a user pool\r\n    * @param poolAddress The address to validate\r\n    * @return bool Whether the given address is a valid user pool address\r\n    */\r\n    function checkIfPoolAddressIsValid(address poolAddress) external view returns (bool);\r\n\r\n    /**\r\n    * @dev Updates the address for the given contract; meant to be called by AddressResolver owner\r\n    * @param contractName The name of the contract\r\n    * @param newAddress The new address for the given contract\r\n    */\r\n    function setContractAddress(string memory contractName, address newAddress) external;\r\n\r\n    /**\r\n    * @dev Adds a new user pool address; meant to be called by the PoolManager contract\r\n    * @param poolAddress The address of the user pool\r\n    */\r\n    function addPoolAddress(address poolAddress) external;\r\n\r\n    function contractVerifiers(address) external view returns (address);\r\n\r\n    function assetVerifiers(uint) external view returns (address);\r\n}",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IAddressResolver {\r\n    /**\r\n    * @dev Given a contract name, returns the address of the contract\r\n    * @param contractName The name of the contract\r\n    * @return address The address associated with the given contract name\r\n    */\r\n    function getContractAddress(string memory contractName) external view returns (address);\r\n\r\n    /**\r\n    * @dev Given an address, returns whether the address belongs to a user pool\r\n    * @param poolAddress The address to validate\r\n    * @return bool Whether the given address is a valid user pool address\r\n    */\r\n    function checkIfPoolAddressIsValid(address poolAddress) external view returns (bool);\r\n\r\n    /**\r\n    * @dev Adds a new user pool address; meant to be called by the PoolManager contract\r\n    * @param poolAddress The address of the user pool\r\n    */\r\n    function addPoolAddress(address poolAddress) external;\r\n\r\n    function contractVerifiers(address) external view returns (address);\r\n\r\n    function assetVerifiers(uint) external view returns (address);\r\n}",
   "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\IAddressResolver.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol",
     "exportedSymbols": {
       "IAddressResolver": [
-        8767
+        8838
       ]
     },
-    "id": 8768,
+    "id": 8839,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8722,
+        "id": 8801,
         "literals": [
           "solidity",
           ">=",
@@ -147,38 +129,38 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 8767,
+        "id": 8838,
         "linearizedBaseContracts": [
-          8767
+          8838
         ],
         "name": "IAddressResolver",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "documentation": {
-              "id": 8723,
+              "id": 8802,
               "nodeType": "StructuredDocumentation",
               "src": "97:209:17",
               "text": " @dev Given a contract name, returns the address of the contract\n @param contractName The name of the contract\n @return address The address associated with the given contract name"
             },
             "functionSelector": "04433bbc",
-            "id": 8730,
+            "id": 8809,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getContractAddress",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8726,
+              "id": 8805,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8725,
+                  "id": 8804,
                   "mutability": "mutable",
                   "name": "contractName",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8730,
+                  "scope": 8809,
                   "src": "340:26:17",
                   "stateVariable": false,
                   "storageLocation": "memory",
@@ -187,7 +169,7 @@
                     "typeString": "string"
                   },
                   "typeName": {
-                    "id": 8724,
+                    "id": 8803,
                     "name": "string",
                     "nodeType": "ElementaryTypeName",
                     "src": "340:6:17",
@@ -202,16 +184,16 @@
               "src": "339:28:17"
             },
             "returnParameters": {
-              "id": 8729,
+              "id": 8808,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8728,
+                  "id": 8807,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8730,
+                  "scope": 8809,
                   "src": "391:7:17",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -220,7 +202,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8727,
+                    "id": 8806,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "391:7:17",
@@ -235,7 +217,7 @@
               ],
               "src": "390:9:17"
             },
-            "scope": 8767,
+            "scope": 8838,
             "src": "312:88:17",
             "stateMutability": "view",
             "virtual": false,
@@ -243,29 +225,29 @@
           },
           {
             "documentation": {
-              "id": 8731,
+              "id": 8810,
               "nodeType": "StructuredDocumentation",
               "src": "408:217:17",
               "text": " @dev Given an address, returns whether the address belongs to a user pool\n @param poolAddress The address to validate\n @return bool Whether the given address is a valid user pool address"
             },
             "functionSelector": "e51f8aba",
-            "id": 8738,
+            "id": 8817,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkIfPoolAddressIsValid",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8734,
+              "id": 8813,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8733,
+                  "id": 8812,
                   "mutability": "mutable",
                   "name": "poolAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8738,
+                  "scope": 8817,
                   "src": "666:19:17",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -274,7 +256,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8732,
+                    "id": 8811,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "666:7:17",
@@ -290,16 +272,16 @@
               "src": "665:21:17"
             },
             "returnParameters": {
-              "id": 8737,
+              "id": 8816,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8736,
+                  "id": 8815,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8738,
+                  "scope": 8817,
                   "src": "710:4:17",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -308,7 +290,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 8735,
+                    "id": 8814,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "710:4:17",
@@ -322,7 +304,7 @@
               ],
               "src": "709:6:17"
             },
-            "scope": 8767,
+            "scope": 8838,
             "src": "631:85:17",
             "stateMutability": "view",
             "virtual": false,
@@ -330,116 +312,30 @@
           },
           {
             "documentation": {
-              "id": 8739,
+              "id": 8818,
               "nodeType": "StructuredDocumentation",
-              "src": "724:227:17",
-              "text": " @dev Updates the address for the given contract; meant to be called by AddressResolver owner\n @param contractName The name of the contract\n @param newAddress The new address for the given contract"
-            },
-            "functionSelector": "534e785c",
-            "id": 8746,
-            "implemented": false,
-            "kind": "function",
-            "modifiers": [],
-            "name": "setContractAddress",
-            "nodeType": "FunctionDefinition",
-            "parameters": {
-              "id": 8744,
-              "nodeType": "ParameterList",
-              "parameters": [
-                {
-                  "constant": false,
-                  "id": 8741,
-                  "mutability": "mutable",
-                  "name": "contractName",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 8746,
-                  "src": "985:26:17",
-                  "stateVariable": false,
-                  "storageLocation": "memory",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_string_memory_ptr",
-                    "typeString": "string"
-                  },
-                  "typeName": {
-                    "id": 8740,
-                    "name": "string",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "985:6:17",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_string_storage_ptr",
-                      "typeString": "string"
-                    }
-                  },
-                  "visibility": "internal"
-                },
-                {
-                  "constant": false,
-                  "id": 8743,
-                  "mutability": "mutable",
-                  "name": "newAddress",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 8746,
-                  "src": "1013:18:17",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 8742,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "1013:7:17",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "visibility": "internal"
-                }
-              ],
-              "src": "984:48:17"
-            },
-            "returnParameters": {
-              "id": 8745,
-              "nodeType": "ParameterList",
-              "parameters": [],
-              "src": "1041:0:17"
-            },
-            "scope": 8767,
-            "src": "957:85:17",
-            "stateMutability": "nonpayable",
-            "virtual": false,
-            "visibility": "external"
-          },
-          {
-            "documentation": {
-              "id": 8747,
-              "nodeType": "StructuredDocumentation",
-              "src": "1050:155:17",
+              "src": "724:155:17",
               "text": " @dev Adds a new user pool address; meant to be called by the PoolManager contract\n @param poolAddress The address of the user pool"
             },
             "functionSelector": "43499844",
-            "id": 8752,
+            "id": 8823,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "addPoolAddress",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8750,
+              "id": 8821,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8749,
+                  "id": 8820,
                   "mutability": "mutable",
                   "name": "poolAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8752,
-                  "src": "1235:19:17",
+                  "scope": 8823,
+                  "src": "909:19:17",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -447,10 +343,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8748,
+                    "id": 8819,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1235:7:17",
+                    "src": "909:7:17",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -460,40 +356,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1234:21:17"
+              "src": "908:21:17"
             },
             "returnParameters": {
-              "id": 8751,
+              "id": 8822,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1264:0:17"
+              "src": "938:0:17"
             },
-            "scope": 8767,
-            "src": "1211:54:17",
+            "scope": 8838,
+            "src": "885:54:17",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "functionSelector": "2febaebd",
-            "id": 8759,
+            "id": 8830,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "contractVerifiers",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8755,
+              "id": 8826,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8754,
+                  "id": 8825,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8759,
-                  "src": "1300:7:17",
+                  "scope": 8830,
+                  "src": "974:7:17",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -501,10 +397,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8753,
+                    "id": 8824,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1300:7:17",
+                    "src": "974:7:17",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -514,20 +410,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1299:9:17"
+              "src": "973:9:17"
             },
             "returnParameters": {
-              "id": 8758,
+              "id": 8829,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8757,
+                  "id": 8828,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8759,
-                  "src": "1332:7:17",
+                  "scope": 8830,
+                  "src": "1006:7:17",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -535,10 +431,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8756,
+                    "id": 8827,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1332:7:17",
+                    "src": "1006:7:17",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -548,34 +444,34 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1331:9:17"
+              "src": "1005:9:17"
             },
-            "scope": 8767,
-            "src": "1273:68:17",
+            "scope": 8838,
+            "src": "947:68:17",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "functionSelector": "58c1c787",
-            "id": 8766,
+            "id": 8837,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "assetVerifiers",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8762,
+              "id": 8833,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8761,
+                  "id": 8832,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8766,
-                  "src": "1373:4:17",
+                  "scope": 8837,
+                  "src": "1047:4:17",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -583,10 +479,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8760,
+                    "id": 8831,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1373:4:17",
+                    "src": "1047:4:17",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -595,20 +491,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1372:6:17"
+              "src": "1046:6:17"
             },
             "returnParameters": {
-              "id": 8765,
+              "id": 8836,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8764,
+                  "id": 8835,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8766,
-                  "src": "1402:7:17",
+                  "scope": 8837,
+                  "src": "1076:7:17",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -616,10 +512,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8763,
+                    "id": 8834,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1402:7:17",
+                    "src": "1076:7:17",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -629,27 +525,27 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1401:9:17"
+              "src": "1075:9:17"
             },
-            "scope": 8767,
-            "src": "1349:62:17",
+            "scope": 8838,
+            "src": "1023:62:17",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 8768,
-        "src": "63:1351:17"
+        "scope": 8839,
+        "src": "63:1025:17"
       }
     ],
-    "src": "35:1379:17"
+    "src": "35:1053:17"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IAddressResolver.sol",
       "exportedSymbols": {
         "IAddressResolver": [
-          8767
+          8838
         ]
       },
       "license": "MIT"
@@ -664,7 +560,7 @@
             ".6"
           ]
         },
-        "id": 8722,
+        "id": 8801,
         "name": "PragmaDirective",
         "src": "35:24:17"
       },
@@ -680,10 +576,10 @@
           "contractKind": "interface",
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            8767
+            8838
           ],
           "name": "IAddressResolver",
-          "scope": 8768
+          "scope": 8839
         },
         "children": [
           {
@@ -696,7 +592,7 @@
                 null
               ],
               "name": "getContractAddress",
-              "scope": 8767,
+              "scope": 8838,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -706,7 +602,7 @@
                 "attributes": {
                   "text": " @dev Given a contract name, returns the address of the contract\n @param contractName The name of the contract\n @return address The address associated with the given contract name"
                 },
-                "id": 8723,
+                "id": 8802,
                 "name": "StructuredDocumentation",
                 "src": "97:209:17"
               },
@@ -717,7 +613,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "contractName",
-                      "scope": 8730,
+                      "scope": 8809,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "string",
@@ -729,17 +625,17 @@
                           "name": "string",
                           "type": "string"
                         },
-                        "id": 8724,
+                        "id": 8803,
                         "name": "ElementaryTypeName",
                         "src": "340:6:17"
                       }
                     ],
-                    "id": 8725,
+                    "id": 8804,
                     "name": "VariableDeclaration",
                     "src": "340:26:17"
                   }
                 ],
-                "id": 8726,
+                "id": 8805,
                 "name": "ParameterList",
                 "src": "339:28:17"
               },
@@ -750,7 +646,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8730,
+                      "scope": 8809,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -763,22 +659,22 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8727,
+                        "id": 8806,
                         "name": "ElementaryTypeName",
                         "src": "391:7:17"
                       }
                     ],
-                    "id": 8728,
+                    "id": 8807,
                     "name": "VariableDeclaration",
                     "src": "391:7:17"
                   }
                 ],
-                "id": 8729,
+                "id": 8808,
                 "name": "ParameterList",
                 "src": "390:9:17"
               }
             ],
-            "id": 8730,
+            "id": 8809,
             "name": "FunctionDefinition",
             "src": "312:88:17"
           },
@@ -792,7 +688,7 @@
                 null
               ],
               "name": "checkIfPoolAddressIsValid",
-              "scope": 8767,
+              "scope": 8838,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -802,7 +698,7 @@
                 "attributes": {
                   "text": " @dev Given an address, returns whether the address belongs to a user pool\n @param poolAddress The address to validate\n @return bool Whether the given address is a valid user pool address"
                 },
-                "id": 8731,
+                "id": 8810,
                 "name": "StructuredDocumentation",
                 "src": "408:217:17"
               },
@@ -813,7 +709,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "poolAddress",
-                      "scope": 8738,
+                      "scope": 8817,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -826,17 +722,17 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8732,
+                        "id": 8811,
                         "name": "ElementaryTypeName",
                         "src": "666:7:17"
                       }
                     ],
-                    "id": 8733,
+                    "id": 8812,
                     "name": "VariableDeclaration",
                     "src": "666:19:17"
                   }
                 ],
-                "id": 8734,
+                "id": 8813,
                 "name": "ParameterList",
                 "src": "665:21:17"
               },
@@ -847,7 +743,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8738,
+                      "scope": 8817,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -859,124 +755,24 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 8735,
+                        "id": 8814,
                         "name": "ElementaryTypeName",
                         "src": "710:4:17"
                       }
                     ],
-                    "id": 8736,
+                    "id": 8815,
                     "name": "VariableDeclaration",
                     "src": "710:4:17"
                   }
                 ],
-                "id": 8737,
+                "id": 8816,
                 "name": "ParameterList",
                 "src": "709:6:17"
               }
             ],
-            "id": 8738,
+            "id": 8817,
             "name": "FunctionDefinition",
             "src": "631:85:17"
-          },
-          {
-            "attributes": {
-              "functionSelector": "534e785c",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "setContractAddress",
-              "scope": 8767,
-              "stateMutability": "nonpayable",
-              "virtual": false,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "text": " @dev Updates the address for the given contract; meant to be called by AddressResolver owner\n @param contractName The name of the contract\n @param newAddress The new address for the given contract"
-                },
-                "id": 8739,
-                "name": "StructuredDocumentation",
-                "src": "724:227:17"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
-                      "name": "contractName",
-                      "scope": 8746,
-                      "stateVariable": false,
-                      "storageLocation": "memory",
-                      "type": "string",
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "string",
-                          "type": "string"
-                        },
-                        "id": 8740,
-                        "name": "ElementaryTypeName",
-                        "src": "985:6:17"
-                      }
-                    ],
-                    "id": 8741,
-                    "name": "VariableDeclaration",
-                    "src": "985:26:17"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
-                      "name": "newAddress",
-                      "scope": 8746,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 8742,
-                        "name": "ElementaryTypeName",
-                        "src": "1013:7:17"
-                      }
-                    ],
-                    "id": 8743,
-                    "name": "VariableDeclaration",
-                    "src": "1013:18:17"
-                  }
-                ],
-                "id": 8744,
-                "name": "ParameterList",
-                "src": "984:48:17"
-              },
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 8745,
-                "name": "ParameterList",
-                "src": "1041:0:17"
-              }
-            ],
-            "id": 8746,
-            "name": "FunctionDefinition",
-            "src": "957:85:17"
           },
           {
             "attributes": {
@@ -988,7 +784,7 @@
                 null
               ],
               "name": "addPoolAddress",
-              "scope": 8767,
+              "scope": 8838,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -998,9 +794,9 @@
                 "attributes": {
                   "text": " @dev Adds a new user pool address; meant to be called by the PoolManager contract\n @param poolAddress The address of the user pool"
                 },
-                "id": 8747,
+                "id": 8818,
                 "name": "StructuredDocumentation",
-                "src": "1050:155:17"
+                "src": "724:155:17"
               },
               {
                 "children": [
@@ -1009,7 +805,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "poolAddress",
-                      "scope": 8752,
+                      "scope": 8823,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1022,19 +818,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8748,
+                        "id": 8819,
                         "name": "ElementaryTypeName",
-                        "src": "1235:7:17"
+                        "src": "909:7:17"
                       }
                     ],
-                    "id": 8749,
+                    "id": 8820,
                     "name": "VariableDeclaration",
-                    "src": "1235:19:17"
+                    "src": "909:19:17"
                   }
                 ],
-                "id": 8750,
+                "id": 8821,
                 "name": "ParameterList",
-                "src": "1234:21:17"
+                "src": "908:21:17"
               },
               {
                 "attributes": {
@@ -1043,14 +839,14 @@
                   ]
                 },
                 "children": [],
-                "id": 8751,
+                "id": 8822,
                 "name": "ParameterList",
-                "src": "1264:0:17"
+                "src": "938:0:17"
               }
             ],
-            "id": 8752,
+            "id": 8823,
             "name": "FunctionDefinition",
-            "src": "1211:54:17"
+            "src": "885:54:17"
           },
           {
             "attributes": {
@@ -1062,7 +858,7 @@
                 null
               ],
               "name": "contractVerifiers",
-              "scope": 8767,
+              "scope": 8838,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1075,7 +871,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8759,
+                      "scope": 8830,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1088,19 +884,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8753,
+                        "id": 8824,
                         "name": "ElementaryTypeName",
-                        "src": "1300:7:17"
+                        "src": "974:7:17"
                       }
                     ],
-                    "id": 8754,
+                    "id": 8825,
                     "name": "VariableDeclaration",
-                    "src": "1300:7:17"
+                    "src": "974:7:17"
                   }
                 ],
-                "id": 8755,
+                "id": 8826,
                 "name": "ParameterList",
-                "src": "1299:9:17"
+                "src": "973:9:17"
               },
               {
                 "children": [
@@ -1109,7 +905,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8759,
+                      "scope": 8830,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1122,24 +918,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8756,
+                        "id": 8827,
                         "name": "ElementaryTypeName",
-                        "src": "1332:7:17"
+                        "src": "1006:7:17"
                       }
                     ],
-                    "id": 8757,
+                    "id": 8828,
                     "name": "VariableDeclaration",
-                    "src": "1332:7:17"
+                    "src": "1006:7:17"
                   }
                 ],
-                "id": 8758,
+                "id": 8829,
                 "name": "ParameterList",
-                "src": "1331:9:17"
+                "src": "1005:9:17"
               }
             ],
-            "id": 8759,
+            "id": 8830,
             "name": "FunctionDefinition",
-            "src": "1273:68:17"
+            "src": "947:68:17"
           },
           {
             "attributes": {
@@ -1151,7 +947,7 @@
                 null
               ],
               "name": "assetVerifiers",
-              "scope": 8767,
+              "scope": 8838,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1164,7 +960,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8766,
+                      "scope": 8837,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1176,19 +972,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8760,
+                        "id": 8831,
                         "name": "ElementaryTypeName",
-                        "src": "1373:4:17"
+                        "src": "1047:4:17"
                       }
                     ],
-                    "id": 8761,
+                    "id": 8832,
                     "name": "VariableDeclaration",
-                    "src": "1373:4:17"
+                    "src": "1047:4:17"
                   }
                 ],
-                "id": 8762,
+                "id": 8833,
                 "name": "ParameterList",
-                "src": "1372:6:17"
+                "src": "1046:6:17"
               },
               {
                 "children": [
@@ -1197,7 +993,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8766,
+                      "scope": 8837,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1210,34 +1006,34 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8763,
+                        "id": 8834,
                         "name": "ElementaryTypeName",
-                        "src": "1402:7:17"
+                        "src": "1076:7:17"
                       }
                     ],
-                    "id": 8764,
+                    "id": 8835,
                     "name": "VariableDeclaration",
-                    "src": "1402:7:17"
+                    "src": "1076:7:17"
                   }
                 ],
-                "id": 8765,
+                "id": 8836,
                 "name": "ParameterList",
-                "src": "1401:9:17"
+                "src": "1075:9:17"
               }
             ],
-            "id": 8766,
+            "id": 8837,
             "name": "FunctionDefinition",
-            "src": "1349:62:17"
+            "src": "1023:62:17"
           }
         ],
-        "id": 8767,
+        "id": 8838,
         "name": "ContractDefinition",
-        "src": "63:1351:17"
+        "src": "63:1025:17"
       }
     ],
-    "id": 8768,
+    "id": 8839,
     "name": "SourceUnit",
-    "src": "35:1379:17"
+    "src": "35:1053:17"
   },
   "compiler": {
     "name": "solc",
@@ -1245,7 +1041,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-08-16T00:30:22.048Z",
+  "updatedAt": "2021-08-17T23:05:06.044Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -1271,13 +1067,6 @@
         },
         "returns": {
           "_0": "address The address associated with the given contract name"
-        }
-      },
-      "setContractAddress(string,address)": {
-        "details": "Updates the address for the given contract; meant to be called by AddressResolver owner",
-        "params": {
-          "contractName": "The name of the contract",
-          "newAddress": "The new address for the given contract"
         }
       }
     },
