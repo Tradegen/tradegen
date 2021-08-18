@@ -106,9 +106,6 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
     function setFarmAddress(address pair, address farmAddress) external onlyOwner {
         require(pair != address(0), "UbeswapLPVerifier: invalid pair address");
         require(farmAddress != address(0), "UbeswapLPVerifier: invalid farm address");
-        
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        require(pair == IBaseUbeswapAdapter(baseUbeswapAdapterAddress).checkIfFarmExists(farmAddress), "UbeswapLPVerifier: invalid farm for pair");
 
         ubeswapFarms[pair] = farmAddress;
 

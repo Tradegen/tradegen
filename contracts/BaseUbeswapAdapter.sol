@@ -131,17 +131,6 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     }
 
     /**
-    * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address
-    * @param farmAddress Address of the farm to check
-    * @return address The farm's staking token address
-    */
-    function checkIfFarmExists(address farmAddress) public view override returns (address) {
-        require(farmAddress != address(0), "Invalid farm address");
-
-        return IStakingRewards(farmAddress).stakingToken();
-    }
-
-    /**
     * @dev Returns the address of a token pair
     * @param tokenA First token in pair
     * @param tokenB Second token in pair
@@ -164,7 +153,6 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     */
     function getAvailableRewards(address poolAddress, address farmAddress) public view override returns (uint) {
         require(poolAddress != address(0), "BaseUbeswapAdapter: invalid pool address");
-        require(checkIfFarmExists(farmAddress) != address(0), "BaseUbeswapAdapter: invalid farm address");
 
         return IStakingRewards(farmAddress).earned(poolAddress);
     }

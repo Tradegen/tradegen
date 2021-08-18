@@ -108,25 +108,6 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "farmAddress",
-          "type": "address"
-        }
-      ],
-      "name": "checkIfFarmExists",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
           "name": "tokenA",
           "type": "address"
         },
@@ -206,7 +187,7 @@
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"MAX_SLIPPAGE_PERCENT\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"checkIfFarmExists\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"currencyKeyIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"currencyKeyOut\",\"type\":\"address\"}],\"name\":\"getAmountsIn\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"currencyKeyIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"currencyKeyOut\",\"type\":\"address\"}],\"name\":\"getAmountsOut\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"getAvailableRewards\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableUbeswapFarms\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"}],\"name\":\"getPair\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numberOfLPTokens\",\"type\":\"uint256\"}],\"name\":\"getTokenAmountsFromPair\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkIfFarmExists(address)\":{\"details\":\"Given the address of a farm on Ubeswap, returns the farm's staking token address\",\"params\":{\"farmAddress\":\"Address of the farm to check\"},\"returns\":{\"_0\":\"address The farm's staking token address\"}},\"getAmountsIn(uint256,address,address)\":{\"details\":\"Given the target output asset amount, returns the amount of input asset needed\",\"params\":{\"currencyKeyIn\":\"Address of the asset to be swap from\",\"currencyKeyOut\":\"Address of the asset to be swap to\",\"numberOfTokens\":\"Target amount of output asset\"},\"returns\":{\"_0\":\"uint Amount out input asset needed\"}},\"getAmountsOut(uint256,address,address)\":{\"details\":\"Given an input asset amount, returns the maximum output amount of the other asset\",\"params\":{\"currencyKeyIn\":\"Address of the asset to be swap from\",\"currencyKeyOut\":\"Address of the asset to be swap to\",\"numberOfTokens\":\"Number of tokens\"},\"returns\":{\"_0\":\"uint Amount out of the asset\"}},\"getAvailableRewards(address,address)\":{\"details\":\"Returns the amount of UBE rewards available for the pool in the given farm\",\"params\":{\"farmAddress\":\"Address of the farm on Ubeswap\",\"poolAddress\":\"Address of the pool\"},\"returns\":{\"_0\":\"uint Amount of UBE available\"}},\"getAvailableUbeswapFarms()\":{\"details\":\"Returns the farm address and liquidity pool address for each available farm on Ubeswap\",\"returns\":{\"_0\":\"address[] memory The farm address for each available farm\"}},\"getPair(address,address)\":{\"details\":\"Returns the address of a token pair\",\"params\":{\"tokenA\":\"First token in pair\",\"tokenB\":\"Second token in pair\"},\"returns\":{\"_0\":\"address The pair's address\"}},\"getPrice(address)\":{\"details\":\"Given an input asset address, returns the price of the asset in cUSD\",\"params\":{\"currencyKey\":\"Address of the asset\"},\"returns\":{\"_0\":\"uint Price of the asset\"}},\"getTokenAmountsFromPair(address,address,uint256)\":{\"details\":\"Calculates the amount of tokens in a pair\",\"params\":{\"numberOfLPTokens\":\"Number of LP tokens for the given pair\",\"tokenA\":\"First token in pair\",\"tokenB\":\"Second token in pair\"},\"returns\":{\"_0\":\"(uint, uint) The number of tokens for tokenA and tokenB\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol\":\"IBaseUbeswapAdapter\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol\":{\"keccak256\":\"0xb86f9239455476ff7c6cfc3d50c0dff217fb4e9f0d76f3b0ebd47f1ff03ecbfc\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://dee892ae3e956569784310deee14f35ab01f3871d6fa8b7acd59f05b7691df3a\",\"dweb:/ipfs/QmUZFXePvkxYCSb7FRcoLdYgV4VjGmHorSMAwpU283KGDe\"]},\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/Ubeswap/IUniswapV2Router02.sol\":{\"keccak256\":\"0x14539033edcd16b4c11a8f891bd5d0dc64d48826ad94fb682027124d291a530f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e81f6d0d265b0c101c84d961359b5bcaebdad77e7e93add63969de1b98b8894f\",\"dweb:/ipfs/QmNsjPMUxt3MZKpjB5FHkdeKi1rjjbnKuY89aKLGipGfVC\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"MAX_SLIPPAGE_PERCENT\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"currencyKeyIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"currencyKeyOut\",\"type\":\"address\"}],\"name\":\"getAmountsIn\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"numberOfTokens\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"currencyKeyIn\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"currencyKeyOut\",\"type\":\"address\"}],\"name\":\"getAmountsOut\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"getAvailableRewards\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAvailableUbeswapFarms\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"}],\"name\":\"getPair\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"currencyKey\",\"type\":\"address\"}],\"name\":\"getPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"tokenA\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"tokenB\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"numberOfLPTokens\",\"type\":\"uint256\"}],\"name\":\"getTokenAmountsFromPair\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getAmountsIn(uint256,address,address)\":{\"details\":\"Given the target output asset amount, returns the amount of input asset needed\",\"params\":{\"currencyKeyIn\":\"Address of the asset to be swap from\",\"currencyKeyOut\":\"Address of the asset to be swap to\",\"numberOfTokens\":\"Target amount of output asset\"},\"returns\":{\"_0\":\"uint Amount out input asset needed\"}},\"getAmountsOut(uint256,address,address)\":{\"details\":\"Given an input asset amount, returns the maximum output amount of the other asset\",\"params\":{\"currencyKeyIn\":\"Address of the asset to be swap from\",\"currencyKeyOut\":\"Address of the asset to be swap to\",\"numberOfTokens\":\"Number of tokens\"},\"returns\":{\"_0\":\"uint Amount out of the asset\"}},\"getAvailableRewards(address,address)\":{\"details\":\"Returns the amount of UBE rewards available for the pool in the given farm\",\"params\":{\"farmAddress\":\"Address of the farm on Ubeswap\",\"poolAddress\":\"Address of the pool\"},\"returns\":{\"_0\":\"uint Amount of UBE available\"}},\"getAvailableUbeswapFarms()\":{\"details\":\"Returns the farm address and liquidity pool address for each available farm on Ubeswap\",\"returns\":{\"_0\":\"address[] memory The farm address for each available farm\"}},\"getPair(address,address)\":{\"details\":\"Returns the address of a token pair\",\"params\":{\"tokenA\":\"First token in pair\",\"tokenB\":\"Second token in pair\"},\"returns\":{\"_0\":\"address The pair's address\"}},\"getPrice(address)\":{\"details\":\"Given an input asset address, returns the price of the asset in cUSD\",\"params\":{\"currencyKey\":\"Address of the asset\"},\"returns\":{\"_0\":\"uint Price of the asset\"}},\"getTokenAmountsFromPair(address,address,uint256)\":{\"details\":\"Calculates the amount of tokens in a pair\",\"params\":{\"numberOfLPTokens\":\"Number of LP tokens for the given pair\",\"tokenA\":\"First token in pair\",\"tokenB\":\"Second token in pair\"},\"returns\":{\"_0\":\"(uint, uint) The number of tokens for tokenA and tokenB\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol\":\"IBaseUbeswapAdapter\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol\":{\"keccak256\":\"0x28cb80373b09186a95e4d10029a01f68781f5a2d48ce007bcabd59352f09945c\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://1796c8b35b6b242c4b76ca3f389d0987be8a44026881eb1131cc83cab956da34\",\"dweb:/ipfs/QmbehpQgWT47amHnMfGx7b4vqDpXa4g2rC5kGp6j9FEuTU\"]},\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/Ubeswap/IUniswapV2Router02.sol\":{\"keccak256\":\"0x14539033edcd16b4c11a8f891bd5d0dc64d48826ad94fb682027124d291a530f\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e81f6d0d265b0c101c84d961359b5bcaebdad77e7e93add63969de1b98b8894f\",\"dweb:/ipfs/QmNsjPMUxt3MZKpjB5FHkdeKi1rjjbnKuY89aKLGipGfVC\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -214,24 +195,24 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\nimport './Ubeswap/IUniswapV2Router02.sol';\r\n\r\ninterface IBaseUbeswapAdapter {\r\n    function MAX_SLIPPAGE_PERCENT() external returns (uint);\r\n\r\n    /**\r\n    * @dev Given an input asset address, returns the price of the asset in cUSD\r\n    * @param currencyKey Address of the asset\r\n    * @return uint Price of the asset\r\n    */\r\n    function getPrice(address currencyKey) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given an input asset amount, returns the maximum output amount of the other asset\r\n    * @param numberOfTokens Number of tokens\r\n    * @param currencyKeyIn Address of the asset to be swap from\r\n    * @param currencyKeyOut Address of the asset to be swap to\r\n    * @return uint Amount out of the asset\r\n    */\r\n    function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given the target output asset amount, returns the amount of input asset needed\r\n    * @param numberOfTokens Target amount of output asset\r\n    * @param currencyKeyIn Address of the asset to be swap from\r\n    * @param currencyKeyOut Address of the asset to be swap to\r\n    * @return uint Amount out input asset needed\r\n    */\r\n    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap\r\n    * @return address[] memory The farm address for each available farm\r\n    */\r\n    function getAvailableUbeswapFarms() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address\r\n    * @param farmAddress Address of the farm to check\r\n    * @return address The farm's staking token address\r\n    */\r\n    function checkIfFarmExists(address farmAddress) external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the address of a token pair\r\n    * @param tokenA First token in pair\r\n    * @param tokenB Second token in pair\r\n    * @return address The pair's address\r\n    */\r\n    function getPair(address tokenA, address tokenB) external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the amount of UBE rewards available for the pool in the given farm\r\n    * @param poolAddress Address of the pool\r\n    * @param farmAddress Address of the farm on Ubeswap\r\n    * @return uint Amount of UBE available\r\n    */\r\n    function getAvailableRewards(address poolAddress, address farmAddress) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Calculates the amount of tokens in a pair\r\n    * @param tokenA First token in pair\r\n    * @param tokenB Second token in pair\r\n    * @param numberOfLPTokens Number of LP tokens for the given pair\r\n    * @return (uint, uint) The number of tokens for tokenA and tokenB\r\n    */\r\n    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) external view returns (uint, uint);\r\n}",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\nimport './Ubeswap/IUniswapV2Router02.sol';\r\n\r\ninterface IBaseUbeswapAdapter {\r\n    function MAX_SLIPPAGE_PERCENT() external returns (uint);\r\n\r\n    /**\r\n    * @dev Given an input asset address, returns the price of the asset in cUSD\r\n    * @param currencyKey Address of the asset\r\n    * @return uint Price of the asset\r\n    */\r\n    function getPrice(address currencyKey) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given an input asset amount, returns the maximum output amount of the other asset\r\n    * @param numberOfTokens Number of tokens\r\n    * @param currencyKeyIn Address of the asset to be swap from\r\n    * @param currencyKeyOut Address of the asset to be swap to\r\n    * @return uint Amount out of the asset\r\n    */\r\n    function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Given the target output asset amount, returns the amount of input asset needed\r\n    * @param numberOfTokens Target amount of output asset\r\n    * @param currencyKeyIn Address of the asset to be swap from\r\n    * @param currencyKeyOut Address of the asset to be swap to\r\n    * @return uint Amount out input asset needed\r\n    */\r\n    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap\r\n    * @return address[] memory The farm address for each available farm\r\n    */\r\n    function getAvailableUbeswapFarms() external view returns (address[] memory);\r\n\r\n    /**\r\n    * @dev Returns the address of a token pair\r\n    * @param tokenA First token in pair\r\n    * @param tokenB Second token in pair\r\n    * @return address The pair's address\r\n    */\r\n    function getPair(address tokenA, address tokenB) external view returns (address);\r\n\r\n    /**\r\n    * @dev Returns the amount of UBE rewards available for the pool in the given farm\r\n    * @param poolAddress Address of the pool\r\n    * @param farmAddress Address of the farm on Ubeswap\r\n    * @return uint Amount of UBE available\r\n    */\r\n    function getAvailableRewards(address poolAddress, address farmAddress) external view returns (uint);\r\n\r\n    /**\r\n    * @dev Calculates the amount of tokens in a pair\r\n    * @param tokenA First token in pair\r\n    * @param tokenB Second token in pair\r\n    * @param numberOfLPTokens Number of LP tokens for the given pair\r\n    * @return (uint, uint) The number of tokens for tokenA and tokenB\r\n    */\r\n    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) external view returns (uint, uint);\r\n}",
   "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\IBaseUbeswapAdapter.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol",
     "exportedSymbols": {
       "IBaseUbeswapAdapter": [
-        9042
+        355
       ],
       "IUniswapV2Router02": [
-        10150
+        1364
       ]
     },
-    "id": 9043,
+    "id": 356,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 8954,
+        "id": 275,
         "literals": [
           "solidity",
           ">=",
@@ -239,16 +220,16 @@
           ".6"
         ],
         "nodeType": "PragmaDirective",
-        "src": "35:24:20"
+        "src": "35:24:4"
       },
       {
         "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/Ubeswap/IUniswapV2Router02.sol",
         "file": "./Ubeswap/IUniswapV2Router02.sol",
-        "id": 8955,
+        "id": 276,
         "nodeType": "ImportDirective",
-        "scope": 9043,
-        "sourceUnit": 10151,
-        "src": "63:42:20",
+        "scope": 356,
+        "sourceUnit": 1365,
+        "src": "63:42:4",
         "symbolAliases": [],
         "unitAlias": ""
       },
@@ -258,39 +239,39 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 9042,
+        "id": 355,
         "linearizedBaseContracts": [
-          9042
+          355
         ],
         "name": "IBaseUbeswapAdapter",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "functionSelector": "32e4b286",
-            "id": 8960,
+            "id": 281,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "MAX_SLIPPAGE_PERCENT",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8956,
+              "id": 277,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "175:2:20"
+              "src": "175:2:4"
             },
             "returnParameters": {
-              "id": 8959,
+              "id": 280,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8958,
+                  "id": 279,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8960,
-                  "src": "196:4:20",
+                  "scope": 281,
+                  "src": "196:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -298,10 +279,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8957,
+                    "id": 278,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "196:4:20",
+                    "src": "196:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -310,40 +291,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "195:6:20"
+              "src": "195:6:4"
             },
-            "scope": 9042,
-            "src": "146:56:20",
+            "scope": 355,
+            "src": "146:56:4",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 8961,
+              "id": 282,
               "nodeType": "StructuredDocumentation",
-              "src": "210:178:20",
+              "src": "210:178:4",
               "text": " @dev Given an input asset address, returns the price of the asset in cUSD\n @param currencyKey Address of the asset\n @return uint Price of the asset"
             },
             "functionSelector": "41976e09",
-            "id": 8968,
+            "id": 289,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPrice",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8964,
+              "id": 285,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8963,
+                  "id": 284,
                   "mutability": "mutable",
                   "name": "currencyKey",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8968,
-                  "src": "412:19:20",
+                  "scope": 289,
+                  "src": "412:19:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -351,10 +332,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8962,
+                    "id": 283,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "412:7:20",
+                    "src": "412:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -364,20 +345,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "411:21:20"
+              "src": "411:21:4"
             },
             "returnParameters": {
-              "id": 8967,
+              "id": 288,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8966,
+                  "id": 287,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8968,
-                  "src": "456:4:20",
+                  "scope": 289,
+                  "src": "456:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -385,10 +366,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8965,
+                    "id": 286,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "456:4:20",
+                    "src": "456:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -397,40 +378,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "455:6:20"
+              "src": "455:6:4"
             },
-            "scope": 9042,
-            "src": "394:68:20",
+            "scope": 355,
+            "src": "394:68:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 8969,
+              "id": 290,
               "nodeType": "StructuredDocumentation",
-              "src": "470:324:20",
+              "src": "470:324:4",
               "text": " @dev Given an input asset amount, returns the maximum output amount of the other asset\n @param numberOfTokens Number of tokens\n @param currencyKeyIn Address of the asset to be swap from\n @param currencyKeyOut Address of the asset to be swap to\n @return uint Amount out of the asset"
             },
             "functionSelector": "baf7fa99",
-            "id": 8980,
+            "id": 301,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAmountsOut",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8976,
+              "id": 297,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8971,
+                  "id": 292,
                   "mutability": "mutable",
                   "name": "numberOfTokens",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8980,
-                  "src": "823:19:20",
+                  "scope": 301,
+                  "src": "823:19:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -438,10 +419,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8970,
+                    "id": 291,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "823:4:20",
+                    "src": "823:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -451,12 +432,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 8973,
+                  "id": 294,
                   "mutability": "mutable",
                   "name": "currencyKeyIn",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8980,
-                  "src": "844:21:20",
+                  "scope": 301,
+                  "src": "844:21:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -464,10 +445,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8972,
+                    "id": 293,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "844:7:20",
+                    "src": "844:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -478,12 +459,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 8975,
+                  "id": 296,
                   "mutability": "mutable",
                   "name": "currencyKeyOut",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8980,
-                  "src": "867:22:20",
+                  "scope": 301,
+                  "src": "867:22:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -491,10 +472,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8974,
+                    "id": 295,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "867:7:20",
+                    "src": "867:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -504,20 +485,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "822:68:20"
+              "src": "822:68:4"
             },
             "returnParameters": {
-              "id": 8979,
+              "id": 300,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8978,
+                  "id": 299,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8980,
-                  "src": "914:4:20",
+                  "scope": 301,
+                  "src": "914:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -525,10 +506,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8977,
+                    "id": 298,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "914:4:20",
+                    "src": "914:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -537,40 +518,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "913:6:20"
+              "src": "913:6:4"
             },
-            "scope": 9042,
-            "src": "800:120:20",
+            "scope": 355,
+            "src": "800:120:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 8981,
+              "id": 302,
               "nodeType": "StructuredDocumentation",
-              "src": "928:340:20",
+              "src": "928:340:4",
               "text": " @dev Given the target output asset amount, returns the amount of input asset needed\n @param numberOfTokens Target amount of output asset\n @param currencyKeyIn Address of the asset to be swap from\n @param currencyKeyOut Address of the asset to be swap to\n @return uint Amount out input asset needed"
             },
             "functionSelector": "cdf58cd6",
-            "id": 8992,
+            "id": 313,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAmountsIn",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8988,
+              "id": 309,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8983,
+                  "id": 304,
                   "mutability": "mutable",
                   "name": "numberOfTokens",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8992,
-                  "src": "1296:19:20",
+                  "scope": 313,
+                  "src": "1296:19:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -578,10 +559,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8982,
+                    "id": 303,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1296:4:20",
+                    "src": "1296:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -591,12 +572,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 8985,
+                  "id": 306,
                   "mutability": "mutable",
                   "name": "currencyKeyIn",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8992,
-                  "src": "1317:21:20",
+                  "scope": 313,
+                  "src": "1317:21:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -604,10 +585,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8984,
+                    "id": 305,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1317:7:20",
+                    "src": "1317:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -618,12 +599,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 8987,
+                  "id": 308,
                   "mutability": "mutable",
                   "name": "currencyKeyOut",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8992,
-                  "src": "1340:22:20",
+                  "scope": 313,
+                  "src": "1340:22:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -631,10 +612,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 8986,
+                    "id": 307,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1340:7:20",
+                    "src": "1340:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -644,20 +625,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1295:68:20"
+              "src": "1295:68:4"
             },
             "returnParameters": {
-              "id": 8991,
+              "id": 312,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8990,
+                  "id": 311,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8992,
-                  "src": "1387:4:20",
+                  "scope": 313,
+                  "src": "1387:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -665,10 +646,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 8989,
+                    "id": 310,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1387:4:20",
+                    "src": "1387:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -677,46 +658,46 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1386:6:20"
+              "src": "1386:6:4"
             },
-            "scope": 9042,
-            "src": "1274:119:20",
+            "scope": 355,
+            "src": "1274:119:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 8993,
+              "id": 314,
               "nodeType": "StructuredDocumentation",
-              "src": "1401:183:20",
+              "src": "1401:183:4",
               "text": " @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap\n @return address[] memory The farm address for each available farm"
             },
             "functionSelector": "e1f6e5bb",
-            "id": 8999,
+            "id": 320,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAvailableUbeswapFarms",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 8994,
+              "id": 315,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "1623:2:20"
+              "src": "1623:2:4"
             },
             "returnParameters": {
-              "id": 8998,
+              "id": 319,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 8997,
+                  "id": 318,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 8999,
-                  "src": "1649:16:20",
+                  "scope": 320,
+                  "src": "1649:16:4",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -725,19 +706,19 @@
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 8995,
+                      "id": 316,
                       "name": "address",
                       "nodeType": "ElementaryTypeName",
-                      "src": "1649:7:20",
+                      "src": "1649:7:4",
                       "stateMutability": "nonpayable",
                       "typeDescriptions": {
                         "typeIdentifier": "t_address",
                         "typeString": "address"
                       }
                     },
-                    "id": 8996,
+                    "id": 317,
                     "nodeType": "ArrayTypeName",
-                    "src": "1649:9:20",
+                    "src": "1649:9:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
                       "typeString": "address[]"
@@ -746,128 +727,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "1648:18:20"
+              "src": "1648:18:4"
             },
-            "scope": 9042,
-            "src": "1590:77:20",
+            "scope": 355,
+            "src": "1590:77:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 9000,
+              "id": 321,
               "nodeType": "StructuredDocumentation",
-              "src": "1675:215:20",
-              "text": " @dev Given the address of a farm on Ubeswap, returns the farm's staking token address\n @param farmAddress Address of the farm to check\n @return address The farm's staking token address"
-            },
-            "functionSelector": "81ef421f",
-            "id": 9007,
-            "implemented": false,
-            "kind": "function",
-            "modifiers": [],
-            "name": "checkIfFarmExists",
-            "nodeType": "FunctionDefinition",
-            "parameters": {
-              "id": 9003,
-              "nodeType": "ParameterList",
-              "parameters": [
-                {
-                  "constant": false,
-                  "id": 9002,
-                  "mutability": "mutable",
-                  "name": "farmAddress",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 9007,
-                  "src": "1923:19:20",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 9001,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "1923:7:20",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "visibility": "internal"
-                }
-              ],
-              "src": "1922:21:20"
-            },
-            "returnParameters": {
-              "id": 9006,
-              "nodeType": "ParameterList",
-              "parameters": [
-                {
-                  "constant": false,
-                  "id": 9005,
-                  "mutability": "mutable",
-                  "name": "",
-                  "nodeType": "VariableDeclaration",
-                  "scope": 9007,
-                  "src": "1967:7:20",
-                  "stateVariable": false,
-                  "storageLocation": "default",
-                  "typeDescriptions": {
-                    "typeIdentifier": "t_address",
-                    "typeString": "address"
-                  },
-                  "typeName": {
-                    "id": 9004,
-                    "name": "address",
-                    "nodeType": "ElementaryTypeName",
-                    "src": "1967:7:20",
-                    "stateMutability": "nonpayable",
-                    "typeDescriptions": {
-                      "typeIdentifier": "t_address",
-                      "typeString": "address"
-                    }
-                  },
-                  "visibility": "internal"
-                }
-              ],
-              "src": "1966:9:20"
-            },
-            "scope": 9042,
-            "src": "1896:80:20",
-            "stateMutability": "view",
-            "virtual": false,
-            "visibility": "external"
-          },
-          {
-            "documentation": {
-              "id": 9008,
-              "nodeType": "StructuredDocumentation",
-              "src": "1984:184:20",
+              "src": "1675:184:4",
               "text": " @dev Returns the address of a token pair\n @param tokenA First token in pair\n @param tokenB Second token in pair\n @return address The pair's address"
             },
             "functionSelector": "e6a43905",
-            "id": 9017,
+            "id": 330,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getPair",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9013,
+              "id": 326,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9010,
+                  "id": 323,
                   "mutability": "mutable",
                   "name": "tokenA",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9017,
-                  "src": "2191:14:20",
+                  "scope": 330,
+                  "src": "1882:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -875,10 +768,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9009,
+                    "id": 322,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2191:7:20",
+                    "src": "1882:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -889,12 +782,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 9012,
+                  "id": 325,
                   "mutability": "mutable",
                   "name": "tokenB",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9017,
-                  "src": "2207:14:20",
+                  "scope": 330,
+                  "src": "1898:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -902,10 +795,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9011,
+                    "id": 324,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2207:7:20",
+                    "src": "1898:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -915,20 +808,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2190:32:20"
+              "src": "1881:32:4"
             },
             "returnParameters": {
-              "id": 9016,
+              "id": 329,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9015,
+                  "id": 328,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9017,
-                  "src": "2246:7:20",
+                  "scope": 330,
+                  "src": "1937:7:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -936,10 +829,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9014,
+                    "id": 327,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2246:7:20",
+                    "src": "1937:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -949,40 +842,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2245:9:20"
+              "src": "1936:9:4"
             },
-            "scope": 9042,
-            "src": "2174:81:20",
+            "scope": 355,
+            "src": "1865:81:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 9018,
+              "id": 331,
               "nodeType": "StructuredDocumentation",
-              "src": "2263:245:20",
+              "src": "1954:245:4",
               "text": " @dev Returns the amount of UBE rewards available for the pool in the given farm\n @param poolAddress Address of the pool\n @param farmAddress Address of the farm on Ubeswap\n @return uint Amount of UBE available"
             },
             "functionSelector": "009e78be",
-            "id": 9027,
+            "id": 340,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getAvailableRewards",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9023,
+              "id": 336,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9020,
+                  "id": 333,
                   "mutability": "mutable",
                   "name": "poolAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9027,
-                  "src": "2543:19:20",
+                  "scope": 340,
+                  "src": "2234:19:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -990,10 +883,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9019,
+                    "id": 332,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2543:7:20",
+                    "src": "2234:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1004,12 +897,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 9022,
+                  "id": 335,
                   "mutability": "mutable",
                   "name": "farmAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9027,
-                  "src": "2564:19:20",
+                  "scope": 340,
+                  "src": "2255:19:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1017,10 +910,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9021,
+                    "id": 334,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2564:7:20",
+                    "src": "2255:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1030,20 +923,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2542:42:20"
+              "src": "2233:42:4"
             },
             "returnParameters": {
-              "id": 9026,
+              "id": 339,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9025,
+                  "id": 338,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9027,
-                  "src": "2608:4:20",
+                  "scope": 340,
+                  "src": "2299:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1051,10 +944,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9024,
+                    "id": 337,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2608:4:20",
+                    "src": "2299:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1063,40 +956,40 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2607:6:20"
+              "src": "2298:6:4"
             },
-            "scope": 9042,
-            "src": "2514:100:20",
+            "scope": 355,
+            "src": "2205:100:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
             "documentation": {
-              "id": 9028,
+              "id": 341,
               "nodeType": "StructuredDocumentation",
-              "src": "2622:289:20",
+              "src": "2313:289:4",
               "text": " @dev Calculates the amount of tokens in a pair\n @param tokenA First token in pair\n @param tokenB Second token in pair\n @param numberOfLPTokens Number of LP tokens for the given pair\n @return (uint, uint) The number of tokens for tokenA and tokenB"
             },
             "functionSelector": "d87fc149",
-            "id": 9041,
+            "id": 354,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getTokenAmountsFromPair",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 9035,
+              "id": 348,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9030,
+                  "id": 343,
                   "mutability": "mutable",
                   "name": "tokenA",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9041,
-                  "src": "2950:14:20",
+                  "scope": 354,
+                  "src": "2641:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1104,10 +997,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9029,
+                    "id": 342,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2950:7:20",
+                    "src": "2641:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1118,12 +1011,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 9032,
+                  "id": 345,
                   "mutability": "mutable",
                   "name": "tokenB",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9041,
-                  "src": "2966:14:20",
+                  "scope": 354,
+                  "src": "2657:14:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1131,10 +1024,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 9031,
+                    "id": 344,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2966:7:20",
+                    "src": "2657:7:4",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -1145,12 +1038,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 9034,
+                  "id": 347,
                   "mutability": "mutable",
                   "name": "numberOfLPTokens",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9041,
-                  "src": "2982:21:20",
+                  "scope": 354,
+                  "src": "2673:21:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1158,10 +1051,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9033,
+                    "id": 346,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "2982:4:20",
+                    "src": "2673:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1170,20 +1063,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "2949:55:20"
+              "src": "2640:55:4"
             },
             "returnParameters": {
-              "id": 9040,
+              "id": 353,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 9037,
+                  "id": 350,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9041,
-                  "src": "3028:4:20",
+                  "scope": 354,
+                  "src": "2719:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1191,10 +1084,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9036,
+                    "id": 349,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3028:4:20",
+                    "src": "2719:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1204,12 +1097,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 9039,
+                  "id": 352,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 9041,
-                  "src": "3034:4:20",
+                  "scope": 354,
+                  "src": "2725:4:4",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -1217,10 +1110,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 9038,
+                    "id": 351,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "3034:4:20",
+                    "src": "2725:4:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -1229,30 +1122,30 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "3027:12:20"
+              "src": "2718:12:4"
             },
-            "scope": 9042,
-            "src": "2917:123:20",
+            "scope": 355,
+            "src": "2608:123:4",
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           }
         ],
-        "scope": 9043,
-        "src": "109:2934:20"
+        "scope": 356,
+        "src": "109:2625:4"
       }
     ],
-    "src": "35:3008:20"
+    "src": "35:2699:4"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IBaseUbeswapAdapter.sol",
       "exportedSymbols": {
         "IBaseUbeswapAdapter": [
-          9042
+          355
         ],
         "IUniswapV2Router02": [
-          10150
+          1364
         ]
       },
       "license": "MIT"
@@ -1267,24 +1160,24 @@
             ".6"
           ]
         },
-        "id": 8954,
+        "id": 275,
         "name": "PragmaDirective",
-        "src": "35:24:20"
+        "src": "35:24:4"
       },
       {
         "attributes": {
-          "SourceUnit": 10151,
+          "SourceUnit": 1365,
           "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/Ubeswap/IUniswapV2Router02.sol",
           "file": "./Ubeswap/IUniswapV2Router02.sol",
-          "scope": 9043,
+          "scope": 356,
           "symbolAliases": [
             null
           ],
           "unitAlias": ""
         },
-        "id": 8955,
+        "id": 276,
         "name": "ImportDirective",
-        "src": "63:42:20"
+        "src": "63:42:4"
       },
       {
         "attributes": {
@@ -1298,10 +1191,10 @@
           "contractKind": "interface",
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            9042
+            355
           ],
           "name": "IBaseUbeswapAdapter",
-          "scope": 9043
+          "scope": 356
         },
         "children": [
           {
@@ -1314,7 +1207,7 @@
                 null
               ],
               "name": "MAX_SLIPPAGE_PERCENT",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -1327,9 +1220,9 @@
                   ]
                 },
                 "children": [],
-                "id": 8956,
+                "id": 277,
                 "name": "ParameterList",
-                "src": "175:2:20"
+                "src": "175:2:4"
               },
               {
                 "children": [
@@ -1338,7 +1231,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8960,
+                      "scope": 281,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1350,24 +1243,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8957,
+                        "id": 278,
                         "name": "ElementaryTypeName",
-                        "src": "196:4:20"
+                        "src": "196:4:4"
                       }
                     ],
-                    "id": 8958,
+                    "id": 279,
                     "name": "VariableDeclaration",
-                    "src": "196:4:20"
+                    "src": "196:4:4"
                   }
                 ],
-                "id": 8959,
+                "id": 280,
                 "name": "ParameterList",
-                "src": "195:6:20"
+                "src": "195:6:4"
               }
             ],
-            "id": 8960,
+            "id": 281,
             "name": "FunctionDefinition",
-            "src": "146:56:20"
+            "src": "146:56:4"
           },
           {
             "attributes": {
@@ -1379,7 +1272,7 @@
                 null
               ],
               "name": "getPrice",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1389,9 +1282,9 @@
                 "attributes": {
                   "text": " @dev Given an input asset address, returns the price of the asset in cUSD\n @param currencyKey Address of the asset\n @return uint Price of the asset"
                 },
-                "id": 8961,
+                "id": 282,
                 "name": "StructuredDocumentation",
-                "src": "210:178:20"
+                "src": "210:178:4"
               },
               {
                 "children": [
@@ -1400,7 +1293,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "currencyKey",
-                      "scope": 8968,
+                      "scope": 289,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1413,19 +1306,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8962,
+                        "id": 283,
                         "name": "ElementaryTypeName",
-                        "src": "412:7:20"
+                        "src": "412:7:4"
                       }
                     ],
-                    "id": 8963,
+                    "id": 284,
                     "name": "VariableDeclaration",
-                    "src": "412:19:20"
+                    "src": "412:19:4"
                   }
                 ],
-                "id": 8964,
+                "id": 285,
                 "name": "ParameterList",
-                "src": "411:21:20"
+                "src": "411:21:4"
               },
               {
                 "children": [
@@ -1434,7 +1327,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8968,
+                      "scope": 289,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1446,24 +1339,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8965,
+                        "id": 286,
                         "name": "ElementaryTypeName",
-                        "src": "456:4:20"
+                        "src": "456:4:4"
                       }
                     ],
-                    "id": 8966,
+                    "id": 287,
                     "name": "VariableDeclaration",
-                    "src": "456:4:20"
+                    "src": "456:4:4"
                   }
                 ],
-                "id": 8967,
+                "id": 288,
                 "name": "ParameterList",
-                "src": "455:6:20"
+                "src": "455:6:4"
               }
             ],
-            "id": 8968,
+            "id": 289,
             "name": "FunctionDefinition",
-            "src": "394:68:20"
+            "src": "394:68:4"
           },
           {
             "attributes": {
@@ -1475,7 +1368,7 @@
                 null
               ],
               "name": "getAmountsOut",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1485,9 +1378,9 @@
                 "attributes": {
                   "text": " @dev Given an input asset amount, returns the maximum output amount of the other asset\n @param numberOfTokens Number of tokens\n @param currencyKeyIn Address of the asset to be swap from\n @param currencyKeyOut Address of the asset to be swap to\n @return uint Amount out of the asset"
                 },
-                "id": 8969,
+                "id": 290,
                 "name": "StructuredDocumentation",
-                "src": "470:324:20"
+                "src": "470:324:4"
               },
               {
                 "children": [
@@ -1496,7 +1389,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "numberOfTokens",
-                      "scope": 8980,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1508,21 +1401,21 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8970,
+                        "id": 291,
                         "name": "ElementaryTypeName",
-                        "src": "823:4:20"
+                        "src": "823:4:4"
                       }
                     ],
-                    "id": 8971,
+                    "id": 292,
                     "name": "VariableDeclaration",
-                    "src": "823:19:20"
+                    "src": "823:19:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "currencyKeyIn",
-                      "scope": 8980,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1535,21 +1428,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8972,
+                        "id": 293,
                         "name": "ElementaryTypeName",
-                        "src": "844:7:20"
+                        "src": "844:7:4"
                       }
                     ],
-                    "id": 8973,
+                    "id": 294,
                     "name": "VariableDeclaration",
-                    "src": "844:21:20"
+                    "src": "844:21:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "currencyKeyOut",
-                      "scope": 8980,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1562,19 +1455,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8974,
+                        "id": 295,
                         "name": "ElementaryTypeName",
-                        "src": "867:7:20"
+                        "src": "867:7:4"
                       }
                     ],
-                    "id": 8975,
+                    "id": 296,
                     "name": "VariableDeclaration",
-                    "src": "867:22:20"
+                    "src": "867:22:4"
                   }
                 ],
-                "id": 8976,
+                "id": 297,
                 "name": "ParameterList",
-                "src": "822:68:20"
+                "src": "822:68:4"
               },
               {
                 "children": [
@@ -1583,7 +1476,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8980,
+                      "scope": 301,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1595,24 +1488,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8977,
+                        "id": 298,
                         "name": "ElementaryTypeName",
-                        "src": "914:4:20"
+                        "src": "914:4:4"
                       }
                     ],
-                    "id": 8978,
+                    "id": 299,
                     "name": "VariableDeclaration",
-                    "src": "914:4:20"
+                    "src": "914:4:4"
                   }
                 ],
-                "id": 8979,
+                "id": 300,
                 "name": "ParameterList",
-                "src": "913:6:20"
+                "src": "913:6:4"
               }
             ],
-            "id": 8980,
+            "id": 301,
             "name": "FunctionDefinition",
-            "src": "800:120:20"
+            "src": "800:120:4"
           },
           {
             "attributes": {
@@ -1624,7 +1517,7 @@
                 null
               ],
               "name": "getAmountsIn",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1634,9 +1527,9 @@
                 "attributes": {
                   "text": " @dev Given the target output asset amount, returns the amount of input asset needed\n @param numberOfTokens Target amount of output asset\n @param currencyKeyIn Address of the asset to be swap from\n @param currencyKeyOut Address of the asset to be swap to\n @return uint Amount out input asset needed"
                 },
-                "id": 8981,
+                "id": 302,
                 "name": "StructuredDocumentation",
-                "src": "928:340:20"
+                "src": "928:340:4"
               },
               {
                 "children": [
@@ -1645,7 +1538,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "numberOfTokens",
-                      "scope": 8992,
+                      "scope": 313,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1657,21 +1550,21 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8982,
+                        "id": 303,
                         "name": "ElementaryTypeName",
-                        "src": "1296:4:20"
+                        "src": "1296:4:4"
                       }
                     ],
-                    "id": 8983,
+                    "id": 304,
                     "name": "VariableDeclaration",
-                    "src": "1296:19:20"
+                    "src": "1296:19:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "currencyKeyIn",
-                      "scope": 8992,
+                      "scope": 313,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1684,21 +1577,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8984,
+                        "id": 305,
                         "name": "ElementaryTypeName",
-                        "src": "1317:7:20"
+                        "src": "1317:7:4"
                       }
                     ],
-                    "id": 8985,
+                    "id": 306,
                     "name": "VariableDeclaration",
-                    "src": "1317:21:20"
+                    "src": "1317:21:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "currencyKeyOut",
-                      "scope": 8992,
+                      "scope": 313,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1711,19 +1604,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 8986,
+                        "id": 307,
                         "name": "ElementaryTypeName",
-                        "src": "1340:7:20"
+                        "src": "1340:7:4"
                       }
                     ],
-                    "id": 8987,
+                    "id": 308,
                     "name": "VariableDeclaration",
-                    "src": "1340:22:20"
+                    "src": "1340:22:4"
                   }
                 ],
-                "id": 8988,
+                "id": 309,
                 "name": "ParameterList",
-                "src": "1295:68:20"
+                "src": "1295:68:4"
               },
               {
                 "children": [
@@ -1732,7 +1625,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8992,
+                      "scope": 313,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -1744,24 +1637,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 8989,
+                        "id": 310,
                         "name": "ElementaryTypeName",
-                        "src": "1387:4:20"
+                        "src": "1387:4:4"
                       }
                     ],
-                    "id": 8990,
+                    "id": 311,
                     "name": "VariableDeclaration",
-                    "src": "1387:4:20"
+                    "src": "1387:4:4"
                   }
                 ],
-                "id": 8991,
+                "id": 312,
                 "name": "ParameterList",
-                "src": "1386:6:20"
+                "src": "1386:6:4"
               }
             ],
-            "id": 8992,
+            "id": 313,
             "name": "FunctionDefinition",
-            "src": "1274:119:20"
+            "src": "1274:119:4"
           },
           {
             "attributes": {
@@ -1773,7 +1666,7 @@
                 null
               ],
               "name": "getAvailableUbeswapFarms",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1783,9 +1676,9 @@
                 "attributes": {
                   "text": " @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap\n @return address[] memory The farm address for each available farm"
                 },
-                "id": 8993,
+                "id": 314,
                 "name": "StructuredDocumentation",
-                "src": "1401:183:20"
+                "src": "1401:183:4"
               },
               {
                 "attributes": {
@@ -1794,9 +1687,9 @@
                   ]
                 },
                 "children": [],
-                "id": 8994,
+                "id": 315,
                 "name": "ParameterList",
-                "src": "1623:2:20"
+                "src": "1623:2:4"
               },
               {
                 "children": [
@@ -1805,7 +1698,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 8999,
+                      "scope": 320,
                       "stateVariable": false,
                       "storageLocation": "memory",
                       "type": "address[]",
@@ -1823,126 +1716,29 @@
                               "stateMutability": "nonpayable",
                               "type": "address"
                             },
-                            "id": 8995,
+                            "id": 316,
                             "name": "ElementaryTypeName",
-                            "src": "1649:7:20"
+                            "src": "1649:7:4"
                           }
                         ],
-                        "id": 8996,
+                        "id": 317,
                         "name": "ArrayTypeName",
-                        "src": "1649:9:20"
+                        "src": "1649:9:4"
                       }
                     ],
-                    "id": 8997,
+                    "id": 318,
                     "name": "VariableDeclaration",
-                    "src": "1649:16:20"
+                    "src": "1649:16:4"
                   }
                 ],
-                "id": 8998,
+                "id": 319,
                 "name": "ParameterList",
-                "src": "1648:18:20"
+                "src": "1648:18:4"
               }
             ],
-            "id": 8999,
+            "id": 320,
             "name": "FunctionDefinition",
-            "src": "1590:77:20"
-          },
-          {
-            "attributes": {
-              "functionSelector": "81ef421f",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "checkIfFarmExists",
-              "scope": 9042,
-              "stateMutability": "view",
-              "virtual": false,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "text": " @dev Given the address of a farm on Ubeswap, returns the farm's staking token address\n @param farmAddress Address of the farm to check\n @return address The farm's staking token address"
-                },
-                "id": 9000,
-                "name": "StructuredDocumentation",
-                "src": "1675:215:20"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
-                      "name": "farmAddress",
-                      "scope": 9007,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 9001,
-                        "name": "ElementaryTypeName",
-                        "src": "1923:7:20"
-                      }
-                    ],
-                    "id": 9002,
-                    "name": "VariableDeclaration",
-                    "src": "1923:19:20"
-                  }
-                ],
-                "id": 9003,
-                "name": "ParameterList",
-                "src": "1922:21:20"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "mutability": "mutable",
-                      "name": "",
-                      "scope": 9007,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 9004,
-                        "name": "ElementaryTypeName",
-                        "src": "1967:7:20"
-                      }
-                    ],
-                    "id": 9005,
-                    "name": "VariableDeclaration",
-                    "src": "1967:7:20"
-                  }
-                ],
-                "id": 9006,
-                "name": "ParameterList",
-                "src": "1966:9:20"
-              }
-            ],
-            "id": 9007,
-            "name": "FunctionDefinition",
-            "src": "1896:80:20"
+            "src": "1590:77:4"
           },
           {
             "attributes": {
@@ -1954,7 +1750,7 @@
                 null
               ],
               "name": "getPair",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -1964,9 +1760,9 @@
                 "attributes": {
                   "text": " @dev Returns the address of a token pair\n @param tokenA First token in pair\n @param tokenB Second token in pair\n @return address The pair's address"
                 },
-                "id": 9008,
+                "id": 321,
                 "name": "StructuredDocumentation",
-                "src": "1984:184:20"
+                "src": "1675:184:4"
               },
               {
                 "children": [
@@ -1975,7 +1771,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "tokenA",
-                      "scope": 9017,
+                      "scope": 330,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -1988,21 +1784,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9009,
+                        "id": 322,
                         "name": "ElementaryTypeName",
-                        "src": "2191:7:20"
+                        "src": "1882:7:4"
                       }
                     ],
-                    "id": 9010,
+                    "id": 323,
                     "name": "VariableDeclaration",
-                    "src": "2191:14:20"
+                    "src": "1882:14:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "tokenB",
-                      "scope": 9017,
+                      "scope": 330,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2015,19 +1811,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9011,
+                        "id": 324,
                         "name": "ElementaryTypeName",
-                        "src": "2207:7:20"
+                        "src": "1898:7:4"
                       }
                     ],
-                    "id": 9012,
+                    "id": 325,
                     "name": "VariableDeclaration",
-                    "src": "2207:14:20"
+                    "src": "1898:14:4"
                   }
                 ],
-                "id": 9013,
+                "id": 326,
                 "name": "ParameterList",
-                "src": "2190:32:20"
+                "src": "1881:32:4"
               },
               {
                 "children": [
@@ -2036,7 +1832,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 9017,
+                      "scope": 330,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2049,24 +1845,24 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9014,
+                        "id": 327,
                         "name": "ElementaryTypeName",
-                        "src": "2246:7:20"
+                        "src": "1937:7:4"
                       }
                     ],
-                    "id": 9015,
+                    "id": 328,
                     "name": "VariableDeclaration",
-                    "src": "2246:7:20"
+                    "src": "1937:7:4"
                   }
                 ],
-                "id": 9016,
+                "id": 329,
                 "name": "ParameterList",
-                "src": "2245:9:20"
+                "src": "1936:9:4"
               }
             ],
-            "id": 9017,
+            "id": 330,
             "name": "FunctionDefinition",
-            "src": "2174:81:20"
+            "src": "1865:81:4"
           },
           {
             "attributes": {
@@ -2078,7 +1874,7 @@
                 null
               ],
               "name": "getAvailableRewards",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2088,9 +1884,9 @@
                 "attributes": {
                   "text": " @dev Returns the amount of UBE rewards available for the pool in the given farm\n @param poolAddress Address of the pool\n @param farmAddress Address of the farm on Ubeswap\n @return uint Amount of UBE available"
                 },
-                "id": 9018,
+                "id": 331,
                 "name": "StructuredDocumentation",
-                "src": "2263:245:20"
+                "src": "1954:245:4"
               },
               {
                 "children": [
@@ -2099,7 +1895,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "poolAddress",
-                      "scope": 9027,
+                      "scope": 340,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2112,21 +1908,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9019,
+                        "id": 332,
                         "name": "ElementaryTypeName",
-                        "src": "2543:7:20"
+                        "src": "2234:7:4"
                       }
                     ],
-                    "id": 9020,
+                    "id": 333,
                     "name": "VariableDeclaration",
-                    "src": "2543:19:20"
+                    "src": "2234:19:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "farmAddress",
-                      "scope": 9027,
+                      "scope": 340,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2139,19 +1935,19 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9021,
+                        "id": 334,
                         "name": "ElementaryTypeName",
-                        "src": "2564:7:20"
+                        "src": "2255:7:4"
                       }
                     ],
-                    "id": 9022,
+                    "id": 335,
                     "name": "VariableDeclaration",
-                    "src": "2564:19:20"
+                    "src": "2255:19:4"
                   }
                 ],
-                "id": 9023,
+                "id": 336,
                 "name": "ParameterList",
-                "src": "2542:42:20"
+                "src": "2233:42:4"
               },
               {
                 "children": [
@@ -2160,7 +1956,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 9027,
+                      "scope": 340,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2172,24 +1968,24 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 9024,
+                        "id": 337,
                         "name": "ElementaryTypeName",
-                        "src": "2608:4:20"
+                        "src": "2299:4:4"
                       }
                     ],
-                    "id": 9025,
+                    "id": 338,
                     "name": "VariableDeclaration",
-                    "src": "2608:4:20"
+                    "src": "2299:4:4"
                   }
                 ],
-                "id": 9026,
+                "id": 339,
                 "name": "ParameterList",
-                "src": "2607:6:20"
+                "src": "2298:6:4"
               }
             ],
-            "id": 9027,
+            "id": 340,
             "name": "FunctionDefinition",
-            "src": "2514:100:20"
+            "src": "2205:100:4"
           },
           {
             "attributes": {
@@ -2201,7 +1997,7 @@
                 null
               ],
               "name": "getTokenAmountsFromPair",
-              "scope": 9042,
+              "scope": 355,
               "stateMutability": "view",
               "virtual": false,
               "visibility": "external"
@@ -2211,9 +2007,9 @@
                 "attributes": {
                   "text": " @dev Calculates the amount of tokens in a pair\n @param tokenA First token in pair\n @param tokenB Second token in pair\n @param numberOfLPTokens Number of LP tokens for the given pair\n @return (uint, uint) The number of tokens for tokenA and tokenB"
                 },
-                "id": 9028,
+                "id": 341,
                 "name": "StructuredDocumentation",
-                "src": "2622:289:20"
+                "src": "2313:289:4"
               },
               {
                 "children": [
@@ -2222,7 +2018,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "tokenA",
-                      "scope": 9041,
+                      "scope": 354,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2235,21 +2031,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9029,
+                        "id": 342,
                         "name": "ElementaryTypeName",
-                        "src": "2950:7:20"
+                        "src": "2641:7:4"
                       }
                     ],
-                    "id": 9030,
+                    "id": 343,
                     "name": "VariableDeclaration",
-                    "src": "2950:14:20"
+                    "src": "2641:14:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "tokenB",
-                      "scope": 9041,
+                      "scope": 354,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -2262,21 +2058,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 9031,
+                        "id": 344,
                         "name": "ElementaryTypeName",
-                        "src": "2966:7:20"
+                        "src": "2657:7:4"
                       }
                     ],
-                    "id": 9032,
+                    "id": 345,
                     "name": "VariableDeclaration",
-                    "src": "2966:14:20"
+                    "src": "2657:14:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "numberOfLPTokens",
-                      "scope": 9041,
+                      "scope": 354,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2288,19 +2084,19 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 9033,
+                        "id": 346,
                         "name": "ElementaryTypeName",
-                        "src": "2982:4:20"
+                        "src": "2673:4:4"
                       }
                     ],
-                    "id": 9034,
+                    "id": 347,
                     "name": "VariableDeclaration",
-                    "src": "2982:21:20"
+                    "src": "2673:21:4"
                   }
                 ],
-                "id": 9035,
+                "id": 348,
                 "name": "ParameterList",
-                "src": "2949:55:20"
+                "src": "2640:55:4"
               },
               {
                 "children": [
@@ -2309,7 +2105,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 9041,
+                      "scope": 354,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2321,21 +2117,21 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 9036,
+                        "id": 349,
                         "name": "ElementaryTypeName",
-                        "src": "3028:4:20"
+                        "src": "2719:4:4"
                       }
                     ],
-                    "id": 9037,
+                    "id": 350,
                     "name": "VariableDeclaration",
-                    "src": "3028:4:20"
+                    "src": "2719:4:4"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 9041,
+                      "scope": 354,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -2347,34 +2143,34 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 9038,
+                        "id": 351,
                         "name": "ElementaryTypeName",
-                        "src": "3034:4:20"
+                        "src": "2725:4:4"
                       }
                     ],
-                    "id": 9039,
+                    "id": 352,
                     "name": "VariableDeclaration",
-                    "src": "3034:4:20"
+                    "src": "2725:4:4"
                   }
                 ],
-                "id": 9040,
+                "id": 353,
                 "name": "ParameterList",
-                "src": "3027:12:20"
+                "src": "2718:12:4"
               }
             ],
-            "id": 9041,
+            "id": 354,
             "name": "FunctionDefinition",
-            "src": "2917:123:20"
+            "src": "2608:123:4"
           }
         ],
-        "id": 9042,
+        "id": 355,
         "name": "ContractDefinition",
-        "src": "109:2934:20"
+        "src": "109:2625:4"
       }
     ],
-    "id": 9043,
+    "id": 356,
     "name": "SourceUnit",
-    "src": "35:3008:20"
+    "src": "35:2699:4"
   },
   "compiler": {
     "name": "solc",
@@ -2382,19 +2178,10 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-08-17T23:05:06.049Z",
+  "updatedAt": "2021-08-18T03:36:43.685Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
-      "checkIfFarmExists(address)": {
-        "details": "Given the address of a farm on Ubeswap, returns the farm's staking token address",
-        "params": {
-          "farmAddress": "Address of the farm to check"
-        },
-        "returns": {
-          "_0": "address The farm's staking token address"
-        }
-      },
       "getAmountsIn(uint256,address,address)": {
         "details": "Given the target output asset amount, returns the amount of input asset needed",
         "params": {

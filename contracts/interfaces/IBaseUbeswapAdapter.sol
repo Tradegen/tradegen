@@ -39,13 +39,6 @@ interface IBaseUbeswapAdapter {
     function getAvailableUbeswapFarms() external view returns (address[] memory);
 
     /**
-    * @dev Given the address of a farm on Ubeswap, returns the farm's staking token address
-    * @param farmAddress Address of the farm to check
-    * @return address The farm's staking token address
-    */
-    function checkIfFarmExists(address farmAddress) external view returns (address);
-
-    /**
     * @dev Returns the address of a token pair
     * @param tokenA First token in pair
     * @param tokenB Second token in pair
