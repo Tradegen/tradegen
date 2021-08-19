@@ -23,7 +23,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     /* ========== STATE VARIABLES ========== */
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
-    bool private initialized = false;
 
     uint256 public override periodFinish = 0;
     uint256 public override rewardRate = 0;
@@ -149,26 +148,10 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
             lastUpdateTime[farms[i]] = block.timestamp;
         }
 
+        numberOfFarms = numberOfFarms.add(farms.length);
+
         periodFinish = block.timestamp.add(rewardsDuration);
         emit RewardAdded(reward, block.timestamp);
-    }
-
-    /**
-     * @notice Initialize the lastUpdateTime of each Ubeswap farm; meant to be called once
-     */
-    function initializeFarms() external onlyOwner {
-        require(!initialized, "Already initialized farms");
-        //Initialize lastUpdateTime of each available Ubeswap farm
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address[] memory farms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms();
-        for (uint i = 0; i < farms.length; i++)
-        {
-            lastUpdateTime[farms[i]] = block.timestamp;
-        }
-
-        initialized = true;
-
-        emit InitializedFarms(farms.length, block.timestamp);
     }
 
     /**
@@ -179,6 +162,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         require(lastUpdateTime[farm] > 0, "Farm already exists");
 
         lastUpdateTime[farm] = block.timestamp;
+        numberOfFarms = numberOfFarms.add(1);
 
         emit AddedFarm(farm, block.timestamp);
     }
@@ -188,6 +172,8 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     modifier updateReward(address account, address farm) {
         if (farm != address(0))
         {
+            require(lastUpdateTime[farm] > 0, "invalid farm");
+
             rewardPerTokenStored[farm] = rewardPerToken(farm);
             lastUpdateTime[farm] = lastTimeRewardApplicable();
 

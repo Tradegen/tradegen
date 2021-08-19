@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.6;
+pragma experimental ABIEncoderV2;
 
 interface IUbeswapPoolManager {
     struct PoolInfo {
@@ -15,4 +16,6 @@ interface IUbeswapPoolManager {
     function poolsCount() external view returns(uint256);
 
     function poolsByIndex(uint256) external view returns(address);
+
+    function pools(address) external view returns(PoolInfo memory);
 }

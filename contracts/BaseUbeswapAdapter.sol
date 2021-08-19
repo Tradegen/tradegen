@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.6;
+pragma experimental ABIEncoderV2;
 
 //Interfaces
 import './interfaces/Ubeswap/IUniswapV2Router02.sol';
@@ -10,6 +11,7 @@ import './interfaces/IAddressResolver.sol';
 import './interfaces/Ubeswap/IUbeswapPoolManager.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 import './interfaces/Ubeswap/IUniswapV2Factory.sol';
+import './interfaces/Ubeswap/IStakingRewards.sol';
 
 //Inheritance
 import './interfaces/IBaseUbeswapAdapter.sol';
@@ -113,21 +115,55 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     }
 
     /**
-    * @dev Returns the farm address and liquidity pool address for each available farm on Ubeswap
+    * @dev Returns the address of each available farm on Ubeswap
     * @return address[] memory The farm address for each available farm
     */
     function getAvailableUbeswapFarms() public view override returns (address[] memory) {
         address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
 
         uint numberOfAvailableFarms = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsCount();
+        address[] memory poolAddresses = new address[](numberOfAvailableFarms);
         address[] memory farmAddresses = new address[](numberOfAvailableFarms);
 
+        //Get supported LP tokens
         for (uint i = 0; i < numberOfAvailableFarms; i++)
         {
-            farmAddresses[i] = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsByIndex(i);
+            poolAddresses[i] = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsByIndex(i);
+        }
+
+        //Get supported farms
+        for (uint i = 0; i < numberOfAvailableFarms; i++)
+        {
+            IUbeswapPoolManager.PoolInfo memory farm = IUbeswapPoolManager(ubeswapPoolManagerAddress).pools(poolAddresses[i]);
+            farmAddresses[i] = farm.poolAddress;
         }
 
         return farmAddresses;
+    }
+
+    /**
+    * @dev Checks whether the given liquidity pair has a farm on Ubeswap
+    * @param pair Address of the liquidity pair
+    * @return bool Whether the pair has a farm
+    */
+    function checkIfLPTokenHasFarm(address pair) public view override returns (bool) {
+        require(pair != address(0), "BaseUbeswapAdapter: invalid pair address");
+
+        address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
+        IUbeswapPoolManager.PoolInfo memory ubeswapFarm = IUbeswapPoolManager(ubeswapPoolManagerAddress).pools(pair);
+
+        return (ubeswapFarm.poolAddress != address(0));
+    }
+
+    /**
+    * @dev Checks whether the given farm is supported on Ubeswap
+    * @param farm Address of the farm
+    * @return address Address of the farm's staking token
+    */
+    function checkIfFarmExists(address farm) public view override returns (address) {
+        require(farm != address(0), "BaseUbeswapAdapter: invalid farm address");
+
+        return IStakingRewards(farm).stakingToken();
     }
 
     /**

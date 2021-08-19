@@ -36,19 +36,11 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
             address spender = convert32toAddress(getInput(data, 0));
             uint amount = uint(getInput(data, 1));
 
+            //Only check for contract verifier, since an asset probably won't call transferFrom() on another asset
             address verifier = IAddressResolver(addressResolver).contractVerifiers(spender);
-            if (verifier == address(0))
-            {
-                address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");
-                if (IAssetHandler(assetHandlerAddress).isValidAsset(spender))
-                {
-                    uint assetType = IAssetHandler(assetHandlerAddress).getAssetType(spender);
-                    verifier = IAddressResolver(addressResolver).assetVerifiers(assetType);
-                }
-            }
 
             //Checks if the spender is an approved address
-            require(verifier != address(0) && verifier != address(this), "ERC20Verifier: unsupported spender approval"); 
+            require(verifier != address(0), "ERC20Verifier: unsupported spender approval"); 
 
             emit Approve(pool, spender, amount, block.timestamp);
 
