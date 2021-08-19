@@ -18,7 +18,7 @@ const BaseUbeswapAdapter = require('../build/contracts/BaseUbeswapAdapter.json')
 const AssetHandler = require('../build/contracts/AssetHandler.json');
 const Settings = require('../build/contracts/Settings.json');
 
-var contractAddress = "0xe8c1210C95d6F7901Db0063Ba9033D5B5e31E996";
+var contractAddress = "0xbABf3C2610d655Fd85E9632C3E79e7F7E61967F6";
 var tradegenLPStakingEscrowAddress = "0xcceD1C1bc6c8E58a033be9E2e63CebC380E2d231";
 var baseTradegenAddress = "0xb79d64d9Acc251b04A3Ca9f811EFf49Bde52BbbC";
 var addressResolverAddress = "0x2BE72721aBe391Ff84E090dC4247AB873572c2A2";
@@ -97,69 +97,6 @@ function initContract()
             'reward token should be TGEN'
         );
     });*/
-    
-    it('Stake from first user', async () => {
-        let account = await getAccount();
-        kit.connection.addAccount(account.privateKey);
-
-        //Get balance of user
-        let pairBalance = await pairInstance.methods.balanceOf(account.address).call();
-        console.log(pairBalance);
-        
-        //Approve 10,000,000 TGEN_cUSD
-        let txObject = await pairInstance.methods.approve(contractAddress, 10000000);
-        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
-        let receipt = await tx.waitReceipt();
-
-        //Stake 10,000,000 TGEN_cUSD
-        let txObject2 = await instance.methods.stake(10000000, 0);
-        let tx2 = await kit.sendTransactionObject(txObject2, { from: account.address }); 
-        let receipt2 = await tx2.waitReceipt();
-
-        //Get balance of user
-        let data = await instance.methods.balanceOf(account.address).call();
-        console.log(data);
-
-        //Get total supply
-        let data1 = await instance.methods.totalSupply().call();
-        console.log(data1);
-
-        //Get number of vesting entries
-        let data2 = await instance.methods.numVestingEntries(account.address).call();
-        console.log(data2);
-
-        //Get first vesting schedule entry
-        let data3 = await instance.methods.getVestingScheduleEntry(account.address, 0).call();
-        console.log(data3);
-
-        //Get first vesting schedule entry vesting time
-        let data4 = await instance.methods.getVestingTime(account.address, 0).call();
-        console.log(data4);
-
-        //Get first vesting schedule entry vesting quantity
-        let data5 = await instance.methods.getVestingQuantity(account.address, 0).call();
-        console.log(data5);
-
-        //Get next vesting index
-        let data6 = await instance.methods.getNextVestingIndex(account.address).call();
-        console.log(data6);
-
-        //Get next vesting entry
-        let data7 = await instance.methods.getNextVestingEntry(account.address).call();
-        console.log(data7);
-
-        //Get next vesting time
-        let data8 = await instance.methods.getNextVestingTime(account.address).call();
-        console.log(data8);
-
-        //Get next vesting quantity
-        let data9 = await instance.methods.getNextVestingQuantity(account.address).call();
-        console.log(data9);
-
-        //Get first vesting schedule entry vesting tokens
-        let data10 = await instance.methods.getVestingTokenAmount(account.address, 0).call();
-        console.log(data10);
-    });
     /*
     it('Stake from first user', async () => {
         let account = await getAccount();
@@ -222,7 +159,69 @@ function initContract()
         //Get first vesting schedule entry vesting tokens
         let data10 = await instance.methods.getVestingTokenAmount(account.address, 0).call();
         console.log(data10);
-    })*/
+    });*/
+    
+    it('Withdraw from first user', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        //Get initial pair balance of user
+        let initialPairBalance = await pairInstance.methods.balanceOf(account.address).call();
+        console.log(initialPairBalance);
+
+        //Vest unlocked TGEN-cUSD
+        let txObject = await instance.methods.vest();
+        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+        let receipt = await tx.waitReceipt();
+
+        //Get balance of user
+        let data = await instance.methods.balanceOf(account.address).call();
+        console.log(data);
+
+        //Get total supply
+        let data1 = await instance.methods.totalSupply().call();
+        console.log(data1);
+
+        //Get number of vesting entries
+        let data2 = await instance.methods.numVestingEntries(account.address).call();
+        console.log(data2);
+
+        //Get first vesting schedule entry
+        let data3 = await instance.methods.getVestingScheduleEntry(account.address, 0).call();
+        console.log(data3);
+
+        //Get first vesting schedule entry vesting time
+        let data4 = await instance.methods.getVestingTime(account.address, 0).call();
+        console.log(data4);
+
+        //Get first vesting schedule entry vesting quantity
+        let data5 = await instance.methods.getVestingQuantity(account.address, 0).call();
+        console.log(data5);
+
+        //Get next vesting index
+        let data6 = await instance.methods.getNextVestingIndex(account.address).call();
+        console.log(data6);
+
+        //Get next vesting entry
+        let data7 = await instance.methods.getNextVestingEntry(account.address).call();
+        console.log(data7);
+
+        //Get next vesting time
+        let data8 = await instance.methods.getNextVestingTime(account.address).call();
+        console.log(data8);
+
+        //Get next vesting quantity
+        let data9 = await instance.methods.getNextVestingQuantity(account.address).call();
+        console.log(data9);
+
+        //Get first vesting schedule entry vesting tokens
+        let data10 = await instance.methods.getVestingTokenAmount(account.address, 0).call();
+        console.log(data10);
+
+        //Get new pair balance of user
+        let newPairBalance = await pairInstance.methods.balanceOf(account.address).call();
+        console.log(newPairBalance);
+    })
     /*
     it('Get reward from first user', async () => {
         let account = await getAccount();
@@ -244,16 +243,28 @@ function initContract()
         let data3 = await instance.methods.rewardRate().call();
         console.log(data3);
 
-        //Get token amounts from pair
-        let data4 = await baseUbeswapAdapterInstance.methods.getTokenAmountsFromPair(baseTradegenAddress, cUSD, 10000000000).call();
-        console.log(data4);
-
-        let CELOprice = await baseUbeswapAdapterInstance.methods.getPrice(CELO).call();
-        console.log(CELOprice);
-
         //Get value of LP tokens
-        let data5 = await instance.methods.calculateValueOfLPTokens(10000000000).call();
-        console.log(data5);
+        let data4 = await instance.methods.calculateValueOfLPTokens(10000000000).call();
+        console.log(data4);
+    });*/
+
+    /*
+    it('Claim reward from first user', async () => {
+        let account = await getAccount();
+        kit.connection.addAccount(account.privateKey);
+
+        //Get initial TGEN balance of escrow contract
+        let initialTGENBalance = await tradegenInstance.methods.balanceOf(tradegenLPStakingEscrowAddress).call();
+        console.log(initialTGENBalance);
+
+        //Claim reward
+        let txObject = await instance.methods.getReward();
+        let tx = await kit.sendTransactionObject(txObject, { from: account.address }); 
+        let receipt = await tx.waitReceipt();
+
+        //Get new TGEN balance of escrow contract
+        let newTGENBalance = await tradegenInstance.methods.balanceOf(tradegenLPStakingEscrowAddress).call();
+        console.log(newTGENBalance);
     });*/
 }
 

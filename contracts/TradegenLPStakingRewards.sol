@@ -273,6 +273,18 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         }  
     }
 
+    function _claim(address user) internal {
+        address tradegenLPStakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenLPStakingEscrow");
+        uint reward = rewards[user];
+
+        if (reward > 0)
+        {
+            rewards[user] = 0;
+            ITradegenStakingEscrow(tradegenLPStakingEscrowAddress).claimStakingRewards(user, reward);
+            emit RewardPaid(user, reward, block.timestamp);
+        }
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
@@ -328,22 +340,14 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
             emit Vested(msg.sender, block.timestamp, total);
         }
 
-        getReward();
+        _claim(msg.sender);
     }
 
     /**
      * @notice Allow a user to claim any available staking rewards
      */
     function getReward() public override nonReentrant updateReward(msg.sender) {
-        address tradegenLPStakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenLPStakingEscrow");
-        uint reward = rewards[msg.sender];
-
-        if (reward > 0)
-        {
-            rewards[msg.sender] = 0;
-            ITradegenStakingEscrow(tradegenLPStakingEscrowAddress).claimStakingRewards(msg.sender, reward);
-            emit RewardPaid(msg.sender, reward, block.timestamp);
-        }
+        _claim(msg.sender);
     }
 
     /* ========== MODIFIERS ========== */
