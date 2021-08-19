@@ -84,14 +84,6 @@ function initContract()
         let data4 = await distributeFundsInstance.methods.getRecipientByName("TradegenStakingEscrow").call();
         console.log(data4);
 
-        //Send some TGEN to second user
-        let txObject5 = await tradegenInstance.methods.transfer(account2.address, 200000);
-        let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address }); 
-        let receipt5 = await tx5.waitReceipt();
-
-        let data5 = await tradegenInstance.methods.balanceOf(account2.address).call();
-        console.log(data5);
-
         //Send some TGEN to TradegenStakingEscrow
         let txObject5 = await tradegenInstance.methods.transfer(tradegenStakingEscrowAddress, 1000000000);
         let tx5 = await kit.sendTransactionObject(txObject5, { from: account.address }); 
@@ -296,4 +288,4 @@ function initContract()
     });
 }
 
-initContract();
+//initContract();

@@ -18,6 +18,7 @@ import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 import "./interfaces/ISettings.sol";
 import "./interfaces/IAssetHandler.sol";
+import "./interfaces/ITradegenStakingEscrow.sol";
 import "./interfaces/IBaseUbeswapAdapter.sol";
 import "./interfaces/Ubeswap/IUniswapV2Pair.sol";
 
@@ -31,9 +32,12 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     mapping(address => uint256) public userRewardPerTokenPaid;
     mapping(address => uint256) public rewards;
 
-    /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
+    uint256 private _totalSupply;
+    mapping(address => uint256) private _balances;
+
+    /* Lists of (timestamp, quantity, tokens) tuples per account, sorted in ascending time order.
      * These are the times at which each given quantity of LP token vests. */
-    mapping(address => uint[2][]) public vestingSchedules;
+    mapping(address => uint[3][]) public vestingSchedules;
 
     /* An account's total vested TGEN-cUSD LP token balance to save recomputing this */
     mapping(address => uint) public totalVestedAccountBalance;
@@ -43,6 +47,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     uint public constant TIME_INDEX = 0;
     uint public constant QUANTITY_INDEX = 1;
+    uint public constant TOKENS_INDEX = 2;
 
     /* Limit vesting entries to disallow unbounded iteration over vesting schedules. */
     uint public constant MAX_VESTING_ENTRIES = 48;
@@ -57,7 +62,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     /* ========== VIEW FUNCTIONS ========== */
 
     function rewardRate() public view override returns (uint) {
-        return ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingFarmRewards");
+        return ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingRewards");
     }
 
     function totalSupply() public view override returns (uint) {
@@ -93,9 +98,9 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /**
      * @notice Get a particular schedule entry for an account.
-     * @return A pair of uints: (timestamp, TGEN-cUSD LP quantity).
+     * @return A tuple of uints: (timestamp, TGEN-cUSD LP quantity, token quantity).
      */
-    function getVestingScheduleEntry(address account, uint index) public view override returns (uint[2] memory) {
+    function getVestingScheduleEntry(address account, uint index) public view override returns (uint[3] memory) {
         return vestingSchedules[account][index];
     }
 
@@ -111,6 +116,13 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      */
     function getVestingQuantity(address account, uint index) public view override returns (uint) {
         return getVestingScheduleEntry(account, index)[QUANTITY_INDEX];
+    }
+
+    /**
+     * @notice Get the quantity of tokens associated with a given schedule entry.
+     */
+    function getVestingTokenAmount(address account, uint index) public view override returns (uint) {
+        return getVestingScheduleEntry(account, index)[TOKENS_INDEX];
     }
 
     /**
@@ -134,31 +146,31 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @notice Calculates the amount of TGEN reward per token stored
      */
     function rewardPerToken() public view override returns (uint) {
-        uint rate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingFarmRewards");
+        uint rate = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingRewards");
 
-        if (totalVestedBalance == 0)
+        if (_totalSupply == 0)
         {
             return rewardPerTokenStored;
         }
 
-        return rewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(rate).mul(1e18).div(totalVestedBalance));
+        return rewardPerTokenStored.add(block.timestamp.sub(lastUpdateTime).mul(rate).div(7 days).mul(1e18).div(_totalSupply));
     }
 
     /**
      * @notice Calculates the amount of TGEN rewards earned
      */
     function earned(address account) public view override returns (uint) {
-        return totalVestedAccountBalance[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
+        return _balances[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
     }
 
     /**
      * @notice Obtain the next schedule entry that will vest for a given user.
-     * @return A pair of uints: (timestamp, TGEN-cUSD LP quantity). */
-    function getNextVestingEntry(address account) public view override returns (uint[2] memory) {
+     * @return A tuple of uints: (timestamp, TGEN-cUSD LP quantity, token quantity). */
+    function getNextVestingEntry(address account) public view override returns (uint[3] memory) {
         uint index = getNextVestingIndex(account);
         if (index == numVestingEntries(account))
         {
-            return [uint(0), 0];
+            return [uint(0), 0, 0];
         }
 
         return getVestingScheduleEntry(account, index);
@@ -193,11 +205,13 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @param account The account to append a new vesting entry to.
      * @param time The absolute unix timestamp after which the vested quantity may be withdrawn.
      * @param quantity The quantity of TGEN-cUSD LP that will vest.
+     * @param numberOfTokens Number of tokens to issue, base on staked quantity and number of weeks
      */
-    function appendVestingEntry(address account, uint time, uint quantity) internal {
+    function appendVestingEntry(address account, uint time, uint quantity, uint numberOfTokens) internal {
         /* No empty or already-passed vesting entries allowed. */
         require(block.timestamp < time, "Time must be in the future");
         require(quantity != 0, "Quantity cannot be zero");
+        require(numberOfTokens > 0, "Number of tokens must be greater than 0");
 
         /* Disallow arbitrarily long vesting schedules in light of the gas limit. */
         uint scheduleLength = vestingSchedules[account].length;
@@ -206,6 +220,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         if (scheduleLength == 0)
         {
             totalVestedAccountBalance[account] = quantity;
+            _balances[account] = numberOfTokens;
         }
         else
         {
@@ -217,9 +232,10 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
             );
 
             totalVestedAccountBalance[account] = totalVestedAccountBalance[account].add(quantity);
+            _balances[account] = _balances[account].add(numberOfTokens);
         }
 
-        vestingSchedules[account].push([time, quantity]);
+        vestingSchedules[account].push([time, quantity, numberOfTokens]);
     }
 
     /**
@@ -255,17 +271,19 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      */
     function stake(uint amount, uint numberOfWeeks) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "TradegenLPStakingRewards: Staked amount must be greater than 0");
-        require(numberOfWeeks > 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: number of weeks must be between 1 and 52");
+        require(numberOfWeeks >= 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: number of weeks must be between 0 and 52");
 
         //Up to 2x multiplier depending on number of weeks staked
         uint vestingTimestamp = block.timestamp.add(uint(1 weeks).mul(numberOfWeeks));
-        uint adjustedAmount = amount.mul(numberOfWeeks.add(1)).div(numberOfWeeks);
-        appendVestingEntry(msg.sender, vestingTimestamp, adjustedAmount);
+        uint adjustedAmount = amount.mul(numberOfWeeks.add(52)).div(52);
 
-        totalVestedBalance = totalVestedBalance.add(adjustedAmount);
-        IERC20(stakingToken()).transferFrom(msg.sender, address(this), adjustedAmount);
+        _totalSupply = _totalSupply.add(adjustedAmount);
+        appendVestingEntry(msg.sender, vestingTimestamp, amount, adjustedAmount);
 
-        emit Staked(msg.sender, adjustedAmount, vestingTimestamp, block.timestamp);
+        totalVestedBalance = totalVestedBalance.add(amount);
+        IERC20(stakingToken()).transferFrom(msg.sender, address(this), amount);
+
+        emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
     }
 
     /**
@@ -274,6 +292,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     function vest() external override nonReentrant updateReward(msg.sender) {
         uint numEntries = numVestingEntries(msg.sender);
         uint total;
+        uint tokenTotal;
 
         for (uint i = 0; i < numEntries; i++)
         {
@@ -285,18 +304,22 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
             }
 
             uint qty = getVestingQuantity(msg.sender, i);
+            uint numberOfTokens = getVestingTokenAmount(msg.sender, i);
 
-            if (qty > 0)
+            if (qty > 0 || numberOfTokens > 0)
             {
-                vestingSchedules[msg.sender][i] = [0, 0];
+                vestingSchedules[msg.sender][i] = [0, 0, 0];
                 total = total.add(qty);
+                tokenTotal = tokenTotal.add(numberOfTokens);
             }
         }
 
-        if (total != 0)
+        if (total != 0 || tokenTotal != 0)
         {
             totalVestedBalance = totalVestedBalance.sub(total);
             totalVestedAccountBalance[msg.sender] = totalVestedAccountBalance[msg.sender].sub(total);
+            _totalSupply = _totalSupply.sub(tokenTotal);
+            _balances[msg.sender] = _balances[msg.sender].sub(tokenTotal);
 
             IERC20(stakingToken()).transfer(msg.sender, total);
 
@@ -310,13 +333,13 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @notice Allow a user to claim any available staking rewards
      */
     function getReward() public override nonReentrant updateReward(msg.sender) {
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        address tradegenLPStakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenLPStakingEscrow");
         uint reward = rewards[msg.sender];
 
         if (reward > 0)
         {
             rewards[msg.sender] = 0;
-            IERC20(TGEN).transfer(msg.sender, reward);
+            ITradegenStakingEscrow(tradegenLPStakingEscrowAddress).claimStakingRewards(msg.sender, reward);
             emit RewardPaid(msg.sender, reward, block.timestamp);
         }
     }

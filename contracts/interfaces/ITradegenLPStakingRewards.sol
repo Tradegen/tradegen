@@ -20,15 +20,17 @@ interface ITradegenLPStakingRewards {
 
     function numVestingEntries(address account) external view returns (uint);
 
-    function getVestingScheduleEntry(address account, uint index) external view returns (uint[2] memory);
+    function getVestingScheduleEntry(address account, uint index) external view returns (uint[3] memory);
 
     function getVestingTime(address account, uint index) external view returns (uint);
 
     function getVestingQuantity(address account, uint index) external view returns (uint);
 
+    function getVestingTokenAmount(address account, uint index) external view returns (uint);
+
     function getNextVestingIndex(address account) external view returns (uint);
 
-    function getNextVestingEntry(address account) external view returns (uint[2] memory);
+    function getNextVestingEntry(address account) external view returns (uint[3] memory);
 
     function getNextVestingTime(address account) external view returns (uint);
 

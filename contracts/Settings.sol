@@ -18,6 +18,7 @@ contract Settings is ISettings, Ownable {
 
     /**
     * @notice Initial parameters and values:
+    *         WeeklyLPStakingRewards - 500,000 TGEN; 
     *         WeeklyStakingFarmRewards - 500,000 TGEN; 
     *         WeeklyStableCoinStakingRewards - 500,000 TGEN;
     *         WeeklyStakingRewards - 500,000 TGEN; 
