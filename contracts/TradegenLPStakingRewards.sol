@@ -195,7 +195,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @return uint USD value of this contract
      */
     function getUSDValueOfContract() public view override returns (uint) {
-        return calculateValueOfLPTokens(totalVestedBalance);
+        return (_totalSupply > 0) ? calculateValueOfLPTokens(totalVestedBalance) : 0;
     }
 
     /**
@@ -273,7 +273,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         }  
     }
 
-    function _claim(address user) internal {
+    function _claim(address user) internal updateReward(user) {
         address tradegenLPStakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenLPStakingEscrow");
         uint reward = rewards[user];
 
@@ -315,6 +315,9 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         uint total;
         uint tokenTotal;
 
+        //Claim rewards before withdrawing, since rewards calculation will fail if total supply is 0 after withdrawing
+        _claim(msg.sender);
+
         for (uint i = 0; i < numEntries; i++)
         {
             uint qty = getVestingQuantity(msg.sender, i);
@@ -339,14 +342,12 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
             emit Vested(msg.sender, block.timestamp, total);
         }
-
-        _claim(msg.sender);
     }
 
     /**
      * @notice Allow a user to claim any available staking rewards
      */
-    function getReward() public override nonReentrant updateReward(msg.sender) {
+    function getReward() public override nonReentrant {
         _claim(msg.sender);
     }
 
