@@ -42,6 +42,8 @@ interface ITradegenLPStakingRewards {
 
     function getReward() external;
 
+    function calculateValueOfLPTokens(uint numberOfTokens) external view returns (uint);
+
     /**
      * @notice Returns the USD value of all LP tokens staked in this contract
      * @return uint USD value of this contract

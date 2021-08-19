@@ -195,47 +195,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @return uint USD value of this contract
      */
     function getUSDValueOfContract() public view override returns (uint) {
-        return _calculateValueOfLPTokens(totalVestedBalance);
-    }
-
-    /* ========== INTERNAL FUNCTIONS ========== */
-
-    /**
-     * @notice Add a new vesting entry at a given time and quantity to an account's schedule.
-     * @param account The account to append a new vesting entry to.
-     * @param time The absolute unix timestamp after which the vested quantity may be withdrawn.
-     * @param quantity The quantity of TGEN-cUSD LP that will vest.
-     * @param numberOfTokens Number of tokens to issue, base on staked quantity and number of weeks
-     */
-    function appendVestingEntry(address account, uint time, uint quantity, uint numberOfTokens) internal {
-        /* No empty or already-passed vesting entries allowed. */
-        require(block.timestamp < time, "Time must be in the future");
-        require(quantity != 0, "Quantity cannot be zero");
-        require(numberOfTokens > 0, "Number of tokens must be greater than 0");
-
-        /* Disallow arbitrarily long vesting schedules in light of the gas limit. */
-        uint scheduleLength = vestingSchedules[account].length;
-        require(scheduleLength <= MAX_VESTING_ENTRIES, "Vesting schedule is too long");
-
-        if (scheduleLength == 0)
-        {
-            totalVestedAccountBalance[account] = quantity;
-            _balances[account] = numberOfTokens;
-        }
-        else
-        {
-            /* Disallow adding new vested TGEN-cUSD LP earlier than the last one.
-             * Since entries are only appended, this means that no vesting date can be repeated. */
-            require(
-                getVestingTime(account, numVestingEntries(account) - 1) < time,
-                "Cannot add new vested entries earlier than the last one"
-            );
-
-            totalVestedAccountBalance[account] = totalVestedAccountBalance[account].add(quantity);
-            _balances[account] = _balances[account].add(numberOfTokens);
-        }
-
-        vestingSchedules[account].push([time, quantity, numberOfTokens]);
+        return calculateValueOfLPTokens(totalVestedBalance);
     }
 
     /**
@@ -243,7 +203,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @param numberOfTokens Number of LP tokens in the farm
      * @return uint The USD value of the LP tokens
      */
-    function _calculateValueOfLPTokens(uint numberOfTokens) internal view returns (uint) {
+    function calculateValueOfLPTokens(uint numberOfTokens) public view override returns (uint) {
         require(numberOfTokens > 0, "TradegenLPStakingRewards: number of LP tokens in pair must be greater than 0");
 
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter"); 
@@ -262,6 +222,55 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         uint USDBalanceB = amountB.mul(USDperTokenB).div(10 ** numberOfDecimalsB);
 
         return USDBalanceA.mul(USDBalanceB);
+    }
+
+    /* ========== INTERNAL FUNCTIONS ========== */
+
+    /**
+     * @notice Add a new vesting entry at a given time and quantity to an account's schedule.
+     * @param account The account to append a new vesting entry to.
+     * @param time The absolute unix timestamp after which the vested quantity may be withdrawn.
+     * @param quantity The quantity of TGEN-cUSD LP that will vest.
+     * @param numberOfTokens Number of tokens to issue, base on staked quantity and number of weeks
+     */
+    function appendVestingEntry(address account, uint time, uint quantity, uint numberOfTokens) internal {
+        /* No empty or already-passed vesting entries allowed. */
+        require(block.timestamp <= time, "Time must be in the future");
+        require(quantity != 0, "Quantity cannot be zero");
+        require(numberOfTokens > 0, "Number of tokens must be greater than 0");
+
+        /* Disallow arbitrarily long vesting schedules in light of the gas limit. */
+        uint scheduleLength = vestingSchedules[account].length;
+
+        if (scheduleLength == 0)
+        {
+            totalVestedAccountBalance[account] = quantity;
+            _balances[account] = numberOfTokens;
+
+            vestingSchedules[account].push([time, quantity, numberOfTokens]);
+        }
+        else
+        {
+            //Look for empty spot before appending new entry
+            bool foundEmptySpot = false;
+            for (uint i = 0; i < scheduleLength; i++)
+            {
+                if (getVestingQuantity(account, i) == 0)
+                {
+                    vestingSchedules[account][i] = [time, quantity, numberOfTokens];
+                    foundEmptySpot = true;
+                }
+            }
+
+            if (!foundEmptySpot)
+            {
+                require(scheduleLength <= MAX_VESTING_ENTRIES, "Vesting schedule is too long");
+                vestingSchedules[account].push([time, quantity, numberOfTokens]);
+            }
+
+            totalVestedAccountBalance[account] = totalVestedAccountBalance[account].add(quantity);
+            _balances[account] = _balances[account].add(numberOfTokens);
+        }  
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
@@ -296,13 +305,6 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
         for (uint i = 0; i < numEntries; i++)
         {
-            uint time = getVestingTime(msg.sender, i);
-            /* The list is sorted; when we reach the first future time, bail out. */
-            if (time > block.timestamp)
-            {
-                break;
-            }
-
             uint qty = getVestingQuantity(msg.sender, i);
             uint numberOfTokens = getVestingTokenAmount(msg.sender, i);
 
