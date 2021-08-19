@@ -3,97 +3,30 @@
 pragma solidity >=0.7.6;
 
 interface IStakingFarmRewards {
+    // Views
+    function lastTimeRewardApplicable() external view returns (uint256);
 
-    /**
-     * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
-     */
-    function balanceOf(address account, address farmAddress) external view returns (uint);
+    function rewardPerToken(address farm) external view returns (uint256);
 
-    /**
-     * @notice The number of vesting dates in an account's schedule for the given farm.
-     */
-    function numVestingEntries(address account, address farmAddress) external view returns (uint);
+    function earned(address account, address farm) external view returns (uint256);
 
-    /**
-     * @notice Get a particular schedule entry for an account for the given farm.
-     * @return A pair of uints: (timestamp, LP token quantity).
-     */
-    function getVestingScheduleEntry(address account, uint index, address farmAddress) external view returns (uint[2] memory);
+    function getRewardForDuration() external view returns (uint256);
 
-    /**
-     * @notice Get the time at which a given schedule entry will vest.
-     */
-    function getVestingTime(address account, uint index, address farmAddress) external view returns (uint);
+    function totalSupply(address farm) external view returns (uint256);
 
-    /**
-     * @notice Get the quantity of LP tokens associated with a given schedule entry for the given farm.
-     */
-    function getVestingQuantity(address account, uint index, address farmAddress) external view returns (uint);
+    function balanceOf(address account, address farm) external view returns (uint256);
 
-    /**
-     * @notice Obtain the index of the next schedule entry that will vest for a given user.
-     */
-    function getNextVestingIndex(address account, address farmAddress) external view returns (uint);
+    function periodFinish() external view returns (uint256);
 
-    /**
-     * @notice Obtain the next schedule entry that will vest for a given user.
-     * @return A pair of uints: (timestamp, LP token quantity). */
-    function getNextVestingEntry(address account, address farmAddress) external view returns (uint[2] memory);
+    function rewardRate() external view returns (uint256);
 
-    /**
-     * @notice Obtain the time at which the next schedule entry will vest for a given user.
-     */
-    function getNextVestingTime(address account, address farmAddress) external view returns (uint);
+    // Mutative
 
-    /**
-     * @notice Obtain the quantity which the next schedule entry will vest for a given user.
-     */
-    function getNextVestingQuantity(address account, address farmAddress) external view returns (uint);
+    function stake(uint256 amount, address farm) external;
 
-    /**
-     * @notice Allow a user to withdraw any LP tokens in their schedule that have vested.
-     */
-    function vest(address farmAddress) external;
+    function withdraw(uint256 amount, address farm) external;
 
-    /**
-     * @notice Stakes the given LP token amount.
-     */
-    function stake(uint amount, address farmAddress) external;
+    function getReward(address farm) external;
 
-    /**
-     * @notice Allow a user to claim any available staking rewards for the given farm.
-     */
-    function getReward(address farmAddress) external;
-
-    /**
-     * @notice Calculates the amount of TGEN reward per token staked in the given farm.
-     */
-    function rewardPerToken(address farmAddress) external view returns (uint256);
-
-    /**
-     * @notice Calculates the amount of TGEN rewards earned for the given farm.
-     */
-    function earned(address account, address farmAddress) external view returns (uint256);
-
-    /**
-     * @notice Returns the user's staked farms, balance in each staked farm, and the number of staked farms
-     * @param account Address of the user
-     * @return (address[], uint[], uint) The address of each staked farm, user's balance in the associated farm, and the number of staked farms
-     */
-    function getStakedFarms(address account) external view returns (address[] memory, uint[] memory, uint);
-
-    /**
-     * @notice Returns the USD value of the user's staked position in the given farm
-     * @param account Address of the user
-     * @param farmAddress Address of the farm
-     * @return uint USD value of the staked position
-     */
-    function getUSDValueOfStakedPosition(address account, address farmAddress) external view returns (uint);
-
-    /**
-     * @notice Returns the USD value of the given farm
-     * @param farmAddress Address of the farm
-     * @return uint USD value staked in the farm
-     */
-    function getUSDValueOfFarm(address farmAddress) external view returns (uint);
+    function exit(address farm) external;
 }
