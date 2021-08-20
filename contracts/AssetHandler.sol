@@ -48,7 +48,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @return bool Whether the asset is supported
     */
     function isValidAsset(address asset) public view override isValidAddress(asset) returns (bool) {
-        return (assetTypes[asset] > 0);
+        return (assetTypes[asset] > 0 || asset == cUSDAddress);
     }
 
     /**
