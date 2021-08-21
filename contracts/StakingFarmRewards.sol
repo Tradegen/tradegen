@@ -24,6 +24,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
+    address public externalRewardToken;
+    mapping (address => mapping(address => uint256)) public externalRewards;
+    mapping (address => mapping(address => uint256)) public externalUserRewardPerTokenPaid;
+    mapping (address => uint256) public externalRewardPerTokenStored;
+
     uint256 public override periodFinish = 0;
     uint256 public override rewardRate = 0;
     uint256 public rewardsDuration = 7 days;
@@ -40,8 +45,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) Ownable() {
+    constructor(IAddressResolver _addressResolver, address _externalRewardToken) Ownable() {
+        require(_externalRewardToken != address(0), "StakingFarmRewards: invalid external reward token");
+
         ADDRESS_RESOLVER = _addressResolver;
+        externalRewardToken = _externalRewardToken;
     }
 
     /* ========== VIEWS ========== */
@@ -75,6 +83,27 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         return rewardRate.mul(rewardsDuration);
     }
 
+    function earnedExternal(address account, address farm) public returns (uint result) {
+        uint externalOldTotalRewards = IERC20(externalRewardToken).balanceOf(address(this));
+
+        IStakingRewards(farm).getReward();
+
+        uint externalTotalRewards = IERC20(externalRewardToken).balanceOf(address(this));
+        uint newExternalRewardsAmount = externalTotalRewards.sub(externalOldTotalRewards);
+
+        if (_totalSupply[farm] > 0)
+        {
+            externalRewardPerTokenStored[farm] = externalRewardPerTokenStored[farm].add(newExternalRewardsAmount.mul(1e18).div(_totalSupply[farm]));
+        }
+
+        result = _balances[farm][account]
+                .mul(externalRewardPerTokenStored[farm].sub(externalUserRewardPerTokenPaid[farm][account]))
+                .div(1e18).add(externalRewards[farm][account]);
+
+        externalUserRewardPerTokenPaid[farm][account] = externalRewardPerTokenStored[farm];
+        externalRewards[farm][account] = result;
+    }
+
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function stake(uint256 amount, address farm) external override nonReentrant updateReward(msg.sender, farm) {
@@ -85,6 +114,8 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         _totalSupply[farm] = _totalSupply[farm].add(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].add(amount);
         IERC20(stakingToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(stakingToken).approve(farm, amount);
+        IStakingRewards(farm).stake(amount);
 
         emit Staked(msg.sender, farm, amount, block.timestamp);
     }
@@ -96,6 +127,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
         _totalSupply[farm] = _totalSupply[farm].sub(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].sub(amount);
+        IStakingRewards(farm).withdraw(amount);
         IERC20(stakingToken).transfer(msg.sender, amount);
 
         emit Withdrawn(msg.sender, farm, amount, block.timestamp);
@@ -103,13 +135,22 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
     function getReward(address farm) public override nonReentrant updateReward(msg.sender, farm) {
         uint256 reward = rewards[farm][msg.sender];
+        uint256 externalReward = externalRewards[farm][msg.sender];
         address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        address rewardsToken = IStakingRewards(farm).rewardsToken();
 
         if (reward > 0)
         {
             rewards[farm][msg.sender] = 0;
             IERC20(TGEN).transfer(msg.sender, reward);
             emit RewardPaid(msg.sender, farm, reward, block.timestamp);
+        }
+
+        if (externalReward > 0)
+        {
+            externalRewards[farm][msg.sender] = 0;
+            IERC20(rewardsToken).transfer(msg.sender, externalReward);
+            emit ExternalRewardPaid(msg.sender, farm, externalReward, block.timestamp);
         }
     }
 
@@ -193,6 +234,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     event Staked(address indexed user, address indexed farm, uint256 amount, uint timestamp);
     event Withdrawn(address indexed user, address indexed farm, uint256 amount, uint timestamp);
     event RewardPaid(address indexed user, address indexed farm, uint256 reward, uint timestamp);
+    event ExternalRewardPaid(address indexed user, address indexed farm, uint256 reward, uint timestamp);
     event AddedFarm(address farm, uint timestamp);
-    event InitializedFarms(uint numberOfFarmsAdded, uint timestamp);
 }
