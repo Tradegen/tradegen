@@ -67,13 +67,18 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "nonpayable",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"fundAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sourceAsset\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"sourceAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"destinationAsset\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"ExchangeFrom\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addressResolver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"verify(address,address,address,bytes)\":{\"details\":\"Parses the transaction data to make sure the transaction is valid\",\"params\":{\"addressResolver\":\"Address of AddressResolver contract\",\"data\":\"Transaction call data\",\"pool\":\"Address of the pool\",\"to\":\"External contract address\"},\"returns\":{\"_0\":\"uint Type of the asset\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol\":\"IVerifier\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol\":{\"keccak256\":\"0x174f336a0ef85c421ad5c75529fcd32562be2a75f9a3f960b43b916b5318f179\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3ac637ee17e42eb3e65c74fc5c605ff4c5f3a8a7c46e7f7bce84c161e95b076e\",\"dweb:/ipfs/QmaWbNqwYGZ9gEnPVK7ww2NGyvcnme29ipbeEwbxUqRhfq\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"fundAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"sourceAsset\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"sourceAmount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"destinationAsset\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"ExchangeFrom\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"addressResolver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"verify(address,address,address,bytes)\":{\"details\":\"Parses the transaction data to make sure the transaction is valid\",\"params\":{\"addressResolver\":\"Address of AddressResolver contract\",\"data\":\"Transaction call data\",\"pool\":\"Address of the pool\",\"to\":\"External contract address\"},\"returns\":{\"_0\":\"(uint, address) Whether the transaction is valid and the received asset\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol\":\"IVerifier\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol\":{\"keccak256\":\"0xa49655b6e39caa46df2a13bbb2a4d078ceb633fa808fe1b875b7d2211cd5f7b3\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://99dda036b556aadbfeb60fc35b7133bfcda4b1aef26e6ce6c713c3ab01642849\",\"dweb:/ipfs/QmTeW1vHVS2i4WTHi5eRtJNpmSXGxRuUSUwheRiJbfhUQb\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
   "immutableReferences": {},
@@ -81,21 +86,21 @@
   "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IVerifier {\r\n    /**\r\n    * @dev Parses the transaction data to make sure the transaction is valid\r\n    * @param addressResolver Address of AddressResolver contract\r\n    * @param pool Address of the pool\r\n    * @param to External contract address\r\n    * @param data Transaction call data\r\n    * @return uint Type of the asset\r\n    */\r\n    function verify(address addressResolver, address pool, address to, bytes calldata data) external returns (bool);\r\n\r\n    event ExchangeFrom(address fundAddress, address sourceAsset, uint sourceAmount, address destinationAsset, uint timestamp);\r\n}",
-  "sourcePath": "C:/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IVerifier {\r\n    /**\r\n    * @dev Parses the transaction data to make sure the transaction is valid\r\n    * @param addressResolver Address of AddressResolver contract\r\n    * @param pool Address of the pool\r\n    * @param to External contract address\r\n    * @param data Transaction call data\r\n    * @return (uint, address) Whether the transaction is valid and the received asset\r\n    */\r\n    function verify(address addressResolver, address pool, address to, bytes calldata data) external returns (bool, address);\r\n\r\n    event ExchangeFrom(address fundAddress, address sourceAsset, uint sourceAmount, address destinationAsset, uint timestamp);\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\IVerifier.sol",
   "ast": {
     "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol",
     "exportedSymbols": {
       "IVerifier": [
-        1007
+        2619
       ]
     },
-    "id": 1008,
+    "id": 2620,
     "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 980,
+        "id": 2590,
         "literals": [
           "solidity",
           ">=",
@@ -103,7 +108,7 @@
           ".6"
         ],
         "nodeType": "PragmaDirective",
-        "src": "35:24:8"
+        "src": "35:24:10"
       },
       {
         "abstract": false,
@@ -111,39 +116,39 @@
         "contractDependencies": [],
         "contractKind": "interface",
         "fullyImplemented": false,
-        "id": 1007,
+        "id": 2619,
         "linearizedBaseContracts": [
-          1007
+          2619
         ],
         "name": "IVerifier",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
             "documentation": {
-              "id": 981,
+              "id": 2591,
               "nodeType": "StructuredDocumentation",
-              "src": "90:316:8",
-              "text": " @dev Parses the transaction data to make sure the transaction is valid\n @param addressResolver Address of AddressResolver contract\n @param pool Address of the pool\n @param to External contract address\n @param data Transaction call data\n @return uint Type of the asset"
+              "src": "90:365:10",
+              "text": " @dev Parses the transaction data to make sure the transaction is valid\n @param addressResolver Address of AddressResolver contract\n @param pool Address of the pool\n @param to External contract address\n @param data Transaction call data\n @return (uint, address) Whether the transaction is valid and the received asset"
             },
             "functionSelector": "39158fdd",
-            "id": 994,
+            "id": 2606,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "verify",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 990,
+              "id": 2600,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 983,
+                  "id": 2593,
                   "mutability": "mutable",
                   "name": "addressResolver",
                   "nodeType": "VariableDeclaration",
-                  "scope": 994,
-                  "src": "428:23:8",
+                  "scope": 2606,
+                  "src": "477:23:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -151,10 +156,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 982,
+                    "id": 2592,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "428:7:8",
+                    "src": "477:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -165,12 +170,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 985,
+                  "id": 2595,
                   "mutability": "mutable",
                   "name": "pool",
                   "nodeType": "VariableDeclaration",
-                  "scope": 994,
-                  "src": "453:12:8",
+                  "scope": 2606,
+                  "src": "502:12:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -178,10 +183,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 984,
+                    "id": 2594,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "453:7:8",
+                    "src": "502:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -192,12 +197,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 987,
+                  "id": 2597,
                   "mutability": "mutable",
                   "name": "to",
                   "nodeType": "VariableDeclaration",
-                  "scope": 994,
-                  "src": "467:10:8",
+                  "scope": 2606,
+                  "src": "516:10:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -205,10 +210,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 986,
+                    "id": 2596,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "467:7:8",
+                    "src": "516:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -219,12 +224,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 989,
+                  "id": 2599,
                   "mutability": "mutable",
                   "name": "data",
                   "nodeType": "VariableDeclaration",
-                  "scope": 994,
-                  "src": "479:19:8",
+                  "scope": 2606,
+                  "src": "528:19:10",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -232,10 +237,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 988,
+                    "id": 2598,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "479:5:8",
+                    "src": "528:5:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -244,20 +249,20 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "427:72:8"
+              "src": "476:72:10"
             },
             "returnParameters": {
-              "id": 993,
+              "id": 2605,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 992,
+                  "id": 2602,
                   "mutability": "mutable",
                   "name": "",
                   "nodeType": "VariableDeclaration",
-                  "scope": 994,
-                  "src": "518:4:8",
+                  "scope": 2606,
+                  "src": "567:4:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -265,44 +270,71 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 991,
+                    "id": 2601,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "518:4:8",
+                    "src": "567:4:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
                   "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2604,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2606,
+                  "src": "573:7:10",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 2603,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "573:7:10",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
                 }
               ],
-              "src": "517:6:8"
+              "src": "566:15:10"
             },
-            "scope": 1007,
-            "src": "412:112:8",
+            "scope": 2619,
+            "src": "461:121:10",
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
             "anonymous": false,
-            "id": 1006,
+            "id": 2618,
             "name": "ExchangeFrom",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 1005,
+              "id": 2617,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 996,
+                  "id": 2608,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "fundAddress",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1006,
-                  "src": "551:19:8",
+                  "scope": 2618,
+                  "src": "609:19:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -310,10 +342,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 995,
+                    "id": 2607,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "551:7:8",
+                    "src": "609:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -324,13 +356,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 998,
+                  "id": 2610,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "sourceAsset",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1006,
-                  "src": "572:19:8",
+                  "scope": 2618,
+                  "src": "630:19:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -338,10 +370,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 997,
+                    "id": 2609,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "572:7:8",
+                    "src": "630:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -352,13 +384,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1000,
+                  "id": 2612,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "sourceAmount",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1006,
-                  "src": "593:17:8",
+                  "scope": 2618,
+                  "src": "651:17:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -366,10 +398,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 999,
+                    "id": 2611,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "593:4:8",
+                    "src": "651:4:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -379,13 +411,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1002,
+                  "id": 2614,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "destinationAsset",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1006,
-                  "src": "612:24:8",
+                  "scope": 2618,
+                  "src": "670:24:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -393,10 +425,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 1001,
+                    "id": 2613,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "612:7:8",
+                    "src": "670:7:10",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -407,13 +439,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 1004,
+                  "id": 2616,
                   "indexed": false,
                   "mutability": "mutable",
                   "name": "timestamp",
                   "nodeType": "VariableDeclaration",
-                  "scope": 1006,
-                  "src": "638:14:8",
+                  "scope": 2618,
+                  "src": "696:14:10",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -421,10 +453,10 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 1003,
+                    "id": 2615,
                     "name": "uint",
                     "nodeType": "ElementaryTypeName",
-                    "src": "638:4:8",
+                    "src": "696:4:10",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
@@ -433,23 +465,23 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "550:103:8"
+              "src": "608:103:10"
             },
-            "src": "532:122:8"
+            "src": "590:122:10"
           }
         ],
-        "scope": 1008,
-        "src": "63:594:8"
+        "scope": 2620,
+        "src": "63:652:10"
       }
     ],
-    "src": "35:622:8"
+    "src": "35:680:10"
   },
   "legacyAST": {
     "attributes": {
       "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IVerifier.sol",
       "exportedSymbols": {
         "IVerifier": [
-          1007
+          2619
         ]
       },
       "license": "MIT"
@@ -464,9 +496,9 @@
             ".6"
           ]
         },
-        "id": 980,
+        "id": 2590,
         "name": "PragmaDirective",
-        "src": "35:24:8"
+        "src": "35:24:10"
       },
       {
         "attributes": {
@@ -480,10 +512,10 @@
           "contractKind": "interface",
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            1007
+            2619
           ],
           "name": "IVerifier",
-          "scope": 1008
+          "scope": 2620
         },
         "children": [
           {
@@ -496,7 +528,7 @@
                 null
               ],
               "name": "verify",
-              "scope": 1007,
+              "scope": 2619,
               "stateMutability": "nonpayable",
               "virtual": false,
               "visibility": "external"
@@ -504,11 +536,11 @@
             "children": [
               {
                 "attributes": {
-                  "text": " @dev Parses the transaction data to make sure the transaction is valid\n @param addressResolver Address of AddressResolver contract\n @param pool Address of the pool\n @param to External contract address\n @param data Transaction call data\n @return uint Type of the asset"
+                  "text": " @dev Parses the transaction data to make sure the transaction is valid\n @param addressResolver Address of AddressResolver contract\n @param pool Address of the pool\n @param to External contract address\n @param data Transaction call data\n @return (uint, address) Whether the transaction is valid and the received asset"
                 },
-                "id": 981,
+                "id": 2591,
                 "name": "StructuredDocumentation",
-                "src": "90:316:8"
+                "src": "90:365:10"
               },
               {
                 "children": [
@@ -517,7 +549,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "addressResolver",
-                      "scope": 994,
+                      "scope": 2606,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -530,21 +562,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 982,
+                        "id": 2592,
                         "name": "ElementaryTypeName",
-                        "src": "428:7:8"
+                        "src": "477:7:10"
                       }
                     ],
-                    "id": 983,
+                    "id": 2593,
                     "name": "VariableDeclaration",
-                    "src": "428:23:8"
+                    "src": "477:23:10"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "pool",
-                      "scope": 994,
+                      "scope": 2606,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -557,21 +589,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 984,
+                        "id": 2594,
                         "name": "ElementaryTypeName",
-                        "src": "453:7:8"
+                        "src": "502:7:10"
                       }
                     ],
-                    "id": 985,
+                    "id": 2595,
                     "name": "VariableDeclaration",
-                    "src": "453:12:8"
+                    "src": "502:12:10"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "to",
-                      "scope": 994,
+                      "scope": 2606,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -584,21 +616,21 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 986,
+                        "id": 2596,
                         "name": "ElementaryTypeName",
-                        "src": "467:7:8"
+                        "src": "516:7:10"
                       }
                     ],
-                    "id": 987,
+                    "id": 2597,
                     "name": "VariableDeclaration",
-                    "src": "467:10:8"
+                    "src": "516:10:10"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "mutability": "mutable",
                       "name": "data",
-                      "scope": 994,
+                      "scope": 2606,
                       "stateVariable": false,
                       "storageLocation": "calldata",
                       "type": "bytes",
@@ -610,19 +642,19 @@
                           "name": "bytes",
                           "type": "bytes"
                         },
-                        "id": 988,
+                        "id": 2598,
                         "name": "ElementaryTypeName",
-                        "src": "479:5:8"
+                        "src": "528:5:10"
                       }
                     ],
-                    "id": 989,
+                    "id": 2599,
                     "name": "VariableDeclaration",
-                    "src": "479:19:8"
+                    "src": "528:19:10"
                   }
                 ],
-                "id": 990,
+                "id": 2600,
                 "name": "ParameterList",
-                "src": "427:72:8"
+                "src": "476:72:10"
               },
               {
                 "children": [
@@ -631,7 +663,7 @@
                       "constant": false,
                       "mutability": "mutable",
                       "name": "",
-                      "scope": 994,
+                      "scope": 2606,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -643,24 +675,51 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 991,
+                        "id": 2601,
                         "name": "ElementaryTypeName",
-                        "src": "518:4:8"
+                        "src": "567:4:10"
                       }
                     ],
-                    "id": 992,
+                    "id": 2602,
                     "name": "VariableDeclaration",
-                    "src": "518:4:8"
+                    "src": "567:4:10"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 2606,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 2603,
+                        "name": "ElementaryTypeName",
+                        "src": "573:7:10"
+                      }
+                    ],
+                    "id": 2604,
+                    "name": "VariableDeclaration",
+                    "src": "573:7:10"
                   }
                 ],
-                "id": 993,
+                "id": 2605,
                 "name": "ParameterList",
-                "src": "517:6:8"
+                "src": "566:15:10"
               }
             ],
-            "id": 994,
+            "id": 2606,
             "name": "FunctionDefinition",
-            "src": "412:112:8"
+            "src": "461:121:10"
           },
           {
             "attributes": {
@@ -676,7 +735,7 @@
                       "indexed": false,
                       "mutability": "mutable",
                       "name": "fundAddress",
-                      "scope": 1006,
+                      "scope": 2618,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -689,14 +748,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 995,
+                        "id": 2607,
                         "name": "ElementaryTypeName",
-                        "src": "551:7:8"
+                        "src": "609:7:10"
                       }
                     ],
-                    "id": 996,
+                    "id": 2608,
                     "name": "VariableDeclaration",
-                    "src": "551:19:8"
+                    "src": "609:19:10"
                   },
                   {
                     "attributes": {
@@ -704,7 +763,7 @@
                       "indexed": false,
                       "mutability": "mutable",
                       "name": "sourceAsset",
-                      "scope": 1006,
+                      "scope": 2618,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -717,14 +776,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 997,
+                        "id": 2609,
                         "name": "ElementaryTypeName",
-                        "src": "572:7:8"
+                        "src": "630:7:10"
                       }
                     ],
-                    "id": 998,
+                    "id": 2610,
                     "name": "VariableDeclaration",
-                    "src": "572:19:8"
+                    "src": "630:19:10"
                   },
                   {
                     "attributes": {
@@ -732,7 +791,7 @@
                       "indexed": false,
                       "mutability": "mutable",
                       "name": "sourceAmount",
-                      "scope": 1006,
+                      "scope": 2618,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -744,14 +803,14 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 999,
+                        "id": 2611,
                         "name": "ElementaryTypeName",
-                        "src": "593:4:8"
+                        "src": "651:4:10"
                       }
                     ],
-                    "id": 1000,
+                    "id": 2612,
                     "name": "VariableDeclaration",
-                    "src": "593:17:8"
+                    "src": "651:17:10"
                   },
                   {
                     "attributes": {
@@ -759,7 +818,7 @@
                       "indexed": false,
                       "mutability": "mutable",
                       "name": "destinationAsset",
-                      "scope": 1006,
+                      "scope": 2618,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -772,14 +831,14 @@
                           "stateMutability": "nonpayable",
                           "type": "address"
                         },
-                        "id": 1001,
+                        "id": 2613,
                         "name": "ElementaryTypeName",
-                        "src": "612:7:8"
+                        "src": "670:7:10"
                       }
                     ],
-                    "id": 1002,
+                    "id": 2614,
                     "name": "VariableDeclaration",
-                    "src": "612:24:8"
+                    "src": "670:24:10"
                   },
                   {
                     "attributes": {
@@ -787,7 +846,7 @@
                       "indexed": false,
                       "mutability": "mutable",
                       "name": "timestamp",
-                      "scope": 1006,
+                      "scope": 2618,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -799,34 +858,34 @@
                           "name": "uint",
                           "type": "uint256"
                         },
-                        "id": 1003,
+                        "id": 2615,
                         "name": "ElementaryTypeName",
-                        "src": "638:4:8"
+                        "src": "696:4:10"
                       }
                     ],
-                    "id": 1004,
+                    "id": 2616,
                     "name": "VariableDeclaration",
-                    "src": "638:14:8"
+                    "src": "696:14:10"
                   }
                 ],
-                "id": 1005,
+                "id": 2617,
                 "name": "ParameterList",
-                "src": "550:103:8"
+                "src": "608:103:10"
               }
             ],
-            "id": 1006,
+            "id": 2618,
             "name": "EventDefinition",
-            "src": "532:122:8"
+            "src": "590:122:10"
           }
         ],
-        "id": 1007,
+        "id": 2619,
         "name": "ContractDefinition",
-        "src": "63:594:8"
+        "src": "63:652:10"
       }
     ],
-    "id": 1008,
+    "id": 2620,
     "name": "SourceUnit",
-    "src": "35:622:8"
+    "src": "35:680:10"
   },
   "compiler": {
     "name": "solc",
@@ -834,7 +893,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.1",
-  "updatedAt": "2021-08-18T16:00:59.091Z",
+  "updatedAt": "2021-08-20T20:58:56.763Z",
   "devdoc": {
     "kind": "dev",
     "methods": {
@@ -847,7 +906,7 @@
           "to": "External contract address"
         },
         "returns": {
-          "_0": "uint Type of the asset"
+          "_0": "(uint, address) Whether the transaction is valid and the received asset"
         }
       }
     },

@@ -71,10 +71,15 @@ interface IPool {
     function deposit(uint amount) external;
 
     /**
-    * @dev Withdraws the given number of pool tokens from the user
+    * @dev Withdraws the user's full investment
     * @param numberOfPoolTokens Number of pool tokens to withdraw
     */
     function withdraw(uint numberOfPoolTokens) external;
+
+    /**
+    * @dev Withdraws the user's full investment
+    */
+    function exit() external;
 
     /**
     * @dev Returns the pool's performance fee

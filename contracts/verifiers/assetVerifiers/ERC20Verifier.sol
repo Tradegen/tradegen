@@ -26,9 +26,9 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param addressResolver Address of AddressResolver contract
     * @param pool Address of the pool
     * @param data Transaction call data
-    * @return uint Type of the asset
+    * @return (uint, address) Whether the transaction is valid and the received asset
     */
-    function verify(address addressResolver, address pool, address, bytes calldata data) public virtual override returns (bool) {
+    function verify(address addressResolver, address pool, address, bytes calldata data) public virtual override returns (bool, address) {
         bytes4 method = getMethod(data);
 
         if (method == bytes4(keccak256("approve(address,uint256)")))
@@ -44,10 +44,10 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
 
             emit Approve(pool, spender, amount, block.timestamp);
 
-            return true;
+            return (true, address(0));
         }
 
-        return false;
+        return (false, address(0));
     }
 
     /**

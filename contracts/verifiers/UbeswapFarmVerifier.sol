@@ -24,9 +24,9 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
     * @param pool Address of the pool
     * @param to External contract address
     * @param data Transaction call data
-    * @return uint Type of the asset
+    * @return (uint, address) Whether the transaction is valid and the received asset
     */
-    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool) {
+    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool, address) {
         bytes4 method = getMethod(data);
 
         address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");
@@ -46,7 +46,7 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
 
             emit Staked(pool, to, numberOfLPTokens, block.timestamp);
 
-            return true;
+            return (true, rewardToken);
         }
         else if (method == bytes4(keccak256("withdraw(uint)")))
         {
@@ -61,7 +61,7 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
 
             emit Unstaked(pool, to, numberOfLPTokens, block.timestamp);
 
-            return true;
+            return (true, pair);
         }
         else if (method == bytes4(keccak256("getReward()")))
         {
@@ -73,7 +73,7 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
 
             emit ClaimedReward(pool, to, block.timestamp);
 
-            return true;
+            return (true, rewardToken);
         }
         else if (method == bytes4(keccak256("exit()")))
         {
@@ -90,10 +90,10 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
             emit Unstaked(pool, to, numberOfLPTokens, block.timestamp);
             emit ClaimedReward(pool, to, block.timestamp);
 
-            return true;
+            return (true, rewardToken);
         }
 
-        return false;
+        return (false, address(0));
     }
 
     /* ========== EVENTS ========== */

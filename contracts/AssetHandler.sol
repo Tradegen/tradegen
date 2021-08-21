@@ -131,6 +131,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     function setStableCoinAddress(address stableCoinAddress) external onlyOwner isValidAddress(stableCoinAddress) {
         address oldAddress = cUSDAddress;
         cUSDAddress = stableCoinAddress;
+        assetTypes[stableCoinAddress] = 1;
 
         emit UpdatedStableCoinAddress(oldAddress, stableCoinAddress, block.timestamp);
     }

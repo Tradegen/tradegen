@@ -111,11 +111,11 @@ contract Pool is IPool, IERC20 {
         //Calculate USD value of each asset
         for (uint i = 0; i < numberOfPositions; i++)
         {
-            balances[i] = IAssetHandler(assetHandlerAddress).getBalance(address(this), _positionKeys[i]);
-            addresses[i] = _positionKeys[i];
+            balances[i] = IAssetHandler(assetHandlerAddress).getBalance(address(this), _positionKeys[i.add(1)]);
+            addresses[i] = _positionKeys[i.add(1)];
 
-            uint numberOfDecimals = IAssetHandler(assetHandlerAddress).getDecimals(_positionKeys[i]);
-            uint USDperToken = IAssetHandler(assetHandlerAddress).getUSDPrice(_positionKeys[i]);
+            uint numberOfDecimals = IAssetHandler(assetHandlerAddress).getDecimals(_positionKeys[i.add(1)]);
+            uint USDperToken = IAssetHandler(assetHandlerAddress).getUSDPrice(_positionKeys[i.add(1)]);
             uint positionBalanceInUSD = balances[i].mul(USDperToken).div(10 ** numberOfDecimals);
             sum = sum.add(positionBalanceInUSD);
         }
@@ -143,7 +143,7 @@ contract Pool is IPool, IERC20 {
         uint sum = 0;
 
         //Get USD value of each asset
-        for (uint i = 0; i < numberOfPositions; i++)
+        for (uint i = 1; i <= numberOfPositions; i++)
         {
             sum = sum.add(getAssetValue(_positionKeys[i], assetHandlerAddress));
         }
@@ -268,7 +268,6 @@ contract Pool is IPool, IERC20 {
 
         IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
 
-        //Add cUSD to position keys if it's not there already
         _addPositionKey(stableCoinAddress);
 
         emit Deposit(address(this), msg.sender, amount, block.timestamp);
@@ -296,7 +295,7 @@ contract Pool is IPool, IERC20 {
         uint assetCount = numberOfPositions;
 
         //Withdraw user's portion of pool's assets
-        for (uint i = assetCount.sub(1); i >= 0; i--)
+        for (uint i = assetCount; i > 0; i--)
         {
             uint portionOfAssetBalance = _withdrawProcessing(_positionKeys[i], msg.sender, portion);
 
@@ -304,8 +303,8 @@ contract Pool is IPool, IERC20 {
             {
                 IERC20(_positionKeys[i]).transfer(msg.sender, portionOfAssetBalance);
 
-                amountsWithdrawn[i] = portionOfAssetBalance;
-                assetsWithdrawn[i] = _positionKeys[i];
+                amountsWithdrawn[i.sub(1)] = portionOfAssetBalance;
+                assetsWithdrawn[i.sub(1)] = _positionKeys[i];
             }
 
             //Remove position keys if pool is liquidated
@@ -324,6 +323,13 @@ contract Pool is IPool, IERC20 {
         uint valueWithdrawn = poolValue.mul(portion).div(10**18);
 
         emit Withdraw(address(this), msg.sender, numberOfPoolTokens, valueWithdrawn, assetsWithdrawn, amountsWithdrawn, block.timestamp);
+    }
+
+    /**
+    * @dev Withdraws the user's full investment
+    */
+    function exit() external override {
+        withdraw(balanceOf(msg.sender));
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
@@ -354,10 +360,14 @@ contract Pool is IPool, IERC20 {
         }
 
         require(verifier != address(0), "Pool: invalid verifier");
-        require(IVerifier(verifier).verify(address(ADDRESS_RESOLVER), address(this), to, data), "Pool: invalid transaction");
+
+        (bool valid, address receivedAsset) = IVerifier(verifier).verify(address(ADDRESS_RESOLVER), address(this), to, data);
+        require(valid, "Pool: invalid transaction");
 
         (bool success, ) = to.call(data);
         require(success, "Pool: transaction failed to execute");
+
+        _addPositionKey(receivedAsset);
 
         emit ExecutedTransaction(address(this), _manager, to, block.timestamp);
     }
@@ -393,14 +403,12 @@ contract Pool is IPool, IERC20 {
     * @param currency Address of token to add
     */
     function _addPositionKey(address currency) internal {
-        require(currency != address(0), "Pool: invalid asset address");
-
         //Add token to positionKeys if not currently in positionKeys
-        if (positionToIndex[currency] == 0)
+        if (currency != address(0) && positionToIndex[currency] == 0)
         {
-            positionToIndex[currency] = numberOfPositions;
-            _positionKeys[numberOfPositions] = currency;
             numberOfPositions = numberOfPositions.add(1);
+            _positionKeys[numberOfPositions] = currency;
+            positionToIndex[currency] = numberOfPositions;
         }
     }
 
@@ -414,9 +422,9 @@ contract Pool is IPool, IERC20 {
         //Remove currency from positionKeys if no balance left; account for dust
         if (IERC20(currency).balanceOf(address(this)) < 10000)
         {
-            _positionKeys[positionToIndex[currency]] = _positionKeys[numberOfPositions - 1];
-            positionToIndex[_positionKeys[numberOfPositions - 1]] = positionToIndex[currency];
-            delete _positionKeys[numberOfPositions - 1];
+            _positionKeys[positionToIndex[currency]] = _positionKeys[numberOfPositions];
+            positionToIndex[_positionKeys[numberOfPositions]] = positionToIndex[currency];
+            delete _positionKeys[numberOfPositions];
             delete positionToIndex[currency];
             numberOfPositions = numberOfPositions.sub(1);
         }

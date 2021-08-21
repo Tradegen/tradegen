@@ -160,6 +160,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     function addFarm(address farm) external onlyOwner {
         require(farm != address(0), "Invalid farm address");
         require(lastUpdateTime[farm] > 0, "Farm already exists");
+        require(block.timestamp >= periodFinish, "Need to wait for period to finish before adding farm");
 
         lastUpdateTime[farm] = block.timestamp;
         numberOfFarms = numberOfFarms.add(1);
