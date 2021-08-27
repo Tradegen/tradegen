@@ -88,20 +88,6 @@ contract PoolFactory is Ownable {
         emit CreatedPool(msg.sender, poolAddress, pools.length - 1, block.timestamp);
     }
 
-    /**
-    * @dev Sets the pool's farm address to the specified address
-    * @notice Only the PoolFactory contract owner can call this function
-    * @param poolAddress Address of the pool
-    * @param farmAddress Address of the farm
-    */
-    function setFarmAddress(address poolAddress, address farmAddress) external isValidPoolAddress(poolAddress) onlyOwner {
-        require(farmAddress != address(0), "PoolFactory: Invalid farm address");
-
-        IPool(poolAddress).setFarmAddress(farmAddress);
-
-        emit UpdatedFarmAddress(poolAddress, farmAddress, block.timestamp);
-    }
-
     /* ========== MODIFIERS ========== */
 
     modifier isValidPoolAddress(address poolAddress) {
@@ -112,6 +98,5 @@ contract PoolFactory is Ownable {
 
     /* ========== EVENTS ========== */
 
-    event UpdatedFarmAddress(address indexed poolAddress, address farmAddress, uint timestamp);
     event CreatedPool(address indexed managerAddress, address indexed poolAddress, uint poolIndex, uint timestamp);
 }

@@ -9,7 +9,7 @@ import './libraries/SafeMath.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
-import './interfaces/IBaseUbeswapAdapter.sol';
+import './interfaces/ILPVerifier.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 
 //Inheritance
@@ -109,7 +109,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     function stake(uint256 amount, address farm) external override nonReentrant updateReward(msg.sender, farm) {
         require(amount > 0, "Cannot stake 0");
 
-        address stakingToken = IStakingRewards(farm).stakingToken();
+        address ubeswapLPVerifierAddress = ADDRESS_RESOLVER.assetVerifiers(2);
+
+        require(ubeswapLPVerifierAddress != address(0), "StakingFarmRewards: invalid UbeswapLPVerifier address");
+
+        (address stakingToken,) = ILPVerifier(ubeswapLPVerifierAddress).getFarmTokens(farm);
 
         _totalSupply[farm] = _totalSupply[farm].add(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].add(amount);
@@ -123,7 +127,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     function withdraw(uint256 amount, address farm) public override nonReentrant updateReward(msg.sender, farm) {
         require(amount > 0, "Cannot withdraw 0");
 
-        address stakingToken = IStakingRewards(farm).stakingToken();
+        address ubeswapLPVerifierAddress = ADDRESS_RESOLVER.assetVerifiers(2);
+
+        require(ubeswapLPVerifierAddress != address(0), "StakingFarmRewards: invalid UbeswapLPVerifier address");
+
+        (address stakingToken,) = ILPVerifier(ubeswapLPVerifierAddress).getFarmTokens(farm);
 
         _totalSupply[farm] = _totalSupply[farm].sub(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].sub(amount);
@@ -137,7 +145,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         uint256 reward = rewards[farm][msg.sender];
         uint256 externalReward = externalRewards[farm][msg.sender];
         address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-        address rewardsToken = IStakingRewards(farm).rewardsToken();
+        address ubeswapLPVerifierAddress = ADDRESS_RESOLVER.assetVerifiers(2);
+
+        require(ubeswapLPVerifierAddress != address(0), "StakingFarmRewards: invalid UbeswapLPVerifier address");
+
+        (,address rewardsToken) = ILPVerifier(ubeswapLPVerifierAddress).getFarmTokens(farm);
 
         if (reward > 0)
         {
@@ -182,15 +194,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         uint balance = IERC20(TGEN).balanceOf(address(this));
         require(rewardRate <= balance.div(rewardsDuration), "Provided reward too high");
 
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address[] memory farms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms();
-        for (uint i = 0; i < farms.length; i++)
-        {
-            lastUpdateTime[farms[i]] = block.timestamp;
-        }
-
-        numberOfFarms = numberOfFarms.add(farms.length);
-
         periodFinish = block.timestamp.add(rewardsDuration);
         emit RewardAdded(reward, block.timestamp);
     }
@@ -200,7 +203,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
      */
     function addFarm(address farm) external onlyOwner {
         require(farm != address(0), "Invalid farm address");
-        require(lastUpdateTime[farm] > 0, "Farm already exists");
+        require(lastUpdateTime[farm] == 0, "Farm already exists");
         require(block.timestamp >= periodFinish, "Need to wait for period to finish before adding farm");
 
         lastUpdateTime[farm] = block.timestamp;
@@ -223,6 +226,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
             {
                 rewards[farm][account] = earned(account, farm);
                 userRewardPerTokenPaid[farm][account] = rewardPerTokenStored[farm];
+                earnedExternal(account, farm);
             }
         }
         _;

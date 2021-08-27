@@ -28,7 +28,6 @@ contract Pool is IPool, IERC20 {
     uint public _totalSupply;
     address public _manager;
     uint public _performanceFee; //expressed as %
-    address public _farmAddress;
     uint256 public _tokenPriceAtLastFeeMint;
 
     mapping (address => uint) public _balanceOf;
@@ -64,14 +63,6 @@ contract Pool is IPool, IERC20 {
 
     function decimals() public pure override returns (uint8) {
         return 18;
-    }
-
-    /**
-    * @dev Returns the address of the pool's farm
-    * @return address Address of the pool's farm
-    */
-    function getFarmAddress() public view override returns (address) {
-        return _farmAddress;
     }
 
     /**
@@ -293,11 +284,10 @@ contract Pool is IPool, IERC20 {
         address[] memory assetsWithdrawn = new address[](numberOfPositions);
 
         uint assetCount = numberOfPositions;
-
         //Withdraw user's portion of pool's assets
         for (uint i = assetCount; i > 0; i--)
         {
-            uint portionOfAssetBalance = _withdrawProcessing(_positionKeys[i], msg.sender, portion);
+            uint portionOfAssetBalance = _withdrawProcessing(_positionKeys[i], portion);
 
             if (portionOfAssetBalance > 0)
             {
@@ -358,18 +348,18 @@ contract Pool is IPool, IERC20 {
                 _addPositionKey(to);
             }
         }
-
+        
         require(verifier != address(0), "Pool: invalid verifier");
-
+        
         (bool valid, address receivedAsset) = IVerifier(verifier).verify(address(ADDRESS_RESOLVER), address(this), to, data);
         require(valid, "Pool: invalid transaction");
-
+        
         (bool success, ) = to.call(data);
-        require(success, "Pool: transaction failed to execute");
+        //require(success, "Pool: transaction failed to execute");
 
         _addPositionKey(receivedAsset);
 
-        emit ExecutedTransaction(address(this), _manager, to, block.timestamp);
+        emit ExecutedTransaction(address(this), _manager, to, success, block.timestamp);
     }
 
     /**
@@ -378,22 +368,12 @@ contract Pool is IPool, IERC20 {
     function removeEmptyPositions() external onlyPoolManager {
         uint assetCount = numberOfPositions;
 
-        for (uint i = assetCount.sub(1); i >= 0; i--)
+        for (uint i = assetCount; i > 0; i--)
         {
             _removePositionKey(_positionKeys[i]);
         }
 
         emit RemovedEmptyPositions(address(this), _manager, block.timestamp);
-    }
-
-    /**
-    * @dev Updates the pool's farm address
-    * @param farmAddress Address of the pool's farm
-    */
-    function setFarmAddress(address farmAddress) public override onlyPoolFactory {
-        require(farmAddress != address(0), "Invalid farm address");
-
-        _farmAddress = farmAddress;
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -419,11 +399,16 @@ contract Pool is IPool, IERC20 {
     function _removePositionKey(address currency) internal {
         require(currency != address(0), "Pool: invalid asset address");
 
+        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
+
         //Remove currency from positionKeys if no balance left; account for dust
-        if (IERC20(currency).balanceOf(address(this)) < 10000)
+        if (IAssetHandler(assetHandlerAddress).getBalance(address(this), currency) < 1000)
         {
-            _positionKeys[positionToIndex[currency]] = _positionKeys[numberOfPositions];
-            positionToIndex[_positionKeys[numberOfPositions]] = positionToIndex[currency];
+            if (_positionKeys[positionToIndex[currency]] != _positionKeys[numberOfPositions])
+            {
+                _positionKeys[positionToIndex[currency]] = _positionKeys[numberOfPositions];
+                positionToIndex[_positionKeys[numberOfPositions]] = positionToIndex[currency];
+            }
             delete _positionKeys[numberOfPositions];
             delete positionToIndex[currency];
             numberOfPositions = numberOfPositions.sub(1);
@@ -483,15 +468,14 @@ contract Pool is IPool, IERC20 {
     /**
     * @dev Performs additional processing when withdrawing an asset (such as checking for staked tokens)
     * @param asset Address of asset to withdraw
-    * @param to Address of external contract
     * @param portion User's portion of pool's asset balance
     * @return Amount of tokens to withdraw
     */
-    function _withdrawProcessing(address asset, address to, uint portion) internal returns (uint) {
+    function _withdrawProcessing(address asset, uint portion) internal returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address verifier = IAssetHandler(assetHandlerAddress).getVerifier(asset);
 
-        (address withdrawAsset, uint withdrawBalance, IAssetVerifier.MultiTransaction[] memory transactions) = IAssetVerifier(verifier).prepareWithdrawal(address(this), asset, portion, to);
+        (address withdrawAsset, uint withdrawBalance, IAssetVerifier.MultiTransaction[] memory transactions) = IAssetVerifier(verifier).prepareWithdrawal(address(this), asset, portion);
 
         if (transactions.length > 0)
         {
@@ -504,7 +488,7 @@ contract Pool is IPool, IERC20 {
             //Execute each transaction
             for (uint i = 0; i < transactions.length; i++)
             {
-                (bool success,) = to.call(transactions[i].txData);
+                (bool success,) = (transactions[i].to).call(transactions[i].txData);
                 require(success, "Pool: failed to withdraw tokens");
             }
 
@@ -520,13 +504,6 @@ contract Pool is IPool, IERC20 {
 
     /* ========== MODIFIERS ========== */
 
-    modifier onlyPoolFactory() {
-        address poolFactoryAddress = ADDRESS_RESOLVER.getContractAddress("PoolFactory");
-
-        require(msg.sender == poolFactoryAddress, "Pool: Only PoolFactory contract can call this function");
-        _;
-    }
-
     modifier onlyPoolManager() {
         require(msg.sender == _manager, "Pool: Only pool's manager can call this function");
         _;
@@ -537,6 +514,6 @@ contract Pool is IPool, IERC20 {
     event Deposit(address indexed poolAddress, address indexed userAddress, uint amount, uint timestamp);
     event Withdraw(address indexed poolAddress, address indexed userAddress, uint numberOfPoolTokens, uint valueWithdrawn, address[] assets, uint[] amountsWithdrawn, uint timestamp);
     event MintedManagerFee(address indexed poolAddress, address indexed manager, uint amount, uint timestamp);
-    event ExecutedTransaction(address indexed poolAddress, address indexed manager, address to, uint timestamp);
+    event ExecutedTransaction(address indexed poolAddress, address indexed manager, address to, bool success, uint timestamp);
     event RemovedEmptyPositions(address indexed poolAddress, address indexed manager, uint timestamp);
 }

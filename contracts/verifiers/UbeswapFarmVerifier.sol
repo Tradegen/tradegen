@@ -12,6 +12,7 @@ import "../interfaces/IVerifier.sol";
 //Interfaces
 import "../interfaces/IAddressResolver.sol";
 import "../interfaces/IAssetHandler.sol";
+import "../interfaces/ILPVerifier.sol";
 import "../interfaces/Ubeswap/IStakingRewards.sol";
 import "../interfaces/Ubeswap/IUniswapV2Pair.sol";
 
@@ -30,15 +31,15 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
         bytes4 method = getMethod(data);
 
         address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");
+        address ubeswapLPVerifierAddress = IAddressResolver(addressResolver).assetVerifiers(2);
 
-        if (method == bytes4(keccak256("stake(uint)")))
+        //Get assets 
+        (address pair, address rewardToken) = ILPVerifier(ubeswapLPVerifierAddress).getFarmTokens(to);
+
+        if (method == bytes4(keccak256("stake(uint256)")))
         {
             //Parse transaction data
             uint numberOfLPTokens = uint(getInput(data, 0));
-
-            //Get assets 
-            address pair = IStakingRewards(to).stakingToken();
-            address rewardToken = IStakingRewards(to).rewardsToken();
 
             //Check if assets are supported
             require(IAssetHandler(assetHandlerAddress).isValidAsset(rewardToken), "UbeswapFarmVerifier: unsupported reward token");
@@ -48,13 +49,10 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
 
             return (true, rewardToken);
         }
-        else if (method == bytes4(keccak256("withdraw(uint)")))
+        else if (method == bytes4(keccak256("withdraw(uint256)")))
         {
             //Parse transaction data
             uint numberOfLPTokens = uint(getInput(data, 0));
-
-            //Get assets
-            address pair = IStakingRewards(to).stakingToken();
 
             //Check if assets are supported
             require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapFarmVerifier: unsupported liquidity pair");
@@ -65,9 +63,6 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
         }
         else if (method == bytes4(keccak256("getReward()")))
         {
-            //Get assets
-            address rewardToken = IStakingRewards(to).rewardsToken();
-
             //Check if assets are supported
             require(IAssetHandler(assetHandlerAddress).isValidAsset(rewardToken), "UbeswapFarmVerifier: unsupported reward token");
 
@@ -77,10 +72,6 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
         }
         else if (method == bytes4(keccak256("exit()")))
         {
-            //Get assets
-            address pair = IStakingRewards(to).stakingToken();
-            address rewardToken = IStakingRewards(to).rewardsToken();
-
             uint numberOfLPTokens = IStakingRewards(to).balanceOf(pool);
 
             //Check if assets are supported

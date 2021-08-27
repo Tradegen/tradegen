@@ -33,9 +33,9 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Given an address, returns whether the address belongs to a user pool
+    * @dev Given an address, returns whether the address belongs to a pool
     * @param poolAddress The address to validate
-    * @return bool Whether the given address is a valid user pool address
+    * @return bool Whether the given address is a valid pool address
     */
     function checkIfPoolAddressIsValid(address poolAddress) public view override returns(bool) {
         return (poolAddress != address(0)) ? (_poolAddresses[poolAddress] == poolAddress) : false;
@@ -80,8 +80,8 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Adds a new user pool address; meant to be called by the PoolManager contract
-    * @param poolAddress The address of the user pool
+    * @dev Adds a new pool address; meant to be called by the PoolFactory contract
+    * @param poolAddress The address of the pool
     */
     function addPoolAddress(address poolAddress) external override onlyPoolFactory isValidAddress(poolAddress) {
         require(_poolAddresses[poolAddress] != poolAddress, "Pool already exists");

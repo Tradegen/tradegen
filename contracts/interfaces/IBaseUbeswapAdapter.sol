@@ -46,13 +46,6 @@ interface IBaseUbeswapAdapter {
     function checkIfLPTokenHasFarm(address pair) external view returns (bool);
 
     /**
-    * @dev Checks whether the given farm is supported on Ubeswap
-    * @param farm Address of the farm
-    * @return address Address of the farm's staking token
-    */
-    function checkIfFarmExists(address farm) external view returns (address);
-
-    /**
     * @dev Returns the address of a token pair
     * @param tokenA First token in pair
     * @param tokenB Second token in pair

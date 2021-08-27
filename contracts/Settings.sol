@@ -22,7 +22,7 @@ contract Settings is ISettings, Ownable {
     *         WeeklyStakingFarmRewards - 500,000 TGEN; 
     *         WeeklyStableCoinStakingRewards - 500,000 TGEN;
     *         WeeklyStakingRewards - 500,000 TGEN; 
-    *         TransactionFee - 0.3%;
+    *         TransactionFee - 0.3%; (30 / 1000)
     *         VoteLimit - 10;
     *         VotingReward - 3 TGEN;
     *         StrategyApprovalThreshold - 80%;

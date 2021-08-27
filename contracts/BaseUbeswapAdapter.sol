@@ -156,17 +156,6 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     }
 
     /**
-    * @dev Checks whether the given farm is supported on Ubeswap
-    * @param farm Address of the farm
-    * @return address Address of the farm's staking token
-    */
-    function checkIfFarmExists(address farm) public view override returns (address) {
-        require(farm != address(0), "BaseUbeswapAdapter: invalid farm address");
-
-        return IStakingRewards(farm).stakingToken();
-    }
-
-    /**
     * @dev Returns the address of a token pair
     * @param tokenA First token in pair
     * @param tokenB Second token in pair

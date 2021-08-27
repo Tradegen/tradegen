@@ -32,8 +32,8 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     mapping(address => uint256) public userRewardPerTokenPaid;
     mapping(address => uint256) public rewards;
 
-    uint256 private _totalSupply;
-    mapping(address => uint256) private _balances;
+    uint256 public _totalSupply;
+    mapping(address => uint256) public _balances;
 
     /* Lists of (timestamp, quantity, tokens) tuples per account, sorted in ascending time order.
      * These are the times at which each given quantity of LP token vests. */

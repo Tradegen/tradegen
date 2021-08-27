@@ -21,12 +21,6 @@ interface IPool {
     function name() external view returns (string memory);
 
     /**
-    * @dev Returns the address of the pool's farm
-    * @return address Address of the pool's farm
-    */
-    function getFarmAddress() external view returns (address);
-
-    /**
     * @dev Return the pool manager's address
     * @return address Address of the pool's manager
     */
@@ -86,12 +80,6 @@ interface IPool {
     * @return uint The pool's performance fee
     */
     function getPerformanceFee() external view returns (uint);
-
-    /**
-    * @dev Updates the pool's farm address
-    * @param farmAddress Address of the pool's farm
-    */
-    function setFarmAddress(address farmAddress) external;
 
     /**
     * @dev Returns the pool's USD value of the asset

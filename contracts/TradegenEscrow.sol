@@ -174,12 +174,20 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
      * and that the sequence of timestamps is strictly increasing.
      */
     function addCustomVestingSchedule(address account, uint[] calldata times, uint[] calldata quantities) external onlyOwner {
+        require(account != address(0), "TradegenEscrow: invalid account");
+        require(times.length > 0, "TradegenEscrow: need to have at least 1 timestamp");
+        require(quantities.length > 0, "TradegenEscrow: need to have at least 1 quantity");
+        require(times.length == quantities.length, "TradegenEscrow: arrays have different lengths");
+
         uint total;
         for (uint i = 0; i < times.length; i++)
         {
             appendVestingEntry(account, times[i], quantities[i]);
             total = total.add(quantities[i]);
         }
+
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        require(IERC20(TGEN).balanceOf(address(this)) >= totalVestedBalance, "TradegenEscrow: not enough TGEN in contract");
 
         emit AddedVestingSchedule(account, total, block.timestamp);
     }
@@ -191,7 +199,13 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
      * and that the sequence of timestamps is strictly increasing.
      */
     function addUniformMonthlyVestingSchedule(address account, uint amount, uint numberOfMonths) external onlyOwner {
+        require(account != address(0), "TradegenEscrow: invalid account");
+        require(amount > 0, "TradegenEscrow: amount must be greater than 0");
+        require(numberOfMonths > 0, "TradegenEscrow: number of months must be greater than 0");
         require(numberOfMonths <= MAX_VESTING_ENTRIES, "Vesting schedule is too long");
+
+        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        require(IERC20(TGEN).balanceOf(address(this)) >= totalVestedBalance.add(amount), "TradegenEscrow: not enough TGEN in contract");
 
         uint timestamp = block.timestamp;
         for (uint i = 0; i < numberOfMonths; i++)

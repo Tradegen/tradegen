@@ -10,6 +10,7 @@ import "../../libraries/SafeMath.sol";
 //Inheritance
 import "./ERC20Verifier.sol";
 import "../../Ownable.sol";
+import "../../interfaces/ILPVerifier.sol";
 
 //Internal references
 import "../../interfaces/IAddressResolver.sol";
@@ -18,12 +19,14 @@ import "../../interfaces/IERC20.sol";
 import "../../interfaces/IBaseUbeswapAdapter.sol";
 import "../../interfaces/Ubeswap/IStakingRewards.sol";
 
-contract UbeswapLPVerifier is ERC20Verifier, Ownable {
+contract UbeswapLPVerifier is ERC20Verifier, Ownable, ILPVerifier {
     using SafeMath for uint;
 
     IAddressResolver public ADDRESS_RESOLVER;
 
     mapping (address => address) public ubeswapFarms;
+    mapping (address => address) public stakingTokens; //farm => pair
+    mapping (address => address) public rewardTokens; //farm => reward token
 
     constructor(IAddressResolver addressResolver) Ownable() {
         ADDRESS_RESOLVER = addressResolver;
@@ -36,13 +39,11 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
     * @param pool Address of the pool
     * @param asset Address of the asset
     * @param portion Portion of the pool's balance in the asset
-    * @param to Recipient's address
     * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
     */
-    function prepareWithdrawal(address pool, address asset, uint portion, address to) public view override returns (address, uint, MultiTransaction[] memory transactions) {
+    function prepareWithdrawal(address pool, address asset, uint portion) public view override returns (address, uint, MultiTransaction[] memory transactions) {
         require(pool != address(0), "UbeswapLPVerifier: invalid pool address");
         require(asset != address(0), "UbeswapLPVerifier: invalid asset address");
-        require(to != address(0), "UbeswapLPVerifier: invalid address");
         require(portion > 0, "UbeswapLPVerifier: portion must be greater than 0");
 
         uint poolBalance = IERC20(asset).balanceOf(pool);
@@ -78,42 +79,40 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable {
         return poolBalance.add(stakedBalance);
     }
 
-    /* ========== RESTRICTED FUNCTIONS ========== */
-
     /**
-    * @dev Initializes the contract's available Ubeswap farms
-    * @notice Meant to be called by contract owner
+    * @dev Given the address of a farm, returns the farm's staking token and reward token
+    * @param farmAddress Address of the farm
+    * @return (address, address) Address of the staking token and reward token
     */
-    function initializeFarms() external onlyOwner {
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
+    function getFarmTokens(address farmAddress) public view override returns (address, address) {
+        require(farmAddress != address(0), "UbeswapLPVerifier: invalid farm address");
 
-        address[] memory availableFarms = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getAvailableUbeswapFarms();
-        for (uint i = 0; i < availableFarms.length; i++)
-        {
-            address pair = IStakingRewards(availableFarms[i]).stakingToken();
-            ubeswapFarms[pair] = availableFarms[i];
-        }
-
-        emit InitializedFarms(availableFarms.length, block.timestamp);
+        return (stakingTokens[farmAddress], rewardTokens[farmAddress]);
     }
+
+    /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
     * @dev Updates the farm address for the pair
     * @notice Meant to be called by contract owner
     * @param pair Address of pair on Ubeswap
     * @param farmAddress Address of farm on Ubeswap
+    * @param rewardToken Address of token paid to stakers
     */
-    function setFarmAddress(address pair, address farmAddress) external onlyOwner {
+    function setFarmAddress(address pair, address farmAddress, address rewardToken) external onlyOwner {
         require(pair != address(0), "UbeswapLPVerifier: invalid pair address");
         require(farmAddress != address(0), "UbeswapLPVerifier: invalid farm address");
+        require(rewardToken != address(0), "UbeswapLPVerifier: invalid reward token");
 
         ubeswapFarms[pair] = farmAddress;
+        stakingTokens[farmAddress] = pair;
+        rewardTokens[farmAddress] = rewardToken;
 
-        emit UpdatedFarmAddress(pair, farmAddress, block.timestamp);
+        emit UpdatedFarmAddress(pair, farmAddress, rewardToken, block.timestamp);
     }
 
     /* ========== EVENTS ========== */
 
-    event InitializedFarms(uint numberOfFarms, uint timestamp);
-    event UpdatedFarmAddress(address pair, address farmAddress, uint timestamp);
+    event InitializedFarms(uint numberOfFarms, address[] pairs, uint timestamp);
+    event UpdatedFarmAddress(address pair, address farmAddress, address rewardToken, uint timestamp);
 }

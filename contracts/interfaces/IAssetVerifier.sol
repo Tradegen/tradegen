@@ -14,10 +14,9 @@ interface IAssetVerifier {
     * @param pool Address of the pool
     * @param asset Address of the asset
     * @param portion Portion of the pool's balance in the asset
-    * @param to Recipient's address
     * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
     */
-    function prepareWithdrawal(address pool, address asset, uint portion, address to) external view returns (address, uint, MultiTransaction[] memory transactions);
+    function prepareWithdrawal(address pool, address asset, uint portion) external view returns (address, uint, MultiTransaction[] memory transactions);
 
     /**
     * @dev Returns the pool's balance in the asset
