@@ -6,7 +6,6 @@ pragma experimental ABIEncoderV2;
 interface ISellable {
     /**
     * @dev Transfers tokens from seller to buyer
-    * @notice Meant to be called from Marketplace contract
     * @param from Address of the seller
     * @param to Address of the buyer
     * @param tokenClass The class of the asset's token

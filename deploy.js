@@ -4,7 +4,7 @@ const UBE_ALFAJORES = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
 
 async function main() {
     const signers = await ethers.getSigners();
-    deployer = signers[0];
+    deployer = signers[1];
 
     let AddressResolverFactory = await ethers.getContractFactory('AddressResolver');
     let TradegenERC20Factory = await ethers.getContractFactory('TradegenERC20');
@@ -135,7 +135,7 @@ async function main() {
     await NFTPoolFactoryContract.deployed();
     let NFTPoolFactoryAddress = NFTPoolFactoryContract.address;
     console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);
-
+    
     let treasury = await TreasuryFactory.deploy(addressResolverAddress);
     await treasury.deployed();
     let treasuryAddress = treasury.address;
