@@ -62,13 +62,16 @@ async function initializeAddressResolver() {
     await addressResolver.setContractAddress("TradegenStakingRewards", TradegenStakingRewardsAddress);
     await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
     await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
-    await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);*/
+    await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
     let tx = await addressResolver.setContractAddress("Marketplace", MarketplaceAddress);
     let tx2 = await addressResolver.setContractAddress("Treasury", TreasuryAddress);
     let tx3 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
     await tx.wait();
     await tx2.wait();
-    await tx3.wait();
+    await tx3.wait();*/
+
+    let tx = await addressResolver.setContractAddress("Operator", deployer.address);
+    await tx.wait();
     /*
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
@@ -98,10 +101,10 @@ async function initializeAddressResolver() {
     const address18 = await addressResolver.getContractAddress("TradegenStakingRewards");
     const address19 = await addressResolver.getContractAddress("UbeswapRouter");
     const address20 = await addressResolver.getContractAddress("UbeswapPoolManager");
-    const address21 = await addressResolver.getContractAddress("UniswapV2Factory");*/
+    const address21 = await addressResolver.getContractAddress("UniswapV2Factory");
     const address22 = await addressResolver.getContractAddress("Marketplace");
     const address23 = await addressResolver.getContractAddress("Treasury");
-    const address24 = await addressResolver.getContractAddress("NFTPoolFactory");
+    const address24 = await addressResolver.getContractAddress("NFTPoolFactory");*/
     /*console.log(address1);
     console.log(address2);
     console.log(address3);
@@ -122,10 +125,10 @@ async function initializeAddressResolver() {
     console.log(address18);
     console.log(address19);
     console.log(address20);
-    console.log(address21);*/
+    console.log(address21);
     console.log(address22);
     console.log(address23);
-    console.log(address24);
+    console.log(address24);*/
 }
 
 async function initializeAssetHandler() {
@@ -238,13 +241,13 @@ async function initializeMarketplace() {
 
   console.log("done");
 }
-/*
+
 initializeAddressResolver()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 /*
 initializeAssetHandler()
   .then(() => process.exit(0))
@@ -258,11 +261,11 @@ initializeSettings()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 initializeMarketplace()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/

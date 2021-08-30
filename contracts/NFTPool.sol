@@ -25,6 +25,7 @@ contract NFTPool is INFTPool, ISellable {
     IAddressResolver public ADDRESS_RESOLVER;
     address private _factory;
     bool private _initialized;
+    address public farm;
    
     //Pool info
     string public name;
@@ -288,27 +289,6 @@ contract NFTPool is INFTPool, ISellable {
         }
     }
 
-    /**
-    * @dev Transfers tokens from seller to buyer
-    * @param from Address of the seller
-    * @param to Address of the buyer
-    * @param tokenClass The class of the asset's token
-    * @param numberOfTokens Number of tokens to purchase
-    */
-    function transfer(address from, address to, uint tokenClass, uint numberOfTokens) external override returns(bool) {
-        if (balanceOf[from][tokenClass] < numberOfTokens)
-        {
-            return false;
-        }
-
-        balanceOf[from][tokenClass] = balanceOf[from][tokenClass].sub(numberOfTokens);
-        balanceOf[to][tokenClass] = balanceOf[to][tokenClass].add(numberOfTokens);
-        balance[from] = balance[from].sub(numberOfTokens);
-        balance[to] = balance[to].add(numberOfTokens);
-
-        return true;
-    }
-
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
@@ -384,6 +364,32 @@ contract NFTPool is INFTPool, ISellable {
         availableC2 = (supplyCap.mul(10).div(100) > 2) ? supplyCap.mul(10).div(100) : 2;
         availableC3 = (supplyCap.mul(20).div(100) > 3) ? supplyCap.mul(20).div(100) : 3;
         availableC4 = supplyCap.sub(availableC3).sub(availableC2).sub(availableC1);
+    }
+
+    /**
+    * @dev Transfers tokens from seller to buyer
+    * @notice Meant to be called from Marketplace contract
+    * @param from Address of the seller
+    * @param to Address of the buyer
+    * @param tokenClass The class of the asset's token
+    * @param numberOfTokens Number of tokens to purchase
+    */
+    function transfer(address from, address to, uint tokenClass, uint numberOfTokens) external override onlyMarketplaceOrFarm returns(bool) {
+        if (balanceOf[from][tokenClass] < numberOfTokens)
+        {
+            return false;
+        }
+
+        balanceOf[from][tokenClass] = balanceOf[from][tokenClass].sub(numberOfTokens);
+        balanceOf[to][tokenClass] = balanceOf[to][tokenClass].add(numberOfTokens);
+        balance[from] = balance[from].sub(numberOfTokens);
+        balance[to] = balance[to].add(numberOfTokens);
+
+        return true;
+    }
+
+    function setFarmAddress(address farmAddress) external onlyOperator {
+        farm = farmAddress;
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
@@ -530,8 +536,14 @@ contract NFTPool is INFTPool, ISellable {
         _;
     }
 
-    modifier onlyMarketplace() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("Marketplace"), "NFTPool: Only Marketplace can call this function");
+    modifier onlyMarketplaceOrFarm() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("Marketplace") ||
+                msg.sender == farm, "NFTPool: Only Marketplace or Farm can call this function");
+        _;
+    }
+
+    modifier onlyOperator() {
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("Marketplace"), "NFTPool: Only Operator can call this function");
         _;
     }
 
