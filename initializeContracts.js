@@ -5,6 +5,7 @@ const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD } = 
 const AddressResolverABI = require('./build/abi/AddressResolver');
 const SettingsABI = require('./build/abi/Settings');
 const AssetHandlerABI = require('./build/abi/AssetHandler');
+const MarketplaceABI = require('./build/abi/Marketplace');
 
 //From contractAddressAlfajores.txt
 const AddressResolverAddress = "0x32432FFE7E23885DF303eA41ECEe1e31aC8652a2";
@@ -26,6 +27,9 @@ const TradegenLPStakingEscrowAddress = "0xa8e7707CfC56718566bA9Ac4883CAbb38E74D6
 const TradegenLPStakingRewardsAddress = "0xDe7473C7b5262961A1C7f8c2215EB46Cba966302";
 const TradegenStakingEscrowAddress = "0xB81D06e9B6B9A0D237500694E8600B654253dD19";
 const TradegenStakingRewardsAddress = "0xC5be2Aef0fac68a9399CEa2d715E31f0fc45B9Dd";
+const MarketplaceAddress = "0x4306F56e43D4dfec5Ab90760654d68E983d97137";
+const NFTPoolFactoryAddress = "0x2dB13ac7A21F42bcAaFC71C1f1F8c647AEBC9750";
+const TreasuryAddress = "0x61DAbc6fb49eF01f059590a53b96dAaEB7745492";
 
 const UBE_ALFAJORES = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
 const CELO_ALFAJORES = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
@@ -33,10 +37,10 @@ const cUSD_ALFAJORES = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 async function initializeAddressResolver() {
     const signers = await ethers.getSigners();
-    deployer = signers[0];
+    deployer = signers[1];
     
     let addressResolver = new ethers.Contract(AddressResolverAddress, AddressResolverABI, deployer);
-
+    /*
     //Initialize contract addresses in AddressResolver
     await addressResolver.setContractAddress("BaseUbeswapAdapter", BaseUbeswapAdapterAddress);
     await addressResolver.setContractAddress("TradegenERC20", TradegenERC20Address);
@@ -58,17 +62,23 @@ async function initializeAddressResolver() {
     await addressResolver.setContractAddress("TradegenStakingRewards", TradegenStakingRewardsAddress);
     await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
     await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
-    await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
-
+    await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);*/
+    let tx = await addressResolver.setContractAddress("Marketplace", MarketplaceAddress);
+    let tx2 = await addressResolver.setContractAddress("Treasury", TreasuryAddress);
+    let tx3 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
+    await tx.wait();
+    await tx2.wait();
+    await tx3.wait();
+    /*
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
     await addressResolver.setAssetVerifier(2, UbeswapLPVerifierAddress);
 
     //Add contract verifier to AddressResolver
-    await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);
+    await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);*/
 
     //Check if addresses were set correctly
-    const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
+    /*const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
     const address2 = await addressResolver.getContractAddress("TradegenERC20");
     const address3 = await addressResolver.getContractAddress("Settings");
     const address4 = await addressResolver.getContractAddress("DistributeFunds");
@@ -88,8 +98,11 @@ async function initializeAddressResolver() {
     const address18 = await addressResolver.getContractAddress("TradegenStakingRewards");
     const address19 = await addressResolver.getContractAddress("UbeswapRouter");
     const address20 = await addressResolver.getContractAddress("UbeswapPoolManager");
-    const address21 = await addressResolver.getContractAddress("UniswapV2Factory");
-    console.log(address1);
+    const address21 = await addressResolver.getContractAddress("UniswapV2Factory");*/
+    const address22 = await addressResolver.getContractAddress("Marketplace");
+    const address23 = await addressResolver.getContractAddress("Treasury");
+    const address24 = await addressResolver.getContractAddress("NFTPoolFactory");
+    /*console.log(address1);
     console.log(address2);
     console.log(address3);
     console.log(address4);
@@ -109,7 +122,10 @@ async function initializeAddressResolver() {
     console.log(address18);
     console.log(address19);
     console.log(address20);
-    console.log(address21);
+    console.log(address21);*/
+    console.log(address22);
+    console.log(address23);
+    console.log(address24);
 }
 
 async function initializeAssetHandler() {
@@ -146,51 +162,105 @@ async function initializeAssetHandler() {
 
 async function initializeSettings() {
     const signers = await ethers.getSigners();
-    deployer = signers[0];
+    deployer = signers[1];
     
     let settings = new ethers.Contract(SettingsAddress, SettingsABI, deployer);
 
     //Set parameter values in Settings contract
+    /*
     await settings.setParameterValue("WeeklyLPStakingRewards", parseEther("500000"));
     await settings.setParameterValue("WeeklyStakingFarmRewards", parseEther("500000"));
     await settings.setParameterValue("WeeklyStableCoinStakingRewards", parseEther("500000"));
     await settings.setParameterValue("WeeklyStakingRewards", parseEther("500000"));
     await settings.setParameterValue("TransactionFee", 30);
     await settings.setParameterValue("MaximumPerformanceFee", 3000);
-    await settings.setParameterValue("MaximumNumberOfPositionsInPool", 6);
+    await settings.setParameterValue("MaximumNumberOfPositionsInPool", 6);*/
+    let tx = await settings.setParameterValue("MarketplaceProtocolFee", 100);
+    let tx2 = await settings.setParameterValue("MarketplaceAssetManagerFee", 200);
+    let tx3 = await settings.setParameterValue("MaximumNumberOfNFTPoolTokens", 1000000);
+    let tx4 = await settings.setParameterValue("MinimumNumberOfNFTPoolTokens", 10);
+    let tx5 = await settings.setParameterValue("MaximumNFTPoolSeedPrice", parseEther("1000"));
+    let tx6 = await settings.setParameterValue("MinimumNFTPoolSeedPrice", parseEther("0.1"));
+    let tx7 = await settings.setParameterValue("MaximumNumberOfPoolsPerUser", 2);
+    await tx.wait();
+    await tx2.wait();
+    await tx3.wait();
+    await tx4.wait();
+    await tx5.wait();
+    await tx6.wait();
+    await tx7.wait();
 
     //Check if parameters were set correctly
+    /*
     const param1 = await settings.getParameterValue("WeeklyLPStakingRewards");
     const param2 = await settings.getParameterValue("WeeklyStakingFarmRewards");
     const param3 = await settings.getParameterValue("WeeklyStableCoinStakingRewards");
     const param4 = await settings.getParameterValue("WeeklyStakingRewards");
     const param5 = await settings.getParameterValue("TransactionFee");
     const param6 = await settings.getParameterValue("MaximumPerformanceFee");
-    const param7 = await settings.getParameterValue("MaximumNumberOfPositionsInPool");
+    const param7 = await settings.getParameterValue("MaximumNumberOfPositionsInPool");*/
+    const param8 = await settings.getParameterValue("MarketplaceProtocolFee");
+    const param9 = await settings.getParameterValue("MarketplaceAssetManagerFee");
+    const param10 = await settings.getParameterValue("MaximumNumberOfNFTPoolTokens");
+    const param11 = await settings.getParameterValue("MinimumNumberOfNFTPoolTokens");
+    const param12 = await settings.getParameterValue("MaximumNFTPoolSeedPrice");
+    const param13 = await settings.getParameterValue("MinimumNFTPoolSeedPrice");
+    const param14 = await settings.getParameterValue("MaximumNumberOfPoolsPerUser");
+    /*
     console.log(param1);
     console.log(param2);
     console.log(param3);
     console.log(param4);
     console.log(param5);
     console.log(param6);
-    console.log(param7);
+    console.log(param7);*/
+    console.log(param8);
+    console.log(param9);
+    console.log(param10);
+    console.log(param11);
+    console.log(param12);
+    console.log(param13);
+    console.log(param14);
 }
 
+async function initializeMarketplace() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let marketplace = new ethers.Contract(MarketplaceAddress, MarketplaceABI, deployer);
+
+  //Add NFTPoolFactory as whitelisted contract in Marketplace
+  let tx = await marketplace.addWhitelistedContract(NFTPoolFactoryAddress);
+  await tx.wait();
+
+  const isValid = await marketplace.whitelistedContracts(NFTPoolFactoryAddress);
+  console.log(isValid);
+
+  console.log("done");
+}
+/*
 initializeAddressResolver()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
-
+  });*/
+/*
 initializeAssetHandler()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
-
+  });*/
+/*
 initializeSettings()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  });*/
+
+initializeMarketplace()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)

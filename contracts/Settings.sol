@@ -36,6 +36,12 @@ contract Settings is ISettings, Ownable {
     *         LiquidationFee - 5%;
     *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
     *         UBEKeeperReward - 0.1%;
+    *         MarketplaceProtocolFee - 1% (100 / 10000)
+    *         MarketplaceAssetManagerFee - 2% (200 / 10000)
+    *         MaximumNumberOfNFTPoolTokens - 1,000,000
+    *         MinimumNumberOfNFTPoolTokens - 10
+    *         MaximumNFTPoolSeedPrice - $1,000 (10 ** 21)
+    *         MinimumNFTPoolSeedPrice - $0.10 (10 ** 17)
     */
     constructor() Ownable() {}
 

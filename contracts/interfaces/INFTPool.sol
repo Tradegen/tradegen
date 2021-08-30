@@ -2,19 +2,7 @@
 
 pragma solidity >=0.7.6;
 
-interface IPool {
-    /**
-    * @dev Returns the name of the pool
-    * @return string The name of the pool
-    */
-    function name() external view returns (string memory);
-
-    /**
-    * @dev Return the pool manager's address
-    * @return address Address of the pool's manager
-    */
-    function getManagerAddress() external view returns (address);
-
+interface INFTPool {
     /**
     * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value
     * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions
@@ -22,8 +10,8 @@ interface IPool {
     function getPositionsAndTotal() external view returns (address[] memory, uint[] memory, uint);
 
     /**
-    * @dev Returns the amount of stable coins the pool has to invest
-    * @return uint Amount of stable coin the pool has available
+    * @dev Returns the amount of cUSD the pool has to invest
+    * @return uint Amount of cUSD in the pool
     */
     function getAvailableFunds() external view returns (uint);
 
@@ -40,35 +28,23 @@ interface IPool {
     function getUSDBalance(address user) external view returns (uint);
 
     /**
-    * @dev Returns the number of pool tokens the user has
-    * @param user Address of the user
-    * @return uint Number of pool tokens the user has
-    */
-    function balanceOf(address user) external view returns (uint);
-
-    /**
-    * @dev Deposits the given USD amount into the pool
+    * @dev Purchases the given amount of pool tokens
     * @notice Call cUSD.approve() before calling this function
-    * @param amount Amount of USD to deposit into the pool
+    * @param numberOfPoolTokens Number of pool tokens to purchase
     */
-    function deposit(uint amount) external;
+    function deposit(uint numberOfPoolTokens) external;
 
     /**
     * @dev Withdraws the user's full investment
     * @param numberOfPoolTokens Number of pool tokens to withdraw
+    * @param tokenClass Token class to withdraw from
     */
-    function withdraw(uint numberOfPoolTokens) external;
+    function withdraw(uint numberOfPoolTokens, uint tokenClass) external;
 
     /**
     * @dev Withdraws the user's full investment
     */
     function exit() external;
-
-    /**
-    * @dev Returns the pool's performance fee
-    * @return uint The pool's performance fee
-    */
-    function getPerformanceFee() external view returns (uint);
 
     /**
     * @dev Returns the pool's USD value of the asset
@@ -79,20 +55,14 @@ interface IPool {
     function getAssetValue(address asset, address assetHandlerAddress) external view returns (uint);
 
     /**
-    * @dev Returns the price of the pool's token
-    * @return USD price of the pool's token
+    * @dev Returns the supply price of the pool's token
+    * @return USD supply price of the pool's token
     */
     function tokenPrice() external view returns (uint);
 
     /**
-    * @dev Returns the pool manager's available fees
-    * @return Pool manager's available fees
-    */
-    function availableManagerFee() external view returns (uint);
-
-    /**
-    * @dev Returns the total supply of LP tokens in the pool
-    * @return uint Total supply of LP tokens
+    * @dev Returns the total supply of pool tokens
+    * @return uint Total supply of pool tokens
     */
     function totalSupply() external view returns (uint);
 }

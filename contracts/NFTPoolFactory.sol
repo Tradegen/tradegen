@@ -5,17 +5,15 @@ pragma solidity >=0.7.6;
 //Interfaces
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
+import './interfaces/IMarketplace.sol';
 
 //Libraries
 import './libraries/SafeMath.sol';
 
-//Inheritance
-import './Ownable.sol';
-
 //Internal references
-import './Pool.sol';
+import './NFTPool.sol';
 
-contract PoolFactory is Ownable {
+contract NFTPoolFactory {
     using SafeMath for uint;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
@@ -24,7 +22,7 @@ contract PoolFactory is Ownable {
     mapping (address => uint[]) public userToManagedPools;
     mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
 
-    constructor(IAddressResolver addressResolver) Ownable() {
+    constructor(IAddressResolver addressResolver) {
         ADDRESS_RESOLVER = addressResolver;
     }
 
@@ -63,39 +61,42 @@ contract PoolFactory is Ownable {
     /**
     * @dev Creates a new pool
     * @param poolName Name of the pool
-    * @param performanceFee Performance fee for the pool
+    * @param maxSupply Maximum number of pool tokens
+    * @param seedPrice Initial price of pool tokens
     */
-    function createPool(string memory poolName, uint performanceFee) external {
+    function createPool(string memory poolName, uint maxSupply, uint seedPrice) external {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
-        uint maximumPerformanceFee = ISettings(settingsAddress).getParameterValue("MaximumPerformanceFee");
+        uint maximumNumberOfNFTPoolTokens = ISettings(settingsAddress).getParameterValue("MaximumNumberOfNFTPoolTokens");
+        uint minimumNumberOfNFTPoolTokens = ISettings(settingsAddress).getParameterValue("MinimumNumberOfNFTPoolTokens");
+        uint maximumNFTPoolSeedPrice = ISettings(settingsAddress).getParameterValue("MaximumNFTPoolSeedPrice");
+        uint minimumNFTPoolSeedPrice = ISettings(settingsAddress).getParameterValue("MinimumNFTPoolSeedPrice");
         uint maximumNumberOfPoolsPerUser = ISettings(settingsAddress).getParameterValue("MaximumNumberOfPoolsPerUser");
 
-        require(bytes(poolName).length < 30, "Pool name must have less than 30 characters");
-        require(performanceFee <= maximumPerformanceFee, "Cannot exceed maximum performance fee");
+        
+        require(bytes(poolName).length < 40, "Pool name must have less than 40 characters");
+        require(maxSupply <= maximumNumberOfNFTPoolTokens, "Cannot exceed max supply cap");
+        require(maxSupply >= minimumNumberOfNFTPoolTokens, "Cannot have less than min supply cap");
+        require(seedPrice >= minimumNFTPoolSeedPrice, "Seed price must be greater than min seed price");
+        require(seedPrice <= maximumNFTPoolSeedPrice, "Seed price must be less than max seed price");
         require(userToManagedPools[msg.sender].length < maximumNumberOfPoolsPerUser, "Cannot exceed maximum number of pools per user");
-
+        
         //Create pool
-        Pool temp = new Pool(poolName, performanceFee, msg.sender, ADDRESS_RESOLVER);
+        address poolAddress = address(new NFTPool());
+        NFTPool(poolAddress).initialize(poolName, seedPrice, maxSupply, msg.sender, ADDRESS_RESOLVER);
 
         //Update state variables
-        address poolAddress = address(temp);
         pools.push(poolAddress);
         userToManagedPools[msg.sender].push(pools.length - 1);
         addressToIndex[poolAddress] = pools.length;
-        ADDRESS_RESOLVER.addPoolAddress(poolAddress);
 
-        emit CreatedPool(msg.sender, poolAddress, pools.length - 1, block.timestamp);
-    }
+        //Add pool token as sellable asset on marketplace
+        address marketplaceAddress = ADDRESS_RESOLVER.getContractAddress("Marketplace");
+        IMarketplace(marketplaceAddress).addAsset(poolAddress, msg.sender);
 
-    /* ========== MODIFIERS ========== */
-
-    modifier isValidPoolAddress(address poolAddress) {
-        require(poolAddress != address(0), "PoolFactory: Invalid pool address");
-        require(addressToIndex[poolAddress] > 0, "PoolFactory: Pool not found");
-        _;
+        emit CreatedNFTPool(msg.sender, poolAddress, pools.length - 1, block.timestamp);
     }
 
     /* ========== EVENTS ========== */
 
-    event CreatedPool(address indexed managerAddress, address indexed poolAddress, uint poolIndex, uint timestamp);
+    event CreatedNFTPool(address indexed managerAddress, address indexed poolAddress, uint poolIndex, uint timestamp);
 }

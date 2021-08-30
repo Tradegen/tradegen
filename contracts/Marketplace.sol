@@ -1,0 +1,257 @@
+// SPDX-License-Identifier: MIT
+
+pragma solidity >=0.7.6;
+pragma experimental ABIEncoderV2;
+
+//Libraries
+import './libraries/SafeMath.sol';
+
+//Inheritance
+import './interfaces/IMarketplace.sol';
+import './Ownable.sol';
+
+//Interfaces
+import './interfaces/IAddressResolver.sol';
+import './interfaces/IERC20.sol';
+import './interfaces/ISettings.sol';
+import './interfaces/IAssetHandler.sol';
+import './interfaces/ISellable.sol';
+
+contract Marketplace is IMarketplace, Ownable {
+    using SafeMath for uint;
+
+    IAddressResolver public immutable ADDRESS_RESOLVER;
+
+    mapping (uint => MarketplaceListing) public marketplaceListings; //starts at index 1
+    uint public numberOfMarketplaceListings;
+    mapping (address => mapping (address => uint)) public userToListingIndex; //max 1 listing per user
+
+    //Address of the asset's manager (used for sending manager's fee)
+    //Set to asset's address if asset doesn't have manager (no manager fee in this case)
+    //Set to address(0) if invalid asset
+    mapping (address => address) public assetManagers; 
+
+    //Set of contracts that can add a new asset to marketplace
+    mapping (address => bool) public whitelistedContracts;
+
+    constructor(IAddressResolver addressResolver) Ownable() {
+        ADDRESS_RESOLVER = addressResolver;
+    }
+
+    /* ========== VIEWS ========== */
+
+    /**
+    * @dev Given the address of a user and an asset, returns the index of the marketplace listing
+    * @notice Returns 0 if user doesn't have a listing in the given asset
+    * @param user Address of the user
+    * @param asset Address of the asset
+    * @return uint Index of the user's marketplace listing
+    */
+    function getListingIndex(address user, address asset) external view override returns (uint) {
+        require(user != address(0), "Marketplace: invalid user address");
+        require(asset != address(0), "Marketplace: invalid asset");
+
+        return userToListingIndex[asset][user];
+    }
+
+    /**
+    * @dev Given the index of a marketplace listing, returns the listing's data
+    * @param index Index of the marketplace listing
+    * @return (address, address, uint, uint, uint) Asset for sale, address of the seller, asset's token class, number of tokens for sale, USD per token
+    */
+    function getMarketplaceListing(uint index) public view override indexInRange(index) returns (address, address, uint, uint, uint) {
+        MarketplaceListing memory listing = marketplaceListings[index];
+
+        return (listing.asset, listing.seller, listing.tokenClass, listing.numberOfTokens, listing.price);
+    }
+
+    /* ========== MUTATIVE FUNCTIONS ========== */
+
+    /**
+    * @dev Purchases the specified number of tokens from the marketplace listing
+    * @param asset Address of the token for sale
+    * @param index Index of the marketplace listing in the asset's listings array
+    * @param numberOfTokens Number of tokens to purchase
+    */
+    function purchase(address asset, uint index, uint numberOfTokens) external override isValidAsset(asset) {
+        require(numberOfTokens > 0 &&
+                numberOfTokens <= marketplaceListings[index].numberOfTokens,
+                "Quantity out of bounds");
+        require(msg.sender != marketplaceListings[index].seller, "Cannot buy your own position");
+        
+        address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
+        uint protocolFee = ISettings(settingsAddress).getParameterValue("MarketplaceProtocolFee");
+        uint managerFee = (assetManagers[asset] != asset) ? ISettings(settingsAddress).getParameterValue("MarketplaceAssetManagerFee") : 0;
+        address stableCoinAddress = IAssetHandler(ADDRESS_RESOLVER.getContractAddress("AssetHandler")).getStableCoinAddress();
+
+        uint amountOfUSD = marketplaceListings[index].price.mul(numberOfTokens);
+
+        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amountOfUSD);
+        
+        //Transfer cUSD to seller and pay protocol fee
+        IERC20(stableCoinAddress).transfer(marketplaceListings[index].seller, amountOfUSD.mul(10000 - protocolFee - managerFee).div(10000));
+        IERC20(stableCoinAddress).transfer(ADDRESS_RESOLVER.getContractAddress("Treasury"), amountOfUSD.mul(protocolFee).div(10000));
+
+        //Pay manager fee if asset has manager
+        if (managerFee > 0)
+        {
+            IERC20(stableCoinAddress).transfer(assetManagers[asset], amountOfUSD.mul(managerFee).div(10000));
+        }
+
+        //Transfer tokens from seller to buyer
+        require(ISellable(asset).transfer(marketplaceListings[index].seller, msg.sender, marketplaceListings[index].tokenClass, numberOfTokens), "Token transfer failed");
+
+        //Update marketplace listing
+        if (numberOfTokens == marketplaceListings[index].numberOfTokens)
+        {
+            _removeListing(marketplaceListings[index].seller, asset, index);
+        }
+        else
+        {
+            marketplaceListings[index].numberOfTokens = marketplaceListings[index].numberOfTokens.sub(numberOfTokens);
+        }
+
+        emit Purchased(msg.sender, asset, index, numberOfTokens, block.timestamp);
+    }
+
+    /**
+    * @dev Creates a new marketplace listing with the given price and quantity
+    * @param asset Address of the token for sale
+    * @param tokenClass The class of the asset's token
+    * @param numberOfTokens Number of tokens to sell
+    * @param price USD per token
+    */
+    function createListing(address asset, uint tokenClass, uint numberOfTokens, uint price) external override isValidAsset(asset) {
+        require(userToListingIndex[asset][msg.sender] == 0, "Already have a marketplace listing for this asset");
+        require(price > 0, "Price must be greater than 0");
+        require(tokenClass > 0 && tokenClass < 5, "Token class must be between 1 and 4");
+        require(numberOfTokens > 0 && numberOfTokens <= ISellable(asset).balanceOf(msg.sender, tokenClass), "Quantity out of bounds");
+
+        numberOfMarketplaceListings = numberOfMarketplaceListings.add(1);
+        userToListingIndex[asset][msg.sender] = numberOfMarketplaceListings;
+        marketplaceListings[numberOfMarketplaceListings] = MarketplaceListing(asset, msg.sender, tokenClass, numberOfTokens, price);
+
+        emit CreatedListing(msg.sender, asset, tokenClass, numberOfTokens, price, block.timestamp);
+    }
+
+    /**
+    * @dev Removes the marketplace listing at the given index
+    * @param asset Address of the token for sale
+    * @param index Index of the marketplace listing in the asset's listings array
+    */
+    function removeListing(address asset, uint index) external override isValidAsset(asset) indexInRange(index) onlySeller(asset, index) {
+        _removeListing(msg.sender, asset, index);
+
+        emit RemovedListing(msg.sender, asset, block.timestamp);
+    }
+
+    /**
+    * @dev Updates the price of the given marketplace listing
+    * @param asset Address of the token for sale
+    * @param index Index of the marketplace listing in the asset's listings array
+    * @param newPrice USD per token
+    */
+    function updatePrice(address asset, uint index, uint newPrice) external override isValidAsset(asset) indexInRange(index) onlySeller(asset, index) {
+        require(newPrice > 0, "New price must be greater than 0");
+
+        marketplaceListings[index].price = newPrice;
+
+        emit UpdatedPrice(msg.sender, asset, index, newPrice, block.timestamp);
+    }
+
+    /**
+    * @dev Updates the number of tokens for sale of the given marketplace listing
+    * @param asset Address of the token for sale
+    * @param index Index of the marketplace listing in the asset's listings array
+    * @param newQuantity Number of tokens to sell
+    */
+    function updateQuantity(address asset, uint index, uint newQuantity) external override isValidAsset(asset) indexInRange(index) onlySeller(asset, index) {
+        require(newQuantity > 0 &&
+                newQuantity <= ISellable(asset).balanceOf(msg.sender, marketplaceListings[index].tokenClass),
+                "Quantity out of bounds");
+
+        marketplaceListings[index].numberOfTokens = newQuantity;
+
+        emit UpdatedQuantity(msg.sender, asset, index, newQuantity, block.timestamp);
+    }
+
+    /* ========== RESTRICTED FUNCTIONS ========== */
+
+    /**
+    * @dev Adds a new sellable asset to the marketplace
+    * @notice Meant to be called by whitelisted contract
+    * @notice Set 'manager' to asset address if asset doesn't have manager
+    * @param asset Address of the asset to add
+    * @param manager Address of the asset's manager (or asset's address if asset doesn't have manager)
+    */
+    function addAsset(address asset, address manager) external override onlyWhitelistedContracts {
+        require(asset != address(0), "Marketplace: invalid asset address");
+        require(manager != address(0), "Marketplace: invalid manager address");
+        require(assetManagers[asset] == address(0), "Marketplace: already added this asset");
+
+        assetManagers[asset] = manager;
+
+        emit AddedAsset(asset, block.timestamp);
+    }
+
+    /**
+    * @dev Adds a new whitelisted contract
+    * @notice Meant to be called by Marketplace contract deployer
+    * @param contractAddress Address of contract to add
+    */
+    function addWhitelistedContract(address contractAddress) external onlyOwner {
+        require(contractAddress != address(0), "Invalid contract address");
+        require(!whitelistedContracts[contractAddress], "Contract already added");
+
+        whitelistedContracts[contractAddress] = true;
+
+        emit AddedWhitelistedContract(contractAddress, block.timestamp);
+    }
+
+    /* ========== INTERNAL FUNCTIONS ========== */
+
+    /**
+    * @dev Moves the last marketplace listing to the specified index
+    * @dev Updates state variables for caller and last listing's seller
+    * @param caller Address of user to remove listing from
+    * @param asset Address of the token for sale
+    * @param index Index of the marketplace listing in the asset's listings array
+    */
+    function _removeListing(address caller, address asset, uint index) internal {
+        MarketplaceListing memory lastListing = marketplaceListings[numberOfMarketplaceListings];
+
+        marketplaceListings[index] = MarketplaceListing(lastListing.asset, lastListing.seller, lastListing.tokenClass, lastListing.numberOfTokens, lastListing.price);
+        userToListingIndex[asset][caller] = 0;
+        userToListingIndex[lastListing.asset][lastListing.seller] = (index == numberOfMarketplaceListings) ? numberOfMarketplaceListings.sub(1) : index;
+        delete marketplaceListings[numberOfMarketplaceListings];
+        numberOfMarketplaceListings = numberOfMarketplaceListings.sub(1);
+    }
+
+    /* ========== MODIFIERS ========== */
+
+    modifier indexInRange(uint index) {
+        require(index > 0 &&
+                index <= numberOfMarketplaceListings,
+                "Marketplace: Index out of range");
+        _;
+    }
+
+    modifier onlySeller(address asset, uint index) {
+        require(index == userToListingIndex[asset][msg.sender],
+                "Marketplace: Only the seller can call this function");
+        _;
+    }
+
+    modifier onlyWhitelistedContracts() {
+        require(whitelistedContracts[msg.sender],
+                "Marketplace: Only whitelisted contract can call this function");
+        _;
+    }
+
+    modifier isValidAsset(address asset) {
+        require(asset != address(0) &&
+                assetManagers[asset] != address(0), 
+                "Marketplace: Invalid asset");
+        _;
+    }
+}

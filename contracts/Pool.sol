@@ -19,7 +19,7 @@ import './interfaces/Ubeswap/IStakingRewards.sol';
 //Libraries
 import './libraries/SafeMath.sol';
 
-contract Pool is IPool, IERC20 {
+contract Pool is IPool {
     using SafeMath for uint;
 
     IAddressResolver public ADDRESS_RESOLVER;
@@ -31,7 +31,6 @@ contract Pool is IPool, IERC20 {
     uint256 public _tokenPriceAtLastFeeMint;
 
     mapping (address => uint) public _balanceOf;
-    mapping (address => mapping(address => uint)) public override allowance;
 
     //Asset positions
     mapping (uint => address) public _positionKeys;
@@ -53,16 +52,8 @@ contract Pool is IPool, IERC20 {
     * @dev Returns the name of the pool
     * @return string The name of the pool
     */
-    function name() public view override(IPool, IERC20) returns (string memory) {
+    function name() public view override returns (string memory) {
         return _name;
-    }
-
-    function symbol() public pure override returns (string memory) {
-        return "";
-    }
-
-    function decimals() public pure override returns (uint8) {
-        return 18;
     }
 
     /**
@@ -159,7 +150,7 @@ contract Pool is IPool, IERC20 {
     * @param user Address of the user
     * @return uint Number of pool tokens the user has
     */
-    function balanceOf(address user) public view override(IPool, IERC20) returns (uint) {
+    function balanceOf(address user) public view override returns (uint) {
         require(user != address(0), "Invalid user address");
 
         return _balanceOf[user];
@@ -214,24 +205,6 @@ contract Pool is IPool, IERC20 {
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
-
-    function approve(address spender, uint value) public override returns (bool) {
-        _approve(msg.sender, spender, value);
-        return true;
-    }
-
-    function transfer(address to, uint value) public override returns (bool) {
-        _transfer(msg.sender, to, value);
-        return true;
-    }
-
-    function transferFrom(address from, address to, uint value) public override returns (bool) {
-        if (allowance[from][msg.sender] > 0) {
-            allowance[from][msg.sender] = allowance[from][msg.sender].sub(value);
-        }
-        _transfer(from, to, value);
-        return true;
-    }
 
     /**
     * @dev Mints the pool manager's fee
@@ -355,7 +328,7 @@ contract Pool is IPool, IERC20 {
         require(valid, "Pool: invalid transaction");
         
         (bool success, ) = to.call(data);
-        //require(success, "Pool: transaction failed to execute");
+        require(success, "Pool: transaction failed to execute");
 
         _addPositionKey(receivedAsset);
 
@@ -415,26 +388,20 @@ contract Pool is IPool, IERC20 {
         }
     }
 
-    function _approve(address owner, address spender, uint value) private {
-        allowance[owner][spender] = value;
-        emit Approval(owner, spender, value);
-    }
-
-    function _transfer(address from, address to, uint value) private {
-        _balanceOf[from] = _balanceOf[from].sub(value);
-        _balanceOf[to] = _balanceOf[to].add(value);
-        emit Transfer(from, to, value);
-    }
-
     /**
     * @dev Calculates the price of a pool token
     * @param _poolValue Value of the pool in USD
     * @return Price of a pool token
     */
     function _tokenPrice(uint _poolValue) internal view returns (uint) {
-        if (_totalSupply == 0 || _poolValue == 0)
+        if (_poolValue == 0)
         {
             return 0;
+        }
+
+        if (_totalSupply == 0)
+        {
+            return 10**18;
         }
 
         return _poolValue.mul(10**18).div(_totalSupply);
