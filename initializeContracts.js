@@ -1,11 +1,13 @@
 const { ethers } = require("hardhat");
 const { parseEther } = require("@ethersproject/units");
-const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD } = require("./test/utils/addresses");
+//const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD } = require("./test/utils/addresses");
 
 const AddressResolverABI = require('./build/abi/AddressResolver');
 const SettingsABI = require('./build/abi/Settings');
 const AssetHandlerABI = require('./build/abi/AssetHandler');
 const MarketplaceABI = require('./build/abi/Marketplace');
+const PoolFactoryABI = require('./build/abi/PoolFactory');
+const NFTPoolFactoryABI = require('./build/abi/NFTPoolFactory');
 
 //From contractAddressAlfajores.txt
 const AddressResolverAddress = "0x32432FFE7E23885DF303eA41ECEe1e31aC8652a2";
@@ -242,12 +244,34 @@ async function initializeMarketplace() {
   console.log("done");
 }
 
+async function createFirstPools() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let poolFactory = new ethers.Contract(PoolFactoryAddress, PoolFactoryABI, deployer);
+  let NFTPoolFactory = new ethers.Contract(NFTPoolFactoryAddress, NFTPoolFactoryABI, deployer);
+
+  //Create pool
+  let tx = await poolFactory.createPool("UBE holder", 1000);
+  await tx.wait();
+
+  //Create NFT pool
+  let tx2 = await NFTPoolFactory.createPool("CELO exclusive pool", 1000, parseEther("1"));
+  await tx2.wait();
+
+  const availablePools = await poolFactory.getAvailablePools();
+  console.log(availablePools);
+
+  const availableNFTPools = await NFTPoolFactory.getAvailablePools();
+  console.log(availableNFTPools);
+}
+/*
 initializeAddressResolver()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeAssetHandler()
   .then(() => process.exit(0))
@@ -269,3 +293,10 @@ initializeMarketplace()
     console.error(error)
     process.exit(1)
   });*/
+
+createFirstPools()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  });

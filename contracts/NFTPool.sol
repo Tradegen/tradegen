@@ -543,7 +543,7 @@ contract NFTPool is INFTPool, ISellable {
     }
 
     modifier onlyOperator() {
-        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("Marketplace"), "NFTPool: Only Operator can call this function");
+        require(msg.sender == ADDRESS_RESOLVER.getContractAddress("Operator"), "NFTPool: Only Operator can call this function");
         _;
     }
 
