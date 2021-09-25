@@ -8,6 +8,8 @@ const AssetHandlerABI = require('./build/abi/AssetHandler');
 const MarketplaceABI = require('./build/abi/Marketplace');
 const PoolFactoryABI = require('./build/abi/PoolFactory');
 const NFTPoolFactoryABI = require('./build/abi/NFTPoolFactory');
+const TradegenStakingRewardsABI = require('./build/abi/TradegenStakingRewards');
+const BaseUbeswapAdapterABI = require('./build/abi/BaseUbeswapAdapter');
 
 //From contractAddressAlfajores.txt
 const AddressResolverAddress = "0x32432FFE7E23885DF303eA41ECEe1e31aC8652a2";
@@ -36,6 +38,7 @@ const TreasuryAddress = "0x61DAbc6fb49eF01f059590a53b96dAaEB7745492";
 const UBE_ALFAJORES = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
 const CELO_ALFAJORES = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
 const cUSD_ALFAJORES = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+const TGEN_cUSD = "0xF4Aa9Ca2Da7B4530B3e96A0BC35747FB28af711C";
 
 async function initializeAddressResolver() {
     const signers = await ethers.getSigners();
@@ -140,17 +143,18 @@ async function initializeAssetHandler() {
     let assetHandler = new ethers.Contract(AssetHandlerAddress, AssetHandlerABI, deployer);
 
     //Add asset types to AssetHandler
-    await assetHandler.addAssetType(1, ERC20PriceAggregatorAddress);
-    await assetHandler.addAssetType(2, UbeswapLPTokenPriceAggregatorAddress);
+    //await assetHandler.addAssetType(1, ERC20PriceAggregatorAddress);
+    //await assetHandler.addAssetType(2, UbeswapLPTokenPriceAggregatorAddress);
 
     //Add assets to AssetHandler
-    await assetHandler.addCurrencyKey(1, CELO_ALFAJORES);
-    await assetHandler.addCurrencyKey(1, UBE_ALFAJORES);
-    await assetHandler.addCurrencyKey(1, TradegenERC20Address);
-    await assetHandler.addCurrencyKey(2, CELO_cUSD);
+    //await assetHandler.addCurrencyKey(1, CELO_ALFAJORES);
+    //await assetHandler.addCurrencyKey(1, UBE_ALFAJORES);
+    //await assetHandler.addCurrencyKey(1, TradegenERC20Address);
+    //await assetHandler.addCurrencyKey(2, CELO_cUSD);
+    await assetHandler.addCurrencyKey(2, TGEN_cUSD);
 
     //Set stablecoin address
-    await assetHandler.setStableCoinAddress(cUSD_ALFAJORES);
+    //await assetHandler.setStableCoinAddress(cUSD_ALFAJORES);
 
     //Check if contract was initialized correctly
     const assetsForType1 = await assetHandler.getAvailableAssetsForType(1);
@@ -250,14 +254,14 @@ async function createFirstPools() {
   
   let poolFactory = new ethers.Contract(PoolFactoryAddress, PoolFactoryABI, deployer);
   let NFTPoolFactory = new ethers.Contract(NFTPoolFactoryAddress, NFTPoolFactoryABI, deployer);
-
+  /*
   //Create pool
   let tx = await poolFactory.createPool("UBE holder", 1000);
   await tx.wait();
 
   //Create NFT pool
   let tx2 = await NFTPoolFactory.createPool("CELO exclusive pool", 1000, parseEther("1"));
-  await tx2.wait();
+  await tx2.wait();*/
 
   const availablePools = await poolFactory.getAvailablePools();
   console.log(availablePools);
@@ -265,6 +269,35 @@ async function createFirstPools() {
   const availableNFTPools = await NFTPoolFactory.getAvailablePools();
   console.log(availableNFTPools);
 }
+
+async function initializeTradegenStakingRewards() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let stakingRewards = new ethers.Contract(TradegenStakingRewardsAddress, TradegenStakingRewardsABI, deployer);
+
+  //Notify reward amount
+  let tx = await stakingRewards.notifyRewardAmount(parseEther("1000000"));
+  await tx.wait();
+
+  const rewardRate = await stakingRewards.rewardRate();
+  console.log(rewardRate);
+
+  console.log("done");
+}
+
+async function getTGEN_cUSD() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let baseUbeswapAdapter = new ethers.Contract(BaseUbeswapAdapterAddress, BaseUbeswapAdapterABI, deployer);
+
+  const pair = await baseUbeswapAdapter.getPair(TradegenERC20Address, cUSD_ALFAJORES);
+  console.log(pair);
+
+  console.log("done");
+}
+
 /*
 initializeAddressResolver()
   .then(() => process.exit(0))
@@ -272,13 +305,13 @@ initializeAddressResolver()
     console.error(error)
     process.exit(1)
   });*/
-/*
+
 initializeAssetHandler()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 /*
 initializeSettings()
   .then(() => process.exit(0))
@@ -292,7 +325,7 @@ initializeMarketplace()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 createFirstPools()
   .then(() => process.exit(0))
@@ -300,3 +333,17 @@ createFirstPools()
     console.error(error)
     process.exit(1)
   });
+
+initializeTradegenStakingRewards()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});
+
+getTGEN_cUSD()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});*/

@@ -37,9 +37,29 @@ async function distributeFunds() {
     console.log(balance3);
 }
 
+async function transferTGEN() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let TradegenERC20 = new ethers.Contract(TradegenERC20Address, TradegenERC20ABI, deployer);
+
+  //Transfer TGEN to test user
+  await TradegenERC20.approve("0xfe65F680Ca5a452048857CDe5Cb5C0907b183440", parseEther("100"));
+  await TradegenERC20.transfer("0xfe65F680Ca5a452048857CDe5Cb5C0907b183440", parseEther("100"));
+  const balance = await TradegenERC20.balanceOf("0xfe65F680Ca5a452048857CDe5Cb5C0907b183440");
+  console.log(balance);
+}
+/*
 distributeFunds()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
+
+transferTGEN()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});
