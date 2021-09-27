@@ -1,0 +1,314 @@
+{
+  "contractName": "IPriceAggregator",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getUSDPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getUSDPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IPriceAggregator.sol\":\"IPriceAggregator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IPriceAggregator.sol\":{\"keccak256\":\"0xed38b617368bdbcfeba4415d4bcd85cdccd8e3f16d321fee1b75f5987e0201c8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://323e0736241d9d1e10a6fe7691c0a265845cf6dc342f08d0ea2777176ff94607\",\"dweb:/ipfs/QmbLcjqvVR5bpmki1fqqKasGWr1fCNJmrFb1b2AkZKte3f\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface IPriceAggregator {\r\n    function getUSDPrice(address asset) external view returns (uint);\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\IPriceAggregator.sol",
+  "ast": {
+    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IPriceAggregator.sol",
+    "exportedSymbols": {
+      "IPriceAggregator": [
+        11917
+      ]
+    },
+    "id": 11918,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11909,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.7",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:30"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 11917,
+        "linearizedBaseContracts": [
+          11917
+        ],
+        "name": "IPriceAggregator",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "functionSelector": "8b2f0f4f",
+            "id": 11916,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUSDPrice",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11912,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11911,
+                  "mutability": "mutable",
+                  "name": "asset",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11916,
+                  "src": "118:13:30",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11910,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "118:7:30",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "117:15:30"
+            },
+            "returnParameters": {
+              "id": 11915,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11914,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11916,
+                  "src": "156:4:30",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 11913,
+                    "name": "uint",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "156:4:30",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "155:6:30"
+            },
+            "scope": 11917,
+            "src": "97:65:30",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 11918,
+        "src": "63:102:30"
+      }
+    ],
+    "src": "35:130:30"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/IPriceAggregator.sol",
+      "exportedSymbols": {
+        "IPriceAggregator": [
+          11917
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            ">=",
+            "0.7",
+            ".6"
+          ]
+        },
+        "id": 11909,
+        "name": "PragmaDirective",
+        "src": "35:24:30"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            11917
+          ],
+          "name": "IPriceAggregator",
+          "scope": 11918
+        },
+        "children": [
+          {
+            "attributes": {
+              "functionSelector": "8b2f0f4f",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getUSDPrice",
+              "scope": 11917,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "asset",
+                      "scope": 11916,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 11910,
+                        "name": "ElementaryTypeName",
+                        "src": "118:7:30"
+                      }
+                    ],
+                    "id": 11911,
+                    "name": "VariableDeclaration",
+                    "src": "118:13:30"
+                  }
+                ],
+                "id": 11912,
+                "name": "ParameterList",
+                "src": "117:15:30"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 11916,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint",
+                          "type": "uint256"
+                        },
+                        "id": 11913,
+                        "name": "ElementaryTypeName",
+                        "src": "156:4:30"
+                      }
+                    ],
+                    "id": 11914,
+                    "name": "VariableDeclaration",
+                    "src": "156:4:30"
+                  }
+                ],
+                "id": 11915,
+                "name": "ParameterList",
+                "src": "155:6:30"
+              }
+            ],
+            "id": 11916,
+            "name": "FunctionDefinition",
+            "src": "97:65:30"
+          }
+        ],
+        "id": 11917,
+        "name": "ContractDefinition",
+        "src": "63:102:30"
+      }
+    ],
+    "id": 11918,
+    "name": "SourceUnit",
+    "src": "35:130:30"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.1",
+  "updatedAt": "2021-09-26T18:16:47.663Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

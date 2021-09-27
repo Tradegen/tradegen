@@ -1,0 +1,399 @@
+{
+  "contractName": "ILPVerifier",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "farmAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getFarmTokens",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.6+commit.7338295f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"farmAddress\",\"type\":\"address\"}],\"name\":\"getFarmTokens\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getFarmTokens(address)\":{\"details\":\"Given the address of a farm, returns the farm's staking token and reward token\",\"params\":{\"farmAddress\":\"Address of the farm\"},\"returns\":{\"_0\":\"(address, address) Address of the staking token and reward token\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ILPVerifier.sol\":\"ILPVerifier\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ILPVerifier.sol\":{\"keccak256\":\"0xc4a7c44bb106d7ffb3e5190b12cd4ceb2b39fdf1d34e836225a73898d8e5ea99\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://089cb9e760e1ee956c24f2f4aa9142ee4cbb139656ad426791a003d81513ab6f\",\"dweb:/ipfs/QmUPE3ZN9w3t3GFXnNWXafdXu54oLvvsJ3jVaLTrccsZx3\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: MIT\r\n\r\npragma solidity >=0.7.6;\r\n\r\ninterface ILPVerifier {\r\n    /**\r\n    * @dev Given the address of a farm, returns the farm's staking token and reward token\r\n    * @param farmAddress Address of the farm\r\n    * @return (address, address) Address of the staking token and reward token\r\n    */\r\n    function getFarmTokens(address farmAddress) external view returns (address, address);\r\n}",
+  "sourcePath": "C:\\Users\\xavie\\OneDrive\\Desktop\\TradeGen\\Github\\tradegen-protocol\\contracts\\interfaces\\ILPVerifier.sol",
+  "ast": {
+    "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ILPVerifier.sol",
+    "exportedSymbols": {
+      "ILPVerifier": [
+        11558
+      ]
+    },
+    "id": 11559,
+    "license": "MIT",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 11547,
+        "literals": [
+          "solidity",
+          ">=",
+          "0.7",
+          ".6"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "35:24:26"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "id": 11558,
+        "linearizedBaseContracts": [
+          11558
+        ],
+        "name": "ILPVerifier",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "documentation": {
+              "id": 11548,
+              "nodeType": "StructuredDocumentation",
+              "src": "92:228:26",
+              "text": " @dev Given the address of a farm, returns the farm's staking token and reward token\n @param farmAddress Address of the farm\n @return (address, address) Address of the staking token and reward token"
+            },
+            "functionSelector": "6cff49de",
+            "id": 11557,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getFarmTokens",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 11551,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11550,
+                  "mutability": "mutable",
+                  "name": "farmAddress",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11557,
+                  "src": "349:19:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11549,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "349:7:26",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "348:21:26"
+            },
+            "returnParameters": {
+              "id": 11556,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 11553,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11557,
+                  "src": "393:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11552,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "393:7:26",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 11555,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 11557,
+                  "src": "402:7:26",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 11554,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "402:7:26",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "392:18:26"
+            },
+            "scope": 11558,
+            "src": "326:85:26",
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "scope": 11559,
+        "src": "63:351:26"
+      }
+    ],
+    "src": "35:379:26"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/C/Users/xavie/OneDrive/Desktop/TradeGen/Github/tradegen-protocol/contracts/interfaces/ILPVerifier.sol",
+      "exportedSymbols": {
+        "ILPVerifier": [
+          11558
+        ]
+      },
+      "license": "MIT"
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            ">=",
+            "0.7",
+            ".6"
+          ]
+        },
+        "id": 11547,
+        "name": "PragmaDirective",
+        "src": "35:24:26"
+      },
+      {
+        "attributes": {
+          "abstract": false,
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "interface",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            11558
+          ],
+          "name": "ILPVerifier",
+          "scope": 11559
+        },
+        "children": [
+          {
+            "attributes": {
+              "functionSelector": "6cff49de",
+              "implemented": false,
+              "isConstructor": false,
+              "kind": "function",
+              "modifiers": [
+                null
+              ],
+              "name": "getFarmTokens",
+              "scope": 11558,
+              "stateMutability": "view",
+              "virtual": false,
+              "visibility": "external"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "text": " @dev Given the address of a farm, returns the farm's staking token and reward token\n @param farmAddress Address of the farm\n @return (address, address) Address of the staking token and reward token"
+                },
+                "id": 11548,
+                "name": "StructuredDocumentation",
+                "src": "92:228:26"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "farmAddress",
+                      "scope": 11557,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 11549,
+                        "name": "ElementaryTypeName",
+                        "src": "349:7:26"
+                      }
+                    ],
+                    "id": 11550,
+                    "name": "VariableDeclaration",
+                    "src": "349:19:26"
+                  }
+                ],
+                "id": 11551,
+                "name": "ParameterList",
+                "src": "348:21:26"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 11557,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 11552,
+                        "name": "ElementaryTypeName",
+                        "src": "393:7:26"
+                      }
+                    ],
+                    "id": 11553,
+                    "name": "VariableDeclaration",
+                    "src": "393:7:26"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "mutability": "mutable",
+                      "name": "",
+                      "scope": 11557,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "stateMutability": "nonpayable",
+                          "type": "address"
+                        },
+                        "id": 11554,
+                        "name": "ElementaryTypeName",
+                        "src": "402:7:26"
+                      }
+                    ],
+                    "id": 11555,
+                    "name": "VariableDeclaration",
+                    "src": "402:7:26"
+                  }
+                ],
+                "id": 11556,
+                "name": "ParameterList",
+                "src": "392:18:26"
+              }
+            ],
+            "id": 11557,
+            "name": "FunctionDefinition",
+            "src": "326:85:26"
+          }
+        ],
+        "id": 11558,
+        "name": "ContractDefinition",
+        "src": "63:351:26"
+      }
+    ],
+    "id": 11559,
+    "name": "SourceUnit",
+    "src": "35:379:26"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.7.6+commit.7338295f.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.1",
+  "updatedAt": "2021-09-26T18:16:47.657Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getFarmTokens(address)": {
+        "details": "Given the address of a farm, returns the farm's staking token and reward token",
+        "params": {
+          "farmAddress": "Address of the farm"
+        },
+        "returns": {
+          "_0": "(address, address) Address of the staking token and reward token"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

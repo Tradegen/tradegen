@@ -10,6 +10,7 @@ const PoolFactoryABI = require('./build/abi/PoolFactory');
 const NFTPoolFactoryABI = require('./build/abi/NFTPoolFactory');
 const TradegenStakingRewardsABI = require('./build/abi/TradegenStakingRewards');
 const BaseUbeswapAdapterABI = require('./build/abi/BaseUbeswapAdapter');
+const NFTPoolABI = require('./build/abi/NFTPool');
 
 //From contractAddressAlfajores.txt
 const AddressResolverAddress = "0x32432FFE7E23885DF303eA41ECEe1e31aC8652a2";
@@ -32,7 +33,7 @@ const TradegenLPStakingRewardsAddress = "0xDe7473C7b5262961A1C7f8c2215EB46Cba966
 const TradegenStakingEscrowAddress = "0xB81D06e9B6B9A0D237500694E8600B654253dD19";
 const TradegenStakingRewardsAddress = "0xC5be2Aef0fac68a9399CEa2d715E31f0fc45B9Dd";
 const MarketplaceAddress = "0x4306F56e43D4dfec5Ab90760654d68E983d97137";
-const NFTPoolFactoryAddress = "0x2dB13ac7A21F42bcAaFC71C1f1F8c647AEBC9750";
+const NFTPoolFactoryAddress = "0x35D49c882F65Ce27042601c678da7A6953A134e3";
 const TreasuryAddress = "0x61DAbc6fb49eF01f059590a53b96dAaEB7745492";
 
 const UBE_ALFAJORES = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
@@ -42,7 +43,7 @@ const TGEN_cUSD = "0xF4Aa9Ca2Da7B4530B3e96A0BC35747FB28af711C";
 
 async function initializeAddressResolver() {
     const signers = await ethers.getSigners();
-    deployer = signers[1];
+    deployer = signers[0];
     
     let addressResolver = new ethers.Contract(AddressResolverAddress, AddressResolverABI, deployer);
     /*
@@ -75,8 +76,14 @@ async function initializeAddressResolver() {
     await tx2.wait();
     await tx3.wait();*/
 
-    let tx = await addressResolver.setContractAddress("Operator", deployer.address);
-    await tx.wait();
+    //let tx = await addressResolver.setContractAddress("Operator", deployer.address);
+    //await tx.wait();
+
+    let tx3 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
+    await tx3.wait();
+
+    const address2 = await addressResolver.getContractAddress("NFTPoolFactory");
+    console.log(address2);
     /*
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
@@ -234,7 +241,7 @@ async function initializeSettings() {
 
 async function initializeMarketplace() {
   const signers = await ethers.getSigners();
-  deployer = signers[0];
+  deployer = signers[1];
   
   let marketplace = new ethers.Contract(MarketplaceAddress, MarketplaceABI, deployer);
 
@@ -250,18 +257,18 @@ async function initializeMarketplace() {
 
 async function createFirstPools() {
   const signers = await ethers.getSigners();
-  deployer = signers[0];
+  deployer = signers[1];
   
   let poolFactory = new ethers.Contract(PoolFactoryAddress, PoolFactoryABI, deployer);
   let NFTPoolFactory = new ethers.Contract(NFTPoolFactoryAddress, NFTPoolFactoryABI, deployer);
   /*
   //Create pool
   let tx = await poolFactory.createPool("UBE holder", 1000);
-  await tx.wait();
+  await tx.wait();*/
 
   //Create NFT pool
-  let tx2 = await NFTPoolFactory.createPool("CELO exclusive pool", 1000, parseEther("1"));
-  await tx2.wait();*/
+  let tx2 = await NFTPoolFactory.createPool("CELO pool", 100, parseEther("0.5"));
+  await tx2.wait();
 
   const availablePools = await poolFactory.getAvailablePools();
   console.log(availablePools);
@@ -298,13 +305,33 @@ async function getTGEN_cUSD() {
   console.log("done");
 }
 
+async function setFarmAddress() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+
+  const deployedNFTPoolAddress = "0x3e820DAAAE5A31DA7458cdd14696524C5F4b6AEF";
+  const testFarmAddress = "0x743A391CE067Ca24d802147e3CB72b81fDA55E5a";
+  let pool = new ethers.Contract(deployedNFTPoolAddress, NFTPoolABI, deployer);
+
+  console.log(deployer.address);
+
+  let tx = await pool.setFarmAddress(testFarmAddress);
+  await tx.wait();
+
+  const addressResolver = await pool.ADDRESS_RESOLVER();
+  console.log(addressResolver);
+
+  const farm = await pool.farm();
+  console.log(farm);
+}
+
 /*
 initializeAddressResolver()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 initializeAssetHandler()
   .then(() => process.exit(0))
@@ -312,7 +339,7 @@ initializeAssetHandler()
     console.error(error)
     process.exit(1)
   });
-/*
+
 initializeSettings()
   .then(() => process.exit(0))
   .catch(error => {
@@ -321,13 +348,6 @@ initializeSettings()
   });
 
 initializeMarketplace()
-  .then(() => process.exit(0))
-  .catch(error => {
-    console.error(error)
-    process.exit(1)
-  });
-
-createFirstPools()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
@@ -347,3 +367,24 @@ getTGEN_cUSD()
     console.error(error)
     process.exit(1)
 });*/
+/*
+initializeMarketplace()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});
+
+createFirstPools()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});*/
+
+setFarmAddress()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+});

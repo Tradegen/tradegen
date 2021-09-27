@@ -124,22 +124,22 @@ async function main() {
     let tradegenStakingRewards = await TradegenStakingRewardsFactory.deploy(addressResolverAddress);
     await tradegenStakingRewards.deployed();
     let tradegenStakingRewardsAddress = tradegenStakingRewards.address;
-    console.log("TradegenStakingRewards: " + tradegenStakingRewardsAddress);*/
+    console.log("TradegenStakingRewards: " + tradegenStakingRewardsAddress);
 
     let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
     await marketplace.deployed();
     let marketplaceAddress = marketplace.address;
     console.log("Marketplace: " + marketplaceAddress);
+    
+    let treasury = await TreasuryFactory.deploy(addressResolverAddress);
+    await treasury.deployed();
+    let treasuryAddress = treasury.address;
+    console.log("Treasury: " + treasuryAddress);*/
 
     let NFTPoolFactoryContract = await NFTPoolFactoryFactory.deploy(addressResolverAddress);
     await NFTPoolFactoryContract.deployed();
     let NFTPoolFactoryAddress = NFTPoolFactoryContract.address;
     console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);
-    
-    let treasury = await TreasuryFactory.deploy(addressResolverAddress);
-    await treasury.deployed();
-    let treasuryAddress = treasury.address;
-    console.log("Treasury: " + treasuryAddress);
 }
 
 main()

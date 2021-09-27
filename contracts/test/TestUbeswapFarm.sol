@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity >=0.7.6;
-
+/*
 import "../openzeppelin-solidity/Math.sol";
 import "../openzeppelin-solidity/SafeMath.sol";
 import "../openzeppelin-solidity/SafeERC20.sol";
@@ -18,7 +18,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    /* ========== STATE VARIABLES ========== */
+    // ========== STATE VARIABLES ========== //
 
     IERC20 public rewardsToken;
     IERC20 public stakingToken;
@@ -34,7 +34,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
 
-    /* ========== CONSTRUCTOR ========== */
+    // ========== CONSTRUCTOR ========== //
 
     constructor(
         address _rewardsDistribution,
@@ -46,7 +46,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
         rewardsDistribution = _rewardsDistribution;
     }
 
-    /* ========== VIEWS ========== */
+    // ========== VIEWS ========== //
 
     function totalSupply() external view override returns (uint256) {
         return _totalSupply;
@@ -78,7 +78,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
         return rewardRate.mul(rewardsDuration);
     }
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
+    // ========== MUTATIVE FUNCTIONS ========== //
 
     // XXX: removed notPaused
     function stake(uint256 amount) external override nonReentrant updateReward(msg.sender) {
@@ -111,7 +111,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
         getReward();
     }
 
-    /* ========== RESTRICTED FUNCTIONS ========== */
+    // ========== RESTRICTED FUNCTIONS ========== //
 
     function notifyRewardAmount(uint256 reward) external override onlyRewardsDistribution updateReward(address(0)) {
         if (block.timestamp >= periodFinish) {
@@ -155,7 +155,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
         emit RewardsDurationUpdated(rewardsDuration);
     }
 
-    /* ========== MODIFIERS ========== */
+    // ========== MODIFIERS ========== //
 
     modifier updateReward(address account) {
         rewardPerTokenStored = rewardPerToken();
@@ -167,7 +167,7 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
         _;
     }
 
-    /* ========== EVENTS ========== */
+    // ========== EVENTS ========== //
 
     event RewardAdded(uint256 reward);
     event Staked(address indexed user, uint256 amount);
@@ -175,4 +175,4 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
     event RewardPaid(address indexed user, uint256 reward);
     event RewardsDurationUpdated(uint256 newDuration);
     event Recovered(address token, uint256 amount);
-}
+}*/
