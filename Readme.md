@@ -2,7 +2,7 @@
 
 Tradegen is a decentralized asset management and algo trading platform on Celo.
 
-https://ubeswap.org
+https://tradegen.io
 
 ## Deployed Contracts
 
