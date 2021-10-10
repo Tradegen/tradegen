@@ -112,7 +112,7 @@ contract Marketplace is IMarketplace, Ownable {
             marketplaceListings[index].numberOfTokens = marketplaceListings[index].numberOfTokens.sub(numberOfTokens);
         }
 
-        emit Purchased(msg.sender, asset, index, numberOfTokens, block.timestamp);
+        emit Purchased(msg.sender, asset, index, numberOfTokens, marketplaceListings[index].price, block.timestamp);
     }
 
     /**
@@ -212,13 +212,12 @@ contract Marketplace is IMarketplace, Ownable {
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
-    * @dev Sets the marketplace listing's 'exists' variable to false and resets price/quantity
+    * @dev Sets the marketplace listing's 'exists' variable to false and resets quantity
     * @param index Index of the marketplace listing in the asset's listings array
     */
     function _removeListing(uint index) internal {
         marketplaceListings[index].exists = false;
         marketplaceListings[index].numberOfTokens = 0;
-        marketplaceListings[index].price = 0;
     }
 
     /* ========== MODIFIERS ========== */

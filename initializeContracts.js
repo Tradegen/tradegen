@@ -32,7 +32,7 @@ const TradegenLPStakingEscrowAddress = "0xa8e7707CfC56718566bA9Ac4883CAbb38E74D6
 const TradegenLPStakingRewardsAddress = "0xDe7473C7b5262961A1C7f8c2215EB46Cba966302";
 const TradegenStakingEscrowAddress = "0xB81D06e9B6B9A0D237500694E8600B654253dD19";
 const TradegenStakingRewardsAddress = "0xC5be2Aef0fac68a9399CEa2d715E31f0fc45B9Dd";
-const MarketplaceAddress = "0x268AC2423BF80b4dD55f70864d387Aa18Cd92361";
+const MarketplaceAddress = "0x2db44b4791e86DE173A0b1279DEAe1AF21E50cB4";
 const NFTPoolFactoryAddress = "0x35D49c882F65Ce27042601c678da7A6953A134e3";
 const TreasuryAddress = "0x61DAbc6fb49eF01f059590a53b96dAaEB7745492";
 

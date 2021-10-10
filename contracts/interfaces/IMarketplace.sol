@@ -85,7 +85,7 @@ interface IMarketplace {
     event RemovedListing(address indexed seller, address indexed asset, uint marketplaceListing, uint timestamp);
     event UpdatedPrice(address indexed seller, address indexed asset, uint marketplaceListing, uint newPrice, uint timestamp);
     event UpdatedQuantity(address indexed seller, address indexed asset, uint marketplaceListing, uint newQuantity, uint timestamp);
-    event Purchased(address indexed buyer, address indexed asset, uint marketplaceListing, uint numberOfTokens, uint timestamp);
+    event Purchased(address indexed buyer, address indexed asset, uint marketplaceListing, uint numberOfTokens, uint tokenPrice, uint timestamp);
     event AddedAsset(address asset, uint timestamp);
     event AddedWhitelistedContract(address contractAddress, uint timestamp);
 }
