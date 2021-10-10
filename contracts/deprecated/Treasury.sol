@@ -3,15 +3,15 @@
 pragma solidity >=0.7.6;
 
 // Inheritance
-import "./Ownable.sol";
+import "../Ownable.sol";
 
 // Internal references
-import "./interfaces/IERC20.sol";
-import "./interfaces/IAssetHandler.sol";
-import "./interfaces/IAddressResolver.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/IAssetHandler.sol";
+import "../interfaces/IAddressResolver.sol";
 
 // Libraires
-import "./libraries/SafeMath.sol";
+import "../libraries/SafeMath.sol";
 
 contract Treasury is Ownable {
     using SafeMath for uint;

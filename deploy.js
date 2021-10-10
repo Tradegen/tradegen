@@ -27,7 +27,7 @@ async function main() {
     let TradegenStakingRewardsFactory = await ethers.getContractFactory('TradegenStakingRewards');
     let NFTPoolFactoryFactory = await ethers.getContractFactory('NFTPoolFactory');*/
     let MarketplaceFactory = await ethers.getContractFactory('Marketplace');
-    let TreasuryFactory = await ethers.getContractFactory('Treasury');
+    //let TreasuryFactory = await ethers.getContractFactory('Treasury');
 
     let addressResolverAddress = "0x32432FFE7E23885DF303eA41ECEe1e31aC8652a2";
     /*
