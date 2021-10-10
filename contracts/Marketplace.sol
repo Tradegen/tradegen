@@ -74,6 +74,7 @@ contract Marketplace is IMarketplace, Ownable {
     * @param numberOfTokens Number of tokens to purchase
     */
     function purchase(address asset, uint index, uint numberOfTokens) external override isValidAsset(asset) {
+        require(marketplaceListings[index].exists, "Listing doesn't exist");
         require(numberOfTokens > 0 &&
                 numberOfTokens <= marketplaceListings[index].numberOfTokens,
                 "Quantity out of bounds");
@@ -104,7 +105,7 @@ contract Marketplace is IMarketplace, Ownable {
         //Update marketplace listing
         if (numberOfTokens == marketplaceListings[index].numberOfTokens)
         {
-            _removeListing(marketplaceListings[index].seller, asset, index);
+            _removeListing(index);
         }
         else
         {
@@ -129,9 +130,9 @@ contract Marketplace is IMarketplace, Ownable {
 
         numberOfMarketplaceListings = numberOfMarketplaceListings.add(1);
         userToListingIndex[asset][msg.sender] = numberOfMarketplaceListings;
-        marketplaceListings[numberOfMarketplaceListings] = MarketplaceListing(asset, msg.sender, tokenClass, numberOfTokens, price);
+        marketplaceListings[numberOfMarketplaceListings] = MarketplaceListing(asset, msg.sender, true, tokenClass, numberOfTokens, price);
 
-        emit CreatedListing(msg.sender, asset, tokenClass, numberOfTokens, price, block.timestamp);
+        emit CreatedListing(msg.sender, asset, numberOfMarketplaceListings, tokenClass, numberOfTokens, price, block.timestamp);
     }
 
     /**
@@ -140,9 +141,9 @@ contract Marketplace is IMarketplace, Ownable {
     * @param index Index of the marketplace listing in the asset's listings array
     */
     function removeListing(address asset, uint index) external override isValidAsset(asset) indexInRange(index) onlySeller(asset, index) {
-        _removeListing(msg.sender, asset, index);
+        _removeListing(index);
 
-        emit RemovedListing(msg.sender, asset, block.timestamp);
+        emit RemovedListing(msg.sender, asset, index, block.timestamp);
     }
 
     /**
@@ -211,20 +212,13 @@ contract Marketplace is IMarketplace, Ownable {
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
-    * @dev Moves the last marketplace listing to the specified index
-    * @dev Updates state variables for caller and last listing's seller
-    * @param caller Address of user to remove listing from
-    * @param asset Address of the token for sale
+    * @dev Sets the marketplace listing's 'exists' variable to false and resets price/quantity
     * @param index Index of the marketplace listing in the asset's listings array
     */
-    function _removeListing(address caller, address asset, uint index) internal {
-        MarketplaceListing memory lastListing = marketplaceListings[numberOfMarketplaceListings];
-
-        marketplaceListings[index] = MarketplaceListing(lastListing.asset, lastListing.seller, lastListing.tokenClass, lastListing.numberOfTokens, lastListing.price);
-        userToListingIndex[asset][caller] = 0;
-        userToListingIndex[lastListing.asset][lastListing.seller] = (index == numberOfMarketplaceListings) ? numberOfMarketplaceListings.sub(1) : index;
-        delete marketplaceListings[numberOfMarketplaceListings];
-        numberOfMarketplaceListings = numberOfMarketplaceListings.sub(1);
+    function _removeListing(uint index) internal {
+        marketplaceListings[index].exists = false;
+        marketplaceListings[index].numberOfTokens = 0;
+        marketplaceListings[index].price = 0;
     }
 
     /* ========== MODIFIERS ========== */

@@ -8,6 +8,7 @@ interface IMarketplace {
     struct MarketplaceListing {
         address asset;
         address seller;
+        bool exists;
         uint tokenClass;
         uint numberOfTokens;
         uint price;
@@ -80,8 +81,8 @@ interface IMarketplace {
 
     /* ========== EVENTS ========== */
 
-    event CreatedListing(address indexed seller, address indexed asset, uint tokenClass, uint numberOfTokens, uint price, uint timestamp);
-    event RemovedListing(address indexed seller, address indexed asset, uint timestamp);
+    event CreatedListing(address indexed seller, address indexed asset, uint marketplaceListing, uint tokenClass, uint numberOfTokens, uint price, uint timestamp);
+    event RemovedListing(address indexed seller, address indexed asset, uint marketplaceListing, uint timestamp);
     event UpdatedPrice(address indexed seller, address indexed asset, uint marketplaceListing, uint newPrice, uint timestamp);
     event UpdatedQuantity(address indexed seller, address indexed asset, uint marketplaceListing, uint newQuantity, uint timestamp);
     event Purchased(address indexed buyer, address indexed asset, uint marketplaceListing, uint numberOfTokens, uint timestamp);

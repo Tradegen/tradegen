@@ -5,7 +5,7 @@ const UBE_ALFAJORES = "0xE66DF61A33532614544A0ec1B8d3fb8D5D7dCEa8";
 async function main() {
     const signers = await ethers.getSigners();
     deployer = signers[1];
-
+    /*
     let AddressResolverFactory = await ethers.getContractFactory('AddressResolver');
     let TradegenERC20Factory = await ethers.getContractFactory('TradegenERC20');
     let SettingsFactory = await ethers.getContractFactory('Settings');
@@ -25,7 +25,7 @@ async function main() {
     let TradegenLPStakingRewardsFactory = await ethers.getContractFactory('TradegenLPStakingRewards');
     let TradegenStakingEscrowFactory = await ethers.getContractFactory('TradegenStakingEscrow');
     let TradegenStakingRewardsFactory = await ethers.getContractFactory('TradegenStakingRewards');
-    let NFTPoolFactoryFactory = await ethers.getContractFactory('NFTPoolFactory');
+    let NFTPoolFactoryFactory = await ethers.getContractFactory('NFTPoolFactory');*/
     let MarketplaceFactory = await ethers.getContractFactory('Marketplace');
     let TreasuryFactory = await ethers.getContractFactory('Treasury');
 
@@ -134,12 +134,17 @@ async function main() {
     let treasury = await TreasuryFactory.deploy(addressResolverAddress);
     await treasury.deployed();
     let treasuryAddress = treasury.address;
-    console.log("Treasury: " + treasuryAddress);*/
+    console.log("Treasury: " + treasuryAddress);
 
     let NFTPoolFactoryContract = await NFTPoolFactoryFactory.deploy(addressResolverAddress);
     await NFTPoolFactoryContract.deployed();
     let NFTPoolFactoryAddress = NFTPoolFactoryContract.address;
-    console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);
+    console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);*/
+
+    let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
+    await marketplace.deployed();
+    let marketplaceAddress = marketplace.address;
+    console.log("Marketplace: " + marketplaceAddress);
 }
 
 main()

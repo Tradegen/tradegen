@@ -32,7 +32,7 @@ const TradegenLPStakingEscrowAddress = "0xa8e7707CfC56718566bA9Ac4883CAbb38E74D6
 const TradegenLPStakingRewardsAddress = "0xDe7473C7b5262961A1C7f8c2215EB46Cba966302";
 const TradegenStakingEscrowAddress = "0xB81D06e9B6B9A0D237500694E8600B654253dD19";
 const TradegenStakingRewardsAddress = "0xC5be2Aef0fac68a9399CEa2d715E31f0fc45B9Dd";
-const MarketplaceAddress = "0x4306F56e43D4dfec5Ab90760654d68E983d97137";
+const MarketplaceAddress = "0x1383a2beD814B53Eac5D4e94559b1687D3070379";
 const NFTPoolFactoryAddress = "0x35D49c882F65Ce27042601c678da7A6953A134e3";
 const TreasuryAddress = "0x61DAbc6fb49eF01f059590a53b96dAaEB7745492";
 
@@ -79,10 +79,10 @@ async function initializeAddressResolver() {
     //let tx = await addressResolver.setContractAddress("Operator", deployer.address);
     //await tx.wait();
 
-    let tx3 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
-    await tx3.wait();
+    let tx = await addressResolver.setContractAddress("Marketplace", MarketplaceAddress);
+    await tx.wait();
 
-    const address2 = await addressResolver.getContractAddress("NFTPoolFactory");
+    const address2 = await addressResolver.getContractAddress("Marketplace");
     console.log(address2);
     /*
     //Add asset verifiers to AddressResolver
@@ -325,14 +325,14 @@ async function setFarmAddress() {
   console.log(farm);
 }
 
-/*
+
 initializeAddressResolver()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
   });
-
+/*
 initializeAssetHandler()
   .then(() => process.exit(0))
   .catch(error => {
@@ -380,11 +380,11 @@ createFirstPools()
   .catch(error => {
     console.error(error)
     process.exit(1)
-});*/
+});
 
 setFarmAddress()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-});
+});*/
