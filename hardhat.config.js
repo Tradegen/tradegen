@@ -37,26 +37,20 @@ module.exports = {
   },
   networks: {
     cmainnet: {
-      provider: () =>
-        new HDWalletProvider({
-          privateKeys: [process.env.PRIVATE_KEY1],
-          providerOrUrl: 'https://forno.celo.org',
-        }),
+      accounts: [process.env.PRIVATE_KEY1],
       network_id: 42220,
       gas: 6000000,
       gasPrice: toWei('0.1', 'gwei'),
-      url: 'https://forno.celo.org'
+      url: 'https://forno.celo.org',
+      live: true
     },
     alfajores: {
-      provider: () =>
-        new HDWalletProvider({
-          privateKeys: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
-          providerOrUrl: 'https://alfajores-forno.celo-testnet.org',
-        }),
+      accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
       network_id: 44787,
       gas: 6000000,
       gasPrice: toWei('0.5', 'gwei'),
-      url: 'https://alfajores-forno.celo-testnet.org'
+      url: 'https://alfajores-forno.celo-testnet.org',
+      live: true
     },/*
     hardhat: {
       chainId: 31337,
