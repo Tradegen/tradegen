@@ -13,6 +13,7 @@ require("hardhat-gas-reporter");
 const { removeConsoleLog } = require("hardhat-preprocessor");
 require("hardhat-spdx-license-identifier");
 const { HardhatUserConfig, task } = require("hardhat/config");
+const HDWalletProvider = require('@truffle/hdwallet-provider')
 
 /*
 task("deploy", "Deploys a step", (async (...args) =>
@@ -34,21 +35,25 @@ module.exports = {
     currency: "USD"
   },
   networks: {
-    mainnet: {
-      url: fornoURLs[ICeloNetwork.MAINNET],
-      accounts: [process.env.PRIVATE_KEY1],
-      chainId: ICeloNetwork.MAINNET,
-      live: true,
-      gasPrice: 2 * 10 ** 8,
-      gas: 8000000,
+    cmainnet: {
+      provider: () =>
+        new HDWalletProvider({
+          privateKeys: [process.env.PRIVATE_KEY1],
+          providerOrUrl: 'https://forno.celo.org',
+        }),
+      network_id: 42220,
+      gas: 6000000,
+      gasPrice: toWei('0.1', 'gwei'),
     },
     alfajores: {
-      url: fornoURLs[ICeloNetwork.ALFAJORES],
-      accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
-      chainId: ICeloNetwork.ALFAJORES,
-      live: true,
-      gasPrice: 2 * 10 ** 8,
-      gas: 8000000,
+      provider: () =>
+        new HDWalletProvider({
+          privateKeys: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
+          providerOrUrl: 'https://alfajores-forno.celo-testnet.org',
+        }),
+      network_id: 44787,
+      gas: 6000000,
+      gasPrice: toWei('0.5', 'gwei'),
     },/*
     hardhat: {
       chainId: 31337,
