@@ -13,7 +13,8 @@ require("hardhat-gas-reporter");
 const { removeConsoleLog } = require("hardhat-preprocessor");
 require("hardhat-spdx-license-identifier");
 const { HardhatUserConfig, task } = require("hardhat/config");
-const HDWalletProvider = require('@truffle/hdwallet-provider')
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const { toWei } = require('web3-utils');
 
 /*
 task("deploy", "Deploys a step", (async (...args) =>
