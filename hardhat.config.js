@@ -45,6 +45,7 @@ module.exports = {
       network_id: 42220,
       gas: 6000000,
       gasPrice: toWei('0.1', 'gwei'),
+      url: 'https://forno.celo.org'
     },
     alfajores: {
       provider: () =>
@@ -55,6 +56,7 @@ module.exports = {
       network_id: 44787,
       gas: 6000000,
       gasPrice: toWei('0.5', 'gwei'),
+      url: 'https://alfajores-forno.celo-testnet.org'
     },/*
     hardhat: {
       chainId: 31337,
