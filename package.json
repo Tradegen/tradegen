@@ -14,7 +14,7 @@
     "build": "hardhat compile && npm run",
     "console": "hardhat console",
     "test": "hardhat test",
-    "slither": "slither ."
+    "slither": "slither --exclude-dependencies --exclude-informational --exclude-low --exclude-medium --exclude=arbitrary-send --filter-paths=Pool.sol ."
   },
   "devDependencies": {
     "@celo/contractkit": "^1.1.0",
