@@ -37,7 +37,7 @@ module.exports = {
   },
   networks: {
     cmainnet: {
-      accounts: [process.env.PRIVATE_KEY1],
+      accounts: [process.env.PRIVATE_KEY1 ?? ''],
       chainId: 42220,
       gas: 6000000,
       gasPrice: 0.5 * 10 ** 9,
@@ -45,7 +45,7 @@ module.exports = {
       live: true
     },
     alfajores: {
-      accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
+      accounts: [process.env.PRIVATE_KEY1 ?? '', process.env.PRIVATE_KEY2 ?? ''],
       chainId: 44787,
       gas: 6000000,
       gasPrice: 0.5 * 10 ** 9,
