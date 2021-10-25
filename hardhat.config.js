@@ -38,7 +38,7 @@ module.exports = {
   networks: {
     cmainnet: {
       accounts: [process.env.PRIVATE_KEY1],
-      network_id: 42220,
+      chainId: 42220,
       gas: 6000000,
       gasPrice: toWei('0.1', 'gwei'),
       url: 'https://forno.celo.org',
@@ -46,7 +46,7 @@ module.exports = {
     },
     alfajores: {
       accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
-      network_id: 44787,
+      chainId: 44787,
       gas: 6000000,
       gasPrice: toWei('0.5', 'gwei'),
       url: 'https://alfajores-forno.celo-testnet.org',
