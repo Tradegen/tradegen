@@ -40,7 +40,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY1],
       chainId: 42220,
       gas: 6000000,
-      gasPrice: toWei('0.1', 'gwei'),
+      gasPrice: 0.5 * 10 ** 9,
       url: 'https://forno.celo.org',
       live: true
     },
@@ -48,7 +48,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY1, process.env.PRIVATE_KEY2],
       chainId: 44787,
       gas: 6000000,
-      gasPrice: toWei('0.5', 'gwei'),
+      gasPrice: 0.5 * 10 ** 9,
       url: 'https://alfajores-forno.celo-testnet.org',
       live: true
     },/*
