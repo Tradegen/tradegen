@@ -60,7 +60,7 @@ contract Marketplace is IMarketplace, Ownable {
     * @param index Index of the marketplace listing
     * @return (address, address, uint, uint, uint) Asset for sale, address of the seller, asset's token class, number of tokens for sale, USD per token
     */
-    function getMarketplaceListing(uint index) public view override indexInRange(index) returns (address, address, uint, uint, uint) {
+    function getMarketplaceListing(uint index) external view override indexInRange(index) returns (address, address, uint, uint, uint) {
         MarketplaceListing memory listing = marketplaceListings[index];
 
         return (listing.asset, listing.seller, listing.tokenClass, listing.numberOfTokens, listing.price);

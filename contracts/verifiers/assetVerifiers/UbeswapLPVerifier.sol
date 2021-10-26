@@ -41,7 +41,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable, ILPVerifier {
     * @param portion Portion of the pool's balance in the asset
     * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
     */
-    function prepareWithdrawal(address pool, address asset, uint portion) public view override returns (address, uint, MultiTransaction[] memory transactions) {
+    function prepareWithdrawal(address pool, address asset, uint portion) external view override returns (address, uint, MultiTransaction[] memory transactions) {
         require(pool != address(0), "UbeswapLPVerifier: invalid pool address");
         require(asset != address(0), "UbeswapLPVerifier: invalid asset address");
         require(portion > 0, "UbeswapLPVerifier: portion must be greater than 0");
@@ -84,7 +84,7 @@ contract UbeswapLPVerifier is ERC20Verifier, Ownable, ILPVerifier {
     * @param farmAddress Address of the farm
     * @return (address, address) Address of the staking token and reward token
     */
-    function getFarmTokens(address farmAddress) public view override returns (address, address) {
+    function getFarmTokens(address farmAddress) external view override returns (address, address) {
         require(farmAddress != address(0), "UbeswapLPVerifier: invalid farm address");
 
         return (stakingTokens[farmAddress], rewardTokens[farmAddress]);

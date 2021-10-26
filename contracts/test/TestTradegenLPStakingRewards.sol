@@ -12,9 +12,9 @@ import "../openzeppelin-solidity/ReentrancyGuard.sol";
 
 // Libraries
 import "../openzeppelin-solidity/SafeMath.sol";
+import "../openzeppelin-solidity/SafeERC20.sol";
 
 // Internal references
-import "../interfaces/IERC20.sol";
 import "../interfaces/IAddressResolver.sol";
 import "../interfaces/ISettings.sol";
 import "../interfaces/IAssetHandler.sol";
@@ -24,6 +24,7 @@ import "../interfaces/Ubeswap/IUniswapV2Pair.sol";
 
 contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, ReentrancyGuard {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
@@ -61,11 +62,11 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
 
     /* ========== VIEW FUNCTIONS ========== */
 
-    function rewardRate() public view override returns (uint) {
+    function rewardRate() external view override returns (uint) {
         return ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingRewards");
     }
 
-    function totalSupply() public view override returns (uint) {
+    function totalSupply() external view override returns (uint) {
         return totalVestedBalance;
     }
 
@@ -82,7 +83,7 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
     /**
      * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
      */
-    function balanceOf(address account) public view override returns (uint) {
+    function balanceOf(address account) external view override returns (uint) {
         return totalVestedAccountBalance[account];
     }
 
@@ -191,7 +192,7 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
      * @notice Returns the USD value of all LP tokens staked in this contract
      * @return uint USD value of this contract
      */
-    function getUSDValueOfContract() public view override returns (uint) {
+    function getUSDValueOfContract() external view override returns (uint) {
         return (_totalSupply > 0) ? calculateValueOfLPTokens(totalVestedBalance) : 0;
     }
 
@@ -299,7 +300,7 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
         appendVestingEntry(msg.sender, vestingTimestamp, amount, adjustedAmount);
 
         totalVestedBalance = totalVestedBalance.add(amount);
-        IERC20(stakingToken()).transferFrom(msg.sender, address(this), amount);
+        IERC20(stakingToken()).safeTransferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
     }
@@ -335,7 +336,7 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
             _totalSupply = _totalSupply.sub(tokenTotal);
             _balances[msg.sender] = _balances[msg.sender].sub(tokenTotal);
 
-            IERC20(stakingToken()).transfer(msg.sender, total);
+            IERC20(stakingToken()).safeTransfer(msg.sender, total);
 
             emit Vested(msg.sender, block.timestamp, total);
         }
@@ -344,7 +345,7 @@ contract TestTradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Ree
     /**
      * @notice Allow a user to claim any available staking rewards
      */
-    function getReward() public override nonReentrant {
+    function getReward() external override nonReentrant {
         _claim(msg.sender);
     }
 

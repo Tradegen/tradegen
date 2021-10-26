@@ -66,11 +66,11 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /* ========== VIEW FUNCTIONS ========== */
 
-    function rewardRate() public view override returns (uint) {
+    function rewardRate() external view override returns (uint) {
         return ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("WeeklyLPStakingRewards");
     }
 
-    function totalSupply() public view override returns (uint) {
+    function totalSupply() external view override returns (uint) {
         return totalVestedBalance;
     }
 
@@ -85,7 +85,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     /**
      * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
      */
-    function balanceOf(address account) public view override returns (uint) {
+    function balanceOf(address account) external view override returns (uint) {
         return totalVestedAccountBalance[account];
     }
 
@@ -194,7 +194,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @notice Returns the USD value of all LP tokens staked in this contract
      * @return uint USD value of this contract
      */
-    function getUSDValueOfContract() public view override returns (uint) {
+    function getUSDValueOfContract() external view override returns (uint) {
         return (_totalSupply > 0) ? calculateValueOfLPTokens(totalVestedBalance) : 0;
     }
 
@@ -347,7 +347,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     /**
      * @notice Allow a user to claim any available staking rewards
      */
-    function getReward() public override nonReentrant {
+    function getReward() external override nonReentrant {
         _claim(msg.sender);
     }
 

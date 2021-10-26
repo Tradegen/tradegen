@@ -28,7 +28,7 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param data Transaction call data
     * @return (uint, address) Whether the transaction is valid and the received asset
     */
-    function verify(address addressResolver, address pool, address, bytes calldata data) public virtual override returns (bool, address) {
+    function verify(address addressResolver, address pool, address, bytes calldata data) external virtual override returns (bool, address) {
         bytes4 method = getMethod(data);
 
         if (method == bytes4(keccak256("approve(address,uint256)")))
@@ -57,7 +57,7 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param portion Portion of the pool's balance in the asset
     * @return (address, uint, MultiTransaction[]) Withdrawn asset, amount of asset withdrawn, and transactions used to execute the withdrawal
     */
-    function prepareWithdrawal(address pool, address asset, uint portion) public view virtual override returns (address, uint, MultiTransaction[] memory transactions) {
+    function prepareWithdrawal(address pool, address asset, uint portion) external view virtual override returns (address, uint, MultiTransaction[] memory transactions) {
         uint totalAssetBalance = getBalance(pool, asset);
         uint withdrawBalance = totalAssetBalance.mul(portion).div(10**18);
         return (asset, withdrawBalance, transactions);
@@ -78,7 +78,7 @@ contract ERC20Verifier is TxDataUtils, IVerifier, IAssetVerifier {
     * @param asset Address of the asset
     * @return uint Asset's number of decimals
     */
-    function getDecimals(address asset) public view override returns (uint) {
+    function getDecimals(address asset) external view override returns (uint) {
         return IERC20(asset).decimals();
     }
 

@@ -27,7 +27,7 @@ contract UbeswapFarmVerifier is TxDataUtils, IVerifier {
     * @param data Transaction call data
     * @return (uint, address) Whether the transaction is valid and the received asset
     */
-    function verify(address addressResolver, address pool, address to, bytes calldata data) public override returns (bool, address) {
+    function verify(address addressResolver, address pool, address to, bytes calldata data) external override returns (bool, address) {
         bytes4 method = getMethod(data);
 
         address assetHandlerAddress = IAddressResolver(addressResolver).getContractAddress("AssetHandler");

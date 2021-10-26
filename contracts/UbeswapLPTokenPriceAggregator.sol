@@ -28,7 +28,7 @@ contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
 
     /* ========== VIEWS ========== */
 
-    function getUSDPrice(address pair) public view override returns (uint) {
+    function getUSDPrice(address pair) external view override returns (uint) {
         require(pair != address(0), "UbeswapLPTokenPriceAggregator: invalid asset address");
 
         address token0 = IUniswapV2Pair(pair).token0();

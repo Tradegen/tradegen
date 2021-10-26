@@ -38,7 +38,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param currencyKey Address of the asset
     * @return uint Price of the asset
     */
-    function getPrice(address currencyKey) public view override returns(uint) {
+    function getPrice(address currencyKey) external view override returns(uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
         address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
@@ -69,7 +69,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param currencyKeyOut Address of the asset to be swap to
     * @return uint Amount out of the asset
     */
-    function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) public view override returns (uint) {
+    function getAmountsOut(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view override returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
         address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
@@ -95,7 +95,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param currencyKeyOut Address of the asset to be swap to
     * @return uint Amount out input asset needed
     */
-    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) public view override returns (uint) {
+    function getAmountsIn(uint numberOfTokens, address currencyKeyIn, address currencyKeyOut) external view override returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
         address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
@@ -118,7 +118,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @dev Returns the address of each available farm on Ubeswap
     * @return address[] memory The farm address for each available farm
     */
-    function getAvailableUbeswapFarms() public view override returns (address[] memory) {
+    function getAvailableUbeswapFarms() external view override returns (address[] memory) {
         address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
 
         uint numberOfAvailableFarms = IUbeswapPoolManager(ubeswapPoolManagerAddress).poolsCount();
@@ -146,7 +146,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param pair Address of the liquidity pair
     * @return bool Whether the pair has a farm
     */
-    function checkIfLPTokenHasFarm(address pair) public view override returns (bool) {
+    function checkIfLPTokenHasFarm(address pair) external view override returns (bool) {
         require(pair != address(0), "BaseUbeswapAdapter: invalid pair address");
 
         address ubeswapPoolManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPoolManager");
@@ -176,7 +176,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param farmAddress Address of the farm on Ubeswap
     * @return uint Amount of UBE available
     */
-    function getAvailableRewards(address poolAddress, address farmAddress) public view override returns (uint) {
+    function getAvailableRewards(address poolAddress, address farmAddress) external view override returns (uint) {
         require(poolAddress != address(0), "BaseUbeswapAdapter: invalid pool address");
 
         return IStakingRewards(farmAddress).earned(poolAddress);
@@ -189,7 +189,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     * @param numberOfLPTokens Number of LP tokens for the given pair
     * @return (uint, uint) The number of tokens for tokenA and tokenB
     */
-    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) public view override returns (uint, uint) {
+    function getTokenAmountsFromPair(address tokenA, address tokenB, uint numberOfLPTokens) external view override returns (uint, uint) {
         address pair = getPair(tokenA, tokenB);
         require(pair != address(0), "BaseUbeswapAdapter: invalid address for pair");
 

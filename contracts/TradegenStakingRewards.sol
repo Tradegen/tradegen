@@ -107,7 +107,7 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
         emit Withdrawn(msg.sender, amount);
     }
 
-    function getReward() public override nonReentrant {
+    function getReward() external override nonReentrant {
         _claim(msg.sender);
     }
 

@@ -19,7 +19,7 @@ contract ERC20PriceAggregator is IPriceAggregator {
 
     /* ========== VIEWS ========== */
 
-    function getUSDPrice(address asset) public view override returns (uint) {
+    function getUSDPrice(address asset) external view override returns (uint) {
         require(asset != address(0), "ERC20PriceAggregator: invalid asset address");
 
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");

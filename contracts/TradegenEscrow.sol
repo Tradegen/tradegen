@@ -44,7 +44,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
     /**
      * @notice A simple alias to totalVestedAccountBalance: provides ERC20 balance integration.
      */
-    function balanceOf(address account) public view override returns (uint) {
+    function balanceOf(address account) external view override returns (uint) {
         return totalVestedAccountBalance[account];
     }
 

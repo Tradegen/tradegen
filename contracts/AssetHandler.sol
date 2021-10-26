@@ -36,7 +36,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param asset Address of the asset
     * @return uint Price of the asset in USD
     */
-    function getUSDPrice(address asset) public view override isValidAddress(asset) returns (uint) {
+    function getUSDPrice(address asset) external view override isValidAddress(asset) returns (uint) {
         require(assetTypes[asset] > 0, "AssetHandler: asset not supported");
         
         return IPriceAggregator(assetTypeToPriceAggregator[assetTypes[asset]]).getUSDPrice(asset);
@@ -47,7 +47,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param asset Address of the asset
     * @return bool Whether the asset is supported
     */
-    function isValidAsset(address asset) public view override isValidAddress(asset) returns (bool) {
+    function isValidAsset(address asset) external view override isValidAddress(asset) returns (bool) {
         return (assetTypes[asset] > 0 || asset == cUSDAddress);
     }
 
@@ -56,7 +56,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param assetType Type of asset
     * @return address[] Address of each supported asset for the type
     */
-    function getAvailableAssetsForType(uint assetType) public view override returns (address[] memory) {
+    function getAvailableAssetsForType(uint assetType) external view override returns (address[] memory) {
         require(assetType > 0, "AssetHandler: assetType must be greater than 0");
 
         uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
@@ -74,7 +74,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @dev Returns the address of the stable coin
     * @return address The stable coin address
     */
-    function getStableCoinAddress() public view override returns(address) {
+    function getStableCoinAddress() external view override returns(address) {
         return cUSDAddress;
     }
 
@@ -83,7 +83,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param addressToCheck Address of the asset
     * @return uint Type of the asset
     */
-    function getAssetType(address addressToCheck) public view override isValidAddress(addressToCheck) returns (uint) {
+    function getAssetType(address addressToCheck) external view override isValidAddress(addressToCheck) returns (uint) {
         return assetTypes[addressToCheck];
     }
 
@@ -93,7 +93,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param asset Address of the asset
     * @return uint Pool's balance of the asset
     */
-    function getBalance(address pool, address asset) public view override isValidAddress(pool) isValidAddress(asset) returns (uint) {
+    function getBalance(address pool, address asset) external view override isValidAddress(pool) isValidAddress(asset) returns (uint) {
         address verifier = getVerifier(asset);
 
         return IAssetVerifier(verifier).getBalance(pool, asset);
@@ -104,7 +104,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @param asset Address of the asset
     * @return uint Number of decimals
     */
-    function getDecimals(address asset) public view override isValidAddress(asset) returns (uint) {
+    function getDecimals(address asset) external view override isValidAddress(asset) returns (uint) {
         uint assetType = assetTypes[asset];
         address verifier = ADDRESS_RESOLVER.assetVerifiers(assetType);
 

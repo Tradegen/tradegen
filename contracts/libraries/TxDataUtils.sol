@@ -14,7 +14,7 @@ contract TxDataUtils {
     return read4left(data, 0);
   }
 
-  function getParams(bytes calldata data) public pure returns (bytes memory) {
+  function getParams(bytes calldata data) external pure returns (bytes memory) {
     return data.slice(4, data.length - 4);
   }
 
@@ -41,7 +41,7 @@ contract TxDataUtils {
     return read32(data, uint256(arrayPos) + 4 + (uint256(arrayLen) * 32), 32);
   }
 
-  function getArrayLength(bytes calldata data, uint8 inputNum) public pure returns (uint256) {
+  function getArrayLength(bytes calldata data, uint8 inputNum) external pure returns (uint256) {
     bytes32 arrayPos = read32(data, 32 * inputNum + 4, 32);
     return uint256(read32(data, uint256(arrayPos) + 4, 32));
   }

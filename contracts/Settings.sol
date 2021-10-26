@@ -47,7 +47,7 @@ contract Settings is ISettings, Ownable {
     * @param parameter The name of the parameter to get value for
     * @return uint The value of the given parameter
     */
-    function getParameterValue(string memory parameter) public view override returns(uint) {
+    function getParameterValue(string memory parameter) external view override returns(uint) {
         return parameters[parameter];
     }
 

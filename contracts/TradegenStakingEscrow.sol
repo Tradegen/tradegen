@@ -29,7 +29,7 @@ contract TradegenStakingEscrow is Ownable, ITradegenStakingEscrow {
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
+    function claimStakingRewards(address user, uint amount) external override onlyStakingRewards {
         require(amount > 0, "No staking rewards to claim");
         require(REWARD_TOKEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
         
