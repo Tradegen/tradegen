@@ -179,7 +179,7 @@ contract NFTPool is INFTPool, ISellable {
     * @notice Call cUSD.approve() before calling this function
     * @param numberOfPoolTokens Number of pool tokens to purchase
     */
-    function deposit(uint numberOfPoolTokens) public override {
+    function deposit(uint numberOfPoolTokens) external override {
         require(numberOfPoolTokens > 0 &&
                 totalSupply.add(numberOfPoolTokens) <= maxSupply,
                 "Quantity out of bounds");
@@ -296,7 +296,7 @@ contract NFTPool is INFTPool, ISellable {
     * @param to Address of external contract
     * @param data Bytes data for the transaction
     */
-    function executeTransaction(address to, bytes memory data) public onlyPoolManager {
+    function executeTransaction(address to, bytes memory data) external onlyPoolManager {
         require(to != address(0), "Invalid 'to' address");
 
         //First try to get contract verifier

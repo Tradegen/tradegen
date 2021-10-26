@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 pragma experimental ABIEncoderV2;
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 //Inheritance
 import './interfaces/IMarketplace.sol';
@@ -12,13 +13,13 @@ import './Ownable.sol';
 
 //Interfaces
 import './interfaces/IAddressResolver.sol';
-import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAssetHandler.sol';
 import './interfaces/ISellable.sol';
 
 contract Marketplace is IMarketplace, Ownable {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
@@ -87,16 +88,16 @@ contract Marketplace is IMarketplace, Ownable {
 
         uint amountOfUSD = marketplaceListings[index].price.mul(numberOfTokens);
 
-        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amountOfUSD);
+        IERC20(stableCoinAddress).safeTransferFrom(msg.sender, address(this), amountOfUSD);
         
         //Transfer cUSD to seller and pay protocol fee
-        IERC20(stableCoinAddress).transfer(marketplaceListings[index].seller, amountOfUSD.mul(10000 - protocolFee - managerFee).div(10000));
-        IERC20(stableCoinAddress).transfer(ADDRESS_RESOLVER.getContractAddress("Treasury"), amountOfUSD.mul(protocolFee).div(10000));
+        IERC20(stableCoinAddress).safeTransfer(marketplaceListings[index].seller, amountOfUSD.mul(10000 - protocolFee - managerFee).div(10000));
+        IERC20(stableCoinAddress).safeTransfer(ADDRESS_RESOLVER.getContractAddress("Treasury"), amountOfUSD.mul(protocolFee).div(10000));
 
         //Pay manager fee if asset has manager
         if (managerFee > 0)
         {
-            IERC20(stableCoinAddress).transfer(assetManagers[asset], amountOfUSD.mul(managerFee).div(10000));
+            IERC20(stableCoinAddress).safeTransfer(assetManagers[asset], amountOfUSD.mul(managerFee).div(10000));
         }
 
         //Transfer tokens from seller to buyer
