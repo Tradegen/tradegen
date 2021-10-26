@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Libraries
 import "../libraries/TxDataUtils.sol";
-import "../libraries/SafeMath.sol";
+import "../openzeppelin-solidity/SafeMath.sol";
 
 //Inheritance
 import "../interfaces/IVerifier.sol";
