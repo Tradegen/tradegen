@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 pragma experimental ABIEncoderV2;
 
 //Interfaces
@@ -17,7 +17,7 @@ import './interfaces/Ubeswap/IStakingRewards.sol';
 import './interfaces/IBaseUbeswapAdapter.sol';
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
 
 contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     using SafeMath for uint;

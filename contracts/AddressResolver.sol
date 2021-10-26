@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Interfaces
 import './interfaces/IAddressResolver.sol';
@@ -26,7 +26,7 @@ contract AddressResolver is IAddressResolver, Ownable {
     * @param contractName The name of the contract
     * @return address The address associated with the given contract name
     */
-    function getContractAddress(string memory contractName) public view override returns(address) {
+    function getContractAddress(string memory contractName) external view override returns(address) {
         require (contractAddresses[contractName] != address(0), "AddressResolver: contract not found");
         
         return contractAddresses[contractName];
@@ -37,7 +37,7 @@ contract AddressResolver is IAddressResolver, Ownable {
     * @param poolAddress The address to validate
     * @return bool Whether the given address is a valid pool address
     */
-    function checkIfPoolAddressIsValid(address poolAddress) public view override returns(bool) {
+    function checkIfPoolAddressIsValid(address poolAddress) external view override returns(bool) {
         return (poolAddress != address(0)) ? (_poolAddresses[poolAddress] == poolAddress) : false;
     }
 

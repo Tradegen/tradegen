@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Inheritance
 import "./interfaces/IAssetHandler.sol";
@@ -12,7 +12,7 @@ import './interfaces/IAddressResolver.sol';
 import './interfaces/IAssetVerifier.sol';
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
 
 contract AssetHandler is IAssetHandler, Ownable {
     using SafeMath for uint;
