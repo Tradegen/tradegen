@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.3;
 
-import '../libraries/SafeMath.sol';
+import '../openzeppelin-solidity/SafeMath.sol';
 
 import '../interfaces/IERC20.sol';
 

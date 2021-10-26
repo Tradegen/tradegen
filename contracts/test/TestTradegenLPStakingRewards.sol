@@ -11,7 +11,7 @@ import "../interfaces//ITradegenLPStakingRewards.sol";
 import "../openzeppelin-solidity/ReentrancyGuard.sol";
 
 // Libraries
-import "../libraries/SafeMath.sol";
+import "../openzeppelin-solidity/SafeMath.sol";
 
 // Internal references
 import "../interfaces/IERC20.sol";
