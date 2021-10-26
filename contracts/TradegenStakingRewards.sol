@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 //Interfaces
-import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/ITradegenStakingEscrow.sol';
@@ -17,11 +17,15 @@ import "./openzeppelin-solidity/ReentrancyGuard.sol";
 import "./Ownable.sol";
 
 contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
-    using SafeMath for uint256;
+    using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     /* ========== STATE VARIABLES ========== */
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
+
+    // TGEN-CELO LP token
+    IERC20 public immutable STAKING_TOKEN;
 
     uint256 public override periodFinish = 0;
     uint256 public override rewardRate = 0;
@@ -37,18 +41,19 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) Ownable() {
+    constructor(IAddressResolver _addressResolver, address _stakingToken) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
+        STAKING_TOKEN = IERC20(_stakingToken);
     }
 
     /* ========== VIEWS ========== */
 
     function stakingToken() external view override returns (address) {
-        return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        return address(STAKING_TOKEN);
     }
 
     function rewardsToken() external view override returns (address) {
-        return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+        return address(STAKING_TOKEN);
     }
 
     function totalSupply() external view override returns (uint256) {
@@ -85,11 +90,9 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
     function stake(uint256 amount) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Cannot stake 0");
 
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-
         _totalSupply = _totalSupply.add(amount);
         _balances[msg.sender] = _balances[msg.sender].add(amount);
-        IERC20(TGEN).transferFrom(msg.sender, address(this), amount);
+        STAKING_TOKEN.safeTransferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount);
     }
@@ -97,11 +100,9 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
     function withdraw(uint256 amount) public override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Cannot withdraw 0");
 
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-
         _totalSupply = _totalSupply.sub(amount);
         _balances[msg.sender] = _balances[msg.sender].sub(amount);
-        IERC20(TGEN).transfer(msg.sender, amount);
+        STAKING_TOKEN.safeTransfer(msg.sender, amount);
 
         emit Withdrawn(msg.sender, amount);
     }
@@ -126,7 +127,6 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0)) {
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
         address tradegenStakingEscrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenStakingEscrow");
 
         if (block.timestamp >= periodFinish)
@@ -144,7 +144,7 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
         // This keeps the reward rate in the right range, preventing overflows due to
         // very high values of rewardRate in the earned and rewardsPerToken functions;
         // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
-        uint balance = IERC20(TGEN).balanceOf(tradegenStakingEscrowAddress);
+        uint balance = STAKING_TOKEN.balanceOf(tradegenStakingEscrowAddress);
         require(rewardRate <= balance.div(rewardsDuration), "Provided reward too high");
 
         lastUpdateTime = block.timestamp;

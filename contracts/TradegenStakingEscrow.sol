@@ -1,37 +1,39 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 // Inheritance
 import "./Ownable.sol";
 import './interfaces/ITradegenStakingEscrow.sol';
 
 // Internal references
-import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 
 contract TradegenStakingEscrow is Ownable, ITradegenStakingEscrow {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    constructor(IAddressResolver _addressResolver) Ownable() {
+    // TGEN
+    IERC20 public immutable REWARD_TOKEN;
+
+    constructor(IAddressResolver _addressResolver, address _rewardToken) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
+        REWARD_TOKEN = IERC20(_rewardToken);
     }
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     function claimStakingRewards(address user, uint amount) public override onlyStakingRewards {
-        address tradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-        
         require(amount > 0, "No staking rewards to claim");
-        require(IERC20(tradegenAddress).balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
+        require(REWARD_TOKEN.balanceOf(address(this)) >= amount, "Not enough TGEN in escrow");
         
-        
-        IERC20(tradegenAddress).transfer(user, amount);
+        REWARD_TOKEN.safeTransfer(user, amount);
     }
 
     /* ========== MODIFIERS ========== */

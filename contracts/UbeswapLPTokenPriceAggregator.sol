@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Inheritance
 import './interfaces/IPriceAggregator.sol';
@@ -15,7 +15,7 @@ import './interfaces/Ubeswap/IUniswapV2Pair.sol';
 
 //Libraries
 import "./libraries/TradegenMath.sol";
-import "./libraries/SafeMath.sol";
+import "./openzeppelin-solidity/SafeMath.sol";
 
 contract UbeswapLPTokenPriceAggregator is IPriceAggregator {
     using SafeMath for uint;
