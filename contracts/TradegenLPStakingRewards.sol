@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Adapters
 import './interfaces/IBaseUbeswapAdapter.sol';
@@ -11,10 +11,10 @@ import "./interfaces//ITradegenLPStakingRewards.sol";
 import "./openzeppelin-solidity/ReentrancyGuard.sol";
 
 // Libraries
-import "./libraries/SafeMath.sol";
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 // Internal references
-import "./interfaces/IERC20.sol";
 import "./interfaces/IAddressResolver.sol";
 import "./interfaces/ISettings.sol";
 import "./interfaces/IAssetHandler.sol";
@@ -24,8 +24,12 @@ import "./interfaces/Ubeswap/IUniswapV2Pair.sol";
 
 contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, ReentrancyGuard {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
+
+    // TGEN-CELO LP token
+    IERC20 public immutable STAKING_TOKEN;
 
     uint public lastUpdateTime;
     uint256 public rewardPerTokenStored;
@@ -39,10 +43,10 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * These are the times at which each given quantity of LP token vests. */
     mapping(address => uint[3][]) public vestingSchedules;
 
-    /* An account's total vested TGEN-cUSD LP token balance to save recomputing this */
+    /* An account's total vested TGEN-CELO LP token balance to save recomputing this */
     mapping(address => uint) public totalVestedAccountBalance;
 
-    /* The total remaining vested balance, for verifying the actual TGEN-cUSD LP token balance of this contract against. */
+    /* The total remaining vested balance, for verifying the actual TGEN-CELO LP token balance of this contract against. */
     uint public totalVestedBalance;
 
     uint public constant TIME_INDEX = 0;
@@ -54,8 +58,9 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) Ownable() {
+    constructor(IAddressResolver _addressResolver, address _stakingToken) Ownable() {
         ADDRESS_RESOLVER = _addressResolver;
+        STAKING_TOKEN = IERC20(_stakingToken);
         lastUpdateTime = block.timestamp;
     }
 
@@ -69,17 +74,12 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         return totalVestedBalance;
     }
 
-    function stakingToken() public view override returns (address) {
-        address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
-        address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
-        address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-
-        return IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(TGEN, stableCoinAddress);
-    }
-
     function rewardsToken() external view override returns (address) {
         return ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
+    }
+
+    function stakingToken() public view override returns (address) {
+        return address(STAKING_TOKEN);
     }
 
     /**
@@ -98,7 +98,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /**
      * @notice Get a particular schedule entry for an account.
-     * @return A tuple of uints: (timestamp, TGEN-cUSD LP quantity, token quantity).
+     * @return A tuple of uints: (timestamp, TGEN-CELO LP quantity, token quantity).
      */
     function getVestingScheduleEntry(address account, uint index) public view override returns (uint[3] memory) {
         return vestingSchedules[account][index];
@@ -112,7 +112,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     }
 
     /**
-     * @notice Get the quantity of TGEN-cUSD LP associated with a given schedule entry.
+     * @notice Get the quantity of TGEN-CELO LP associated with a given schedule entry.
      */
     function getVestingQuantity(address account, uint index) public view override returns (uint) {
         return getVestingScheduleEntry(account, index)[QUANTITY_INDEX];
@@ -165,7 +165,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
 
     /**
      * @notice Obtain the next schedule entry that will vest for a given user.
-     * @return A tuple of uints: (timestamp, TGEN-cUSD LP quantity, token quantity). */
+     * @return A tuple of uints: (timestamp, TGEN-CELO LP quantity, token quantity). */
     function getNextVestingEntry(address account) public view override returns (uint[3] memory) {
         uint index = getNextVestingIndex(account);
         if (index == numVestingEntries(account))
@@ -213,13 +213,11 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         address tokenB = IUniswapV2Pair(pair).token1();
         (uint amountA, uint amountB) = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getTokenAmountsFromPair(tokenA, tokenB, numberOfTokens);
 
-        uint numberOfDecimalsA = IERC20(tokenA).decimals();
         uint USDperTokenA = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(tokenA);
-        uint USDBalanceA = amountA.mul(USDperTokenA).div(10 ** numberOfDecimalsA);
+        uint USDBalanceA = amountA.mul(USDperTokenA).div(10 ** 18);
 
-        uint numberOfDecimalsB = IERC20(tokenB).decimals();
         uint USDperTokenB = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(tokenB);
-        uint USDBalanceB = amountB.mul(USDperTokenB).div(10 ** numberOfDecimalsB);
+        uint USDBalanceB = amountB.mul(USDperTokenB).div(10 ** 18);
 
         return USDBalanceA.mul(USDBalanceB);
     }
@@ -230,7 +228,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      * @notice Add a new vesting entry at a given time and quantity to an account's schedule.
      * @param account The account to append a new vesting entry to.
      * @param time The absolute unix timestamp after which the vested quantity may be withdrawn.
-     * @param quantity The quantity of TGEN-cUSD LP that will vest.
+     * @param quantity The quantity of TGEN-CELO LP that will vest.
      * @param numberOfTokens Number of tokens to issue, base on staked quantity and number of weeks
      */
     function appendVestingEntry(address account, uint time, uint quantity, uint numberOfTokens) internal {
@@ -271,6 +269,8 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
             totalVestedAccountBalance[account] = totalVestedAccountBalance[account].add(quantity);
             _balances[account] = _balances[account].add(numberOfTokens);
         }  
+
+        emit AppendedVestingEntry(account, time, quantity, numberOfTokens, block.timestamp);
     }
 
     function _claim(address user) internal updateReward(user) {
@@ -288,7 +288,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
-     * @notice Stakes the given TGEN-cUSD LP amount.
+     * @notice Stakes the given TGEN-CELO LP amount.
      */
     function stake(uint amount, uint numberOfWeeks) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "TradegenLPStakingRewards: Staked amount must be greater than 0");
@@ -302,13 +302,13 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         appendVestingEntry(msg.sender, vestingTimestamp, amount, adjustedAmount);
 
         totalVestedBalance = totalVestedBalance.add(amount);
-        IERC20(stakingToken()).transferFrom(msg.sender, address(this), amount);
+        STAKING_TOKEN.safeTransferFrom(msg.sender, address(this), amount);
 
         emit Staked(msg.sender, amount, vestingTimestamp, block.timestamp);
     }
 
     /**
-     * @notice Allow a user to withdraw any TGEN-cUSD LP in their schedule that have vested.
+     * @notice Allow a user to withdraw any TGEN-CELO LP in their schedule that have vested.
      */
     function vest() external override nonReentrant updateReward(msg.sender) {
         uint numEntries = numVestingEntries(msg.sender);
@@ -338,7 +338,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
             _totalSupply = _totalSupply.sub(tokenTotal);
             _balances[msg.sender] = _balances[msg.sender].sub(tokenTotal);
 
-            IERC20(stakingToken()).transfer(msg.sender, total);
+            STAKING_TOKEN.safeTransfer(msg.sender, total);
 
             emit Vested(msg.sender, block.timestamp, total);
         }
@@ -368,4 +368,5 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
     event Vested(address indexed beneficiary, uint time, uint value);
     event Staked(address indexed beneficiary, uint total, uint vestingTimestamp, uint timestamp);
     event RewardPaid(address indexed user, uint amount, uint timestamp);
+    event AppendedVestingEntry(address indexed account, uint time, uint quantity, uint numberOfTokens, uint timestamp);
 }
