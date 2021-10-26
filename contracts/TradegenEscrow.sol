@@ -1,22 +1,21 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
+
+//Libraries
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 // Inheritance
 import "./Ownable.sol";
 import "./interfaces/ITradegenEscrow.sol";
 
-// Libraires
-import "./libraries/SafeMath.sol";
-
-// Internal references
-import "./interfaces/IERC20.sol";
-import "./interfaces/IAddressResolver.sol";
-
 contract TradegenEscrow is Ownable, ITradegenEscrow {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
-    IAddressResolver public immutable ADDRESS_RESOLVER;
+    // TGEN
+    IERC20 public immutable VESTING_TOKEN;
 
     /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
      * These are the times at which each given quantity of TGEN vests. */
@@ -36,8 +35,8 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver) Ownable() {
-        ADDRESS_RESOLVER = _addressResolver;
+    constructor(address _vestingToken) Ownable() {
+        VESTING_TOKEN = IERC20(_vestingToken);
     }
 
     /* ========== VIEW FUNCTIONS ========== */
@@ -131,8 +130,6 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
      * @param quantity The quantity of TGEN that will vest.
      */
     function appendVestingEntry(address account, uint time, uint quantity) public onlyOwner {
-        address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-
         /* No empty or already-passed vesting entries allowed. */
         require(block.timestamp < time, "Time must be in the future");
         require(quantity != 0, "Quantity cannot be zero");
@@ -140,7 +137,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
         /* There must be enough balance in the contract to provide for the vesting entry. */
         totalVestedBalance = totalVestedBalance.add(quantity);
         require(
-            totalVestedBalance <= IERC20(baseTradegenAddress).balanceOf(address(this)),
+            totalVestedBalance <= VESTING_TOKEN.balanceOf(address(this)),
             "Must be enough balance in the contract to provide for the vesting entry"
         );
 
@@ -165,6 +162,8 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
         }
 
         vestingSchedules[account].push([time, quantity]);
+        
+        emit AppendedVestingEntry(account, time, quantity, block.timestamp);
     }
 
     /**
@@ -186,8 +185,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
             total = total.add(quantities[i]);
         }
 
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-        require(IERC20(TGEN).balanceOf(address(this)) >= totalVestedBalance, "TradegenEscrow: not enough TGEN in contract");
+        require(VESTING_TOKEN.balanceOf(address(this)) >= totalVestedBalance, "TradegenEscrow: not enough TGEN in contract");
 
         emit AddedVestingSchedule(account, total, block.timestamp);
     }
@@ -203,9 +201,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
         require(amount > 0, "TradegenEscrow: amount must be greater than 0");
         require(numberOfMonths > 0, "TradegenEscrow: number of months must be greater than 0");
         require(numberOfMonths <= MAX_VESTING_ENTRIES, "Vesting schedule is too long");
-
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-        require(IERC20(TGEN).balanceOf(address(this)) >= totalVestedBalance.add(amount), "TradegenEscrow: not enough TGEN in contract");
+        require(VESTING_TOKEN.balanceOf(address(this)) >= totalVestedBalance.add(amount), "TradegenEscrow: not enough TGEN in contract");
 
         uint timestamp = block.timestamp;
         for (uint i = 0; i < numberOfMonths; i++)
@@ -245,10 +241,9 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
         if (total != 0)
         {
-            address baseTradegenAddress = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
             totalVestedBalance = totalVestedBalance.sub(total);
             totalVestedAccountBalance[msg.sender] = totalVestedAccountBalance[msg.sender].sub(total);
-            IERC20(baseTradegenAddress).transfer(msg.sender, total);
+            VESTING_TOKEN.safeTransfer(msg.sender, total);
 
             emit Vested(msg.sender, block.timestamp, total);
         }
@@ -258,4 +253,5 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
 
     event Vested(address indexed beneficiary, uint time, uint value);
     event AddedVestingSchedule(address indexed beneficiary, uint total, uint timestamp);
+    event AppendedVestingEntry(address indexed account, uint time, uint quantity, uint timestamp);
 }
