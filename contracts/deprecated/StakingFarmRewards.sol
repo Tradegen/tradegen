@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.3;
-
+/*
 //Libraries
 import "./openzeppelin-solidity/SafeMath.sol";
 import "./openzeppelin-solidity/SafeERC20.sol";
@@ -21,7 +21,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    /* ========== STATE VARIABLES ========== */
+    // ========== STATE VARIABLES ========== //
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
@@ -48,7 +48,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
     uint public numberOfFarms;
 
-    /* ========== CONSTRUCTOR ========== */
+    // ========== CONSTRUCTOR ========== //
 
     constructor(IAddressResolver _addressResolver, address _externalRewardToken, address _rewardToken) Ownable() {
         require(_externalRewardToken != address(0), "StakingFarmRewards: invalid external reward token");
@@ -58,7 +58,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         REWARD_TOKEN = IERC20(_rewardToken);
     }
 
-    /* ========== VIEWS ========== */
+    // ========== VIEWS ========== //
 
     function totalSupply(address farm) external view override returns (uint256) {
         return _totalSupply[farm];
@@ -110,7 +110,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         externalRewards[farm][account] = result;
     }
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
+    // ========== MUTATIVE FUNCTIONS ========== //
 
     function stake(uint256 amount, address farm) external override nonReentrant updateReward(msg.sender, farm) {
         require(amount > 0, "Cannot stake 0");
@@ -156,7 +156,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         withdraw(_balances[farm][msg.sender], farm);
     }
 
-    /* ========== INTERNAL FUNCTIONS ========== */
+    // ========== INTERNAL FUNCTIONS ========== //
 
     function _claim(address user, address farm) internal updateReward(user, farm) {
         uint256 reward = rewards[farm][user];
@@ -182,7 +182,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         }
     }
 
-    /* ========== RESTRICTED FUNCTIONS ========== */
+    // ========== RESTRICTED FUNCTIONS ========== //
 
     function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0), address(0)) {
         if (block.timestamp >= periodFinish)
@@ -207,9 +207,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         emit RewardAdded(reward, block.timestamp);
     }
 
-    /**
-     * @notice Adds a new farm for staking
-     */
     function addFarm(address farm) external onlyOwner {
         require(farm != address(0), "Invalid farm address");
         require(lastUpdateTime[farm] == 0, "Farm already exists");
@@ -221,7 +218,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         emit AddedFarm(farm, block.timestamp);
     }
 
-    /* ========== MODIFIERS ========== */
+    // ========== MODIFIERS ========== //
 
     modifier updateReward(address account, address farm) {
         if (farm != address(0))
@@ -241,7 +238,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         _;
     }
 
-    /* ========== EVENTS ========== */
+    // ========== EVENTS ========== //
 
     event RewardAdded(uint256 reward, uint timestamp);
     event Staked(address indexed user, address indexed farm, uint256 amount, uint timestamp);
@@ -249,4 +246,4 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     event RewardPaid(address indexed user, address indexed farm, uint256 reward, uint timestamp);
     event ExternalRewardPaid(address indexed user, address indexed farm, uint256 reward, uint timestamp);
     event AddedFarm(address farm, uint timestamp);
-}
+}*/
