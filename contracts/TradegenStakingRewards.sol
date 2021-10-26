@@ -107,21 +107,27 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
         emit Withdrawn(msg.sender, amount);
     }
 
-    function getReward() public override nonReentrant updateReward(msg.sender) {
-        uint256 reward = rewards[msg.sender];
-        address escrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenStakingEscrow");
-
-        if (reward > 0)
-        {
-            rewards[msg.sender] = 0;
-            ITradegenStakingEscrow(escrowAddress).claimStakingRewards(msg.sender, reward);
-            emit RewardPaid(msg.sender, reward);
-        }
+    function getReward() public override nonReentrant {
+        _claim(msg.sender);
     }
 
     function exit() external override {
         withdraw(_balances[msg.sender]);
-        getReward();
+        _claim(msg.sender);
+    }
+
+    /* ========== INTERNAL FUNCTIONS ========== */
+
+    function _claim(address user) internal updateReward(user) {
+        uint256 reward = rewards[user];
+        address escrowAddress = ADDRESS_RESOLVER.getContractAddress("TradegenStakingEscrow");
+
+        if (reward > 0)
+        {
+            rewards[user] = 0;
+            ITradegenStakingEscrow(escrowAddress).claimStakingRewards(user, reward);
+            emit RewardPaid(user, reward);
+        }
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */

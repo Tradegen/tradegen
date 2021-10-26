@@ -147,9 +147,20 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         emit Withdrawn(msg.sender, farm, amount, block.timestamp);
     }
 
-    function getReward(address farm) public override nonReentrant updateReward(msg.sender, farm) {
-        uint256 reward = rewards[farm][msg.sender];
-        uint256 externalReward = externalRewards[farm][msg.sender];
+    function getReward(address farm) public override nonReentrant {
+        _claim(msg.sender, farm);
+    }
+
+    function exit(address farm) external override {
+        withdraw(_balances[farm][msg.sender], farm);
+        getReward(farm);
+    }
+
+    /* ========== INTERNAL FUNCTIONS ========== */
+
+    function _claim(address user, address farm) internal updateReward(user, farm) {
+        uint256 reward = rewards[farm][user];
+        uint256 externalReward = externalRewards[farm][user];
         address ubeswapLPVerifierAddress = ADDRESS_RESOLVER.assetVerifiers(2);
 
         require(ubeswapLPVerifierAddress != address(0), "StakingFarmRewards: invalid UbeswapLPVerifier address");
@@ -158,22 +169,17 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
         if (reward > 0)
         {
-            rewards[farm][msg.sender] = 0;
-            REWARD_TOKEN.safeTransfer(msg.sender, reward);
-            emit RewardPaid(msg.sender, farm, reward, block.timestamp);
+            rewards[farm][user] = 0;
+            REWARD_TOKEN.safeTransfer(user, reward);
+            emit RewardPaid(user, farm, reward, block.timestamp);
         }
 
         if (externalReward > 0)
         {
-            externalRewards[farm][msg.sender] = 0;
-            IERC20(rewardsToken).safeTransfer(msg.sender, externalReward);
-            emit ExternalRewardPaid(msg.sender, farm, externalReward, block.timestamp);
+            externalRewards[farm][user] = 0;
+            IERC20(rewardsToken).safeTransfer(user, externalReward);
+            emit ExternalRewardPaid(user, farm, externalReward, block.timestamp);
         }
-    }
-
-    function exit(address farm) external override {
-        withdraw(_balances[farm][msg.sender], farm);
-        getReward(farm);
     }
 
     /* ========== RESTRICTED FUNCTIONS ========== */
