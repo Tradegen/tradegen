@@ -13,8 +13,6 @@ import './Ownable.sol';
 import './Pool.sol';
 
 contract PoolFactory is Ownable {
-    using SafeMath for uint;
-
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
     address[] public pools;

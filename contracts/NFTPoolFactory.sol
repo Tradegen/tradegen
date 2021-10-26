@@ -1,21 +1,16 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Interfaces
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IMarketplace.sol';
 
-//Libraries
-import './libraries/SafeMath.sol';
-
 //Internal references
 import './NFTPool.sol';
 
 contract NFTPoolFactory {
-    using SafeMath for uint;
-
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
     address[] public pools;
@@ -33,7 +28,7 @@ contract NFTPoolFactory {
     * @param user Address of the user
     * @return address[] The address of each pool the user manages
     */
-    function getUserManagedPools(address user) public view returns(address[] memory) {
+    function getUserManagedPools(address user) external view returns(address[] memory) {
         require(user != address(0), "Invalid address");
 
         address[] memory addresses = new address[](userToManagedPools[user].length);
@@ -52,7 +47,7 @@ contract NFTPoolFactory {
     * @dev Returns the address of each available pool
     * @return address[] The address of each available pool
     */
-    function getAvailablePools() public view returns(address[] memory) {
+    function getAvailablePools() external view returns(address[] memory) {
         return pools;
     }
 
@@ -71,7 +66,6 @@ contract NFTPoolFactory {
         uint maximumNFTPoolSeedPrice = ISettings(settingsAddress).getParameterValue("MaximumNFTPoolSeedPrice");
         uint minimumNFTPoolSeedPrice = ISettings(settingsAddress).getParameterValue("MinimumNFTPoolSeedPrice");
         uint maximumNumberOfPoolsPerUser = ISettings(settingsAddress).getParameterValue("MaximumNumberOfPoolsPerUser");
-
         
         require(bytes(poolName).length < 40, "Pool name must have less than 40 characters");
         require(maxSupply <= maximumNumberOfNFTPoolTokens, "Cannot exceed max supply cap");
