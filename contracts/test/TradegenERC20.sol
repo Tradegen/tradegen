@@ -2,9 +2,9 @@
 
 pragma solidity >=0.7.6;
 
-import './libraries/SafeMath.sol';
+import '../libraries/SafeMath.sol';
 
-import './interfaces/IERC20.sol';
+import '../interfaces/IERC20.sol';
 
 contract TradegenERC20 is IERC20 {
     using SafeMath for uint;

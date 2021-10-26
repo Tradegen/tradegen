@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 //Interfaces
-import './interfaces/IERC20.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/ILPVerifier.sol';
@@ -19,12 +19,17 @@ import "./Ownable.sol";
 
 contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     using SafeMath for uint256;
+    using SafeERC20 for IERC20;
 
     /* ========== STATE VARIABLES ========== */
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    address public externalRewardToken;
+    // TGEN
+    IERC20 public immutable REWARD_TOKEN;
+
+    IERC20 public immutable EXTERNAL_REWARD_TOKEN;
+
     mapping (address => mapping(address => uint256)) public externalRewards;
     mapping (address => mapping(address => uint256)) public externalUserRewardPerTokenPaid;
     mapping (address => uint256) public externalRewardPerTokenStored;
@@ -45,11 +50,12 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
     /* ========== CONSTRUCTOR ========== */
 
-    constructor(IAddressResolver _addressResolver, address _externalRewardToken) Ownable() {
+    constructor(IAddressResolver _addressResolver, address _externalRewardToken, address _rewardToken) Ownable() {
         require(_externalRewardToken != address(0), "StakingFarmRewards: invalid external reward token");
 
         ADDRESS_RESOLVER = _addressResolver;
-        externalRewardToken = _externalRewardToken;
+        EXTERNAL_REWARD_TOKEN = IERC20(_externalRewardToken);
+        REWARD_TOKEN = IERC20(_rewardToken);
     }
 
     /* ========== VIEWS ========== */
@@ -84,11 +90,11 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     }
 
     function earnedExternal(address account, address farm) public returns (uint result) {
-        uint externalOldTotalRewards = IERC20(externalRewardToken).balanceOf(address(this));
+        uint externalOldTotalRewards = EXTERNAL_REWARD_TOKEN.balanceOf(address(this));
 
         IStakingRewards(farm).getReward();
 
-        uint externalTotalRewards = IERC20(externalRewardToken).balanceOf(address(this));
+        uint externalTotalRewards = EXTERNAL_REWARD_TOKEN.balanceOf(address(this));
         uint newExternalRewardsAmount = externalTotalRewards.sub(externalOldTotalRewards);
 
         if (_totalSupply[farm] > 0)
@@ -117,7 +123,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
 
         _totalSupply[farm] = _totalSupply[farm].add(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].add(amount);
-        IERC20(stakingToken).transferFrom(msg.sender, address(this), amount);
+        IERC20(stakingToken).safeTransferFrom(msg.sender, address(this), amount);
         IERC20(stakingToken).approve(farm, amount);
         IStakingRewards(farm).stake(amount);
 
@@ -136,7 +142,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         _totalSupply[farm] = _totalSupply[farm].sub(amount);
         _balances[farm][msg.sender] = _balances[farm][msg.sender].sub(amount);
         IStakingRewards(farm).withdraw(amount);
-        IERC20(stakingToken).transfer(msg.sender, amount);
+        IERC20(stakingToken).safeTransfer(msg.sender, amount);
 
         emit Withdrawn(msg.sender, farm, amount, block.timestamp);
     }
@@ -144,7 +150,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     function getReward(address farm) public override nonReentrant updateReward(msg.sender, farm) {
         uint256 reward = rewards[farm][msg.sender];
         uint256 externalReward = externalRewards[farm][msg.sender];
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
         address ubeswapLPVerifierAddress = ADDRESS_RESOLVER.assetVerifiers(2);
 
         require(ubeswapLPVerifierAddress != address(0), "StakingFarmRewards: invalid UbeswapLPVerifier address");
@@ -154,14 +159,14 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         if (reward > 0)
         {
             rewards[farm][msg.sender] = 0;
-            IERC20(TGEN).transfer(msg.sender, reward);
+            REWARD_TOKEN.safeTransfer(msg.sender, reward);
             emit RewardPaid(msg.sender, farm, reward, block.timestamp);
         }
 
         if (externalReward > 0)
         {
             externalRewards[farm][msg.sender] = 0;
-            IERC20(rewardsToken).transfer(msg.sender, externalReward);
+            IERC20(rewardsToken).safeTransfer(msg.sender, externalReward);
             emit ExternalRewardPaid(msg.sender, farm, externalReward, block.timestamp);
         }
     }
@@ -174,8 +179,6 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     function notifyRewardAmount(uint256 reward) external onlyOwner updateReward(address(0), address(0)) {
-        address TGEN = ADDRESS_RESOLVER.getContractAddress("TradegenERC20");
-
         if (block.timestamp >= periodFinish)
         {
             rewardRate = reward.div(rewardsDuration);
@@ -191,7 +194,7 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
         // This keeps the reward rate in the right range, preventing overflows due to
         // very high values of rewardRate in the earned and rewardsPerToken functions;
         // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
-        uint balance = IERC20(TGEN).balanceOf(address(this));
+        uint balance = REWARD_TOKEN.balanceOf(address(this));
         require(rewardRate <= balance.div(rewardsDuration), "Provided reward too high");
 
         periodFinish = block.timestamp.add(rewardsDuration);
