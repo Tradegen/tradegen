@@ -1,19 +1,14 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Interfaces
 import './interfaces/ISettings.sol';
-
-//Libraries
-import './libraries/SafeMath.sol';
 
 //Inheritance
 import './Ownable.sol';
 
 contract Settings is ISettings, Ownable {
-    using SafeMath for uint;
-
     mapping (string => uint) public parameters;
 
     /**
