@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 pragma experimental ABIEncoderV2;
 
 //Adapters
 import './interfaces/IBaseUbeswapAdapter.sol';
 
 //Interfaces
-import './interfaces/IERC20.sol';
 import './interfaces/IPool.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
@@ -17,10 +16,12 @@ import './interfaces/IVerifier.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 
 //Libraries
-import './libraries/SafeMath.sol';
+import "./openzeppelin-solidity/SafeMath.sol";
+import "./openzeppelin-solidity/SafeERC20.sol";
 
 contract Pool is IPool {
     using SafeMath for uint;
+    using SafeERC20 for IERC20;
 
     IAddressResolver public ADDRESS_RESOLVER;
    
@@ -52,7 +53,7 @@ contract Pool is IPool {
     * @dev Returns the name of the pool
     * @return string The name of the pool
     */
-    function name() public view override returns (string memory) {
+    function name() external view override returns (string memory) {
         return _name;
     }
 
@@ -60,7 +61,7 @@ contract Pool is IPool {
     * @dev Return the pool manager's address
     * @return address Address of the pool's manager
     */
-    function getManagerAddress() public view override returns (address) {
+    function getManagerAddress() external view override returns (address) {
         return _manager;
     }
 
@@ -218,7 +219,7 @@ contract Pool is IPool {
     * @notice Call cUSD.approve() before calling this function
     * @param amount Amount of USD to deposit into the pool
     */
-    function deposit(uint amount) public override {
+    function deposit(uint amount) external override {
         require(amount > 0, "Pool: Deposit must be greater than 0");
 
         uint poolBalance = getPoolValue();
@@ -230,7 +231,7 @@ contract Pool is IPool {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
 
-        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amount);
+        IERC20(stableCoinAddress).safeTransferFrom(msg.sender, address(this), amount);
 
         _addPositionKey(stableCoinAddress);
 
@@ -264,7 +265,7 @@ contract Pool is IPool {
 
             if (portionOfAssetBalance > 0)
             {
-                IERC20(_positionKeys[i]).transfer(msg.sender, portionOfAssetBalance);
+                IERC20(_positionKeys[i]).safeTransfer(msg.sender, portionOfAssetBalance);
 
                 amountsWithdrawn[i.sub(1)] = portionOfAssetBalance;
                 assetsWithdrawn[i.sub(1)] = _positionKeys[i];
@@ -302,7 +303,7 @@ contract Pool is IPool {
     * @param to Address of external contract
     * @param data Bytes data for the transaction
     */
-    function executeTransaction(address to, bytes memory data) public onlyPoolManager {
+    function executeTransaction(address to, bytes memory data) external onlyPoolManager {
         require(to != address(0), "Pool: invalid 'to' address");
 
         //First try to get contract verifier

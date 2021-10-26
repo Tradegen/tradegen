@@ -1,13 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >=0.7.6;
+pragma solidity ^0.8.3;
 
 //Interfaces
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
-
-//Libraries
-import './libraries/SafeMath.sol';
 
 //Inheritance
 import './Ownable.sol';
@@ -35,7 +32,7 @@ contract PoolFactory is Ownable {
     * @param user Address of the user
     * @return address[] The address of each pool the user manages
     */
-    function getUserManagedPools(address user) public view returns(address[] memory) {
+    function getUserManagedPools(address user) external view returns(address[] memory) {
         require(user != address(0), "Invalid address");
 
         address[] memory addresses = new address[](userToManagedPools[user].length);
@@ -54,7 +51,7 @@ contract PoolFactory is Ownable {
     * @dev Returns the address of each available pool
     * @return address[] The address of each available pool
     */
-    function getAvailablePools() public view returns(address[] memory) {
+    function getAvailablePools() external view returns(address[] memory) {
         return pools;
     }
 
