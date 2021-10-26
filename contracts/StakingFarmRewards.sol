@@ -152,8 +152,8 @@ contract StakingFarmRewards is IStakingFarmRewards, ReentrancyGuard, Ownable {
     }
 
     function exit(address farm) external override {
-        withdraw(_balances[farm][msg.sender], farm);
         _claim(msg.sender, farm);
+        withdraw(_balances[farm][msg.sender], farm);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */

@@ -112,8 +112,8 @@ contract TradegenStakingRewards is IStakingRewards, ReentrancyGuard, Ownable {
     }
 
     function exit() external override {
-        withdraw(_balances[msg.sender]);
         _claim(msg.sender);
+        withdraw(_balances[msg.sender]);
     }
 
     /* ========== INTERNAL FUNCTIONS ========== */
