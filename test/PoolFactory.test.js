@@ -8,7 +8,7 @@ require("dotenv/config");
 
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
-
+/*
 describe("PoolFactory", () => {
   let deployer;
   let otherUser;
@@ -1093,9 +1093,10 @@ describe("PoolFactory", () => {
       console.log(poolTokenBalance);
       
       //Wait 100 seconds
-      console.log("waiting 100 seconds");
-      setTimeout(() => {}, 100000);
-      console.log("done");
+      console.log("waiting 20 seconds");
+      let currentTimestamp = Math.floor(Date.now() / 1000);
+      while (Math.floor(Date.now() / 1000) < currentTimestamp + 20)
+      {}
 
       let params5 = web3.eth.abi.encodeFunctionCall({
         name: 'getReward',
@@ -1602,4 +1603,4 @@ describe("PoolFactory", () => {
       expect(data[1][0]).to.equal(1000000);
     });
   });
-});
+});*/

@@ -27,7 +27,7 @@ contract Ownable {
   /**
   * @return the address of the owner.
   */
-  function owner() external view returns(address) {
+  function owner() public view returns(address) {
     return _owner;
   }
 
@@ -52,7 +52,7 @@ contract Ownable {
   * It will not be possible to call the functions with the `onlyOwner`
   * modifier anymore.
   */
-  function renounceOwnership() external onlyOwner {
+  function renounceOwnership() public onlyOwner {
     emit OwnershipTransferred(_owner, address(0));
     _owner = address(0);
   }
@@ -61,7 +61,7 @@ contract Ownable {
   * @dev Allows the current owner to transfer control of the contract to a newOwner.
   * @param newOwner The address to transfer ownership to.
   */
-  function transferOwnership(address newOwner) external onlyOwner {
+  function transferOwnership(address newOwner) public onlyOwner {
     _transferOwnership(newOwner);
   }
 

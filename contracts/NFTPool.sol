@@ -4,6 +4,7 @@ pragma solidity ^0.8.3;
 pragma experimental ABIEncoderV2;
 
 //Interfaces
+import './interfaces/IERC20.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IAssetHandler.sol';
@@ -16,12 +17,10 @@ import './interfaces/INFTPool.sol';
 import './interfaces/ISellable.sol';
 
 //Libraries
-import "./openzeppelin-solidity/SafeMath.sol";
-import "./openzeppelin-solidity/SafeERC20.sol";
+import './openzeppelin-solidity/SafeMath.sol';
 
 contract NFTPool is INFTPool, ISellable {
     using SafeMath for uint;
-    using SafeERC20 for IERC20;
 
     IAddressResolver public ADDRESS_RESOLVER;
     address private _factory;
@@ -179,7 +178,7 @@ contract NFTPool is INFTPool, ISellable {
     * @notice Call cUSD.approve() before calling this function
     * @param numberOfPoolTokens Number of pool tokens to purchase
     */
-    function deposit(uint numberOfPoolTokens) external override {
+    function deposit(uint numberOfPoolTokens) public override {
         require(numberOfPoolTokens > 0 &&
                 totalSupply.add(numberOfPoolTokens) <= maxSupply,
                 "Quantity out of bounds");
@@ -192,7 +191,7 @@ contract NFTPool is INFTPool, ISellable {
 
         _depositByClass(msg.sender, numberOfPoolTokens);
 
-        IERC20(stableCoinAddress).safeTransferFrom(msg.sender, address(this), amountOfUSD);
+        IERC20(stableCoinAddress).transferFrom(msg.sender, address(this), amountOfUSD);
 
         _addPositionKey(stableCoinAddress);
 
@@ -226,6 +225,7 @@ contract NFTPool is INFTPool, ISellable {
         }
 
         uint managerFee = ISettings(ADDRESS_RESOLVER.getContractAddress("Settings")).getParameterValue("NFTPoolManagerFee");
+
         uint poolValue = getPoolValue();
         uint portion = numberOfPoolTokens.mul(10**18).div(totalSupply);
 
@@ -263,8 +263,8 @@ contract NFTPool is INFTPool, ISellable {
 
             if (portionOfAssetBalance > 0)
             {
-                IERC20(_positionKeys[i]).safeTransfer(msg.sender, portionOfAssetBalance.mul(10000 - managerFee).div(10000));
-                IERC20(_positionKeys[i]).safeTransfer(manager, portionOfAssetBalance.mul(managerFee).div(10000));
+                IERC20(_positionKeys[i]).transfer(msg.sender, portionOfAssetBalance.mul(10000 - managerFee).div(10000));
+                IERC20(_positionKeys[i]).transfer(manager, portionOfAssetBalance.mul(managerFee).div(10000));
 
                 amountsWithdrawn[i.sub(1)] = portionOfAssetBalance.mul(10000 - managerFee).div(10000);
                 assetsWithdrawn[i.sub(1)] = _positionKeys[i];
@@ -296,7 +296,7 @@ contract NFTPool is INFTPool, ISellable {
     * @param to Address of external contract
     * @param data Bytes data for the transaction
     */
-    function executeTransaction(address to, bytes memory data) external onlyPoolManager {
+    function executeTransaction(address to, bytes memory data) public onlyPoolManager {
         require(to != address(0), "Invalid 'to' address");
 
         //First try to get contract verifier

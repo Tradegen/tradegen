@@ -245,11 +245,11 @@ describe("NFTPoolFactory", () => {
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("20"))
-      const tx = await kit.sendTransactionObject(txo, { from: deployer.address })
+      const tx = await kit.sendTransactionObject(txo, { from: otherUser.address })
       const hash = await tx.getHash()
       const receipt = await tx.waitReceipt()
 
-      let tx2 = await poolContract.deposit(20);
+      let tx2 = await poolContract.connect(otherUser).deposit(20);
       await expect(tx2.wait()).to.be.reverted;
 
       let supply = await poolContract.totalSupply();
@@ -261,7 +261,7 @@ describe("NFTPoolFactory", () => {
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("1"))
-      const tx = await kit.sendTransactionObject(txo, { from: deployer.address })
+      const tx = await kit.sendTransactionObject(txo, { from: otherUser.address })
       const hash = await tx.getHash()
       const receipt = await tx.waitReceipt()
 
@@ -273,7 +273,7 @@ describe("NFTPoolFactory", () => {
       expect(distribution[2]).to.equal(3);
       expect(distribution[3]).to.equal(4);
 
-      let tx2 = await poolContract.deposit(1);
+      let tx2 = await poolContract.connect(otherUser).deposit(1);
       await tx2.wait();
 
       const distribution2 = await poolContract.getAvailableTokensPerClass();
@@ -294,16 +294,16 @@ describe("NFTPoolFactory", () => {
       const tokenPrice = await poolContract.tokenPrice();
       expect(tokenPrice).to.equal(parseEther("1"));
       
-      const userTokenBalanceC1 = await poolContract.balanceOf(deployer.address, 1);
+      const userTokenBalanceC1 = await poolContract.balanceOf(otherUser.address, 1);
       expect(userTokenBalanceC1).to.equal(1);
 
-      const userTokenBalance = await poolContract.balance(deployer.address);
+      const userTokenBalance = await poolContract.balance(otherUser.address);
       expect(userTokenBalance).to.equal(1);
 
       const cUSDValue = await poolContract.getAssetValue(cUSD, assetHandlerAddress);
       expect(cUSDValue).to.equal(parseEther("1"));
 
-      const userUSDBalance = await poolContract.getUSDBalance(deployer.address);
+      const userUSDBalance = await poolContract.getUSDBalance(otherUser.address);
       expect(userUSDBalance).to.equal(parseEther("1"));
 
       const data = await poolContract.getPositionsAndTotal();
@@ -320,11 +320,11 @@ describe("NFTPoolFactory", () => {
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("2"))
-      const tx = await kit.sendTransactionObject(txo, { from: deployer.address })
+      const tx = await kit.sendTransactionObject(txo, { from: otherUser.address })
       const hash = await tx.getHash()
       const receipt = await tx.waitReceipt()
 
-      let tx2 = await poolContract.deposit(2);
+      let tx2 = await poolContract.connect(otherUser).deposit(2);
       await tx2.wait();
 
       const distribution = await poolContract.getAvailableTokensPerClass();
@@ -339,13 +339,13 @@ describe("NFTPoolFactory", () => {
       const tokenPrice = await poolContract.tokenPrice();
       expect(tokenPrice).to.equal(parseEther("1"));
       
-      const userTokenBalanceC1 = await poolContract.balanceOf(deployer.address, 1);
+      const userTokenBalanceC1 = await poolContract.balanceOf(otherUser.address, 1);
       expect(userTokenBalanceC1).to.equal(1);
 
-      const userTokenBalanceC2 = await poolContract.balanceOf(deployer.address, 2);
+      const userTokenBalanceC2 = await poolContract.balanceOf(otherUser.address, 2);
       expect(userTokenBalanceC2).to.equal(1);
 
-      const userTokenBalance = await poolContract.balance(deployer.address);
+      const userTokenBalance = await poolContract.balance(otherUser.address);
       expect(userTokenBalance).to.equal(2);
     });
 
@@ -354,11 +354,11 @@ describe("NFTPoolFactory", () => {
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("10"))
-      const tx = await kit.sendTransactionObject(txo, { from: deployer.address })
+      const tx = await kit.sendTransactionObject(txo, { from: otherUser.address })
       const hash = await tx.getHash()
       const receipt = await tx.waitReceipt()
 
-      let tx2 = await poolContract.deposit(10);
+      let tx2 = await poolContract.connect(otherUser).deposit(10);
       await tx2.wait();
 
       const distribution = await poolContract.getAvailableTokensPerClass();
@@ -373,19 +373,19 @@ describe("NFTPoolFactory", () => {
       const tokenPrice = await poolContract.tokenPrice();
       expect(tokenPrice).to.equal(parseEther("1"));
       
-      const userTokenBalanceC1 = await poolContract.balanceOf(deployer.address, 1);
+      const userTokenBalanceC1 = await poolContract.balanceOf(otherUser.address, 1);
       expect(userTokenBalanceC1).to.equal(1);
 
-      const userTokenBalanceC2 = await poolContract.balanceOf(deployer.address, 2);
+      const userTokenBalanceC2 = await poolContract.balanceOf(otherUser.address, 2);
       expect(userTokenBalanceC2).to.equal(2);
 
-      const userTokenBalanceC3 = await poolContract.balanceOf(deployer.address, 3);
+      const userTokenBalanceC3 = await poolContract.balanceOf(otherUser.address, 3);
       expect(userTokenBalanceC3).to.equal(3);
 
-      const userTokenBalanceC4 = await poolContract.balanceOf(deployer.address, 4);
+      const userTokenBalanceC4 = await poolContract.balanceOf(otherUser.address, 4);
       expect(userTokenBalanceC4).to.equal(4);
 
-      const userTokenBalance = await poolContract.balance(deployer.address);
+      const userTokenBalance = await poolContract.balance(otherUser.address);
       expect(userTokenBalance).to.equal(10);
     });
     
@@ -477,7 +477,7 @@ describe("NFTPoolFactory", () => {
     });
     
     it('withdraw partial position from pool with no tokens for sale', async () => {
-      kit.connection.addAccount(process.env.PRIVATE_KEY2);
+      kit.connection.addAccount(process.env.PRIVATE_KEY1);
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("2"));
@@ -535,7 +535,7 @@ describe("NFTPoolFactory", () => {
     });
     
     it('exit from pool with no tokens for sale', async () => {
-      kit.connection.addAccount(process.env.PRIVATE_KEY2);
+      kit.connection.addAccount(process.env.PRIVATE_KEY1);
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("2"));
@@ -596,7 +596,7 @@ describe("NFTPoolFactory", () => {
     });
 
     it('withdraw from pool with tokens for sale', async () => {
-      kit.connection.addAccount(process.env.PRIVATE_KEY2);
+      kit.connection.addAccount(process.env.PRIVATE_KEY1);
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("2"));
@@ -657,7 +657,7 @@ describe("NFTPoolFactory", () => {
     });
     
     it('cant withdraw tokens for sale', async () => {
-      kit.connection.addAccount(process.env.PRIVATE_KEY2);
+      kit.connection.addAccount(process.env.PRIVATE_KEY1);
       const stabletoken = await kit._web3Contracts.getStableToken();
 
       const txo = await stabletoken.methods.approve(poolAddress, parseEther("2"));

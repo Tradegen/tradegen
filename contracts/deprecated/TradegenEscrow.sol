@@ -3,12 +3,12 @@
 pragma solidity ^0.8.3;
 
 //Libraries
-import "./openzeppelin-solidity/SafeMath.sol";
-import "./openzeppelin-solidity/SafeERC20.sol";
+import "../openzeppelin-solidity/SafeMath.sol";
+import "../openzeppelin-solidity/SafeERC20.sol";
 
 // Inheritance
-import "./Ownable.sol";
-import "./interfaces/ITradegenEscrow.sol";
+import "../Ownable.sol";
+import "../interfaces/ITradegenEscrow.sol";
 
 contract TradegenEscrow is Ownable, ITradegenEscrow {
     using SafeMath for uint;

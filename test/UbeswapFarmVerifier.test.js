@@ -4,7 +4,7 @@ const { POLYCHAIN, CELO_sCELO, CELO_cUSD } = require("./utils/addresses");
 const { ethers } = require("hardhat");
 const Web3 = require("web3");
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
-
+/*
 describe("UbeswapFarmVerifier", () => {
   let deployer;
   let otherUser;
@@ -307,4 +307,4 @@ describe("UbeswapFarmVerifier", () => {
       expect(tx).to.not.emit(ubeswapFarmVerifier, "ClaimedReward");
     });
   });
-});
+});*/

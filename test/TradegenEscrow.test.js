@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, CELO_cUSD } = require("./utils/addresses");
 const { ethers } = require("hardhat");
-
+/*
 describe("TradegenEscrow", () => {
   let deployer;
   let otherUser;
@@ -285,4 +285,4 @@ describe("TradegenEscrow", () => {
       expect(firstUserNextVestingTime).to.equal(currentTimestamp + 40);
     });
   });
-});
+});*/

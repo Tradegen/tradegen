@@ -106,7 +106,7 @@ contract Marketplace is IMarketplace, Ownable {
         //Update marketplace listing
         if (numberOfTokens == marketplaceListings[index].numberOfTokens)
         {
-            _removeListing(index);
+            _removeListing(marketplaceListings[index].seller, asset, index);
         }
         else
         {
@@ -142,7 +142,7 @@ contract Marketplace is IMarketplace, Ownable {
     * @param index Index of the marketplace listing in the asset's listings array
     */
     function removeListing(address asset, uint index) external override isValidAsset(asset) indexInRange(index) onlySeller(asset, index) {
-        _removeListing(index);
+        _removeListing(msg.sender, asset, index);
 
         emit RemovedListing(msg.sender, asset, index, block.timestamp);
     }
@@ -216,9 +216,11 @@ contract Marketplace is IMarketplace, Ownable {
     * @dev Sets the marketplace listing's 'exists' variable to false and resets quantity
     * @param index Index of the marketplace listing in the asset's listings array
     */
-    function _removeListing(uint index) internal {
+    function _removeListing(address user, address asset, uint index) internal {
         marketplaceListings[index].exists = false;
         marketplaceListings[index].numberOfTokens = 0;
+
+        userToListingIndex[asset][user] = 0;
     }
 
     /* ========== MODIFIERS ========== */

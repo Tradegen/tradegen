@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.3;
-/*
+
 import "../openzeppelin-solidity/Math.sol";
 import "../openzeppelin-solidity/SafeMath.sol";
 import "../openzeppelin-solidity/SafeERC20.sol";
@@ -175,4 +175,4 @@ contract StakingRewards is IStakingRewards, RewardsDistributionRecipient, Reentr
     event RewardPaid(address indexed user, uint256 reward);
     event RewardsDurationUpdated(uint256 newDuration);
     event Recovered(address token, uint256 amount);
-}*/
+}

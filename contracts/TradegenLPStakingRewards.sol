@@ -322,8 +322,9 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
         {
             uint qty = getVestingQuantity(msg.sender, i);
             uint numberOfTokens = getVestingTokenAmount(msg.sender, i);
+            uint time = getVestingTime(msg.sender, i);
 
-            if (qty > 0 || numberOfTokens > 0)
+            if (qty > 0 && time <= block.timestamp)
             {
                 vestingSchedules[msg.sender][i] = [0, 0, 0];
                 total = total.add(qty);

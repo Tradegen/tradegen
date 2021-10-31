@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD, VITALIK } = require("./utils/addresses");
-
+/*
 describe("UbeswapLPTokenPriceAggregator", () => {
   let deployer;
   let otherUser;
@@ -79,4 +79,4 @@ describe("UbeswapLPTokenPriceAggregator", () => {
       await expect(UbeswapLPTokenPriceAggregator.getUSDPrice(VITALIK)).to.be.reverted;
     });
   });
-});
+});*/

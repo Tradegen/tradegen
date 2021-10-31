@@ -8,7 +8,7 @@ require("dotenv/config");
 
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
-
+/*
 describe("StakingFarmRewards", () => {
   let deployer;
   let otherUser;
@@ -342,4 +342,4 @@ describe("StakingFarmRewards", () => {
       expect(reward2).to.equal(0);
     });
   });
-});
+});*/

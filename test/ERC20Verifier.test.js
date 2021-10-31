@@ -4,7 +4,7 @@ const { UBESWAP_ROUTER, POLYCHAIN } = require("./utils/addresses");
 const Web3 = require("web3");
 const { ethers } = require("hardhat");
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
-
+/*
 describe("ERC20Verifier", () => {
   let deployer;
   let otherUser;
@@ -128,4 +128,4 @@ describe("ERC20Verifier", () => {
       expect(data[2].length).to.equal(0);
     });
   });
-});
+});*/
