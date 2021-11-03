@@ -54,23 +54,23 @@ async function deployCoreContracts() {
   let ubeswapFarmVerifier = await UbeswapFarmVerifierFactory.deploy();
   await ubeswapFarmVerifier.deployed();
   let ubeswapFarmVerifierAddress = ubeswapFarmVerifier.address;
-  console.log("UbeswapFarmVerifier: " + ubeswapFarmVerifierAddress);
+  console.log("UbeswapFarmVerifier: " + ubeswapFarmVerifierAddress);*/
 
   let assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
   await assetHandler.deployed();
   let assetHandlerAddress = assetHandler.address;
   console.log("AssetHandler: " + assetHandlerAddress);
-
+  /*
   let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
   await baseUbeswapAdapter.deployed();
   let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
-  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);*/
+  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);
 
   let poolFactoryContract = await PoolFactoryFactory.deploy(addressResolverAddress);
   await poolFactoryContract.deployed();
   let poolFactoryAddress = poolFactoryContract.address;
   console.log("PoolFactory: " + poolFactoryAddress);
-  /*
+  
   let ERC20PriceAggregator = await ERC20PriceAggregatorFactory.deploy(addressResolverAddress);
   await ERC20PriceAggregator.deployed();
   let ERC20PriceAggregatorAddress = ERC20PriceAggregator.address;
@@ -79,13 +79,13 @@ async function deployCoreContracts() {
   let ubeswapLPTokenPriceAggregator = await UbeswapLPTokenPriceAggregatorFactory.deploy(addressResolverAddress);
   await ubeswapLPTokenPriceAggregator.deployed();
   let ubeswapLPTokenPriceAggregatorAddress = ubeswapLPTokenPriceAggregator.address;
-  console.log("UbeswapLPTokenPriceAggregator: " + ubeswapLPTokenPriceAggregatorAddress);
+  console.log("UbeswapLPTokenPriceAggregator: " + ubeswapLPTokenPriceAggregatorAddress);*/
 
   let NFTPoolFactoryContract = await NFTPoolFactoryFactory.deploy(addressResolverAddress);
   await NFTPoolFactoryContract.deployed();
   let NFTPoolFactoryAddress = NFTPoolFactoryContract.address;
   console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);
-
+  /*
   let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
   await marketplace.deployed();
   let marketplaceAddress = marketplace.address;

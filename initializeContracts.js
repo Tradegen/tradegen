@@ -19,7 +19,7 @@ const ERC20VerifierAddress = "0xb27F7820694365e83536e3BfDF0c88e2E681F7d0";
 const UbeswapLPVerifierAddress = "0xBdCb0AD258185A89d1345E9e3FAfC48d15b766A9";
 const UbeswapRouterVerifierAddress = "0xD1e8F37D37A71e2a5Ee5d4EE8F1D2AA9cD33C4df";
 const UbeswapFarmVerifierAddress = "0xf025542A976E382111dFd95EcbbF5D7C1f2d34Be";
-const AssetHandlerAddress = "0xF700B78673f01F00d5434a2F7Bd69B8586D687AD";
+const AssetHandlerAddress = "0xe8a66d9D52Bfd5E1d0D176E0706333A749D3026A";
 const BaseUbeswapAdapterAddress = "0xAD6DdC924f4C1b76a617cF64D711c75A44540dbd";
 const PoolFactoryAddress = "0xf3522C175F37e190582384F2F51fAc6c8934349A";
 const TradegenEscrowAddress = "";
@@ -30,7 +30,7 @@ const TradegenLPStakingRewardsAddress = "";
 const TradegenStakingEscrowAddress = "";
 const TradegenStakingRewardsAddress = "";
 const MarketplaceAddress = "0xF59CF0Cc65a80143672B7ff2c3F51eDEdD73A442";
-const NFTPoolFactoryAddress = "0xF9B65898BE62B54cBb000F8A86D0Fa9b7F069DDa";
+const NFTPoolFactoryAddress = "0xF19087B456E53a99C400E6692df2e8b28c1a1d5F";
 
 const UBESWAP_POOL_MANAGER = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 const UNISWAP_V2_FACTORY = "0x62d5b84be28a183abb507e125b384122d2c25fae";
@@ -97,13 +97,19 @@ async function initializeAddressResolverCoreContracts() {
     await tx3.wait();
 
     console.log("set contracts");*/
-    
+
+    let tx = await addressResolver.setContractAddress("AssetHandler", AssetHandlerAddress);
+    await tx.wait();
+
+    let tx2 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
+    await tx2.wait();
+    /*
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
     await addressResolver.setAssetVerifier(2, UbeswapLPVerifierAddress);
 
     //Add contract verifier to AddressResolver
-    await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);
+    await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);*/
 
     //Check if addresses were set correctly
     const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
@@ -183,13 +189,17 @@ async function initializeAssetHandler() {
     await assetHandler.addAssetType(2, UbeswapLPTokenPriceAggregatorAddress);
 
     //Add assets to AssetHandler
+    await assetHandler.addCurrencyKey(1, UBE_MAINNET);
+    await assetHandler.addCurrencyKey(1, CELO_MAINNET);
+    await assetHandler.addCurrencyKey(1, MOO_MAINNET);
+    await assetHandler.addCurrencyKey(1, cUSD_MAINNET);
+    await assetHandler.addCurrencyKey(1, cEUR_MAINNET);
     await assetHandler.addCurrencyKey(1, mCELO_MAINNET);
     await assetHandler.addCurrencyKey(1, WETH_MAINNET);
     await assetHandler.addCurrencyKey(1, pCELO_MAINNET);
     await assetHandler.addCurrencyKey(1, DAI_MAINNET);
     await assetHandler.addCurrencyKey(1, mcEUR_MAINNET);
     await assetHandler.addCurrencyKey(1, LAPIS_MAINNET);
-    await assetHandler.addCurrencyKey(1, cEUR_MAINNET);
     await assetHandler.addCurrencyKey(1, SUSHI_MAINNET);
     await assetHandler.addCurrencyKey(1, WBTC_MAINNET);
     await assetHandler.addCurrencyKey(1, pUSD_MAINNET);
@@ -206,13 +216,9 @@ async function initializeAssetHandler() {
     await assetHandler.addCurrencyKey(1, cMCO2_MAINNET);
     await assetHandler.addCurrencyKey(1, sCELO_MAINNET);
     await assetHandler.addCurrencyKey(1, rCELO_MAINNET);
-    await assetHandler.addCurrencyKey(1, MOO_MAINNET);
     await assetHandler.addCurrencyKey(1, SOL_MAINNET);
     await assetHandler.addCurrencyKey(1, CRV_MAINNET);
     await assetHandler.addCurrencyKey(1, POOF_MAINNET);
-    await assetHandler.addCurrencyKey(1, UBE_MAINNET);
-    await assetHandler.addCurrencyKey(1, CELO_MAINNET);
-    await assetHandler.addCurrencyKey(1, cUSD_MAINNET);
     //await assetHandler.addCurrencyKey(2, CELO_cUSD);
 
     //Set stablecoin address
@@ -398,13 +404,13 @@ async function setFarmAddress() {
   console.log(farm);
 }
 
-
+/*
 initializeAddressResolverCoreContracts()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeAddressResolverTokenContracts()
   .then(() => process.exit(0))
@@ -412,14 +418,14 @@ initializeAddressResolverTokenContracts()
     console.error(error)
     process.exit(1)
   });*/
-/*
+
 initializeAssetHandler()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
   });
-
+/*
 initializeSettingsCoreContracts()
   .then(() => process.exit(0))
   .catch(error => {
