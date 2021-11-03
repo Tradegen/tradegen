@@ -7,6 +7,7 @@ https://tradegen.io
 ## Deployed Contracts
 
 - check contractAddressAlfajores.txt to see deployed contracts on Alfajores
+- check contractAddressMainnet.txt to see deployed contracts on Mainnet
 
 ## Docs
 
