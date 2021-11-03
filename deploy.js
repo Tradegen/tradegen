@@ -30,7 +30,7 @@ async function deployCoreContracts() {
   let MarketplaceFactory = await ethers.getContractFactory('Marketplace');
 
   let addressResolverAddress = "0xd35dFfdd8E4C6e9F096a44b86f339e9066F9D357";
-
+  /*
   let settings = await SettingsFactory.deploy();
   await settings.deployed();
   let settingsAddress = settings.address;
@@ -64,13 +64,13 @@ async function deployCoreContracts() {
   let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
   await baseUbeswapAdapter.deployed();
   let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
-  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);
+  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);*/
 
   let poolFactoryContract = await PoolFactoryFactory.deploy(addressResolverAddress);
   await poolFactoryContract.deployed();
   let poolFactoryAddress = poolFactoryContract.address;
   console.log("PoolFactory: " + poolFactoryAddress);
-
+  /*
   let ERC20PriceAggregator = await ERC20PriceAggregatorFactory.deploy(addressResolverAddress);
   await ERC20PriceAggregator.deployed();
   let ERC20PriceAggregatorAddress = ERC20PriceAggregator.address;
@@ -89,7 +89,7 @@ async function deployCoreContracts() {
   let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
   await marketplace.deployed();
   let marketplaceAddress = marketplace.address;
-  console.log("Marketplace: " + marketplaceAddress);
+  console.log("Marketplace: " + marketplaceAddress);*/
 }
 
 async function deployTokenDependentContracts() {

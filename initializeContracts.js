@@ -21,7 +21,7 @@ const UbeswapRouterVerifierAddress = "0xD1e8F37D37A71e2a5Ee5d4EE8F1D2AA9cD33C4df
 const UbeswapFarmVerifierAddress = "0xf025542A976E382111dFd95EcbbF5D7C1f2d34Be";
 const AssetHandlerAddress = "0xF700B78673f01F00d5434a2F7Bd69B8586D687AD";
 const BaseUbeswapAdapterAddress = "0xAD6DdC924f4C1b76a617cF64D711c75A44540dbd";
-const PoolFactoryAddress = "0x14329A0dAf353bd89C8F4f9471e664cfE36362D2";
+const PoolFactoryAddress = "0xf3522C175F37e190582384F2F51fAc6c8934349A";
 const TradegenEscrowAddress = "";
 const ERC20PriceAggregatorAddress = "0x59190553bBE994FD79C79686588c519F3C79CdA8";
 const UbeswapLPTokenPriceAggregatorAddress = "0x620944345d7A7f792aC22947aFBB5567ae231B46";
@@ -398,13 +398,13 @@ async function setFarmAddress() {
   console.log(farm);
 }
 
-/*
+
 initializeAddressResolverCoreContracts()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 /*
 initializeAddressResolverTokenContracts()
   .then(() => process.exit(0))
@@ -432,14 +432,14 @@ initializeSettingsTokenContracts()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 initializeMarketplace()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeTradegenStakingRewards()
   .then(() => process.exit(0))

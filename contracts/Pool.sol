@@ -141,6 +141,11 @@ contract Pool is IPool {
     function getUSDBalance(address user) public view override returns (uint) {
         require(user != address(0), "Invalid address");
 
+        if (_totalSupply == 0)
+        {
+            return 0;
+        }
+
         uint poolValue = getPoolValue();
 
         return poolValue.mul(_balanceOf[user]).div(_totalSupply);
@@ -395,12 +400,7 @@ contract Pool is IPool {
     * @return Price of a pool token
     */
     function _tokenPrice(uint _poolValue) internal view returns (uint) {
-        if (_poolValue == 0)
-        {
-            return 0;
-        }
-
-        if (_totalSupply == 0)
+        if (_totalSupply == 0 || _poolValue == 0)
         {
             return 10**18;
         }
