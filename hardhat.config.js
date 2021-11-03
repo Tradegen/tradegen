@@ -29,7 +29,7 @@ module.exports = {
   networks: {
     mainnet: {
       url: fornoURLs[ICeloNetwork.MAINNET],
-      accounts: [process.env.PRIVATE_KEY1],
+      accounts: [process.env.PRIVATE_KEY_DEPLOYER],
       chainId: ICeloNetwork.MAINNET,
       live: true,
       gasPrice: 2 * 10 ** 8,
