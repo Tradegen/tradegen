@@ -8,7 +8,7 @@ require("dotenv/config");
 
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
-/*
+
 describe("NFTPoolFactory", () => {
   let deployer;
   let otherUser;
@@ -708,4 +708,4 @@ describe("NFTPoolFactory", () => {
       expect(distribution[3]).to.equal(4);
     });
   });
-});*/
+});

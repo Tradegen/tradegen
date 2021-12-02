@@ -30,7 +30,7 @@ const TradegenLPStakingRewardsAddress = "";
 const TradegenStakingEscrowAddress = "";
 const TradegenStakingRewardsAddress = "";
 const MarketplaceAddress = "0xF59CF0Cc65a80143672B7ff2c3F51eDEdD73A442";
-const NFTPoolFactoryAddress = "0xF19087B456E53a99C400E6692df2e8b28c1a1d5F";
+const NFTPoolFactoryAddress = "0xabD104da77bdD63175A4172715Dffb2b98E24251";
 
 const UBESWAP_POOL_MANAGER = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 const UNISWAP_V2_FACTORY = "0x62d5b84be28a183abb507e125b384122d2c25fae";
@@ -97,12 +97,6 @@ async function initializeAddressResolverCoreContracts() {
     await tx3.wait();
 
     console.log("set contracts");*/
-
-    let tx = await addressResolver.setContractAddress("AssetHandler", AssetHandlerAddress);
-    await tx.wait();
-
-    let tx2 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
-    await tx2.wait();
     /*
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
@@ -417,14 +411,14 @@ initializeAddressResolverTokenContracts()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 initializeAssetHandler()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeSettingsCoreContracts()
   .then(() => process.exit(0))
@@ -438,14 +432,14 @@ initializeSettingsTokenContracts()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 
 initializeMarketplace()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 /*
 initializeTradegenStakingRewards()
   .then(() => process.exit(0))

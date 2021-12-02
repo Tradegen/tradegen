@@ -54,12 +54,12 @@ async function deployCoreContracts() {
   let ubeswapFarmVerifier = await UbeswapFarmVerifierFactory.deploy();
   await ubeswapFarmVerifier.deployed();
   let ubeswapFarmVerifierAddress = ubeswapFarmVerifier.address;
-  console.log("UbeswapFarmVerifier: " + ubeswapFarmVerifierAddress);*/
+  console.log("UbeswapFarmVerifier: " + ubeswapFarmVerifierAddress);
 
   let assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
   await assetHandler.deployed();
   let assetHandlerAddress = assetHandler.address;
-  console.log("AssetHandler: " + assetHandlerAddress);
+  console.log("AssetHandler: " + assetHandlerAddress);*/
   /*
   let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
   await baseUbeswapAdapter.deployed();
