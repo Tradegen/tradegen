@@ -8,6 +8,7 @@ import './interfaces/Ubeswap/IUniswapV2Router02.sol';
 import './interfaces/IERC20.sol';
 import './interfaces/IAssetHandler.sol';
 import './interfaces/IAddressResolver.sol';
+import './interfaces/IUbeswapPathManager.sol';
 import './interfaces/Ubeswap/IUbeswapPoolManager.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 import './interfaces/Ubeswap/IUniswapV2Factory.sol';
@@ -34,7 +35,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Given an input asset address, returns the price of the asset in cUSD
+    * @dev Given an input asset address, returns the price of the asset in USD
     * @param currencyKey Address of the asset
     * @return uint Price of the asset
     */
@@ -43,7 +44,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         address ubeswapRouterAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapRouter");
         address stableCoinAddress = IAssetHandler(assetHandlerAddress).getStableCoinAddress();
 
-        //Check if currency key is cUSD
+        //Check if currency key is stablecoin
         if (currencyKey == stableCoinAddress)
         {
             return 10 ** _getDecimals(currencyKey);
@@ -52,11 +53,9 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         require(currencyKey != address(0), "Invalid currency key");
         require(IAssetHandler(assetHandlerAddress).isValidAsset(currencyKey), "BaseUbeswapAdapter: Currency is not available");
 
-        address[] memory path = new address[](2);
-        path[0] = currencyKey;
-        path[1] = stableCoinAddress;
-
-        uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsOut(10 ** _getDecimals(currencyKey), path); // 1 token -> cUSD
+        address ubeswapPathManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPathManager");
+        address[] memory path = IUbeswapPathManager(ubeswapPathManagerAddress).getPath(currencyKey, stableCoinAddress);
+        uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsOut(10 ** _getDecimals(currencyKey), path); // 1 token -> USD
 
         return amounts[1];
     }
@@ -80,9 +79,8 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         require(IAssetHandler(assetHandlerAddress).isValidAsset(currencyKeyOut) || currencyKeyOut == stableCoinAddress, "BaseUbeswapAdapter: CurrencyKeyOut is not available");
         require(numberOfTokens > 0, "Number of tokens must be greater than 0");
 
-        address[] memory path = new address[](2);
-        path[0] = currencyKeyIn;
-        path[1] = currencyKeyOut;
+        address ubeswapPathManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPathManager");
+        address[] memory path = IUbeswapPathManager(ubeswapPathManagerAddress).getPath(currencyKeyIn, currencyKeyOut);
         uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsOut(numberOfTokens, path);
 
         return amounts[1];
@@ -106,9 +104,8 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         require(IAssetHandler(assetHandlerAddress).isValidAsset(currencyKeyOut) || currencyKeyOut == stableCoinAddress, "BaseUbeswapAdapter: CurrencyKeyOut is not available");
         require(numberOfTokens > 0, "Number of tokens must be greater than 0");
 
-        address[] memory path = new address[](2);
-        path[0] = currencyKeyIn;
-        path[1] = currencyKeyOut;
+        address ubeswapPathManagerAddress = ADDRESS_RESOLVER.getContractAddress("UbeswapPathManager");
+        address[] memory path = IUbeswapPathManager(ubeswapPathManagerAddress).getPath(currencyKeyIn, currencyKeyOut);
         uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsIn(numberOfTokens, path);
 
         return amounts[1];

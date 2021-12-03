@@ -21,7 +21,7 @@ module.exports = {
     // only: [],
     // except: []
   },
-  defaultNetwork: "mainnet",
+  defaultNetwork: "alfajores",
   gasReporter: {
     enabled: process.env.REPORT_GAS ? true : false,
     currency: "USD"

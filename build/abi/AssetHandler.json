@@ -216,19 +216,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "cUSDAddress",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [
       {
         "internalType": "address",
@@ -425,6 +412,24 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "assetType",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "currencyKey",
+        "type": "address"
+      }
+    ],
+    "name": "removeCurrencyKey",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "renounceOwnership",
     "outputs": [],
@@ -435,13 +440,26 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "stableCoinAddress",
+        "name": "_stableCoinAddress",
         "type": "address"
       }
     ],
     "name": "setStableCoinAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "stableCoinAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

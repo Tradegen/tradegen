@@ -19,7 +19,7 @@ contract AssetHandler is IAssetHandler, Ownable {
 
     IAddressResolver public ADDRESS_RESOLVER;
 
-    address public cUSDAddress;
+    address public stableCoinAddress;
     mapping (address => uint) public assetTypes;
     mapping (uint => address) public assetTypeToPriceAggregator;
     mapping (uint => uint) public numberOfAvailableAssetsForType;
@@ -48,7 +48,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @return bool Whether the asset is supported
     */
     function isValidAsset(address asset) external view override isValidAddress(asset) returns (bool) {
-        return (assetTypes[asset] > 0 || asset == cUSDAddress);
+        return (assetTypes[asset] > 0 || asset == stableCoinAddress);
     }
 
     /**
@@ -75,7 +75,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     * @return address The stable coin address
     */
     function getStableCoinAddress() external view override returns(address) {
-        return cUSDAddress;
+        return stableCoinAddress;
     }
 
     /**
@@ -124,16 +124,16 @@ contract AssetHandler is IAssetHandler, Ownable {
 
     /* ========== RESTRICTED FUNCTIONS ========== */
 
-     /**
+    /**
     * @dev Sets the address of the stable coin
-    * @param stableCoinAddress The address of the stable coin
+    * @param _stableCoinAddress The address of the stable coin
     */
-    function setStableCoinAddress(address stableCoinAddress) external onlyOwner isValidAddress(stableCoinAddress) {
-        address oldAddress = cUSDAddress;
-        cUSDAddress = stableCoinAddress;
-        assetTypes[stableCoinAddress] = 1;
+    function setStableCoinAddress(address _stableCoinAddress) external onlyOwner isValidAddress(_stableCoinAddress) {
+        address oldAddress = stableCoinAddress;
+        stableCoinAddress = _stableCoinAddress;
+        assetTypes[_stableCoinAddress] = 1;
 
-        emit UpdatedStableCoinAddress(oldAddress, stableCoinAddress, block.timestamp);
+        emit UpdatedStableCoinAddress(oldAddress, _stableCoinAddress, block.timestamp);
     }
 
     /**
@@ -143,12 +143,44 @@ contract AssetHandler is IAssetHandler, Ownable {
     */
     function addCurrencyKey(uint assetType, address currencyKey) external onlyOwner isValidAddress(currencyKey) {
         require(assetType > 0, "AssetHandler: assetType must be greater than 0");
-        require(currencyKey != cUSDAddress, "AssetHandler: Cannot equal stable token address");
+        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address");
         require(assetTypes[currencyKey] == 0, "AssetHandler: Asset already exists");
 
         assetTypes[currencyKey] = assetType;
         availableAssetsForType[assetType][numberOfAvailableAssetsForType[assetType]] = currencyKey;
         numberOfAvailableAssetsForType[assetType] = numberOfAvailableAssetsForType[assetType].add(1);
+
+        emit AddedAsset(assetType, currencyKey, block.timestamp);
+    }
+
+    /**
+    * @dev Removes support for a currency
+    * @param assetType Type of the asset
+    * @param currencyKey The address of the asset to remove
+    */
+    function removeCurrencyKey(uint assetType, address currencyKey) external onlyOwner isValidAddress(currencyKey) {
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
+        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address");
+        require(assetTypes[currencyKey] > 0, "AssetHandler: Asset not found");
+
+        uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
+        uint index;
+        for (index = 1; index <= numberOfAssets; index++)
+        {
+            if (availableAssetsForType[assetType][index] == currencyKey) break;
+        }
+
+        require(index <= numberOfAssets, "AssetHandler: Index out of bounds");
+
+        //Move last element to the index of currency being removed
+        if (index < numberOfAssets)
+        {
+            availableAssetsForType[assetType][index] = availableAssetsForType[assetType][numberOfAssets];
+        }
+
+        delete availableAssetsForType[assetType][numberOfAssets];
+        delete assetTypes[currencyKey];
+        numberOfAvailableAssetsForType[assetType] = numberOfAvailableAssetsForType[assetType].sub(1);
 
         emit AddedAsset(assetType, currencyKey, block.timestamp);
     }
