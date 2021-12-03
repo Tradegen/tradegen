@@ -10,6 +10,7 @@ const NFTPoolFactoryABI = require('./build/abi/NFTPoolFactory');
 const TradegenStakingRewardsABI = require('./build/abi/TradegenStakingRewards');
 const BaseUbeswapAdapterABI = require('./build/abi/BaseUbeswapAdapter');
 const NFTPoolABI = require('./build/abi/NFTPool');
+const UbeswapPathManagerABI = require('./build/abi/UbeswapPathManager');
 
 //From contractAddressMainnet.txt
 const AddressResolverAddress = "0xd35dFfdd8E4C6e9F096a44b86f339e9066F9D357";
@@ -19,8 +20,8 @@ const ERC20VerifierAddress = "0xb27F7820694365e83536e3BfDF0c88e2E681F7d0";
 const UbeswapLPVerifierAddress = "0xBdCb0AD258185A89d1345E9e3FAfC48d15b766A9";
 const UbeswapRouterVerifierAddress = "0xD1e8F37D37A71e2a5Ee5d4EE8F1D2AA9cD33C4df";
 const UbeswapFarmVerifierAddress = "0xf025542A976E382111dFd95EcbbF5D7C1f2d34Be";
-const AssetHandlerAddress = "0xe8a66d9D52Bfd5E1d0D176E0706333A749D3026A";
-const BaseUbeswapAdapterAddress = "0xAD6DdC924f4C1b76a617cF64D711c75A44540dbd";
+const AssetHandlerAddress = "0xa14D08C5810E9C3ABb257199d9026cd5cE9bF856";
+const BaseUbeswapAdapterAddress = "0x4387A2F84e6448C3b9C6F1FeC8A111c5c7f4de51";
 const PoolFactoryAddress = "0xf3522C175F37e190582384F2F51fAc6c8934349A";
 const TradegenEscrowAddress = "";
 const ERC20PriceAggregatorAddress = "0x59190553bBE994FD79C79686588c519F3C79CdA8";
@@ -31,6 +32,7 @@ const TradegenStakingEscrowAddress = "";
 const TradegenStakingRewardsAddress = "";
 const MarketplaceAddress = "0xF59CF0Cc65a80143672B7ff2c3F51eDEdD73A442";
 const NFTPoolFactoryAddress = "0xabD104da77bdD63175A4172715Dffb2b98E24251";
+const UbeswapPathManagerAddress = "0x5c6B58B3F0B738fCD752AbD9AF1700c99dE62DEB";
 
 const UBESWAP_POOL_MANAGER = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 const UNISWAP_V2_FACTORY = "0x62d5b84be28a183abb507e125b384122d2c25fae";
@@ -105,6 +107,20 @@ async function initializeAddressResolverCoreContracts() {
     //Add contract verifier to AddressResolver
     await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);*/
 
+    let tx = await addressResolver.setContractAddress("BaseUbeswapAdapter", BaseUbeswapAdapterAddress);
+    let tx2 = await addressResolver.setContractAddress("AssetHandler", AssetHandlerAddress);
+    let tx3 = await addressResolver.setContractAddress("UbeswapPathManager", UbeswapPathManagerAddress);
+    await tx.wait();
+    await tx2.wait();
+    await tx3.wait();
+    const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
+    const address2 = await addressResolver.getContractAddress("AssetHandler");
+    const address3 = await addressResolver.getContractAddress("UbeswapPathManager");
+    console.log(address1);
+    console.log(address2);
+    console.log(address3);
+
+    /*
     //Check if addresses were set correctly
     const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
     const address2 = await addressResolver.getContractAddress("Settings");
@@ -137,7 +153,7 @@ async function initializeAddressResolverCoreContracts() {
     console.log(address13);
     console.log(address14);
     console.log(address15);
-    console.log(address16);
+    console.log(address16);*/
     
 }
 
@@ -186,37 +202,36 @@ async function initializeAssetHandler() {
     await assetHandler.addCurrencyKey(1, UBE_MAINNET);
     await assetHandler.addCurrencyKey(1, CELO_MAINNET);
     await assetHandler.addCurrencyKey(1, MOO_MAINNET);
-    await assetHandler.addCurrencyKey(1, cUSD_MAINNET);
-    await assetHandler.addCurrencyKey(1, cEUR_MAINNET);
-    await assetHandler.addCurrencyKey(1, mCELO_MAINNET);
+    //await assetHandler.addCurrencyKey(1, cUSD_MAINNET);
+    //await assetHandler.addCurrencyKey(1, cEUR_MAINNET);
+    //await assetHandler.addCurrencyKey(1, mCELO_MAINNET);
     await assetHandler.addCurrencyKey(1, WETH_MAINNET);
-    await assetHandler.addCurrencyKey(1, pCELO_MAINNET);
-    await assetHandler.addCurrencyKey(1, DAI_MAINNET);
+    //await assetHandler.addCurrencyKey(1, pCELO_MAINNET);
+    //await assetHandler.addCurrencyKey(1, DAI_MAINNET);
     await assetHandler.addCurrencyKey(1, mcEUR_MAINNET);
-    await assetHandler.addCurrencyKey(1, LAPIS_MAINNET);
-    await assetHandler.addCurrencyKey(1, SUSHI_MAINNET);
+    //await assetHandler.addCurrencyKey(1, LAPIS_MAINNET);
+    //await assetHandler.addCurrencyKey(1, SUSHI_MAINNET);
     await assetHandler.addCurrencyKey(1, WBTC_MAINNET);
-    await assetHandler.addCurrencyKey(1, pUSD_MAINNET);
-    await assetHandler.addCurrencyKey(1, USDT_MAINNET);
-    await assetHandler.addCurrencyKey(1, KNX_MAINNET);
-    await assetHandler.addCurrencyKey(1, mcUSD_MAINNET);
-    await assetHandler.addCurrencyKey(1, cXOF_MAINNET);
-    await assetHandler.addCurrencyKey(1, SYMM_MAINNET);
-    await assetHandler.addCurrencyKey(1, MOBI_MAINNET);
-    await assetHandler.addCurrencyKey(1, pEUR_MAINNET);
-    await assetHandler.addCurrencyKey(1, AAVE_MAINNET);
-    await assetHandler.addCurrencyKey(1, SBR_MAINNET);
-    await assetHandler.addCurrencyKey(1, cSTAR_MAINNET);
+    //await assetHandler.addCurrencyKey(1, pUSD_MAINNET);
+    //await assetHandler.addCurrencyKey(1, USDT_MAINNET);
+    //await assetHandler.addCurrencyKey(1, KNX_MAINNET);
+    //await assetHandler.addCurrencyKey(1, cXOF_MAINNET);
+    //await assetHandler.addCurrencyKey(1, SYMM_MAINNET);
+    ///await assetHandler.addCurrencyKey(1, MOBI_MAINNET);
+    //await assetHandler.addCurrencyKey(1, pEUR_MAINNET);
+    //await assetHandler.addCurrencyKey(1, AAVE_MAINNET);
+    //await assetHandler.addCurrencyKey(1, SBR_MAINNET);
+    //await assetHandler.addCurrencyKey(1, cSTAR_MAINNET);
     await assetHandler.addCurrencyKey(1, cMCO2_MAINNET);
-    await assetHandler.addCurrencyKey(1, sCELO_MAINNET);
-    await assetHandler.addCurrencyKey(1, rCELO_MAINNET);
+    //await assetHandler.addCurrencyKey(1, sCELO_MAINNET);
+    //await assetHandler.addCurrencyKey(1, rCELO_MAINNET);
     await assetHandler.addCurrencyKey(1, SOL_MAINNET);
-    await assetHandler.addCurrencyKey(1, CRV_MAINNET);
+    //await assetHandler.addCurrencyKey(1, CRV_MAINNET);
     await assetHandler.addCurrencyKey(1, POOF_MAINNET);
     //await assetHandler.addCurrencyKey(2, CELO_cUSD);
 
     //Set stablecoin address
-    await assetHandler.setStableCoinAddress(cUSD_MAINNET);*/
+    await assetHandler.setStableCoinAddress(mcUSD_MAINNET);*/
     
     //Check if contract was initialized correctly
     const assetsForType1 = await assetHandler.getAvailableAssetsForType(1);
@@ -229,6 +244,85 @@ async function initializeAssetHandler() {
     console.log(assetsForType2);
     console.log(priceAggregator1);
     console.log(priceAggregator2);
+}
+
+async function initializeUbeswapPathManager() {
+  const signers = await ethers.getSigners();
+  deployer = signers[0];
+  
+  let pathManager = new ethers.Contract(UbeswapPathManagerAddress, UbeswapPathManagerABI, deployer);
+
+  //Set forward paths
+  let tx = await pathManager.setPath(mcUSD_MAINNET, UBE_MAINNET, [mcUSD_MAINNET, CELO_MAINNET, UBE_MAINNET]);
+  let tx2 = await pathManager.setPath(mcUSD_MAINNET, CELO_MAINNET, [mcUSD_MAINNET, CELO_MAINNET]);
+  let tx3 = await pathManager.setPath(mcUSD_MAINNET, WBTC_MAINNET, [mcUSD_MAINNET, WBTC_MAINNET]);
+  let tx4 = await pathManager.setPath(mcUSD_MAINNET, cMCO2_MAINNET, [mcUSD_MAINNET, CELO_MAINNET, UBE_MAINNET, cMCO2_MAINNET]);
+  let tx5 = await pathManager.setPath(mcUSD_MAINNET, WETH_MAINNET, [mcUSD_MAINNET, WETH_MAINNET]);
+  let tx6 = await pathManager.setPath(mcUSD_MAINNET, POOF_MAINNET, [mcUSD_MAINNET, CELO_MAINNET, UBE_MAINNET, POOF_MAINNET]);
+  let tx7 = await pathManager.setPath(mcUSD_MAINNET, MOO_MAINNET, [mcUSD_MAINNET, CELO_MAINNET, MOO_MAINNET]);
+  let tx8 = await pathManager.setPath(mcUSD_MAINNET, SOL_MAINNET, [mcUSD_MAINNET, CELO_MAINNET, SOL_MAINNET]);
+  await tx.wait();
+  await tx2.wait();
+  await tx3.wait();
+  await tx4.wait();
+  await tx5.wait();
+  await tx6.wait();
+  await tx7.wait();
+  await tx8.wait();
+
+  //Set backward paths
+  let tx9 = await pathManager.setPath(UBE_MAINNET, mcUSD_MAINNET, [UBE_MAINNET, CELO_MAINNET, mcUSD_MAINNET]);
+  let tx10 = await pathManager.setPath(CELO_MAINNET, mcUSD_MAINNET, [CELO_MAINNET, mcUSD_MAINNET]);
+  let tx11 = await pathManager.setPath(WBTC_MAINNET, mcUSD_MAINNET, [WBTC_MAINNET, mcUSD_MAINNET]);
+  let tx12 = await pathManager.setPath(cMCO2_MAINNET, mcUSD_MAINNET, [cMCO2_MAINNET, UBE_MAINNET, CELO_MAINNET, mcUSD_MAINNET]);
+  let tx13 = await pathManager.setPath(WETH_MAINNET, mcUSD_MAINNET, [WETH_MAINNET, mcUSD_MAINNET]);
+  let tx14 = await pathManager.setPath(POOF_MAINNET, mcUSD_MAINNET, [POOF_MAINNET, UBE_MAINNET, CELO_MAINNET, mcUSD_MAINNET]);
+  let tx15 = await pathManager.setPath(MOO_MAINNET, mcUSD_MAINNET, [MOO_MAINNET, CELO_MAINNET, mcUSD_MAINNET]);
+  let tx16 = await pathManager.setPath(SOL_MAINNET, mcUSD_MAINNET, [SOL_MAINNET, CELO_MAINNET, mcUSD_MAINNET]);
+  await tx9.wait();
+  await tx10.wait();
+  await tx11.wait();
+  await tx12.wait();
+  await tx13.wait();
+  await tx14.wait();
+  await tx15.wait();
+  await tx16.wait();
+  
+  //Check if forward paths were initialized correctly
+  let forwardPath1 = await pathManager.getPath(mcUSD_MAINNET, UBE_MAINNET);
+  let forwardPath2 = await pathManager.getPath(mcUSD_MAINNET, CELO_MAINNET);
+  let forwardPath3 = await pathManager.getPath(mcUSD_MAINNET, WBTC_MAINNET);
+  let forwardPath4 = await pathManager.getPath(mcUSD_MAINNET, cMCO2_MAINNET);
+  let forwardPath5 = await pathManager.getPath(mcUSD_MAINNET, WETH_MAINNET);
+  let forwardPath6 = await pathManager.getPath(mcUSD_MAINNET, POOF_MAINNET);
+  let forwardPath7 = await pathManager.getPath(mcUSD_MAINNET, MOO_MAINNET);
+  let forwardPath8 = await pathManager.getPath(mcUSD_MAINNET, SOL_MAINNET);
+  console.log(forwardPath1);
+  console.log(forwardPath2);
+  console.log(forwardPath3);
+  console.log(forwardPath4);
+  console.log(forwardPath5);
+  console.log(forwardPath6);
+  console.log(forwardPath7);
+  console.log(forwardPath8);
+
+  //Check if backward paths were initialized correctly
+  let backwardPath1 = await pathManager.getPath(UBE_MAINNET, mcUSD_MAINNET);
+  let backwardPath2 = await pathManager.getPath(CELO_MAINNET, mcUSD_MAINNET);
+  let backwardPath3 = await pathManager.getPath(WBTC_MAINNET, mcUSD_MAINNET);
+  let backwardPath4 = await pathManager.getPath(cMCO2_MAINNET, mcUSD_MAINNET);
+  let backwardPath5 = await pathManager.getPath(WETH_MAINNET, mcUSD_MAINNET);
+  let backwardPath6 = await pathManager.getPath(POOF_MAINNET, mcUSD_MAINNET);
+  let backwardPath7 = await pathManager.getPath(MOO_MAINNET, mcUSD_MAINNET);
+  let backwardPath8 = await pathManager.getPath(SOL_MAINNET, mcUSD_MAINNET);
+  console.log(backwardPath1);
+  console.log(backwardPath2);
+  console.log(backwardPath3);
+  console.log(backwardPath4);
+  console.log(backwardPath5);
+  console.log(backwardPath6);
+  console.log(backwardPath7);
+  console.log(backwardPath8);
 }
 
 async function initializeSettingsCoreContracts() {
@@ -419,6 +513,12 @@ initializeAssetHandler()
     console.error(error)
     process.exit(1)
   });*/
+initializeUbeswapPathManager()
+  .then(() => process.exit(0))
+  .catch(error => {
+    console.error(error)
+    process.exit(1)
+  });
 /*
 initializeSettingsCoreContracts()
   .then(() => process.exit(0))
@@ -432,14 +532,14 @@ initializeSettingsTokenContracts()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 
 initializeMarketplace()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeTradegenStakingRewards()
   .then(() => process.exit(0))

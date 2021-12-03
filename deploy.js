@@ -28,6 +28,7 @@ async function deployCoreContracts() {
   let PoolFactoryFactory = await ethers.getContractFactory('PoolFactory');
   let NFTPoolFactoryFactory = await ethers.getContractFactory('NFTPoolFactory');
   let MarketplaceFactory = await ethers.getContractFactory('Marketplace');
+  let UbeswapPathManagerFactory = await ethers.getContractFactory('UbeswapPathManager');
 
   let addressResolverAddress = "0xd35dFfdd8E4C6e9F096a44b86f339e9066F9D357";
   /*
@@ -79,17 +80,32 @@ async function deployCoreContracts() {
   let ubeswapLPTokenPriceAggregator = await UbeswapLPTokenPriceAggregatorFactory.deploy(addressResolverAddress);
   await ubeswapLPTokenPriceAggregator.deployed();
   let ubeswapLPTokenPriceAggregatorAddress = ubeswapLPTokenPriceAggregator.address;
-  console.log("UbeswapLPTokenPriceAggregator: " + ubeswapLPTokenPriceAggregatorAddress);*/
+  console.log("UbeswapLPTokenPriceAggregator: " + ubeswapLPTokenPriceAggregatorAddress);
 
   let NFTPoolFactoryContract = await NFTPoolFactoryFactory.deploy(addressResolverAddress);
   await NFTPoolFactoryContract.deployed();
   let NFTPoolFactoryAddress = NFTPoolFactoryContract.address;
   console.log("NFTPoolFactory: " + NFTPoolFactoryAddress);
-  /*
+  
   let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
   await marketplace.deployed();
   let marketplaceAddress = marketplace.address;
   console.log("Marketplace: " + marketplaceAddress);*/
+
+  let ubeswapPathManager = await UbeswapPathManagerFactory.deploy(addressResolverAddress);
+  await ubeswapPathManager.deployed();
+  let ubeswapPathManagerAddress = ubeswapPathManager.address;
+  console.log("UbeswapPathManager: " + ubeswapPathManagerAddress);
+
+  let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
+  await baseUbeswapAdapter.deployed();
+  let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
+  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);
+
+  let assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
+  await assetHandler.deployed();
+  let assetHandlerAddress = assetHandler.address;
+  console.log("AssetHandler: " + assetHandlerAddress);
 }
 
 async function deployTokenDependentContracts() {
