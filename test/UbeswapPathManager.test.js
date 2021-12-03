@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, CELO_cUSD } = require("./utils/addresses");
 const { ethers } = require("hardhat");
-
+/*
 describe("UbeswapPathManager", () => {
   let deployer;
   let otherUser;
@@ -88,4 +88,4 @@ describe("UbeswapPathManager", () => {
         expect(path[1]).to.equal(CELO);
     });
   });
-});
+});*/

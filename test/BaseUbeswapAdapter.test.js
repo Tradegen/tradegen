@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD, CELO_sCELO, VITALIK } = require("./utils/addresses");
-/*
+
 describe("BaseUbeswapAdapter", () => {
   let deployer;
   let otherUser;
@@ -18,8 +18,13 @@ describe("BaseUbeswapAdapter", () => {
   let baseUbeswapAdapterAddress;
   let BaseUbeswapAdapterFactory;
 
-  const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+  let ubeswapPathManager;
+  let ubeswapPathManagerAddress;
+  let UbeswapPathManagerFactory;
+
+  const mcUSD = "0x3a0EA4e0806805527C750AB9b34382642448468D";
   const CELO = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
+  const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
   before(async () => {
     const signers = await ethers.getSigners();
@@ -30,34 +35,35 @@ describe("BaseUbeswapAdapter", () => {
     BaseUbeswapAdapterFactory = await ethers.getContractFactory('BaseUbeswapAdapter');
     AssetHandlerFactory = await ethers.getContractFactory('AssetHandler');
     AddressResolverFactory = await ethers.getContractFactory('AddressResolver');
+    UbeswapPathManagerFactory = await ethers.getContractFactory('UbeswapPathManager');
 
     addressResolver = await AddressResolverFactory.deploy();
     await addressResolver.deployed();
     addressResolverAddress = addressResolver.address;
 
-    console.log(1);
-
     assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
     await assetHandler.deployed();
     assetHandlerAddress = assetHandler.address;
 
-    console.log(2);
+    ubeswapPathManager = await UbeswapPathManagerFactory.deploy(addressResolverAddress);
+    await ubeswapPathManager.deployed();
+    ubeswapPathManagerAddress = ubeswapPathManager.address;
 
-    let tx = await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
-    console.log(3);
-    let tx2 = await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
-    console.log(4);
-    let tx3 = await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
-    console.log(5);
-    let tx4 = await addressResolver.setContractAddress("AssetHandler", assetHandlerAddress);
-    console.log(6);
+    await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
+    await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
+    await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
+    let tx = await addressResolver.setContractAddress("AssetHandler", assetHandlerAddress);
+    let tx2 = await addressResolver.setContractAddress("UbeswapPathManager", ubeswapPathManagerAddress);
 
     // wait until the transaction is mined
-    await tx4.wait();
+    await tx.wait();
+    await tx2.wait();
 
     await assetHandler.setStableCoinAddress(cUSD);
-    console.log(7);
     await assetHandler.addCurrencyKey(1, CELO);
+
+    await ubeswapPathManager.setPath(cUSD, CELO, [cUSD, CELO]);
+    await ubeswapPathManager.setPath(CELO, cUSD, [CELO, cUSD]);
   });
 
   beforeEach(async () => {
@@ -67,7 +73,7 @@ describe("BaseUbeswapAdapter", () => {
   });
   
   describe("#getPrice", () => {
-    it("get price of cUSD", async () => {
+    it("get price of mcUSD", async () => {
         const price = await baseUbeswapAdapter.getPrice(cUSD);
 
         expect(price).to.equal(parseEther("1"));
@@ -89,7 +95,7 @@ describe("BaseUbeswapAdapter", () => {
 
   describe("#getAmountsOut", () => {
     it("get amounts out for CELO", async () => {
-        const amountsOut = await baseUbeswapAdapter.getAmountsOut(parseEther("1000"), CELO, cUSD);
+        const amountsOut = await baseUbeswapAdapter.getAmountsOut(parseEther("10"), CELO, cUSD);
 
         expect(amountsOut).to.be.gt(parseEther("1"));
     });
@@ -149,4 +155,3 @@ describe("BaseUbeswapAdapter", () => {
     });
   });
 });
-*/
