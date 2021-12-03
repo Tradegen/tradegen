@@ -165,24 +165,24 @@ contract AssetHandler is IAssetHandler, Ownable {
 
         uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
         uint index;
-        for (index = 1; index <= numberOfAssets; index++)
+        for (index = 0; index < numberOfAssets; index++)
         {
             if (availableAssetsForType[assetType][index] == currencyKey) break;
         }
 
-        require(index <= numberOfAssets, "AssetHandler: Index out of bounds");
+        require(index < numberOfAssets, "AssetHandler: Index out of bounds");
 
         //Move last element to the index of currency being removed
         if (index < numberOfAssets)
         {
-            availableAssetsForType[assetType][index] = availableAssetsForType[assetType][numberOfAssets];
+            availableAssetsForType[assetType][index] = availableAssetsForType[assetType][numberOfAssets.sub(1)];
         }
 
-        delete availableAssetsForType[assetType][numberOfAssets];
+        delete availableAssetsForType[assetType][numberOfAssets.sub(1)];
         delete assetTypes[currencyKey];
         numberOfAvailableAssetsForType[assetType] = numberOfAvailableAssetsForType[assetType].sub(1);
 
-        emit AddedAsset(assetType, currencyKey, block.timestamp);
+        emit RemovedAsset(assetType, currencyKey, block.timestamp);
     }
 
     /**
@@ -209,6 +209,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     /* ========== EVENTS ========== */
 
     event AddedAsset(uint assetType, address currencyKey, uint timestamp);
+    event RemovedAsset(uint assetType, address currencyKey, uint timestamp);
     event UpdatedStableCoinAddress(address oldAddress, address stableCurrencyAddress, uint timestamp);
     event AddedAssetType(uint assetType, address priceAggregator, uint timestamp); 
 }

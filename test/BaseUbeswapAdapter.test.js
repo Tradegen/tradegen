@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, UBESWAP_POOL_MANAGER, UNISWAP_V2_FACTORY, CELO_cUSD, CELO_sCELO, VITALIK } = require("./utils/addresses");
-
+/*
 describe("BaseUbeswapAdapter", () => {
   let deployer;
   let otherUser;
@@ -154,4 +154,4 @@ describe("BaseUbeswapAdapter", () => {
         expect(amounts[1]).to.be.gt(parseEther("0.01"));
     });
   });
-});
+});*/

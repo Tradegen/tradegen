@@ -2,7 +2,7 @@ const { expect } = require("chai");
 const { parseEther } = require("@ethersproject/units");
 const { UBESWAP_ROUTER, CELO_cUSD } = require("./utils/addresses");
 const { ethers } = require("hardhat");
-/*
+
 describe("AssetHandler", () => {
   let deployer;
   let otherUser;
@@ -29,10 +29,15 @@ describe("AssetHandler", () => {
 
   let ERC20Verifier;
   let ERC20VerifierAddress;
-  let ERC20VeriferFactory;
+  let ERC20VerifierFactory;
+
+  let ubeswapPathManager;
+  let ubeswapPathManagerAddress;
+  let UbeswapPathManagerFactory;
 
   const CELO = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
   const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+  const mcUSD = "0x3a0EA4e0806805527C750AB9b34382642448468D";
 
   before(async () => {
     const signers = await ethers.getSigners();
@@ -46,6 +51,7 @@ describe("AssetHandler", () => {
     ERC20PriceAggregatorFactory = await ethers.getContractFactory('ERC20PriceAggregator');
     ERC20VerifierFactory = await ethers.getContractFactory('ERC20Verifier');
     UbeswapLPTokenPriceAggregatorFactory = await ethers.getContractFactory('UbeswapLPTokenPriceAggregator');
+    UbeswapPathManagerFactory = await ethers.getContractFactory('UbeswapPathManager');
 
     addressResolver = await AddressResolverFactory.deploy();
     await addressResolver.deployed();
@@ -67,8 +73,13 @@ describe("AssetHandler", () => {
     await ERC20Verifier.deployed();
     ERC20VerifierAddress = ERC20Verifier.address;
 
+    ubeswapPathManager = await UbeswapPathManagerFactory.deploy(addressResolverAddress);
+    await ubeswapPathManager.deployed();
+    ubeswapPathManagerAddress = ubeswapPathManager.address;
+
     await addressResolver.setContractAddress("BaseUbeswapAdapter", baseUbeswapAdapterAddress);
     await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
+    await addressResolver.setContractAddress("UbeswapPathManager", ubeswapPathManagerAddress);
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
   });
 
@@ -126,6 +137,56 @@ describe("AssetHandler", () => {
     });
   });
 
+  describe("#removeCurrencyKey", () => {
+    it("onlyOwner", async () => {
+      let tx = await assetHandler.addCurrencyKey(1, CELO);
+      await tx.wait();
+
+      let tx2 = await assetHandler.connect(otherUser).removeCurrencyKey(1, CELO);
+      await expect(tx2.wait()).to.be.reverted;
+    });
+
+    it("assetExists", async () => {
+      let tx = await assetHandler.removeCurrencyKey(1, CELO);
+      await expect(tx.wait()).to.be.reverted;
+    });
+    
+    it('remove one ERC20 asset from end', async () => {
+      let tx = await assetHandler.addCurrencyKey(1, CELO);
+      await tx.wait();
+
+      let tx2 = await assetHandler.removeCurrencyKey(1, CELO);
+      await tx2.wait();
+
+      const assets = await assetHandler.getAvailableAssetsForType(1);
+      expect(assets.length).to.equal(0);
+
+      const isValid = await assetHandler.isValidAsset(CELO);
+      expect(isValid).to.be.false;
+    });
+
+    it('remove one ERC20 asset from start', async () => {
+      let tx = await assetHandler.addCurrencyKey(1, CELO);
+      await tx.wait();
+
+      let tx2 = await assetHandler.addCurrencyKey(1, mcUSD);
+      await tx2.wait();
+
+      let tx3 = await assetHandler.removeCurrencyKey(1, CELO);
+      await tx3.wait();
+
+      const assets = await assetHandler.getAvailableAssetsForType(1);
+      expect(assets.length).to.equal(1);
+      expect(assets[0]).to.equal(mcUSD);
+
+      const isValid = await assetHandler.isValidAsset(CELO);
+      expect(isValid).to.be.false;
+
+      const isValid2 = await assetHandler.isValidAsset(mcUSD);
+      expect(isValid2).to.be.true;
+    });
+  });
+  
   describe("#addAssetType", () => {
     it("onlyOwner", async () => {
       let tx = await assetHandler.connect(otherUser).addAssetType(1, ERC20PriceAggregatorAddress);
@@ -148,6 +209,11 @@ describe("AssetHandler", () => {
 
       let tx3 = await assetHandler.setStableCoinAddress(cUSD);
       await tx3.wait();
+
+      let tx4 = await ubeswapPathManager.setPath(cUSD, CELO, [cUSD, CELO]);
+      let tx5 = await ubeswapPathManager.setPath(CELO, cUSD, [CELO, cUSD]);
+      await tx4.wait();
+      await tx5.wait();
 
       const price = await assetHandler.getUSDPrice(CELO);
       expect(price).to.be.gt(parseEther("0.01"));
@@ -172,4 +238,4 @@ describe("AssetHandler", () => {
       console.log(price);
     });
   });
-});*/
+});
