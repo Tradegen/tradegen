@@ -90,22 +90,22 @@ async function deployCoreContracts() {
   let marketplace = await MarketplaceFactory.deploy(addressResolverAddress);
   await marketplace.deployed();
   let marketplaceAddress = marketplace.address;
-  console.log("Marketplace: " + marketplaceAddress);*/
+  console.log("Marketplace: " + marketplaceAddress);
 
   let ubeswapPathManager = await UbeswapPathManagerFactory.deploy(addressResolverAddress);
   await ubeswapPathManager.deployed();
   let ubeswapPathManagerAddress = ubeswapPathManager.address;
   console.log("UbeswapPathManager: " + ubeswapPathManagerAddress);
 
+  let poolFactoryContract = await PoolFactoryFactory.deploy(addressResolverAddress);
+  await poolFactoryContract.deployed();
+  let poolFactoryAddress = poolFactoryContract.address;
+  console.log("PoolFactory: " + poolFactoryAddress);*/
+
   let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
   await baseUbeswapAdapter.deployed();
   let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
   console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);
-
-  let assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
-  await assetHandler.deployed();
-  let assetHandlerAddress = assetHandler.address;
-  console.log("AssetHandler: " + assetHandlerAddress);
 }
 
 async function deployTokenDependentContracts() {

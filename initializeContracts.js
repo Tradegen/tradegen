@@ -21,8 +21,8 @@ const UbeswapLPVerifierAddress = "0xBdCb0AD258185A89d1345E9e3FAfC48d15b766A9";
 const UbeswapRouterVerifierAddress = "0xD1e8F37D37A71e2a5Ee5d4EE8F1D2AA9cD33C4df";
 const UbeswapFarmVerifierAddress = "0xf025542A976E382111dFd95EcbbF5D7C1f2d34Be";
 const AssetHandlerAddress = "0xa14D08C5810E9C3ABb257199d9026cd5cE9bF856";
-const BaseUbeswapAdapterAddress = "0x4387A2F84e6448C3b9C6F1FeC8A111c5c7f4de51";
-const PoolFactoryAddress = "0xf3522C175F37e190582384F2F51fAc6c8934349A";
+const BaseUbeswapAdapterAddress = "0xFD90899a01E3A95dB700ab2C2E7CBf62DE5e7630";
+const PoolFactoryAddress = "0x0a0B2FD95d579A91FdCdE3367D0DE01169988232";
 const TradegenEscrowAddress = "";
 const ERC20PriceAggregatorAddress = "0x59190553bBE994FD79C79686588c519F3C79CdA8";
 const UbeswapLPTokenPriceAggregatorAddress = "0x620944345d7A7f792aC22947aFBB5567ae231B46";
@@ -31,7 +31,7 @@ const TradegenLPStakingRewardsAddress = "";
 const TradegenStakingEscrowAddress = "";
 const TradegenStakingRewardsAddress = "";
 const MarketplaceAddress = "0xF59CF0Cc65a80143672B7ff2c3F51eDEdD73A442";
-const NFTPoolFactoryAddress = "0xabD104da77bdD63175A4172715Dffb2b98E24251";
+const NFTPoolFactoryAddress = "0xa01282250d1A983301Aa9797e41e6054b8149a43";
 const UbeswapPathManagerAddress = "0x5c6B58B3F0B738fCD752AbD9AF1700c99dE62DEB";
 
 const UBESWAP_POOL_MANAGER = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
@@ -90,6 +90,7 @@ async function initializeAddressResolverCoreContracts() {
     await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
     await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
     await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
+    await addressResolver.setContractAddress("UbeswapPathManager", UbeswapPathManagerAddress);
     let tx = await addressResolver.setContractAddress("Marketplace", MarketplaceAddress);
     let tx2 = await addressResolver.setContractAddress("NFTPoolFactory", NFTPoolFactoryAddress);
     await tx.wait();
@@ -108,17 +109,9 @@ async function initializeAddressResolverCoreContracts() {
     await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);*/
 
     let tx = await addressResolver.setContractAddress("BaseUbeswapAdapter", BaseUbeswapAdapterAddress);
-    let tx2 = await addressResolver.setContractAddress("AssetHandler", AssetHandlerAddress);
-    let tx3 = await addressResolver.setContractAddress("UbeswapPathManager", UbeswapPathManagerAddress);
     await tx.wait();
-    await tx2.wait();
-    await tx3.wait();
     const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
-    const address2 = await addressResolver.getContractAddress("AssetHandler");
-    const address3 = await addressResolver.getContractAddress("UbeswapPathManager");
     console.log(address1);
-    console.log(address2);
-    console.log(address3);
 
     /*
     //Check if addresses were set correctly
@@ -428,13 +421,13 @@ async function createFirstPools() {
   
   let poolFactory = new ethers.Contract(PoolFactoryAddress, PoolFactoryABI, deployer);
   let NFTPoolFactory = new ethers.Contract(NFTPoolFactoryAddress, NFTPoolFactoryABI, deployer);
-  
+  /*
   //Create pool
   let tx = await poolFactory.createPool("UBE holder", 1000);
-  await tx.wait();
+  await tx.wait();*/
 
   //Create NFT pool
-  let tx2 = await NFTPoolFactory.createPool("CELO pool", 100, parseEther("0.5"));
+  let tx2 = await NFTPoolFactory.createPool("mcUSD pool", 100, parseEther("0.5"));
   await tx2.wait();
 
   const availablePools = await poolFactory.getAvailablePools();
@@ -492,13 +485,13 @@ async function setFarmAddress() {
   console.log(farm);
 }
 
-/*
+
 initializeAddressResolverCoreContracts()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 /*
 initializeAddressResolverTokenContracts()
   .then(() => process.exit(0))
@@ -512,13 +505,13 @@ initializeAssetHandler()
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });*/
+  });
 initializeUbeswapPathManager()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-  });
+  });*/
 /*
 initializeSettingsCoreContracts()
   .then(() => process.exit(0))
@@ -553,15 +546,15 @@ getTGEN_cUSD()
   .catch(error => {
     console.error(error)
     process.exit(1)
-});*/
-/*
+});
+
 createFirstPools()
   .then(() => process.exit(0))
   .catch(error => {
     console.error(error)
     process.exit(1)
-});
-
+});*/
+/*
 setFarmAddress()
   .then(() => process.exit(0))
   .catch(error => {

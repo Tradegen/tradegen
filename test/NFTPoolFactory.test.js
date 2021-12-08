@@ -8,7 +8,7 @@ require("dotenv/config");
 
 const web3 = new Web3('https://alfajores-forno.celo-testnet.org');
 const kit = ContractKit.newKitFromWeb3(web3);
-/*
+
 describe("NFTPoolFactory", () => {
   let deployer;
   let otherUser;
@@ -49,7 +49,12 @@ describe("NFTPoolFactory", () => {
   let poolAddress;
   let PoolFactory;
 
+  let ubeswapPathManager;
+  let ubeswapPathManagerAddress;
+  let UbeswapPathManagerFactory;
+
   const cUSD = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
+  const CELO = "0xF194afDf50B03e69Bd7D057c1Aa9e10c9954E4C9";
   
   before(async () => {
     const signers = await ethers.getSigners();
@@ -66,6 +71,7 @@ describe("NFTPoolFactory", () => {
     ERC20PriceAggregatorFactory = await ethers.getContractFactory('ERC20PriceAggregator');
     PoolFactoryFactory = await ethers.getContractFactory('NFTPoolFactory');
     PoolFactory = await ethers.getContractFactory('NFTPool');
+    UbeswapPathManagerFactory = await ethers.getContractFactory('UbeswapPathManager');
 
     addressResolver = await AddressResolverFactory.deploy();
     await addressResolver.deployed();
@@ -91,6 +97,10 @@ describe("NFTPoolFactory", () => {
     await ERC20Verifier.deployed();
     ERC20VerifierAddress = ERC20Verifier.address;
 
+    ubeswapPathManager = await UbeswapPathManagerFactory.deploy(addressResolverAddress);
+    await ubeswapPathManager.deployed();
+    ubeswapPathManagerAddress = ubeswapPathManager.address;
+
     //Initialize contract addresses in AddressResolver
     await addressResolver.setContractAddress("BaseUbeswapAdapter", baseUbeswapAdapterAddress);
     await addressResolver.setContractAddress("Settings", settingsAddress);
@@ -98,6 +108,7 @@ describe("NFTPoolFactory", () => {
     await addressResolver.setContractAddress("UbeswapRouter", UBESWAP_ROUTER);
     await addressResolver.setContractAddress("UbeswapPoolManager", UBESWAP_POOL_MANAGER);
     await addressResolver.setContractAddress("UniswapV2Factory", UNISWAP_V2_FACTORY);
+    await addressResolver.setContractAddress("UbeswapPathManager", ubeswapPathManagerAddress);
 
     //Add asset verifiers to AddressResolver
     await addressResolver.setAssetVerifier(1, ERC20VerifierAddress);
@@ -107,6 +118,8 @@ describe("NFTPoolFactory", () => {
 
     //Set stablecoin address
     await assetHandler.setStableCoinAddress(cUSD);
+
+    await assetHandler.addCurrencyKey(1, CELO);
 
     //Set parameter values in Settings contract
     await settings.setParameterValue("MarketplaceProtocolFee", 100);
@@ -122,6 +135,16 @@ describe("NFTPoolFactory", () => {
     await tx3.wait();
     await tx4.wait();
     await tx5.wait();
+
+    console.log(1);
+
+    let tx6 = await ubeswapPathManager.setPath(cUSD, CELO, [cUSD, CELO]);
+    let tx7 = await ubeswapPathManager.setPath(CELO, cUSD, [CELO, cUSD]);
+
+    console.log(2);
+
+    await tx6.wait();
+    await tx7.wait();
   });
   
   describe("#createPool (NFTPoolFactory)", () => {
@@ -708,4 +731,4 @@ describe("NFTPoolFactory", () => {
       expect(distribution[3]).to.equal(4);
     });
   });
-});*/
+});

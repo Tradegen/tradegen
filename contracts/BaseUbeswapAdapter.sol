@@ -57,7 +57,7 @@ contract BaseUbeswapAdapter is IBaseUbeswapAdapter {
         address[] memory path = IUbeswapPathManager(ubeswapPathManagerAddress).getPath(currencyKey, stableCoinAddress);
         uint[] memory amounts = IUniswapV2Router02(ubeswapRouterAddress).getAmountsOut(10 ** _getDecimals(currencyKey), path); // 1 token -> USD
 
-        return amounts[1];
+        return amounts[amounts.length - 1];
     }
 
     /**
