@@ -325,16 +325,15 @@ async function initializeSettingsCoreContracts() {
     let settings = new ethers.Contract(SettingsAddress, SettingsABI, deployer);
     /*
     //Set parameter values in Settings contract
-    let tx1 = await settings.setParameterValue("TransactionFee", 30);
-    let tx2 = await settings.setParameterValue("MaximumPerformanceFee", 3000);
-    let tx3 = await settings.setParameterValue("MaximumNumberOfPositionsInPool", 6);
-    let tx4 = await settings.setParameterValue("MarketplaceProtocolFee", 100);
-    let tx5 = await settings.setParameterValue("MarketplaceAssetManagerFee", 200);
-    let tx6 = await settings.setParameterValue("MaximumNumberOfNFTPoolTokens", 1000000);
-    let tx7 = await settings.setParameterValue("MinimumNumberOfNFTPoolTokens", 10);
-    let tx8 = await settings.setParameterValue("MaximumNFTPoolSeedPrice", parseEther("1000"));
-    let tx9 = await settings.setParameterValue("MinimumNFTPoolSeedPrice", parseEther("0.1"));
-    let tx10 = await settings.setParameterValue("MaximumNumberOfPoolsPerUser", 2);
+    let tx1 = await settings.setParameterValue("MaximumPerformanceFee", 3000);
+    let tx2 = await settings.setParameterValue("MaximumNumberOfPositionsInPool", 6);
+    let tx3 = await settings.setParameterValue("MarketplaceProtocolFee", 100);
+    let tx4 = await settings.setParameterValue("MarketplaceAssetManagerFee", 200);
+    let tx5 = await settings.setParameterValue("MaximumNumberOfNFTPoolTokens", 1000000);
+    let tx6 = await settings.setParameterValue("MinimumNumberOfNFTPoolTokens", 10);
+    let tx7 = await settings.setParameterValue("MaximumNFTPoolSeedPrice", parseEther("1000"));
+    let tx8 = await settings.setParameterValue("MinimumNFTPoolSeedPrice", parseEther("0.1"));
+    let tx9 = await settings.setParameterValue("MaximumNumberOfPoolsPerUser", 2);
     await tx1.wait();
     await tx2.wait();
     await tx3.wait();
@@ -344,12 +343,11 @@ async function initializeSettingsCoreContracts() {
     await tx7.wait();
     await tx8.wait();
     await tx9.wait();
-    await tx10.wait();
 
     console.log("set parameters");*/
 
     //Check if parameters were set correctly
-    const param1 = await settings.getParameterValue("TransactionFee");
+    const param1 = await settings.getParameterValue("MaximumNumberOfPoolsPerUser");
     const param2 = await settings.getParameterValue("MaximumPerformanceFee");
     const param3 = await settings.getParameterValue("MaximumNumberOfPositionsInPool");
     const param4 = await settings.getParameterValue("MarketplaceProtocolFee");
@@ -358,7 +356,6 @@ async function initializeSettingsCoreContracts() {
     const param7 = await settings.getParameterValue("MinimumNumberOfNFTPoolTokens");
     const param8 = await settings.getParameterValue("MaximumNFTPoolSeedPrice");
     const param9 = await settings.getParameterValue("MinimumNFTPoolSeedPrice");
-    const param10 = await settings.getParameterValue("MaximumNumberOfPoolsPerUser");
     console.log(param1);
     console.log(param2);
     console.log(param3);
@@ -368,7 +365,6 @@ async function initializeSettingsCoreContracts() {
     console.log(param7);
     console.log(param8);
     console.log(param9);
-    console.log(param10);
 }
 
 async function initializeSettingsTokenContracts() {

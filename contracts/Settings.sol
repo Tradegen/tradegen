@@ -13,24 +13,9 @@ contract Settings is ISettings, Ownable {
 
     /**
     * @notice Initial parameters and values:
-    *         WeeklyLPStakingRewards - 500,000 TGEN; 
-    *         WeeklyStakingFarmRewards - 500,000 TGEN; 
-    *         WeeklyStableCoinStakingRewards - 500,000 TGEN;
-    *         WeeklyStakingRewards - 500,000 TGEN; 
-    *         TransactionFee - 0.3%; (30 / 1000)
-    *         VoteLimit - 10;
-    *         VotingReward - 3 TGEN;
-    *         StrategyApprovalThreshold - 80%;
-    *         MaximumNumberOfEntryRules - 7;
-    *         MaximumNumberOfExitRules - 7;
     *         MaximumNumberOfPoolsPerUser - 2;
     *         MaximumPerformanceFee - 30% (3000 / 10000);
     *         MaximumNumberOfPositionsInPool - 6;
-    *         InterestRateOnLeveragedAssets - 4%;
-    *         InterestRateOnLeveragedLiquidityPositions - 3%;
-    *         LiquidationFee - 5%;
-    *         TargetInsuranceFundAllocation - 50,000,000 TGEN;
-    *         UBEKeeperReward - 0.1%;
     *         MarketplaceProtocolFee - 1% (100 / 10000)
     *         MarketplaceAssetManagerFee - 2% (200 / 10000)
     *         MaximumNumberOfNFTPoolTokens - 1,000,000
