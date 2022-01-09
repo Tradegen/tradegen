@@ -33,6 +33,7 @@ const TradegenStakingRewardsAddress = "";
 const MarketplaceAddress = "0xF59CF0Cc65a80143672B7ff2c3F51eDEdD73A442";
 const NFTPoolFactoryAddress = "0xa01282250d1A983301Aa9797e41e6054b8149a43";
 const UbeswapPathManagerAddress = "0x5c6B58B3F0B738fCD752AbD9AF1700c99dE62DEB";
+const TimelockAddress = "0x12a5A8Ace1452a567016Ff34722C408DcCBb0687";
 
 const UBESWAP_POOL_MANAGER = "0x9Ee3600543eCcc85020D6bc77EB553d1747a65D2";
 const UNISWAP_V2_FACTORY = "0x62d5b84be28a183abb507e125b384122d2c25fae";
@@ -99,6 +100,9 @@ async function initializeAddressResolverCoreContracts() {
     let tx3 = await addressResolver.setContractAddress("Operator", deployer.address);
     await tx3.wait();
 
+    let tx4 = await addressResolver.setContractAddress("Treasury", TimelockAddress);
+    await tx4.wait();
+
     console.log("set contracts");*/
     /*
     //Add asset verifiers to AddressResolver
@@ -108,9 +112,7 @@ async function initializeAddressResolverCoreContracts() {
     //Add contract verifier to AddressResolver
     await addressResolver.setContractVerifier(UBESWAP_ROUTER, UbeswapRouterVerifierAddress);*/
 
-    let tx = await addressResolver.setContractAddress("BaseUbeswapAdapter", BaseUbeswapAdapterAddress);
-    await tx.wait();
-    const address1 = await addressResolver.getContractAddress("BaseUbeswapAdapter");
+    const address1 = await addressResolver.getContractAddress("Treasury");
     console.log(address1);
 
     /*
