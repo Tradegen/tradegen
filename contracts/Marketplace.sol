@@ -23,9 +23,9 @@ contract Marketplace is IMarketplace, Ownable {
 
     IAddressResolver public immutable ADDRESS_RESOLVER;
 
-    mapping (uint => MarketplaceListing) public marketplaceListings; //starts at index 1
+    mapping (uint => MarketplaceListing) public marketplaceListings; //starts at index 1; increases without bounds
     uint public numberOfMarketplaceListings;
-    mapping (address => mapping (address => uint)) public userToListingIndex; //max 1 listing per user
+    mapping (address => mapping (address => uint)) public userToListingIndex; //max 1 listing per user per asset
 
     //Address of the asset's manager (used for sending manager's fee)
     //Set to asset's address if asset doesn't have manager (no manager fee in this case)

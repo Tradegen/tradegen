@@ -31,7 +31,7 @@ async function deployCoreContracts() {
   let UbeswapPathManagerFactory = await ethers.getContractFactory('UbeswapPathManager');
 
   let addressResolverAddress = "0xd35dFfdd8E4C6e9F096a44b86f339e9066F9D357";
-  /*
+  
   let settings = await SettingsFactory.deploy();
   await settings.deployed();
   let settingsAddress = settings.address;
@@ -60,8 +60,8 @@ async function deployCoreContracts() {
   let assetHandler = await AssetHandlerFactory.deploy(addressResolverAddress);
   await assetHandler.deployed();
   let assetHandlerAddress = assetHandler.address;
-  console.log("AssetHandler: " + assetHandlerAddress);*/
-  /*
+  console.log("AssetHandler: " + assetHandlerAddress);
+  
   let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
   await baseUbeswapAdapter.deployed();
   let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
@@ -96,16 +96,6 @@ async function deployCoreContracts() {
   await ubeswapPathManager.deployed();
   let ubeswapPathManagerAddress = ubeswapPathManager.address;
   console.log("UbeswapPathManager: " + ubeswapPathManagerAddress);
-
-  let poolFactoryContract = await PoolFactoryFactory.deploy(addressResolverAddress);
-  await poolFactoryContract.deployed();
-  let poolFactoryAddress = poolFactoryContract.address;
-  console.log("PoolFactory: " + poolFactoryAddress);*/
-
-  let baseUbeswapAdapter = await BaseUbeswapAdapterFactory.deploy(addressResolverAddress);
-  await baseUbeswapAdapter.deployed();
-  let baseUbeswapAdapterAddress = baseUbeswapAdapter.address;
-  console.log("BaseUbeswapAdapter: " + baseUbeswapAdapterAddress);
 }
 
 async function deployTokenDependentContracts() {
