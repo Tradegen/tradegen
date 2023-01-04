@@ -3,14 +3,17 @@
 pragma solidity >=0.6.12;
 
 library BytesLib {
+  /**
+  * @notice Slices '_length' bytes from the given bytes starting from the '_start' byte.
+  */
   function slice(
     bytes memory _bytes,
     uint256 _start,
     uint256 _length
   ) internal pure returns (bytes memory) {
-    require(_length + 31 >= _length, "slice_overflow");
-    require(_start + _length >= _start, "slice_overflow");
-    require(_bytes.length >= _start + _length, "slice_outOfBounds");
+    require(_length + 31 >= _length, "BytesLib: slice_overflow.");
+    require(_start + _length >= _start, "BytesLib: slice_overflow.");
+    require(_bytes.length >= _start + _length, "BytesLib: slice_outOfBounds.");
 
     bytes memory tempBytes;
 
@@ -51,15 +54,15 @@ library BytesLib {
 
           mstore(tempBytes, _length)
 
-          //update free-memory pointer
-          //allocating the array padded to 32 bytes like the compiler does now
+          // Update free-memory pointer
+          // allocating the array padded to 32 bytes like the compiler does now.
           mstore(0x40, and(add(mc, 31), not(31)))
         }
-        //if we want a zero-length slice let's just return a zero-length array
+        // If we want a zero-length slice let's just return a zero-length array.
         default {
           tempBytes := mload(0x40)
-          //zero out the 32 bytes slice we are about to return
-          //we need to do it because Solidity does not garbage collect
+          // Zero out the 32 bytes slice we are about to return.
+          // We need to do it because Solidity does not garbage collect.
           mstore(tempBytes, 0)
 
           mstore(0x40, add(tempBytes, 0x20))
@@ -69,11 +72,14 @@ library BytesLib {
     return tempBytes;
   }
 
+  /**
+  * @notice Converts the given bytes to an address.
+  */
   function toAddress(bytes memory _bytes, uint256 _start) internal pure returns (address) {
-    require(_start + 20 >= _start, "toAddress_overflow");
-    require(_bytes.length >= _start + 20, "toAddress_outOfBounds");
-    address tempAddress;
+    require(_start + 20 >= _start, "BytesLib: toAddress_overflow.");
+    require(_bytes.length >= _start + 20, "BytesLib: toAddress_outOfBounds.");
 
+    address tempAddress;
     assembly {
       tempAddress := div(mload(add(add(_bytes, 0x20), _start)), 0x1000000000000000000000000)
     }
@@ -81,11 +87,14 @@ library BytesLib {
     return tempAddress;
   }
 
+  /**
+  * @notice Converts the given bytes to a uint24.
+  */
   function toUint24(bytes memory _bytes, uint256 _start) internal pure returns (uint24) {
-    require(_start + 3 >= _start, "toUint24_overflow");
-    require(_bytes.length >= _start + 3, "toUint24_outOfBounds");
-    uint24 tempUint;
+    require(_start + 3 >= _start, "BytesLib: toUint24_overflow.");
+    require(_bytes.length >= _start + 3, "BytesLib: toUint24_outOfBounds.");
 
+    uint24 tempUint;
     assembly {
       tempUint := mload(add(add(_bytes, 0x3), _start))
     }

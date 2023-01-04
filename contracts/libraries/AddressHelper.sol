@@ -4,10 +4,10 @@ pragma solidity >=0.6.12;
 
 library AddressHelper {
   /**
-   * @notice try a contract call via assembly
-   * @param to the contract address
-   * @param data the call data
-   * @return success if the contract call is successful or not
+   * @notice try a contract call via assembly.
+   * @param to the contract address.
+   * @param data the call data.
+   * @return success if the contract call is successful or not.
    */
   function tryAssemblyCall(address to, bytes memory data) internal returns (bool success) {
     assembly {
@@ -22,10 +22,10 @@ library AddressHelper {
   }
 
   /**
-   * @notice try a contract delegatecall via assembly
-   * @param to the contract address
-   * @param data the call data
-   * @return success if the contract call is successful or not
+   * @notice try a contract delegatecall via assembly.
+   * @param to the contract address.
+   * @param data the call data.
+   * @return success if the contract call is successful or not.
    */
   function tryAssemblyDelegateCall(address to, bytes memory data) internal returns (bool success) {
     assembly {
