@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.3;
 
-//Libraries
+// Libraries.
 import "../openzeppelin-solidity/SafeMath.sol";
 import "../openzeppelin-solidity/SafeERC20.sol";
 
-// Inheritance
+// Inheritance.
 import "../Ownable.sol";
 import "../interfaces/ITradegenEscrow.sol";
 
@@ -14,7 +14,7 @@ contract TradegenEscrow is Ownable, ITradegenEscrow {
     using SafeMath for uint;
     using SafeERC20 for IERC20;
 
-    // TGEN
+    // TGEN.
     IERC20 public immutable VESTING_TOKEN;
 
     /* Lists of (timestamp, quantity) pairs per account, sorted in ascending time order.
