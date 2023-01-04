@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.3;
 
-//Interfaces
+// Interfaces.
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 
-//Inheritance
+// Inheritance.
 import './Ownable.sol';
 
-//Internal references
+// Internal references.
 import './Pool.sol';
 
 contract PoolFactory is Ownable {
@@ -17,7 +17,7 @@ contract PoolFactory is Ownable {
 
     address[] public pools;
     mapping (address => uint[]) public userToManagedPools;
-    mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
+    mapping (address => uint) public addressToIndex; // Maps to (index + 1); index 0 represents pool not found.
 
     constructor(IAddressResolver addressResolver) Ownable() {
         ADDRESS_RESOLVER = addressResolver;
@@ -26,12 +26,12 @@ contract PoolFactory is Ownable {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Returns the address of each pool the user manages
-    * @param user Address of the user
-    * @return address[] The address of each pool the user manages
+    * @notice Returns the address of each pool the user manages.
+    * @param user Address of the user.
+    * @return address[] The address of each pool the user manages.
     */
     function getUserManagedPools(address user) external view returns(address[] memory) {
-        require(user != address(0), "Invalid address");
+        require(user != address(0), "PoolFactory: Invalid address.");
 
         address[] memory addresses = new address[](userToManagedPools[user].length);
         uint[] memory indexes = userToManagedPools[user];
@@ -46,8 +46,8 @@ contract PoolFactory is Ownable {
     }
 
     /**
-    * @dev Returns the address of each available pool
-    * @return address[] The address of each available pool
+    * @notice Returns the address of each available pool.
+    * @return address[] The address of each available pool.
     */
     function getAvailablePools() external view returns(address[] memory) {
         return pools;
@@ -56,23 +56,23 @@ contract PoolFactory is Ownable {
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
-    * @dev Creates a new pool
-    * @param poolName Name of the pool
-    * @param performanceFee Performance fee for the pool
+    * @notice Creates a new pool.
+    * @param poolName Name of the pool.
+    * @param performanceFee Performance fee for the pool.
     */
     function createPool(string memory poolName, uint performanceFee) external {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
         uint maximumPerformanceFee = ISettings(settingsAddress).getParameterValue("MaximumPerformanceFee");
         uint maximumNumberOfPoolsPerUser = ISettings(settingsAddress).getParameterValue("MaximumNumberOfPoolsPerUser");
 
-        require(bytes(poolName).length < 30, "Pool name must have less than 30 characters");
-        require(performanceFee <= maximumPerformanceFee, "Cannot exceed maximum performance fee");
-        require(userToManagedPools[msg.sender].length < maximumNumberOfPoolsPerUser, "Cannot exceed maximum number of pools per user");
+        require(bytes(poolName).length < 30, "PoolFactory: Pool name must have less than 30 characters.");
+        require(performanceFee <= maximumPerformanceFee, "PoolFactory: Cannot exceed maximum performance fee.");
+        require(userToManagedPools[msg.sender].length < maximumNumberOfPoolsPerUser, "PoolFactory: Cannot exceed maximum number of pools per user.");
 
-        //Create pool
+        // Create pool.
         Pool temp = new Pool(poolName, performanceFee, msg.sender, ADDRESS_RESOLVER);
 
-        //Update state variables
+        // Update state variables.
         address poolAddress = address(temp);
         pools.push(poolAddress);
         userToManagedPools[msg.sender].push(pools.length - 1);
@@ -85,8 +85,8 @@ contract PoolFactory is Ownable {
     /* ========== MODIFIERS ========== */
 
     modifier isValidPoolAddress(address poolAddress) {
-        require(poolAddress != address(0), "PoolFactory: Invalid pool address");
-        require(addressToIndex[poolAddress] > 0, "PoolFactory: Pool not found");
+        require(poolAddress != address(0), "PoolFactory: Invalid pool address.");
+        require(addressToIndex[poolAddress] > 0, "PoolFactory: Pool not found.");
         _;
     }
 

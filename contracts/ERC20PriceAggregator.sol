@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.3;
 
-//Inheritance
+// Inheritance.
 import './interfaces/IPriceAggregator.sol';
 
-//Interfaces
+// Interfaces.
 import './interfaces/IBaseUbeswapAdapter.sol';
 import './interfaces/IAddressResolver.sol';
 
@@ -19,8 +19,11 @@ contract ERC20PriceAggregator is IPriceAggregator {
 
     /* ========== VIEWS ========== */
 
+    /**
+    * @notice Returns the current USD price of the given asset.
+    */
     function getUSDPrice(address asset) external view override returns (uint) {
-        require(asset != address(0), "ERC20PriceAggregator: invalid asset address");
+        require(asset != address(0), "ERC20PriceAggregator: Invalid asset address.");
 
         address baseUbeswapAdapterAddress = ADDRESS_RESOLVER.getContractAddress("BaseUbeswapAdapter");
         return IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPrice(asset);

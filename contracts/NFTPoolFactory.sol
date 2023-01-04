@@ -2,12 +2,12 @@
 
 pragma solidity ^0.8.3;
 
-//Interfaces
+// Interfaces.
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IMarketplace.sol';
 
-//Internal references
+// Internal references.
 import './NFTPool.sol';
 
 contract NFTPoolFactory {
@@ -15,7 +15,7 @@ contract NFTPoolFactory {
 
     address[] public pools;
     mapping (address => uint[]) public userToManagedPools;
-    mapping (address => uint) public addressToIndex; // maps to (index + 1); index 0 represents pool not found
+    mapping (address => uint) public addressToIndex; // Maps to (index + 1); index 0 represents pool not found.
 
     constructor(IAddressResolver addressResolver) {
         ADDRESS_RESOLVER = addressResolver;
@@ -24,12 +24,12 @@ contract NFTPoolFactory {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Returns the address of each pool the user manages
-    * @param user Address of the user
-    * @return address[] The address of each pool the user manages
+    * @notice Returns the address of each pool the user manages.
+    * @param user Address of the user.
+    * @return address[] The address of each pool the user manages.
     */
     function getUserManagedPools(address user) external view returns(address[] memory) {
-        require(user != address(0), "Invalid address");
+        require(user != address(0), "NFTPoolFactory: Invalid address.");
 
         address[] memory addresses = new address[](userToManagedPools[user].length);
         uint[] memory indexes = userToManagedPools[user];
@@ -44,8 +44,8 @@ contract NFTPoolFactory {
     }
 
     /**
-    * @dev Returns the address of each available pool
-    * @return address[] The address of each available pool
+    * @notice Returns the address of each available pool.
+    * @return address[] The address of each available pool.
     */
     function getAvailablePools() external view returns(address[] memory) {
         return pools;
@@ -54,10 +54,10 @@ contract NFTPoolFactory {
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
-    * @dev Creates a new pool
-    * @param poolName Name of the pool
-    * @param maxSupply Maximum number of pool tokens
-    * @param seedPrice Initial price of pool tokens
+    * @notice Creates a new pool.
+    * @param poolName Name of the pool.
+    * @param maxSupply Maximum number of pool tokens.
+    * @param seedPrice Initial price of pool tokens.
     */
     function createPool(string memory poolName, uint maxSupply, uint seedPrice) external {
         address settingsAddress = ADDRESS_RESOLVER.getContractAddress("Settings");
@@ -67,23 +67,23 @@ contract NFTPoolFactory {
         uint minimumNFTPoolSeedPrice = ISettings(settingsAddress).getParameterValue("MinimumNFTPoolSeedPrice");
         uint maximumNumberOfPoolsPerUser = ISettings(settingsAddress).getParameterValue("MaximumNumberOfPoolsPerUser");
         
-        require(bytes(poolName).length < 40, "Pool name must have less than 40 characters");
-        require(maxSupply <= maximumNumberOfNFTPoolTokens, "Cannot exceed max supply cap");
-        require(maxSupply >= minimumNumberOfNFTPoolTokens, "Cannot have less than min supply cap");
-        require(seedPrice >= minimumNFTPoolSeedPrice, "Seed price must be greater than min seed price");
-        require(seedPrice <= maximumNFTPoolSeedPrice, "Seed price must be less than max seed price");
-        require(userToManagedPools[msg.sender].length < maximumNumberOfPoolsPerUser, "Cannot exceed maximum number of pools per user");
+        require(bytes(poolName).length < 40, "NFTPoolFactory: Pool name must have less than 40 characters.");
+        require(maxSupply <= maximumNumberOfNFTPoolTokens, "NFTPoolFactory: Cannot exceed max supply cap.");
+        require(maxSupply >= minimumNumberOfNFTPoolTokens, "NFTPoolFactory: Cannot have less than min supply cap.");
+        require(seedPrice >= minimumNFTPoolSeedPrice, "NFTPoolFactory: Seed price must be greater than min seed price.");
+        require(seedPrice <= maximumNFTPoolSeedPrice, "NFTPoolFactory: Seed price must be less than max seed price.");
+        require(userToManagedPools[msg.sender].length < maximumNumberOfPoolsPerUser, "Cannot exceed maximum number of pools per user.");
         
-        //Create pool
+        // Create pool.
         address poolAddress = address(new NFTPool());
         NFTPool(poolAddress).initialize(poolName, seedPrice, maxSupply, msg.sender, ADDRESS_RESOLVER);
 
-        //Update state variables
+        // Update state variables.
         pools.push(poolAddress);
         userToManagedPools[msg.sender].push(pools.length - 1);
         addressToIndex[poolAddress] = pools.length;
 
-        //Add pool token as sellable asset on marketplace
+        // Add pool token as sellable asset on marketplace.
         address marketplaceAddress = ADDRESS_RESOLVER.getContractAddress("Marketplace");
         IMarketplace(marketplaceAddress).addAsset(poolAddress, msg.sender);
 

@@ -2,10 +2,10 @@
 
 pragma solidity ^0.8.3;
 
-//Interfaces
+// Interfaces.
 import './interfaces/IAddressResolver.sol';
 
-//Inheritance
+// Inheritance.
 import './Ownable.sol';
 
 contract AddressResolver is IAddressResolver, Ownable {
@@ -22,20 +22,20 @@ contract AddressResolver is IAddressResolver, Ownable {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Given a contract name, returns the address of the contract
-    * @param contractName The name of the contract
-    * @return address The address associated with the given contract name
+    * @notice Given a contract name, returns the address of the contract.
+    * @param contractName The name of the contract.
+    * @return address The address associated with the given contract name.
     */
     function getContractAddress(string memory contractName) external view override returns(address) {
-        require (contractAddresses[contractName] != address(0), "AddressResolver: contract not found");
+        require (contractAddresses[contractName] != address(0), "AddressResolver: Contract not found.");
         
         return contractAddresses[contractName];
     }
 
     /**
-    * @dev Given an address, returns whether the address belongs to a pool
-    * @param poolAddress The address to validate
-    * @return bool Whether the given address is a valid pool address
+    * @notice Given an address, returns whether the address belongs to a pool.
+    * @param poolAddress The address to validate.
+    * @return bool Whether the given address is a valid pool address.
     */
     function checkIfPoolAddressIsValid(address poolAddress) external view override returns(bool) {
         return (poolAddress != address(0)) ? (_poolAddresses[poolAddress] == poolAddress) : false;
@@ -44,9 +44,9 @@ contract AddressResolver is IAddressResolver, Ownable {
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
-    * @dev Updates the address for the given contract; meant to be called by AddressResolver owner
-    * @param contractName The name of the contract
-    * @param newAddress The new address for the given contract
+    * @notice Updates the address for the given contract; meant to be called by AddressResolver owner.
+    * @param contractName The name of the contract.
+    * @param newAddress The new address for the given contract.
     */
     function setContractAddress(string memory contractName, address newAddress) external onlyOwner isValidAddress(newAddress) {
         address oldAddress = contractAddresses[contractName];
@@ -56,9 +56,9 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Updates the verifier for the given contract
-    * @param externalContract Address of the external contract
-    * @param verifier Address of the contract's verifier
+    * @notice Updates the verifier for the given contract.
+    * @param externalContract Address of the external contract.
+    * @param verifier Address of the contract's verifier.
     */
     function setContractVerifier(address externalContract, address verifier) external onlyOwner isValidAddress(externalContract) isValidAddress(verifier) {
         contractVerifiers[externalContract] = verifier;
@@ -67,12 +67,12 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Updates the verifier for the given asset
-    * @param assetType Type of the asset
-    * @param verifier Address of the contract's verifier
+    * @notice Updates the verifier for the given asset.
+    * @param assetType Type of the asset.
+    * @param verifier Address of the contract's verifier.
     */
     function setAssetVerifier(uint assetType, address verifier) external onlyOwner isValidAddress(verifier) {
-        require(assetType > 0, "AddressResolver: asset type must be greater than 0");
+        require(assetType > 0, "AddressResolver: Asset type must be greater than 0.");
 
         assetVerifiers[assetType] = verifier;
 
@@ -80,11 +80,11 @@ contract AddressResolver is IAddressResolver, Ownable {
     }
 
     /**
-    * @dev Adds a new pool address; meant to be called by the PoolFactory contract
-    * @param poolAddress The address of the pool
+    * @notice Adds a new pool address; meant to be called by the PoolFactory contract.
+    * @param poolAddress The address of the pool.
     */
     function addPoolAddress(address poolAddress) external override onlyPoolFactory isValidAddress(poolAddress) {
-        require(_poolAddresses[poolAddress] != poolAddress, "Pool already exists");
+        require(_poolAddresses[poolAddress] != poolAddress, "AddressResolver: Pool already exists.");
 
         _poolAddresses[poolAddress] = poolAddress;
     }
@@ -92,12 +92,12 @@ contract AddressResolver is IAddressResolver, Ownable {
     /* ========== MODIFIERS ========== */
 
     modifier isValidAddress(address addressToCheck) {
-        require(addressToCheck != address(0), "Address is not valid");
+        require(addressToCheck != address(0), "AddressResolver: Address is not valid.");
         _;
     }
 
     modifier onlyPoolFactory() {
-        require(msg.sender == contractAddresses["PoolFactory"], "AddressResolver: Only the PoolFactory contract can call this function");
+        require(msg.sender == contractAddresses["PoolFactory"], "AddressResolver: Only the PoolFactory contract can call this function.");
         _;
     }
 

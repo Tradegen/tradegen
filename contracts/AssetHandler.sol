@@ -2,16 +2,16 @@
 
 pragma solidity ^0.8.3;
 
-//Inheritance
+// Inheritance.
 import "./interfaces/IAssetHandler.sol";
 import './Ownable.sol';
 
-//Interfaces
+// Interfaces.
 import './interfaces/IPriceAggregator.sol';
 import './interfaces/IAddressResolver.sol';
 import './interfaces/IAssetVerifier.sol';
 
-//Libraries
+// Libraries.
 import "./openzeppelin-solidity/SafeMath.sol";
 
 contract AssetHandler is IAssetHandler, Ownable {
@@ -32,32 +32,32 @@ contract AssetHandler is IAssetHandler, Ownable {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Given the address of an asset, returns the asset's price in USD
-    * @param asset Address of the asset
-    * @return uint Price of the asset in USD
+    * @notice Given the address of an asset, returns the asset's price in USD.
+    * @param asset Address of the asset.
+    * @return uint Price of the asset in USD.
     */
     function getUSDPrice(address asset) external view override isValidAddress(asset) returns (uint) {
-        require(assetTypes[asset] > 0, "AssetHandler: asset not supported");
+        require(assetTypes[asset] > 0, "AssetHandler: Asset not supported.");
         
         return IPriceAggregator(assetTypeToPriceAggregator[assetTypes[asset]]).getUSDPrice(asset);
     }
 
     /**
-    * @dev Given the address of an asset, returns whether the asset is supported on Tradegen
-    * @param asset Address of the asset
-    * @return bool Whether the asset is supported
+    * @notice Given the address of an asset, returns whether the asset is supported on Tradegen.
+    * @param asset Address of the asset.
+    * @return bool Whether the asset is supported.
     */
     function isValidAsset(address asset) external view override isValidAddress(asset) returns (bool) {
         return (assetTypes[asset] > 0 || asset == stableCoinAddress);
     }
 
     /**
-    * @dev Given an asset type, returns the address of each supported asset for the type
-    * @param assetType Type of asset
-    * @return address[] Address of each supported asset for the type
+    * @notice Given an asset type, returns the address of each supported asset for the type.
+    * @param assetType Type of asset.
+    * @return address[] Address of each supported asset for the type.
     */
     function getAvailableAssetsForType(uint assetType) external view override returns (address[] memory) {
-        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
+        require(assetType > 0, "AssetHandler: AssetType must be greater than 0.");
 
         uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
         address[] memory assets = new address[](numberOfAssets);
@@ -71,27 +71,27 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Returns the address of the stable coin
-    * @return address The stable coin address
+    * @notice Returns the address of the stable coin.
+    * @return address The stable coin address.
     */
     function getStableCoinAddress() external view override returns(address) {
         return stableCoinAddress;
     }
 
     /**
-    * @dev Given the address of an asset, returns the asset's type
-    * @param addressToCheck Address of the asset
-    * @return uint Type of the asset
+    * @notice Given the address of an asset, returns the asset's type.
+    * @param addressToCheck Address of the asset.
+    * @return uint Type of the asset.
     */
     function getAssetType(address addressToCheck) external view override isValidAddress(addressToCheck) returns (uint) {
         return assetTypes[addressToCheck];
     }
 
     /**
-    * @dev Returns the pool's balance of the given asset
-    * @param pool Address of the pool
-    * @param asset Address of the asset
-    * @return uint Pool's balance of the asset
+    * @notice Returns the pool's balance of the given asset.
+    * @param pool Address of the pool.
+    * @param asset Address of the asset.
+    * @return uint Pool's balance of the asset.
     */
     function getBalance(address pool, address asset) external view override isValidAddress(pool) isValidAddress(asset) returns (uint) {
         address verifier = getVerifier(asset);
@@ -100,9 +100,9 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Returns the asset's number of decimals
-    * @param asset Address of the asset
-    * @return uint Number of decimals
+    * @notice Returns the asset's number of decimals.
+    * @param asset Address of the asset.
+    * @return uint Number of decimals.
     */
     function getDecimals(address asset) external view override isValidAddress(asset) returns (uint) {
         uint assetType = assetTypes[asset];
@@ -112,9 +112,9 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Given the address of an asset, returns the address of the asset's verifier
-    * @param asset Address of the asset
-    * @return address Address of the asset's verifier
+    * @notice Given the address of an asset, returns the address of the asset's verifier.
+    * @param asset Address of the asset.
+    * @return address Address of the asset's verifier.
     */
     function getVerifier(address asset) public view override isValidAddress(asset) returns (address) {
         uint assetType = assetTypes[asset];
@@ -125,8 +125,8 @@ contract AssetHandler is IAssetHandler, Ownable {
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
-    * @dev Sets the address of the stable coin
-    * @param _stableCoinAddress The address of the stable coin
+    * @notice Sets the address of the stable coin.
+    * @param _stableCoinAddress The address of the stable coin.
     */
     function setStableCoinAddress(address _stableCoinAddress) external onlyOwner isValidAddress(_stableCoinAddress) {
         address oldAddress = stableCoinAddress;
@@ -137,14 +137,14 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Adds a new tradable currency to the platform
-    * @param assetType Type of the asset
-    * @param currencyKey The address of the asset to add
+    * @notice Adds a new tradable currency to the platform.
+    * @param assetType Type of the asset.
+    * @param currencyKey The address of the asset to add.
     */
     function addCurrencyKey(uint assetType, address currencyKey) external onlyOwner isValidAddress(currencyKey) {
-        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
-        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address");
-        require(assetTypes[currencyKey] == 0, "AssetHandler: Asset already exists");
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0.");
+        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address.");
+        require(assetTypes[currencyKey] == 0, "AssetHandler: Asset already exists.");
 
         assetTypes[currencyKey] = assetType;
         availableAssetsForType[assetType][numberOfAvailableAssetsForType[assetType]] = currencyKey;
@@ -154,14 +154,14 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Removes support for a currency
-    * @param assetType Type of the asset
-    * @param currencyKey The address of the asset to remove
+    * @notice Removes support for a currency.
+    * @param assetType Type of the asset.
+    * @param currencyKey The address of the asset to remove.
     */
     function removeCurrencyKey(uint assetType, address currencyKey) external onlyOwner isValidAddress(currencyKey) {
-        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
-        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address");
-        require(assetTypes[currencyKey] > 0, "AssetHandler: Asset not found");
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0.");
+        require(currencyKey != stableCoinAddress, "AssetHandler: Cannot equal stablecoin address.");
+        require(assetTypes[currencyKey] > 0, "AssetHandler: Asset not found.");
 
         uint numberOfAssets = numberOfAvailableAssetsForType[assetType];
         uint index;
@@ -170,9 +170,9 @@ contract AssetHandler is IAssetHandler, Ownable {
             if (availableAssetsForType[assetType][index] == currencyKey) break;
         }
 
-        require(index < numberOfAssets, "AssetHandler: Index out of bounds");
+        require(index < numberOfAssets, "AssetHandler: Index out of bounds.");
 
-        //Move last element to the index of currency being removed
+        // Move last element to the index of currency being removed.
         if (index < numberOfAssets)
         {
             availableAssetsForType[assetType][index] = availableAssetsForType[assetType][numberOfAssets.sub(1)];
@@ -186,13 +186,13 @@ contract AssetHandler is IAssetHandler, Ownable {
     }
 
     /**
-    * @dev Adds a new asset type
-    * @param assetType Type of the asset
-    * @param priceAggregator Address of the asset's price aggregator
+    * @notice Adds a new asset type.
+    * @param assetType Type of the asset.
+    * @param priceAggregator Address of the asset's price aggregator.
     */
     function addAssetType(uint assetType, address priceAggregator) external onlyOwner isValidAddress(priceAggregator) {
-        require(assetType > 0, "AssetHandler: assetType must be greater than 0");
-        require(assetTypeToPriceAggregator[assetType] == address(0), "AssetHandler: asset type already exists");
+        require(assetType > 0, "AssetHandler: assetType must be greater than 0.");
+        require(assetTypeToPriceAggregator[assetType] == address(0), "AssetHandler: assetType already exists.");
 
         assetTypeToPriceAggregator[assetType] = priceAggregator;
 
@@ -202,7 +202,7 @@ contract AssetHandler is IAssetHandler, Ownable {
     /* ========== MODIFIERS ========== */
 
     modifier isValidAddress(address addressToCheck) {
-        require(addressToCheck != address(0), "AssetHandler: Address is not valid");
+        require(addressToCheck != address(0), "AssetHandler: Address is not valid.");
         _;
     }
 

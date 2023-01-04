@@ -2,14 +2,14 @@
 
 pragma solidity ^0.8.3;
 
-//Libraries
+// Libraries.
 import "../libraries/TxDataUtils.sol";
 import "../openzeppelin-solidity/SafeMath.sol";
 
-//Inheritance
+// Inheritance.
 import "../interfaces/IVerifier.sol";
 
-//Interfaces
+// Interfaces.
 import "../interfaces/IAddressResolver.sol";
 import "../interfaces/IAssetHandler.sol";
 import "../interfaces/IBaseUbeswapAdapter.sol";
@@ -18,11 +18,11 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
     using SafeMath for uint;
 
     /**
-    * @dev Parses the transaction data to make sure the transaction is valid
-    * @param addressResolver Address of AddressResolver contract
-    * @param pool Address of the pool
-    * @param data Transaction call data
-    * @return (uint, address) Whether the transaction is valid and the received asset
+    * @notice Parses the transaction data to make sure the transaction is valid.
+    * @param addressResolver Address of AddressResolver contract.
+    * @param pool Address of the pool.
+    * @param data Transaction call data.
+    * @return (bool, address) Whether the transaction is valid and the received asset.
     */
     function verify(address addressResolver, address pool, address, bytes calldata data) external override returns (bool, address) {
         bytes4 method = getMethod(data);
@@ -32,18 +32,18 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
 
         if (method == bytes4(keccak256("swapExactTokensForTokens(uint256,uint256,address[],address,uint256)")))
         {
-            //Parse transaction data
-            address srcAsset = convert32toAddress(getArrayIndex(data, 2, 0)); // gets the second input (path) first item (token to swap from)
-            address dstAsset = convert32toAddress(getArrayLast(data, 2)); // gets second input (path) last item (token to swap to)
+            // Parse transaction data.
+            address srcAsset = convert32toAddress(getArrayIndex(data, 2, 0)); // Gets the second input (path) first item (token to swap from).
+            address dstAsset = convert32toAddress(getArrayLast(data, 2)); // Gets second input (path) last item (token to swap to).
             uint srcAmount = uint(getInput(data, 0));
             address toAddress = convert32toAddress(getInput(data, 3));
 
-            //Check if assets are supported
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(srcAsset), "UbeswapRouterVerifier: unsupported source asset");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(dstAsset), "UbeswapRouterVerifier: unsupported destination asset");
+            // Check if assets are supported.
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(srcAsset), "UbeswapRouterVerifier: Unsupported source asset.");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(dstAsset), "UbeswapRouterVerifier: Unsupported destination asset.");
 
-            //Check if recipient is a pool
-            require(pool == toAddress, "UbeswapRouterVerifier: recipient is not pool");
+            // Check if recipient is a pool.
+            require(pool == toAddress, "UbeswapRouterVerifier: Recipient is not pool.");
 
             emit Swap(pool, srcAsset, dstAsset, srcAmount, block.timestamp);
 
@@ -57,16 +57,16 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
             uint amountADesired = uint(getInput(data, 2));
             uint amountBDesired = uint(getInput(data, 3));
 
-            //Check if assets are supported
+            // Check if assets are supported.
             address pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: unsupported tokenA");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: unsupported tokenB");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: unsupported LP token");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: Unsupported tokenA.");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: Unsupported tokenB.");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: Unsupported LP token.");
 
             address recipient = convert32toAddress(getInput(data, 6));
 
-            //Check if recipient is a pool
-            require(pool == recipient, "UbeswapRouterVerifier: recipient is not pool");
+            // Check if recipient is a pool.
+            require(pool == recipient, "UbeswapRouterVerifier: Recipient is not pool.");
 
             emit AddedLiquidity(pool, tokenA, tokenB, pair, amountADesired, amountBDesired, block.timestamp);
 
@@ -79,14 +79,14 @@ contract UbeswapRouterVerifier is TxDataUtils, IVerifier {
 
             uint numberOfLPTokens = uint(getInput(data, 2));
 
-            //Check if assets are supported
+            // Check if assets are supported.
             address pair = IBaseUbeswapAdapter(baseUbeswapAdapterAddress).getPair(tokenA, tokenB);
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: unsupported tokenA");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: unsupported tokenB");
-            require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: unsupported LP token");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenA), "UbeswapRouterVerifier: Unsupported tokenA.");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(tokenB), "UbeswapRouterVerifier: Unsupported tokenB.");
+            require(IAssetHandler(assetHandlerAddress).isValidAsset(pair), "UbeswapRouterVerifier: Unsupported LP token.");
 
-            //Check if recipient is a pool
-            require(pool == convert32toAddress(getInput(data, 5)), "UbeswapRouterVerifier: recipient is not pool");
+            // Check if recipient is a pool.
+            require(pool == convert32toAddress(getInput(data, 5)), "UbeswapRouterVerifier: Recipient is not pool.");
 
             emit RemovedLiquidity(pool, tokenA, tokenB, pair, numberOfLPTokens, block.timestamp);
 

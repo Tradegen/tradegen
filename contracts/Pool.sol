@@ -3,10 +3,10 @@
 pragma solidity ^0.8.3;
 pragma experimental ABIEncoderV2;
 
-//Adapters
+// Adapters.
 import './interfaces/IBaseUbeswapAdapter.sol';
 
-//Interfaces
+// Interfaces.
 import './interfaces/IPool.sol';
 import './interfaces/ISettings.sol';
 import './interfaces/IAddressResolver.sol';
@@ -15,7 +15,7 @@ import './interfaces/IAssetVerifier.sol';
 import './interfaces/IVerifier.sol';
 import './interfaces/Ubeswap/IStakingRewards.sol';
 
-//Libraries
+// Libraries.
 import "./openzeppelin-solidity/SafeMath.sol";
 import "./openzeppelin-solidity/SafeERC20.sol";
 
@@ -28,15 +28,15 @@ contract Pool is IPool {
     string public _name;
     uint public _totalSupply;
     address public _manager;
-    uint public _performanceFee; //expressed as %
+    uint public _performanceFee; // Expressed as %.
     uint256 public _tokenPriceAtLastFeeMint;
 
     mapping (address => uint) public _balanceOf;
 
-    //Asset positions
+    // Asset positions.
     mapping (uint => address) public _positionKeys;
     uint public numberOfPositions;
-    mapping (address => uint) public positionToIndex; //maps to (index + 1), with index 0 representing position not found
+    mapping (address => uint) public positionToIndex; // Maps to (index + 1), with index 0 representing position not found.
 
     constructor(string memory poolName, uint performanceFee, address manager, IAddressResolver addressResolver) {
         _name = poolName;
@@ -50,29 +50,29 @@ contract Pool is IPool {
     /* ========== VIEWS ========== */
 
     /**
-    * @dev Returns the name of the pool
-    * @return string The name of the pool
+    * @notice Returns the name of the pool.
+    * @return string The name of the pool.
     */
     function name() external view override returns (string memory) {
         return _name;
     }
 
     /**
-    * @dev Return the pool manager's address
-    * @return address Address of the pool's manager
+    * @notice Return the pool manager's address.
+    * @return address Address of the pool's manager.
     */
     function getManagerAddress() external view override returns (address) {
         return _manager;
     }
 
     /**
-    * @dev Returns the USD value of the asset
-    * @param asset Address of the asset
-    * @param assetHandlerAddress Address of AssetHandler contract
+    * @notice Returns the USD value of the asset.
+    * @param asset Address of the asset.
+    * @param assetHandlerAddress Address of AssetHandler contract.
     */
     function getAssetValue(address asset, address assetHandlerAddress) public view override returns (uint) {
-        require(asset != address(0), "Pool: invalid asset address");
-        require(assetHandlerAddress != address(0), "Pool: invalid asset handler address");
+        require(asset != address(0), "Pool: Invalid asset address.");
+        require(assetHandlerAddress != address(0), "Pool: Invalid asset handler address.");
 
         uint USDperToken = IAssetHandler(assetHandlerAddress).getUSDPrice(asset);
         uint numberOfDecimals = IAssetHandler(assetHandlerAddress).getDecimals(asset);
@@ -82,8 +82,8 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the currency address and balance of each position the pool has, as well as the cumulative value
-    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions
+    * @notice Returns the currency address and balance of each position the pool has, as well as the cumulative value.
+    * @return (address[], uint[], uint) Currency address and balance of each position the pool has, and the cumulative value of positions.
     */
     function getPositionsAndTotal() public view override returns (address[] memory, uint[] memory, uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
@@ -91,7 +91,7 @@ contract Pool is IPool {
         uint[] memory balances = new uint[](numberOfPositions);
         uint sum;
 
-        //Calculate USD value of each asset
+        // Calculate USD value of each asset.
         for (uint i = 0; i < numberOfPositions; i++)
         {
             balances[i] = IAssetHandler(assetHandlerAddress).getBalance(address(this), _positionKeys[i.add(1)]);
@@ -107,8 +107,8 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the amount of cUSD the pool has to invest
-    * @return uint Amount of cUSD the pool has available
+    * @notice Returns the amount of cUSD the pool has to invest.
+    * @return uint Amount of cUSD the pool has available.
     */
     function getAvailableFunds() public view override returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
@@ -118,14 +118,14 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the value of the pool in USD
-    * @return uint Value of the pool in USD
+    * @notice Returns the value of the pool in USD.
+    * @return uint Value of the pool in USD.
     */
     function getPoolValue() public view override returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
         uint sum = 0;
 
-        //Get USD value of each asset
+        // Get USD value of each asset.
         for (uint i = 1; i <= numberOfPositions; i++)
         {
             sum = sum.add(getAssetValue(_positionKeys[i], assetHandlerAddress));
@@ -135,11 +135,11 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the balance of the user in USD
-    * @return uint Balance of the user in USD
+    * @notice Returns the balance of the user in USD.
+    * @return uint Balance of the user in USD.
     */
     function getUSDBalance(address user) public view override returns (uint) {
-        require(user != address(0), "Invalid address");
+        require(user != address(0), "Pool: Invalid address.");
 
         if (_totalSupply == 0)
         {
@@ -152,35 +152,35 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the number of pool tokens the user has
-    * @param user Address of the user
-    * @return uint Number of pool tokens the user has
+    * @notice Returns the number of pool tokens the user has.
+    * @param user Address of the user.
+    * @return uint Number of pool tokens the user has.
     */
     function balanceOf(address user) public view override returns (uint) {
-        require(user != address(0), "Invalid user address");
+        require(user != address(0), "Pool: Invalid user address.");
 
         return _balanceOf[user];
     }
 
     /**
-    * @dev Returns the total supply of LP tokens in the pool
-    * @return uint Total supply of LP tokens
+    * @notice Returns the total supply of LP tokens in the pool.
+    * @return uint Total supply of LP tokens.
     */
     function totalSupply() public view override returns (uint) {
         return _totalSupply;
     }
 
     /**
-    * @dev Returns the pool's performance fee
-    * @return uint The pool's performance fee
+    * @notice Returns the pool's performance fee.
+    * @return uint The pool's performance fee.
     */
     function getPerformanceFee() public view override returns (uint) {
         return _performanceFee;
     }
 
     /**
-    * @dev Returns the price of the pool's token
-    * @return USD price of the pool's token
+    * @notice Returns the price of the pool's token.
+    * @return USD price of the pool's token.
     */
     function tokenPrice() public view override returns (uint) {
         uint poolValue = getPoolValue();
@@ -189,8 +189,8 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Returns the pool manager's available fees
-    * @return Pool manager's available fees
+    * @notice Returns the pool manager's available fees.
+    * @return Pool manager's available fees.
     */
     function availableManagerFee() public view override returns (uint) {
         uint poolValue = getPoolValue();
@@ -213,19 +213,19 @@ contract Pool is IPool {
     /* ========== MUTATIVE FUNCTIONS ========== */
 
     /**
-    * @dev Mints the pool manager's fee
+    * @notice Mints the pool manager's fee.
     */
     function mintManagerFee() external onlyPoolManager {
         _mintManagerFee();
     }
 
     /**
-    * @dev Deposits the given USD amount into the pool
-    * @notice Call cUSD.approve() before calling this function
-    * @param amount Amount of USD to deposit into the pool
+    * @notice Deposits the given USD amount into the pool.
+    * @dev Call cUSD.approve() before calling this function.
+    * @param amount Amount of USD to deposit into the pool.
     */
     function deposit(uint amount) external override {
-        require(amount > 0, "Pool: Deposit must be greater than 0");
+        require(amount > 0, "Pool: Deposit must be greater than 0.");
 
         uint poolBalance = getPoolValue();
         uint numberOfLPTokens = (_totalSupply > 0) ? _totalSupply.mul(amount).div(poolBalance) : amount;
@@ -244,18 +244,18 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Withdraws the given number of pool tokens from the user
-    * @param numberOfPoolTokens Number of pool tokens to withdraw
+    * @notice Withdraws the given number of pool tokens from the user.
+    * @param numberOfPoolTokens Number of pool tokens to withdraw.
     */
     function withdraw(uint numberOfPoolTokens) public override {
-        require(numberOfPoolTokens > 0, "Pool: number of pool tokens must be greater than 0");
-        require(_balanceOf[msg.sender] >= numberOfPoolTokens, "Pool: Not enough pool tokens to withdraw");
+        require(numberOfPoolTokens > 0, "Pool: Number of pool tokens must be greater than 0.");
+        require(_balanceOf[msg.sender] >= numberOfPoolTokens, "Pool: Not enough pool tokens to withdraw.");
 
-        //Mint manager fee
+        // Mint manager fee.
         uint poolValue = _mintManagerFee();
         uint portion = numberOfPoolTokens.mul(10**18).div(_totalSupply);
 
-        //Burn user's pool tokens
+        // Burn user's pool tokens.
         _balanceOf[msg.sender] = _balanceOf[msg.sender].sub(numberOfPoolTokens);
         _totalSupply = _totalSupply.sub(numberOfPoolTokens);
 
@@ -263,7 +263,7 @@ contract Pool is IPool {
         address[] memory assetsWithdrawn = new address[](numberOfPositions);
 
         uint assetCount = numberOfPositions;
-        //Withdraw user's portion of pool's assets
+        // Withdraw user's portion of pool's assets.
         for (uint i = assetCount; i > 0; i--)
         {
             uint portionOfAssetBalance = _withdrawProcessing(_positionKeys[i], portion);
@@ -276,14 +276,14 @@ contract Pool is IPool {
                 assetsWithdrawn[i.sub(1)] = _positionKeys[i];
             }
 
-            //Remove position keys if pool is liquidated
+            // Remove position keys if pool is liquidated.
             if (_totalSupply == 0)
             {
                 _removePositionKey(_positionKeys[i]);
             }
         }
 
-        //Set numberOfPositions to 0 if pool is liquidated
+        // Set numberOfPositions to 0 if pool is liquidated.
         if (_totalSupply == 0)
         {
             numberOfPositions = 0;
@@ -295,7 +295,7 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Withdraws the user's full investment
+    * @dev Withdraws the user's full investment.
     */
     function exit() external override {
         withdraw(balanceOf(msg.sender));
@@ -304,37 +304,38 @@ contract Pool is IPool {
     /* ========== RESTRICTED FUNCTIONS ========== */
 
     /**
-    * @dev Executes a transaction on behalf of the pool; lets pool talk to other protocols
-    * @param to Address of external contract
-    * @param data Bytes data for the transaction
+    * @notice Executes a transaction on behalf of the pool.
+    * @dev Allows the pool to interact with external protocols.
+    * @param to Address of external contract.
+    * @param data Bytes data for the transaction.
     */
     function executeTransaction(address to, bytes memory data) external onlyPoolManager {
-        require(to != address(0), "Pool: invalid 'to' address");
+        require(to != address(0), "Pool: Invalid 'to' address.");
 
-        //First try to get contract verifier
+        // First try to get contract verifier.
         address verifier = ADDRESS_RESOLVER.contractVerifiers(to);
-        //Try to get asset verifier if no contract verifier found
+        // Try to get asset verifier if no contract verifier found.
         if (verifier == address(0))
         {
             address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
             verifier = IAssetHandler(assetHandlerAddress).getVerifier(to);
 
-            //'to' address is an asset; need to check if asset is valid
+            // 'to' address is an asset; need to check if asset is valid.
             if (verifier != address(0))
             {
-                require(IAssetHandler(assetHandlerAddress).isValidAsset(to), "Pool: invalid asset");
+                require(IAssetHandler(assetHandlerAddress).isValidAsset(to), "Pool: Invalid asset.");
 
                 _addPositionKey(to);
             }
         }
         
-        require(verifier != address(0), "Pool: invalid verifier");
+        require(verifier != address(0), "Pool: Invalid verifier.");
         
         (bool valid, address receivedAsset) = IVerifier(verifier).verify(address(ADDRESS_RESOLVER), address(this), to, data);
-        require(valid, "Pool: invalid transaction");
+        require(valid, "Pool: Invalid transaction.");
         
         (bool success, ) = to.call(data);
-        require(success, "Pool: transaction failed to execute");
+        require(success, "Pool: Transaction failed to execute.");
 
         _addPositionKey(receivedAsset);
 
@@ -342,7 +343,7 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Removes the pool's empty positions from position keys
+    * @notice Removes the pool's empty positions from position keys.
     */
     function removeEmptyPositions() external onlyPoolManager {
         uint assetCount = numberOfPositions;
@@ -358,11 +359,11 @@ contract Pool is IPool {
     /* ========== INTERNAL FUNCTIONS ========== */
 
     /**
-    * @dev Adds the given currency to position keys
-    * @param currency Address of token to add
+    * @notice Adds the given currency to position keys.
+    * @param currency Address of token to add.
     */
     function _addPositionKey(address currency) internal {
-        //Add token to positionKeys if not currently in positionKeys
+        // Add token to positionKeys if not currently in positionKeys.
         if (currency != address(0) && positionToIndex[currency] == 0)
         {
             numberOfPositions = numberOfPositions.add(1);
@@ -372,15 +373,15 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Removes the given currency to position keys
-    * @param currency Address of token to remove
+    * @notice Removes the given currency to position keys.
+    * @param currency Address of token to remove.
     */
     function _removePositionKey(address currency) internal {
-        require(currency != address(0), "Pool: invalid asset address");
+        require(currency != address(0), "Pool: Invalid asset address.");
 
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
 
-        //Remove currency from positionKeys if no balance left; account for dust
+        // Remove currency from positionKeys if no balance left; account for dust.
         if (IAssetHandler(assetHandlerAddress).getBalance(address(this), currency) < 1000)
         {
             if (_positionKeys[positionToIndex[currency]] != _positionKeys[numberOfPositions])
@@ -395,9 +396,9 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Calculates the price of a pool token
-    * @param _poolValue Value of the pool in USD
-    * @return Price of a pool token
+    * @notice Calculates the price of a pool token.
+    * @param _poolValue Value of the pool in USD.
+    * @return Price of a pool token.
     */
     function _tokenPrice(uint _poolValue) internal view returns (uint) {
         if (_totalSupply == 0 || _poolValue == 0)
@@ -409,15 +410,15 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Mints the pool manager's available fees
-    * @return Pool's USD value
+    * @notice Mints the pool manager's available fees.
+    * @return Pool's USD value.
     */
     function _mintManagerFee() internal returns(uint) {
         uint poolValue = getPoolValue();
 
         uint availableFee = availableManagerFee();
 
-        // Ignore dust when minting performance fees
+        // Ignore dust when minting performance fees.
         if (availableFee < 10000)
         {
             return 0;
@@ -434,10 +435,10 @@ contract Pool is IPool {
     }
 
     /**
-    * @dev Performs additional processing when withdrawing an asset (such as checking for staked tokens)
-    * @param asset Address of asset to withdraw
-    * @param portion User's portion of pool's asset balance
-    * @return Amount of tokens to withdraw
+    * @notice Performs additional processing when withdrawing an asset (such as checking for staked tokens).
+    * @param asset Address of asset to withdraw.
+    * @param portion User's portion of pool's asset balance.
+    * @return Amount of tokens to withdraw.
     */
     function _withdrawProcessing(address asset, uint portion) internal returns (uint) {
         address assetHandlerAddress = ADDRESS_RESOLVER.getContractAddress("AssetHandler");
@@ -453,14 +454,14 @@ contract Pool is IPool {
                 initialAssetBalance = IERC20(withdrawAsset).balanceOf(address(this));
             }
 
-            //Execute each transaction
+            // Execute each transaction.
             for (uint i = 0; i < transactions.length; i++)
             {
                 (bool success,) = (transactions[i].to).call(transactions[i].txData);
-                require(success, "Pool: failed to withdraw tokens");
+                require(success, "Pool: Failed to withdraw tokens.");
             }
 
-            //Account for additional tokens added (withdrawing staked LP tokens)
+            // Account for additional tokens added (withdrawing staked LP tokens).
             if (withdrawAsset != address(0))
             {
                 withdrawBalance = withdrawBalance.add(IERC20(withdrawAsset).balanceOf(address(this))).sub(initialAssetBalance);
@@ -473,7 +474,7 @@ contract Pool is IPool {
     /* ========== MODIFIERS ========== */
 
     modifier onlyPoolManager() {
-        require(msg.sender == _manager, "Pool: Only pool's manager can call this function");
+        require(msg.sender == _manager, "Pool: Only pool's manager can call this function.");
         _;
     }
 
