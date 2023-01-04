@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Implementation of a decentralized asset management system using blockchain.
+Implementation of a decentralized asset management system on the Celo blockchain.
 
 ## Repository Structure
 
@@ -24,7 +24,7 @@ Implementation of a decentralized asset management system using blockchain.
 
 To learn more about the Tradegen project, visit the docs at https://docs.tradegen.io.
 
-This project is launched on the Celo blockchain. To learn more about Celo, visit their home page: https://celo.org/.
+To learn more about Celo, visit their home page: https://celo.org/.
 
 ## License
 
