@@ -1,15 +1,30 @@
-# Tradegen
+# Tradegen Protocol
 
-Tradegen is a decentralized asset management and algo trading platform on Celo.
+## Purpose
 
-## Deployed Contracts
+Implementation of a decentralized asset management system using blockchain.
 
-- check contractAddressAlfajores.txt to see deployed contracts on Alfajores
-- check contractAddressMainnet.txt to see deployed contracts on Mainnet
+## Repository Structure
 
-## Docs
+```
+.
+├── addresses  ## Address of each deployed contract, organized by network.
+├── audits  ## Audit reports.
+├── build/abi  ## Generated ABIs that developers can use to interact with the system.
+├── contracts  ## All source code.
+│   ├── interfaces  ## Interfaces used for defining/calling contracts.
+│   ├── libraries  ## Libraries storing helper functions.
+│   ├── openzeppelin-solidity  ## Helper contracts provided by OpenZeppelin.
+│   ├── test  ## Mock contracts used for testing main contracts.
+│   ├── verifiers  ## Contracts for verifying external protocols.
+├── test ## Source code for testing code in //contracts.
+```
 
-- docs are available at https://docs.tradegen.io
+## Documentation
+
+To learn more about the Tradegen project, visit the docs at https://docs.tradegen.io.
+
+This project is launched on the Celo blockchain. To learn more about Celo, visit their home page: https://celo.org/.
 
 ## License
 
