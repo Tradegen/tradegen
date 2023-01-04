@@ -340,7 +340,7 @@ contract TradegenLPStakingRewards is Ownable, ITradegenLPStakingRewards, Reentra
      */
     function stake(uint amount, uint numberOfWeeks) external override nonReentrant updateReward(msg.sender) {
         require(amount > 0, "TradegenLPStakingRewards: Staked amount must be greater than 0.");
-        require(numberOfWeeks >= 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: number of weeks must be between 0 and 52.");
+        require(numberOfWeeks >= 0 && numberOfWeeks <= 52, "TradegenLPStakingRewards: Number of weeks must be between 0 and 52.");
 
         // Up to 2x multiplier depending on number of weeks staked.
         uint vestingTimestamp = block.timestamp.add(uint(1 weeks).mul(numberOfWeeks));
