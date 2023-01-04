@@ -25,6 +25,7 @@ This protocol is deprecated. For the latest version of the asset management prot
 * UbeswapFarmVerifier - Checks if a pool's call to a Ubeswap farm contract is valid.
 * UbeswapRouterVerifier - Checks if a pool's call to the Ubeswap router contract is valid.
 * AddressResolver - Stores the address of each contract in the protocol.
+* AssetHandler - Tracks whitelisted assets and handles price calculations.
 * BaseUbeswapAdapter - Makes calls to the Ubeswap router and farm contracts. Used for calculating price and checking if an address is valid.
 * ERC20PriceAggregator - Calculates the price of an ERC20 token.
 * Marketplace - Used for buying/selling NFT Pool tokens.
